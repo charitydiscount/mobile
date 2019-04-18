@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "548055517349",
+    "firebase_url": "https://charitydiscount.firebaseio.com",
+    "project_id": "charitydiscount",
+    "storage_bucket": "charitydiscount.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:548055517349:android:6e9b0787fa282ef9",
+        "android_client_info": {
+          "package_name": "com.charity_discount"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "548055517349-0fktje2g923jue3fnrk6dpm5im43bgt4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApw87PdnrMPqEVHOautGgq23kt_W7neMU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "548055517349-0fktje2g923jue3fnrk6dpm5im43bgt4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
