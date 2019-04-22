@@ -30,8 +30,6 @@ class StateWidget extends StatefulWidget {
 
 class _StateWidgetState extends State<StateWidget> {
   StateModel state;
-  //GoogleSignInAccount googleAccount;
-  //final GoogleSignIn googleSignIn = new GoogleSignIn();
 
   @override
   void initState() {
@@ -45,7 +43,6 @@ class _StateWidgetState extends State<StateWidget> {
   }
 
   Future<Null> initUser() async {
-    //print('...initUser...');
     FirebaseUser firebaseUserAuth = await Auth.getCurrentFirebaseUser();
     User user = await Auth.getUserLocal();
     Settings settings = await Auth.getSettingsLocal();

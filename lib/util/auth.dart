@@ -1,5 +1,4 @@
 import 'dart:async';
-//import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:charity_discount/models/user.dart';
@@ -108,7 +107,6 @@ class Auth {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.getString('user') != null) {
       User user = userFromJson(prefs.getString('user'));
-      //print('USER: $user');
       return user;
     } else {
       return null;
@@ -119,7 +117,6 @@ class Auth {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.getString('settings') != null) {
       Settings settings = settingsFromJson(prefs.getString('settings'));
-      //print('SETTINGS: $settings');
       return settings;
     } else {
       return null;
@@ -143,7 +140,7 @@ class Auth {
           return 'User with this email address not found.';
           break;
         case 'The password is invalid or the user does not have a password.':
-          return 'Invalid password.';
+          return 'Wrong credentials';
           break;
         case 'A network error (such as timeout, interrupted connection or unreachable host) has occurred.':
           return 'No internet connection.';

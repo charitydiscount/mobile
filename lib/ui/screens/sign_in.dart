@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:charity_discount/util/state_widget.dart';
 import 'package:charity_discount/util/auth.dart';
 import 'package:charity_discount/util/validator.dart';
@@ -24,6 +24,7 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   Widget build(BuildContext context) {
+    var data = EasyLocalizationProvider.of(context).data;
     final logo = Hero(
       tag: 'hero',
       child: CircleAvatar(
@@ -50,8 +51,8 @@ class _SignInScreenState extends State<SignInScreen> {
           child: Icon(
             Icons.email,
             color: Colors.grey,
-          ), // icon is 48px widget.
-        ), // icon is 48px widget.
+          ),
+        ),
         hintText: 'Email',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
@@ -69,9 +70,9 @@ class _SignInScreenState extends State<SignInScreen> {
           child: Icon(
             Icons.lock,
             color: Colors.grey,
-          ), // icon is 48px widget.
-        ), // icon is 48px widget.
-        hintText: 'Password',
+          ),
+        ),
+        hintText: AppLocalizations.of(context).tr('password'),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
@@ -89,7 +90,8 @@ class _SignInScreenState extends State<SignInScreen> {
         },
         padding: EdgeInsets.all(12),
         color: Theme.of(context).primaryColor,
-        child: Text('SIGN IN', style: TextStyle(color: Colors.white)),
+        child: Text(AppLocalizations.of(context).tr('signIn').toUpperCase(),
+            style: TextStyle(color: Colors.white)),
       ),
     );
 
@@ -113,40 +115,42 @@ class _SignInScreenState extends State<SignInScreen> {
       },
     );
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: LoadingScreen(
-          child: Form(
-            key: _formKey,
-            autovalidate: _autoValidate,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      logo,
-                      SizedBox(height: 48.0),
-                      email,
-                      SizedBox(height: 24.0),
-                      password,
-                      SizedBox(height: 12.0),
-                      loginButton,
-                      forgotLabel,
-                      signUpLabel
-                    ],
+    return EasyLocalizationProvider(
+        data: data,
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: LoadingScreen(
+              child: Form(
+                key: _formKey,
+                autovalidate: _autoValidate,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Center(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          logo,
+                          SizedBox(height: 48.0),
+                          email,
+                          SizedBox(height: 24.0),
+                          password,
+                          SizedBox(height: 12.0),
+                          loginButton,
+                          forgotLabel,
+                          signUpLabel
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          inAsyncCall: _loadingVisible),
-    );
+              inAsyncCall: _loadingVisible),
+        ));
   }
 
-  Future<void> _changeLoadingVisible() async {
+  Future<void> _toggleLoadingVisible() async {
     setState(() {
       _loadingVisible = !_loadingVisible;
     });
@@ -157,12 +161,12 @@ class _SignInScreenState extends State<SignInScreen> {
     if (_formKey.currentState.validate()) {
       try {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
-        await _changeLoadingVisible();
+        await _toggleLoadingVisible();
         //need await so it has chance to go through error if found.
         await StateWidget.of(context).logInUser(email, password);
         await Navigator.pushNamed(context, '/');
       } catch (e) {
-        _changeLoadingVisible();
+        _toggleLoadingVisible();
         print("Sign In Error: $e");
         String exception = Auth.getExceptionText(e);
         Flushbar(
