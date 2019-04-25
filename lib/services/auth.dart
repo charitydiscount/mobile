@@ -10,58 +10,82 @@ class AuthService {
 
   Observable<FirebaseUser> user;
   Observable<Map<String, dynamic>> profile;
+  Observable<Map<String, dynamic>> settings;
   PublishSubject loading = PublishSubject();
 
   AuthService() {
     user = Observable(_auth.onAuthStateChanged);
 
     profile = user.switchMap((FirebaseUser u) {
-      if(u != null) {
+      if (u != null) {
         return _db
-          .collection('users')
-          .document(u.uid)
-          .snapshots().
-          map((snap) => snap.data);
+            .collection('users')
+            .document(u.uid)
+            .snapshots()
+            .map((snap) => snap.data);
+      } else {
+        return Observable.just({});
+      }
+    });
+
+    settings = user.switchMap((FirebaseUser u) {
+      if (u != null) {
+        return _db
+            .collection('settings')
+            .document(u.uid)
+            .snapshots()
+            .map((snap) => snap.data);
       } else {
         return Observable.just({});
       }
     });
   }
 
-  Future<FirebaseUser> googleSignIn() async {
+  Future<FirebaseUser> signInWithEmailAndPass(email, password) async {
     loading.add(true);
 
-    GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-
-    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken
-    );
-
-    FirebaseUser user = await _auth.signInWithCredential(credential);
-    
-    updateUserData(user);
+    FirebaseUser user = await _auth.signInWithEmailAndPassword(
+        email: email, password: password);
 
     loading.add(false);
 
     return user;
   }
 
-  void updateUserData(FirebaseUser user) async {
-    DocumentReference ref = _db.collection('users').document(user.uid);
-
-    return ref.setData({
-      'uid': user.uid,
-      'email': user.email,
-      'photoURL': user.photoUrl,
-      'displayName': user.displayName,
-      'lastSeen': DateTime.now()
-    }, merge: true);
+  Future<void> forgotPasswordEmail(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
   }
 
-  void signOut() {
+  Future<void> signOut() async {
     _auth.signOut();
+  }
+
+  Future<FirebaseUser> signInWithGoogle() async {
+    loading.add(true);
+
+    GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+
+    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    AuthCredential credential = GoogleAuthProvider.getCredential(
+        accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
+
+    FirebaseUser user = await _auth.signInWithCredential(credential);
+
+    loading.add(false);
+
+    return user;
+  }
+
+  Future<void> updateUserData(String userId, Map<String, dynamic> userData) async {
+    DocumentReference ref = _db.collection('users').document(userId);
+
+    return ref.setData(userData, merge: true);
+  }
+
+  Future<void> updateUserSettings(String userId, Map<String, dynamic> settings) async {
+    DocumentReference ref = _db.collection('settings').document(userId);
+
+    return ref.setData(settings, merge: true);
   }
 }
 

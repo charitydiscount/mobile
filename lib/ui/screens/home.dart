@@ -4,6 +4,7 @@ import 'package:charity_discount/models/state.dart';
 import 'package:charity_discount/util/state_widget.dart';
 import 'package:charity_discount/ui/screens/sign_in.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
+import 'package:charity_discount/controllers/user_controller.dart';
 
 class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
@@ -18,12 +19,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget build(BuildContext context) {
-    appState = StateWidget.of(context).state;
+    appState = StateWidget.of(context).getState();
     var data = EasyLocalizationProvider.of(context).data;
     if (!appState.isLoading &&
-        (appState.firebaseUserAuth == null ||
-            appState.user == null ||
-            appState.settings == null)) {
+        (appState.user == null || appState.settings == null)) {
       return SignInScreen();
     } else {
       if (appState.isLoading) {
@@ -52,20 +51,18 @@ class _HomeScreenState extends State<HomeScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
           ),
-          onPressed: () {
-            StateWidget.of(context).logOutUser();
-          },
+          onPressed: () => _signOut(context),
           padding: EdgeInsets.all(12),
           color: Theme.of(context).primaryColor,
           child: Text('SIGN OUT', style: TextStyle(color: Colors.white)),
         ),
       );
 
-      final userId = appState?.firebaseUserAuth?.uid ?? '';
-      final email = appState?.firebaseUserAuth?.email ?? '';
+      final userId = appState?.user?.userId ?? '';
+      final email = appState?.user?.email ?? '';
       final firstName = appState?.user?.firstName ?? '';
       final lastName = appState?.user?.lastName ?? '';
-      final settingsId = appState?.settings?.settingsId ?? '';
+      final settingsId = appState?.settings?.userId ?? '';
       final userIdLabel = Text('App Id: ');
       final emailLabel = Text('Email: ');
       final firstNameLabel = Text('First Name: ');
@@ -116,5 +113,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 inAsyncCall: _loadingVisible),
           ));
     }
+  }
+
+  Future<void> _signOut(BuildContext context) async {
+    await userController.signOut();
+    await Navigator.pushNamed(context, '/signin');
   }
 }

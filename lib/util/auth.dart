@@ -23,7 +23,7 @@ class Auth {
             .document("users/${user.userId}")
             .setData(user.toJson());
         _addSettings(new Settings(
-          settingsId: user.userId,
+          userId: user.userId,
         ));
       } else {
         print("user ${user.firstName} ${user.email} exists");
@@ -48,7 +48,7 @@ class Auth {
 
   static void _addSettings(Settings settings) async {
     Firestore.instance
-        .document("settings/${settings.settingsId}")
+        .document("settings/${settings.userId}")
         .setData(settings.toJson());
   }
 
@@ -95,7 +95,7 @@ class Auth {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String storeSettings = settingsToJson(settings);
     await prefs.setString('settings', storeSettings);
-    return settings.settingsId;
+    return settings.userId;
   }
 
   static Future<FirebaseUser> getCurrentFirebaseUser() async {

@@ -1,20 +1,16 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:charity_discount/models/state.dart';
 import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/models/settings.dart';
-import 'package:charity_discount/util/auth.dart';
+import 'package:charity_discount/services/auth.dart';
+import 'package:charity_discount/services/local.dart';
 
 class StateWidget extends StatefulWidget {
-  final StateModel state;
   final Widget child;
 
-  StateWidget({
-    @required this.child,
-    this.state,
-  });
+  StateWidget({@required this.child});
 
   // Returns data of the nearest widget _StateDataWidget
   // in the widget tree.
@@ -29,48 +25,35 @@ class StateWidget extends StatefulWidget {
 }
 
 class _StateWidgetState extends State<StateWidget> {
-  StateModel state;
+  StateModel _state;
 
   @override
   void initState() {
     super.initState();
-    if (widget.state != null) {
-      state = widget.state;
-    } else {
-      state = new StateModel(isLoading: true);
-      initUser();
-    }
+    _state = new StateModel();
+
+    authService.profile.listen(
+        (profile) => setState(() => _state.user = User.fromJson(profile)));
+    authService.settings.listen((settings) =>
+        setState(() => _state.settings = Settings.fromJson(settings)));
+    authService.loading
+        .listen((loading) => setState(() => _state.isLoading = loading));
+
+    initFromLocal();
   }
 
-  Future<Null> initUser() async {
-    FirebaseUser firebaseUserAuth = await Auth.getCurrentFirebaseUser();
-    User user = await Auth.getUserLocal();
-    Settings settings = await Auth.getSettingsLocal();
+  getState() {
+    return this._state;
+  }
+
+  Future<Null> initFromLocal() async {
+    User user = await localService.getUserLocal();
+    Settings settings = await localService.getSettingsLocal();
     setState(() {
-      state.isLoading = false;
-      state.firebaseUserAuth = firebaseUserAuth;
-      state.user = user;
-      state.settings = settings;
+      _state.isLoading = false;
+      _state.user = user;
+      _state.settings = settings;
     });
-  }
-
-  Future<void> logOutUser() async {
-    await Auth.signOut();
-    FirebaseUser firebaseUserAuth = await Auth.getCurrentFirebaseUser();
-    setState(() {
-      state.user = null;
-      state.settings = null;
-      state.firebaseUserAuth = firebaseUserAuth;
-    });
-  }
-
-  Future<void> logInUser(email, password) async {
-    String userId = await Auth.signIn(email, password);
-    User user = await Auth.getUserFirestore(userId);
-    await Auth.storeUserLocal(user);
-    Settings settings = await Auth.getSettingsFirestore(userId);
-    await Auth.storeSettingsLocal(settings);
-    await initUser();
   }
 
   @override

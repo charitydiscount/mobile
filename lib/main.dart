@@ -22,7 +22,7 @@ class Main extends StatelessWidget {
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             EasylocaLizationDelegate(
-                locale: data.locale ?? Locale('ro'), path: 'assets/i18n'),
+                locale: data.locale ?? Locale('en'), path: 'assets/i18n'),
           ],
           supportedLocales: [Locale('en'), Locale('ro')],
           locale: data.locale,
