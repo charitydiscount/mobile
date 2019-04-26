@@ -205,12 +205,12 @@ class _SignInScreenState extends State<SignInScreen> {
       try {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         await _toggleLoadingVisible();
-        await userController.signIn(context, Strategy.EmailAndPass,
+        await userController.signIn(Strategy.EmailAndPass,
             {"email": email, "password": password});
         await Navigator.pushNamed(context, '/');
       } catch (e) {
-        await _toggleLoadingVisible();
-        if (!e is Error) {
+        if (!(e is Error)) {
+          await _toggleLoadingVisible();
           String exception = getExceptionText(e);
           Flushbar(
             title: "Sign In Error",
@@ -227,7 +227,7 @@ class _SignInScreenState extends State<SignInScreen> {
   void _googleLogin(BuildContext context) async {
     await _toggleLoadingVisible();
     try {
-      await userController.signIn(context, Strategy.Google);
+      await userController.signIn(Strategy.Google);
       await Navigator.pushNamed(context, '/');
     } catch (e) {
       await _toggleLoadingVisible();

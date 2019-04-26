@@ -19,22 +19,22 @@ class LocalService {
 
   Future<User> getUserLocal() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getString('user') != null) {
-      User user = userFromJson(prefs.getString('user'));
-      return user;
-    } else {
+
+    if (prefs.getString('user') == null) {
       return null;
     }
+
+    return userFromJson(prefs.getString('user'));
   }
 
   Future<Settings> getSettingsLocal() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getString('settings') != null) {
-      Settings settings = settingsFromJson(prefs.getString('settings'));
-      return settings;
-    } else {
+
+    if (prefs.getString('settings') == null) {
       return null;
     }
+
+    return settingsFromJson(prefs.getString('settings'));
   }
 
   Future<void> clear() async {
