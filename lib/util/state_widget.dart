@@ -36,8 +36,6 @@ class _StateWidgetState extends State<StateWidget> {
         (profile) => setState(() => _state.user = User.fromJson(profile)));
     authService.settings.listen((settings) =>
         setState(() => _state.settings = Settings.fromJson(settings)));
-    authService.loading
-        .listen((loading) => setState(() => _state.isLoading = loading));
 
     initFromLocal();
   }

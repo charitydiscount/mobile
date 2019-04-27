@@ -11,7 +11,6 @@ class AuthService {
   Observable<FirebaseUser> user;
   Observable<Map<String, dynamic>> profile;
   Observable<Map<String, dynamic>> settings;
-  PublishSubject loading = PublishSubject();
 
   AuthService() {
     user = Observable(_auth.onAuthStateChanged);
@@ -42,12 +41,8 @@ class AuthService {
   }
 
   Future<FirebaseUser> signInWithEmailAndPass(email, password) async {
-    loading.add(true);
-
     FirebaseUser user = await _auth.signInWithEmailAndPassword(
         email: email, password: password);
-
-    loading.add(false);
 
     return user;
   }
@@ -61,8 +56,6 @@ class AuthService {
   }
 
   Future<FirebaseUser> signInWithGoogle() async {
-    loading.add(true);
-
     GoogleSignInAccount googleUser = await _googleSignIn.signIn();
 
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
@@ -70,8 +63,6 @@ class AuthService {
         accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
     FirebaseUser user = await _auth.signInWithCredential(credential);
-
-    loading.add(false);
 
     return user;
   }
