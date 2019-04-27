@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
-
-import 'package:charity_discount/models/user.dart';
-import 'package:charity_discount/util/auth.dart';
 import 'package:charity_discount/util/validator.dart';
+import 'package:charity_discount/controllers/user_controller.dart';
+import 'package:charity_discount/util/firebase_errors.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -200,21 +199,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         await _changeLoadingVisible();
         //need await so it has chance to go through error if found.
-        await Auth.signUp(email, password).then((uID) {
-          Auth.addUserSettingsDB(new User(
-            userId: uID,
-            email: email,
-            firstName: firstName,
-            lastName: lastName,
-          ));
-        });
+        await userController.signUp(email, password);
+        // await Auth.signUp(email, password).then((uID) {
+        //   Auth.addUserSettingsDB(new User(
+        //     userId: uID,
+        //     email: email,
+        //     firstName: firstName,
+        //     lastName: lastName,
+        //   ));
+        // });
         //now automatically login user too
-        //await StateWidget.of(context).logInUser(email, password);
         await Navigator.pushNamed(context, '/signin');
       } catch (e) {
         _changeLoadingVisible();
         print("Sign Up Error: $e");
-        String exception = Auth.getExceptionText(e);
+        String exception = getExceptionText(e);
         Flushbar(
           title: "Sign Up Error",
           message: exception,

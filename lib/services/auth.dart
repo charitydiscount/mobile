@@ -52,7 +52,7 @@ class AuthService {
     return user;
   }
 
-  Future<void> forgotPasswordEmail(String email) async {
+  Future<void> resetPassword(String email) async {
     await _auth.sendPasswordResetEmail(email: email);
   }
 
@@ -76,16 +76,24 @@ class AuthService {
     return user;
   }
 
-  Future<void> updateUserData(String userId, Map<String, dynamic> userData) async {
+  Future<void> updateUserData(
+      String userId, Map<String, dynamic> userData) async {
     DocumentReference ref = _db.collection('users').document(userId);
 
     return ref.setData(userData, merge: true);
   }
 
-  Future<void> updateUserSettings(String userId, Map<String, dynamic> settings) async {
+  Future<void> updateUserSettings(
+      String userId, Map<String, dynamic> settings) async {
     DocumentReference ref = _db.collection('settings').document(userId);
 
     return ref.setData(settings, merge: true);
+  }
+
+  Future<FirebaseUser> createUser(String email, String password) async {
+    FirebaseUser newUser = await _auth.createUserWithEmailAndPassword(
+        email: email, password: password);
+    return newUser;
   }
 }
 

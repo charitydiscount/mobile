@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
-
-import 'package:charity_discount/util/auth.dart';
 import 'package:charity_discount/util/validator.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
+import 'package:charity_discount/controllers/user_controller.dart';
+import 'package:charity_discount/util/firebase_errors.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
@@ -122,7 +122,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     if (_formKey.currentState.validate()) {
       try {
         await _changeLoadingVisible();
-        await Auth.forgotPasswordEmail(email);
+        await userController.resetPassword(email);
         await _changeLoadingVisible();
         Flushbar(
           title: "Password Reset Email Sent",
@@ -133,7 +133,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       } catch (e) {
         _changeLoadingVisible();
         print("Forgot Password Error: $e");
-        String exception = Auth.getExceptionText(e);
+        String exception = getExceptionText(e);
         Flushbar(
           title: "Forgot Password Error",
           message: exception,

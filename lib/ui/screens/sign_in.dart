@@ -231,7 +231,7 @@ class _SignInScreenState extends State<SignInScreen> {
       await Navigator.pushNamed(context, '/');
     } catch (e) {
       await _toggleLoadingVisible();
-      if (!e is Error) {
+      if (!(e is Error)) {
         String exception = getExceptionText(e);
         Flushbar(
           title: "Sign In Error",

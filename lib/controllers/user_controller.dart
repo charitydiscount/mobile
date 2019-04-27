@@ -30,6 +30,14 @@ class UserController {
     await authService.signOut();
     await localService.clear();
   }
+
+  Future<void> resetPassword(email) async {
+    await authService.resetPassword(email);
+  }
+
+  Future<void> signUp(email, password) async {
+    await authService.createUser(email, password);
+  }
 }
 
 UserController userController = new UserController();
