@@ -30,7 +30,7 @@ class _StateWidgetState extends State<StateWidget> {
   @override
   void initState() {
     super.initState();
-    _state = new StateModel();
+    _state = new StateModel(settings: Settings(lang: 'ro'));
 
     authService.profile.listen(
         (profile) => setState(() => _state.user = User.fromJson(profile)));
@@ -40,7 +40,7 @@ class _StateWidgetState extends State<StateWidget> {
     initFromLocal();
   }
 
-  getState() {
+  StateModel getState() {
     return this._state;
   }
 
@@ -49,8 +49,12 @@ class _StateWidgetState extends State<StateWidget> {
     Settings settings = await localService.getSettingsLocal();
     setState(() {
       _state.isLoading = false;
-      _state.user = user;
-      _state.settings = settings;
+      if (user != null) {
+        _state.user = user;
+      }
+      if (settings != null) {
+        _state.settings = settings;
+      }
     });
   }
 

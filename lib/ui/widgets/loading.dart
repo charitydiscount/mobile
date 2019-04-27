@@ -1,5 +1,3 @@
-//library modal_progress_hud;
-
 import 'package:flutter/material.dart';
 
 ///

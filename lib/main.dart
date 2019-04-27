@@ -22,15 +22,15 @@ class Main extends StatelessWidget {
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             EasylocaLizationDelegate(
-                locale: data.locale ?? Locale('en'), path: 'assets/i18n'),
+                locale: data.locale ?? Locale('ro'), path: 'assets/i18n'),
           ],
           supportedLocales: [Locale('en'), Locale('ro')],
           locale: data.locale,
           routes: {
-            '/': (context) => HomeScreen(),
-            '/signin': (context) => SignInScreen(),
-            '/signup': (context) => SignUpScreen(),
-            '/forgot-password': (context) => ForgotPasswordScreen(),
+            '/': (context) => SafeArea(child: HomeScreen()),
+            '/signin': (context) => SafeArea(child: SignInScreen()),
+            '/signup': (context) => SafeArea(child: SignUpScreen()),
+            '/forgot-password': (context) => SafeArea(child: ForgotPasswordScreen()),
           },
         ));
   }

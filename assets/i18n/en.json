@@ -1,4 +1,7 @@
 {
   "password": "Password",
-  "signIn": "Sign in"
+  "signIn": "Sign in",
+  "charity": "Charity",
+  "shops": "Shops",
+  "profile": "Profile"
 }

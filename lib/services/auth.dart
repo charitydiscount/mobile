@@ -2,9 +2,12 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AuthService {
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: ['https://www.googleapis.com/auth/userinfo.profile', 'email']);
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _db = Firestore.instance;
 
@@ -21,7 +24,7 @@ class AuthService {
             .collection('users')
             .document(u.uid)
             .snapshots()
-            .map((snap) => snap.data);
+            .map((snap) => snap.exists ? snap.data : {});
       } else {
         return Observable.just({});
       }
@@ -35,7 +38,7 @@ class AuthService {
             .snapshots()
             .map((snap) => snap.data);
       } else {
-        return Observable.just({});
+        return Observable.just({'lang': 'ro'});
       }
     });
   }
@@ -55,7 +58,7 @@ class AuthService {
     _auth.signOut();
   }
 
-  Future<FirebaseUser> signInWithGoogle() async {
+  Future<FirebaseUser> signInWithGoogle(lang) async {
     GoogleSignInAccount googleUser = await _googleSignIn.signIn();
 
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
@@ -63,6 +66,22 @@ class AuthService {
         accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
     FirebaseUser user = await _auth.signInWithCredential(credential);
+
+    final googleApisUrl =
+        'https://www.googleapis.com/oauth2/v3/userinfo?alt=json&access_token=${googleAuth.accessToken}';
+    final response = await http.get(googleApisUrl);
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> userInfoJson = json.decode(response.body);
+      await updateUserData(user.uid, {
+        'userId': user.uid,
+        'email': googleUser.email,
+        'firstName': userInfoJson['given_name'],
+        'lastName': userInfoJson['family_name']
+      });
+    }
+
+    await updateUserSettings(user.uid, {'lang': lang});
 
     return user;
   }
@@ -81,9 +100,19 @@ class AuthService {
     return ref.setData(settings, merge: true);
   }
 
-  Future<FirebaseUser> createUser(String email, String password) async {
+  Future<FirebaseUser> createUser(String email, String password,
+      String firstName, String lastName, String lang) async {
     FirebaseUser newUser = await _auth.createUserWithEmailAndPassword(
         email: email, password: password);
+    await updateUserData(newUser.uid, {
+      'userId': newUser.uid,
+      'email': email,
+      'firstName': firstName,
+      'lastName': lastName
+    });
+
+    await updateUserSettings(newUser.uid, {'lang': lang});
+
     return newUser;
   }
 }

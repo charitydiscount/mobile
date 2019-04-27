@@ -12,18 +12,18 @@ String settingsToJson(Settings data) {
 }
 
 class Settings {
-  String userId;
+  String lang;
 
   Settings({
-    this.userId,
+    this.lang,
   });
 
   factory Settings.fromJson(Map<String, dynamic> json) => new Settings(
-        userId: json["userId"],
+        lang: json["lang"],
       );
 
   Map<String, dynamic> toJson() => {
-        "userId": userId,
+        "lang": lang,
       };
 
   factory Settings.fromDocument(DocumentSnapshot doc) {

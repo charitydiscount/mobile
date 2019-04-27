@@ -4,7 +4,7 @@ import 'package:charity_discount/models/settings.dart';
 class StateModel {
   bool isLoading;
   User user;
-  Settings settings;
+  Settings settings = Settings(lang: 'ro');
 
   StateModel({
     this.isLoading = false,

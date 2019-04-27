@@ -3,6 +3,7 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:charity_discount/util/state_widget.dart';
 import 'package:charity_discount/util/validator.dart';
 import 'package:charity_discount/util/social_icons.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
@@ -122,8 +123,7 @@ class _SignInScreenState extends State<SignInScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         horizontalLine(),
-        Text("Social Login",
-            style: TextStyle(fontSize: 16.0)),
+        Text("Social Login", style: TextStyle(fontSize: 16.0)),
         horizontalLine()
       ],
     );
@@ -205,7 +205,9 @@ class _SignInScreenState extends State<SignInScreen> {
       try {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         await _toggleLoadingVisible();
-        await userController.signIn(Strategy.EmailAndPass,
+        await userController.signIn(
+            Strategy.EmailAndPass,
+            StateWidget.of(context).getState().settings.lang,
             {"email": email, "password": password});
         await Navigator.pushNamed(context, '/');
       } catch (e) {
@@ -227,7 +229,8 @@ class _SignInScreenState extends State<SignInScreen> {
   void _googleLogin(BuildContext context) async {
     await _toggleLoadingVisible();
     try {
-      await userController.signIn(Strategy.Google);
+      await userController.signIn(
+          Strategy.Google, StateWidget.of(context).getState().settings.lang);
       await Navigator.pushNamed(context, '/');
     } catch (e) {
       await _toggleLoadingVisible();

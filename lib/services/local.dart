@@ -10,11 +10,10 @@ class LocalService {
     return user.userId;
   }
 
-  Future<String> storeSettingsLocal(Settings settings) async {
+  Future<void> storeSettingsLocal(Settings settings) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String storeSettings = settingsToJson(settings);
     await prefs.setString('settings', storeSettings);
-    return settings.userId;
   }
 
   Future<User> getUserLocal() async {

@@ -184,7 +184,7 @@ class Category {
   int averageApprovalRateAmount;
   int averageApprovalRateCount;
   int oldestPendingCommission;
-  int commission;
+  double commission;
 
   Category({
     this.name,

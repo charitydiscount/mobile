@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
+import 'package:charity_discount/util/state_widget.dart';
 import 'package:charity_discount/util/validator.dart';
 import 'package:charity_discount/controllers/user_controller.dart';
 import 'package:charity_discount/util/firebase_errors.dart';
@@ -182,7 +183,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Future<void> _changeLoadingVisible() async {
+  Future<void> _toggleLoadingVisible() async {
     setState(() {
       _loadingVisible = !_loadingVisible;
     });
@@ -197,21 +198,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (_formKey.currentState.validate()) {
       try {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
-        await _changeLoadingVisible();
-        //need await so it has chance to go through error if found.
-        await userController.signUp(email, password);
-        // await Auth.signUp(email, password).then((uID) {
-        //   Auth.addUserSettingsDB(new User(
-        //     userId: uID,
-        //     email: email,
-        //     firstName: firstName,
-        //     lastName: lastName,
-        //   ));
-        // });
-        //now automatically login user too
+        await _toggleLoadingVisible();
+        await userController.signUp(email, password, firstName, lastName,
+            StateWidget.of(context).getState().settings.lang);
         await Navigator.pushNamed(context, '/signin');
       } catch (e) {
-        _changeLoadingVisible();
+        _toggleLoadingVisible();
         print("Sign Up Error: $e");
         String exception = getExceptionText(e);
         Flushbar(

@@ -103,7 +103,7 @@ Program _$ProgramFromJson(Map<String, dynamic> json) {
       downtime: json['downtime'] as String,
       averagePaymentTime: json['averagePaymentTime'] as int,
       logoId: json['logoId'] as int,
-      logoPath: json['logoPath'] as String,
+      logoPath: json['logo_path'] as String,
       userLogin: json['userLogin'] as String,
       category: json['category'] == null
           ? null
@@ -203,7 +203,7 @@ Category _$CategoryFromJson(Map<String, dynamic> json) {
       averageApprovalRateAmount: json['averageApprovalRateAmount'] as int,
       averageApprovalRateCount: json['averageApprovalRateCount'] as int,
       oldestPendingCommission: json['oldestPendingCommission'] as int,
-      commission: json['commission'] as int);
+      commission: json['commission'] as double);
 }
 
 Map<String, dynamic> _$CategoryToJson(Category instance) => <String, dynamic>{
