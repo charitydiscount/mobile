@@ -13,6 +13,7 @@ class Shops extends StatefulWidget {
 class _ShopsState extends State<Shops> {
   StateModel appState;
   bool _loadingVisible = false;
+  Future<Market> _market = affiliateService.getMarket();
 
   @override
   void initState() {
@@ -22,27 +23,36 @@ class _ShopsState extends State<Shops> {
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).getState();
 
-    if (appState.isLoading) {
-      _loadingVisible = true;
-    } else {
-      _loadingVisible = false;
-    }
+    _loadingVisible = true;
 
     final shopsBuilder = FutureBuilder<Market>(
-      future: affiliateService.getMarket(),
+      future: _market,
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final shopWidgets =
-              snapshot.data.programs.map((p) => ShopWidget(program: p)).toList();
-          return Column(mainAxisSize: MainAxisSize.min, children: shopWidgets);
-        } else if (snapshot.hasError) {
+        if (snapshot.hasError) {
           return Text("${snapshot.error}");
         }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(
+            backgroundColor: Colors.black,
+          );
+        }
 
-        // By default, show a loading spinner
-        return CircularProgressIndicator();
+        final shopWidgets =
+            snapshot.data.programs.map((p) => ShopWidget(program: p)).toList();
+        return RefreshIndicator(
+            onRefresh: () {
+              final marketFuture = affiliateService.getMarket();
+              setState(() {
+                _market = marketFuture;
+              });
+              return marketFuture;
+            },
+            color: Colors.red,
+            child: ListView(children: shopWidgets, shrinkWrap: true));
       },
     );
+
+    _loadingVisible = false;
 
     return LoadingScreen(
         child: Padding(
@@ -50,9 +60,7 @@ class _ShopsState extends State<Shops> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              shopsBuilder
-            ],
+            children: <Widget>[shopsBuilder],
           ),
         ),
         inAsyncCall: _loadingVisible);

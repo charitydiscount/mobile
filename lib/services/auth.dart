@@ -77,7 +77,8 @@ class AuthService {
         'userId': user.uid,
         'email': googleUser.email,
         'firstName': userInfoJson['given_name'],
-        'lastName': userInfoJson['family_name']
+        'lastName': userInfoJson['family_name'],
+        'photoUrl': user.photoUrl
       });
     }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/market.dart';
 import 'package:charity_discount/ui/screens/shop_details.dart';
+import 'package:charity_discount/util/url.dart';
 
 class ShopWidget extends StatelessWidget {
   final Program program;
@@ -10,6 +11,18 @@ class ShopWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final logo = Image.network(program.logoPath, width: 120);
+    final linkButton = MaterialButton(
+      color: Colors.red,
+      textColor: Colors.white,
+      child: Text(
+        'Acceseaza magazin',
+        style: TextStyle(fontSize: 12.0),
+      ),
+      onPressed: () => launchURL(program.mainUrl),
+    );
+    String cashback = program.defaultLeadCommissionAmount != null
+        ? '${program.defaultLeadCommissionAmount} RON'
+        : '${program.defaultSaleCommissionRate}%';
     return Card(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -24,8 +37,7 @@ class ShopWidget extends StatelessWidget {
                 fontSize: 24.0,
               ),
             )),
-            subtitle: Center(
-                child: Text('${program.category.commission.toString()}%')),
+            subtitle: Center(child: Text(cashback)),
           ),
           ButtonTheme.bar(
             child: ButtonBar(
@@ -39,11 +51,12 @@ class ShopWidget extends StatelessWidget {
                   onPressed: () => {
                         Navigator.push(
                             context,
-                            new MaterialPageRoute(
+                            MaterialPageRoute(
                                 builder: (BuildContext context) =>
                                     ShopDetails(program: program)))
                       },
                 ),
+                linkButton,
               ],
             ),
           ),

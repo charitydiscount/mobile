@@ -27,18 +27,26 @@ class _ProfileState extends State<Profile> {
     } else {
       _loadingVisible = false;
     }
+    final logoImage = appState.user.photoUrl != null
+        ? Image.network(
+            appState.user.photoUrl,
+            fit: BoxFit.fill,
+            width: 120.0,
+            height: 120.0,
+          )
+        : Image.asset(
+            'assets/images/default.png',
+            fit: BoxFit.cover,
+            width: 120.0,
+            height: 120.0,
+          );
     final logo = Hero(
       tag: 'hero',
       child: CircleAvatar(
           backgroundColor: Colors.transparent,
           radius: 60.0,
           child: ClipOval(
-            child: Image.asset(
-              'assets/images/default.png',
-              fit: BoxFit.cover,
-              width: 120.0,
-              height: 120.0,
-            ),
+            child: logoImage,
           )),
     );
 
@@ -55,11 +63,9 @@ class _ProfileState extends State<Profile> {
       ),
     );
 
-    final userId = appState?.user?.userId ?? '';
     final email = appState?.user?.email ?? '';
     final firstName = appState?.user?.firstName ?? '';
     final lastName = appState?.user?.lastName ?? '';
-    final userIdLabel = Text('App Id: ');
     final emailLabel = Text('Email: ');
     final firstNameLabel = Text('First Name: ');
     final lastNameLabel = Text('Last Name: ');
@@ -77,8 +83,6 @@ class _ProfileState extends State<Profile> {
                   children: <Widget>[
                     logo,
                     SizedBox(height: 48.0),
-                    userIdLabel,
-                    Text(userId, style: TextStyle(fontWeight: FontWeight.bold)),
                     SizedBox(height: 12.0),
                     emailLabel,
                     Text(email, style: TextStyle(fontWeight: FontWeight.bold)),

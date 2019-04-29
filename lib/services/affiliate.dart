@@ -1,7 +1,8 @@
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:charity_discount/models/market.dart';
 import 'package:charity_discount/models/promotions.dart';
-import 'dart:convert';
+import 'package:charity_discount/util/url.dart';
 
 final String baseUrl = 'https://api.2performant.com/affiliate';
 
@@ -16,7 +17,13 @@ class AffiliateService {
       throw Exception('Failed to get auth data (${response.statusCode})');
     }
 
-    final relevantHeaders = ['access-token', 'client', 'uid', 'token-type'];
+    final relevantHeaders = [
+      'access-token',
+      'client',
+      'uid',
+      'token-type',
+      'unique-id'
+    ];
 
     _auth = response.headers;
     _auth.removeWhere((key, value) => !relevantHeaders.contains(key));
@@ -36,10 +43,28 @@ class AffiliateService {
       throw Exception('Could not load shops (${response.statusCode})');
     }
 
-    return Market.fromJson(json.decode(response.body));
+    Market market = Market.fromJson(json.decode(response.body));
+
+    market.programs.forEach((p) {
+      p.mainUrl =
+          convertAffiliateUrl(p.mainUrl, _auth['unique-id'], p.uniqueCode);
+      if (p.defaultSaleCommissionRate != null) {
+        double commission = double.tryParse(p.defaultSaleCommissionRate);
+        commission = commission * 0.7;
+        p.defaultSaleCommissionRate = commission.toStringAsFixed(2);
+      }
+      if (p.defaultLeadCommissionAmount != null) {
+        double commission = double.tryParse(p.defaultLeadCommissionAmount);
+        commission = commission * 0.7;
+        p.defaultLeadCommissionAmount = commission.toStringAsFixed(2);
+      }
+    });
+
+    return market;
   }
 
-  Future<List<AdvertiserPromotion>> getPromotions(int programId) async {
+  Future<List<AdvertiserPromotion>> getPromotions(
+      int programId, String uniqueId) async {
     if (_auth == null) {
       await _initAuth();
     }
@@ -55,6 +80,11 @@ class AffiliateService {
     Promotions promotions = Promotions.fromJson(json.decode(response.body));
     promotions.advertiserPromotions
         .removeWhere((p) => p.program.id != programId);
+
+    promotions.advertiserPromotions.forEach((p) {
+      p.landingPageLink =
+          convertAffiliateUrl(p.landingPageLink, _auth['unique-id'], uniqueId);
+    });
 
     return promotions.advertiserPromotions;
   }
