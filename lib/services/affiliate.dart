@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'package:charity_discount/models/market.dart';
+import 'package:charity_discount/models/promotions.dart';
 import 'dart:convert';
 
 final String baseUrl = 'https://api.2performant.com/affiliate';
@@ -36,6 +37,26 @@ class AffiliateService {
     }
 
     return Market.fromJson(json.decode(response.body));
+  }
+
+  Future<List<AdvertiserPromotion>> getPromotions(int programId) async {
+    if (_auth == null) {
+      await _initAuth();
+    }
+
+    final url =
+        baseUrl + '/advertiser_promotions?filter[affrequest_status]=accepted';
+    final response = await http.get(url, headers: _auth);
+
+    if (response.statusCode != 200) {
+      throw Exception('Could not load shops (${response.statusCode})');
+    }
+
+    Promotions promotions = Promotions.fromJson(json.decode(response.body));
+    promotions.advertiserPromotions
+        .removeWhere((p) => p.program.id != programId);
+
+    return promotions.advertiserPromotions;
   }
 }
 

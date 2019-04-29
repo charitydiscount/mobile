@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:charity_discount/models/market.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:charity_discount/models/market.dart';
+import 'package:charity_discount/models/promotions.dart'
+    show AdvertiserPromotion;
+import 'package:charity_discount/ui/widgets/promotion.dart';
+import 'package:charity_discount/services/affiliate.dart';
 
 class ShopDetails extends StatelessWidget {
   final Program program;
@@ -24,6 +28,22 @@ class ShopDetails extends StatelessWidget {
       ),
     );
 
+    final promotionsBuilder = FutureBuilder<List<AdvertiserPromotion>>(
+      future: affiliateService.getPromotions(program.id),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final shopWidgets =
+              snapshot.data.map((p) => PromotionWidget(promotion: p)).toList();
+          return Column(mainAxisSize: MainAxisSize.min, children: shopWidgets);
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+
+        // By default, show a loading spinner
+        return CircularProgressIndicator();
+      },
+    );
+
     return Scaffold(
       appBar: AppBar(title: Text(program.name)),
       floatingActionButton: FloatingActionButton(
@@ -33,7 +53,7 @@ class ShopDetails extends StatelessWidget {
       ),
       body: ListView(
         padding: EdgeInsets.only(top: 12.0),
-        children: <Widget>[logo, detailsContainer],
+        children: <Widget>[logo, promotionsBuilder],
       ),
     );
   }
