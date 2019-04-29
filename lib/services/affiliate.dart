@@ -31,12 +31,19 @@ class AffiliateService {
     _auth.putIfAbsent('Accept', () => 'application/json');
   }
 
-  Future<Market> getMarket() async {
+  Future<Market> getMarket({int page, int perPage}) async {
     if (_auth == null) {
       await _initAuth();
     }
 
-    final url = baseUrl + '/programs?filter[relation]=accepted';
+    String url = baseUrl + '/programs?filter[relation]=accepted';
+    if (page != null) {
+      url = url + '&page=$page';
+    }
+    if (perPage != null) {
+      url = url + '&perpage=$perPage';
+    }
+
     final response = await http.get(url, headers: _auth);
 
     if (response.statusCode != 200) {

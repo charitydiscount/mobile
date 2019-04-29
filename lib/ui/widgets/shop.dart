@@ -10,7 +10,11 @@ class ShopWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logo = Image.network(program.logoPath, width: 120);
+    final logo = Image.network(
+      program.logoPath,
+      width: 120,
+      fit: BoxFit.fitHeight,
+    );
     final linkButton = MaterialButton(
       color: Colors.red,
       textColor: Colors.white,

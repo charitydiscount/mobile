@@ -25,7 +25,7 @@ class ShopDetails extends StatelessWidget {
           return Text("${snapshot.error}");
         }
         if (!snapshot.hasData) {
-          return CircularProgressIndicator();
+          return CircularProgressIndicator(backgroundColor: Colors.red,);
         }
         if (snapshot.data.length == 0) {
           return Text('');
