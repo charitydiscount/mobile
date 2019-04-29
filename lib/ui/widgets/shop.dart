@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/market.dart';
+import 'package:charity_discount/ui/screens/shop_details.dart';
 
 class ShopWidget extends StatelessWidget {
   final Program program;
@@ -8,8 +9,7 @@ class ShopWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(program.logoPath);
-    final logo = Image.network(program.logoPath, width: 150);
+    final logo = Image.network(program.logoPath, width: 120);
     return Card(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -31,12 +31,18 @@ class ShopWidget extends StatelessWidget {
             child: ButtonBar(
               children: <Widget>[
                 FlatButton(
-                  child: Icon(Icons.favorite_border),
+                  child: const Icon(Icons.favorite_border),
                   onPressed: () {/* ... */},
                 ),
                 FlatButton(
-                  child: const Text('DETAILS'),
-                  onPressed: () {/* ... */},
+                  child: const Icon(Icons.details),
+                  onPressed: () => {
+                        Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    ShopDetails(program: program)))
+                      },
                 ),
               ],
             ),

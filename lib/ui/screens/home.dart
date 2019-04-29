@@ -27,7 +27,9 @@ class _HomeScreenState extends State<HomeScreen> {
     appState = StateWidget.of(context).getState();
     var data = EasyLocalizationProvider.of(context).data;
     if (!appState.isLoading &&
-        (appState.user == null || appState.settings == null)) {
+        (appState.user == null ||
+            appState.user.userId == null ||
+            appState.settings == null)) {
       return SignInScreen();
     } else {
       if (appState.isLoading) {
