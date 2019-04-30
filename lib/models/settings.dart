@@ -14,17 +14,12 @@ String settingsToJson(Settings data) {
 class Settings {
   String lang;
 
-  Settings({
-    this.lang,
-  });
+  Settings({this.lang});
 
-  factory Settings.fromJson(Map<String, dynamic> json) => new Settings(
-        lang: json["lang"],
-      );
+  factory Settings.fromJson(Map<String, dynamic> json) =>
+      Settings(lang: json["lang"]);
 
-  Map<String, dynamic> toJson() => {
-        "lang": lang,
-      };
+  Map<String, dynamic> toJson() => {"lang": lang};
 
   factory Settings.fromDocument(DocumentSnapshot doc) {
     return Settings.fromJson(doc.data);

@@ -38,7 +38,23 @@ class LocalService {
 
   Future<void> clear() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.clear();
+    await prefs.clear();
+    await prefs.setBool('introCompleted', true);
+  }
+
+  Future<void> setIntroCompleted() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('introCompleted', true);
+  }
+
+  Future<bool> isIntroCompleted() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (prefs.getBool('introCompleted') == null) {
+      return null;
+    }
+
+    return prefs.getBool('introCompleted');
   }
 }
 

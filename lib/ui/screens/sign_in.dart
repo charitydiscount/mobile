@@ -3,12 +3,12 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:charity_discount/util/state_widget.dart';
 import 'package:charity_discount/util/validator.dart';
 import 'package:charity_discount/util/social_icons.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
 import 'package:charity_discount/controllers/user_controller.dart';
 import 'package:charity_discount/util/firebase_errors.dart';
+import 'package:charity_discount/state/state_model.dart';
 
 class SignInScreen extends StatefulWidget {
   _SignInScreenState createState() => _SignInScreenState();
@@ -207,7 +207,7 @@ class _SignInScreenState extends State<SignInScreen> {
         await _toggleLoadingVisible();
         await userController.signIn(
             Strategy.EmailAndPass,
-            StateWidget.of(context).getState().settings.lang,
+            AppModel.of(context).settings.lang,
             {"email": email, "password": password});
         await Navigator.pushNamed(context, '/');
       } catch (e) {
@@ -230,7 +230,7 @@ class _SignInScreenState extends State<SignInScreen> {
     await _toggleLoadingVisible();
     try {
       await userController.signIn(
-          Strategy.Google, StateWidget.of(context).getState().settings.lang);
+          Strategy.Google, AppModel.of(context).settings.lang);
       await Navigator.pushNamed(context, '/');
     } catch (e) {
       if (!(e is Error)) {

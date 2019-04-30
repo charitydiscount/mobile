@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:charity_discount/models/state.dart';
-import 'package:charity_discount/util/state_widget.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
 import 'package:charity_discount/controllers/user_controller.dart';
+import 'package:charity_discount/state/state_model.dart';
 
 class Profile extends StatefulWidget {
   _ProfileState createState() => _ProfileState();
 }
 
 class _ProfileState extends State<Profile> {
-  StateModel appState;
   bool _loadingVisible = false;
 
   @override
@@ -19,14 +17,9 @@ class _ProfileState extends State<Profile> {
   }
 
   Widget build(BuildContext context) {
-    appState = StateWidget.of(context).getState();
+    var appState = AppModel.of(context);
     var data = EasyLocalizationProvider.of(context).data;
 
-    if (appState.isLoading) {
-      _loadingVisible = true;
-    } else {
-      _loadingVisible = false;
-    }
     final logoImage = appState.user.photoUrl != null
         ? Image.network(
             appState.user.photoUrl,

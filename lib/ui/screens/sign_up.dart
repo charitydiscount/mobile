@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
-import 'package:charity_discount/util/state_widget.dart';
 import 'package:charity_discount/util/validator.dart';
 import 'package:charity_discount/controllers/user_controller.dart';
 import 'package:charity_discount/util/firebase_errors.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
+import 'package:charity_discount/state/state_model.dart';
 
 class SignUpScreen extends StatefulWidget {
   _SignUpScreenState createState() => _SignUpScreenState();
@@ -200,7 +200,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         await _toggleLoadingVisible();
         await userController.signUp(email, password, firstName, lastName,
-            StateWidget.of(context).getState().settings.lang);
+            AppModel.of(context).settings.lang);
         await Navigator.pushNamed(context, '/signin');
       } catch (e) {
         _toggleLoadingVisible();
