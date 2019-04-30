@@ -121,7 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       padding: EdgeInsets.symmetric(vertical: 16.0),
       child: RaisedButton(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(12),
         ),
         onPressed: () {
           _emailSignUp(

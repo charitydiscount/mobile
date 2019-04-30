@@ -37,17 +37,24 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
           return Text("${snapshot.error}");
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
+          List<Widget> placeholders = [
+            Padding(
+                padding: EdgeInsets.only(top: 16.0),
+                child: Center(
+                    child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(Colors.red),
+                )))
+          ];
+          placeholders.addAll(List.generate(
+              _perPage,
+              (int index) => Padding(
+                  padding: EdgeInsets.only(top: 8.0),
+                  child: Placeholder(
+                    fallbackHeight: 100.0,
+                    color: Colors.white,
+                  ))));
           return ListView(
-              primary: false,
-              shrinkWrap: true,
-              children: List.generate(
-                  _perPage,
-                  (int index) => Padding(
-                      padding: EdgeInsets.only(top: 8.0),
-                      child: Placeholder(
-                        fallbackHeight: 100.0,
-                        color: Colors.white,
-                      ))));
+              primary: false, shrinkWrap: true, children: placeholders);
         }
         if (!_loadingCompleter.isCompleted) {
           _loadingCompleter.complete();

@@ -33,7 +33,7 @@ ThemeData buildTheme() {
       color: const Color(0xFFCCCCCC),
       size: 20.0,
     ),
-    buttonColor: Colors.white,
+    // buttonColor: Colors.white,
     backgroundColor: Colors.white,
   );
 }

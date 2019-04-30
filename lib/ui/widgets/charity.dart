@@ -33,17 +33,27 @@ class _CharityState extends State<CharityWidget> {
     final casesBuilder = FutureBuilder<Map<String, Charity>>(
       future: cases,
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final shopWidgets = snapshot.data.values
-              .map((c) => CaseWidget(charityCase: c))
-              .toList();
-          return Column(mainAxisSize: MainAxisSize.min, children: shopWidgets);
-        } else if (snapshot.hasError) {
+        if (snapshot.hasError) {
           return Text("${snapshot.error}");
         }
 
-        // By default, show a loading spinner
-        return CircularProgressIndicator();
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Padding(
+              padding: EdgeInsets.only(top: 16.0),
+              child: Center(
+                  child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(Colors.red),
+              )));
+        }
+
+        if (!snapshot.hasData) {
+          return Text('No data available');
+        }
+        
+        final shopWidgets = snapshot.data.values
+            .map((c) => CaseWidget(charityCase: c))
+            .toList();
+        return Column(mainAxisSize: MainAxisSize.min, children: shopWidgets);
       },
     );
 
