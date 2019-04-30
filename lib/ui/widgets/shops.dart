@@ -13,19 +13,25 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   bool _loadingVisible = false;
   final _perPage = 10;
   Completer<Null> _loadingCompleter = Completer<Null>();
+  List<Future<Market>> _marketFutures = List();
   int _totalPages;
 
   @override
   void initState() {
     super.initState();
+    _marketFutures.add(affiliateService.getMarket(page: 1, perPage: _perPage));
   }
 
   Widget _loadPrograms(int pageNumber) {
     if (_totalPages != null && pageNumber > _totalPages) {
       return null;
     }
+    if (_marketFutures.length < pageNumber) {
+      _marketFutures
+          .add(affiliateService.getMarket(page: pageNumber, perPage: _perPage));
+    }
     return FutureBuilder<Market>(
-      future: affiliateService.getMarket(page: pageNumber, perPage: _perPage),
+      future: _marketFutures[pageNumber - 1],
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text("${snapshot.error}");

@@ -13,7 +13,8 @@ class ShopWidget extends StatelessWidget {
     final logo = Image.network(
       program.logoPath,
       width: 120,
-      fit: BoxFit.fitHeight,
+      height: 30,
+      fit: BoxFit.contain,
     );
     final linkButton = MaterialButton(
       color: Colors.red,
