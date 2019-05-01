@@ -16,6 +16,11 @@ class ShopDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     final logo = Image.network(program.logoPath,
         width: 150, height: 40, fit: BoxFit.contain);
+    final category = Padding(
+        padding: EdgeInsets.all(12),
+        child: Chip(
+          label: Text(program.category.name),
+        ));
     final promotionsTitle = Text(
       'Promotii',
       style: TextStyle(fontSize: 24.0),
@@ -57,7 +62,7 @@ class ShopDetails extends StatelessWidget {
       ),
       body: ListView(
         padding: EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),
-        children: <Widget>[logo, promotionsBuilder],
+        children: <Widget>[logo, category, promotionsBuilder],
       ),
     );
   }
