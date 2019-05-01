@@ -31,7 +31,7 @@ class AffiliateService {
     _auth.putIfAbsent('Accept', () => 'application/json');
   }
 
-  Future<Market> getMarket({int page, int perPage}) async {
+  Future<Market> getMarket({int page, int perPage, String userId}) async {
     if (_auth == null) {
       await _initAuth();
     }
@@ -53,8 +53,8 @@ class AffiliateService {
     Market market = Market.fromJson(json.decode(response.body));
 
     market.programs.forEach((p) {
-      p.mainUrl =
-          convertAffiliateUrl(p.mainUrl, _auth['unique-id'], p.uniqueCode);
+      p.mainUrl = convertAffiliateUrl(
+          p.mainUrl, _auth['unique-id'], p.uniqueCode, userId);
       if (p.defaultSaleCommissionRate != null) {
         double commission = double.tryParse(p.defaultSaleCommissionRate);
         commission = commission * 0.7;
@@ -71,7 +71,7 @@ class AffiliateService {
   }
 
   Future<List<AdvertiserPromotion>> getPromotions(
-      int programId, String uniqueId) async {
+      int programId, String uniqueId, String userId) async {
     if (_auth == null) {
       await _initAuth();
     }
@@ -89,8 +89,8 @@ class AffiliateService {
         .removeWhere((p) => p.program.id != programId);
 
     promotions.advertiserPromotions.forEach((p) {
-      p.landingPageLink =
-          convertAffiliateUrl(p.landingPageLink, _auth['unique-id'], uniqueId);
+      p.landingPageLink = convertAffiliateUrl(
+          p.landingPageLink, _auth['unique-id'], uniqueId, userId);
     });
 
     return promotions.advertiserPromotions;

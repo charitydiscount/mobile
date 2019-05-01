@@ -4,6 +4,7 @@ import 'package:charity_discount/models/market.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
 import 'package:charity_discount/ui/widgets/shop.dart';
 import 'package:charity_discount/services/affiliate.dart';
+import 'package:charity_discount/state/state_model.dart';
 
 class Shops extends StatefulWidget {
   _ShopsState createState() => _ShopsState();
@@ -15,11 +16,14 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   Completer<Null> _loadingCompleter = Completer<Null>();
   List<Future<Market>> _marketFutures = List();
   int _totalPages;
+  AppModel _appState;
 
   @override
   void initState() {
     super.initState();
-    _marketFutures.add(affiliateService.getMarket(page: 1, perPage: _perPage));
+    _appState = AppModel.of(context);
+    _marketFutures.add(affiliateService.getMarket(
+        page: 1, perPage: _perPage, userId: _appState.user.userId));
   }
 
   Widget _loadPrograms(int pageNumber) {
@@ -27,8 +31,8 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
       return null;
     }
     if (_marketFutures.length < pageNumber) {
-      _marketFutures
-          .add(affiliateService.getMarket(page: pageNumber, perPage: _perPage));
+      _marketFutures.add(affiliateService.getMarket(
+          page: pageNumber, perPage: _perPage, userId: _appState.user.userId));
     }
     return FutureBuilder<Market>(
       future: _marketFutures[pageNumber - 1],

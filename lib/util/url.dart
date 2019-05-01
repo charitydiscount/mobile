@@ -8,15 +8,14 @@ Future<void> launchURL(String url) async {
   }
 }
 
-String convertAffiliateUrl(String url, String affiliateCode, String uniqueId) {
-  //"https://" + t.host + "/events/click?ad_type=quicklink&aff_code="
-  // + t.affiliate_code + "&unique=" + t.campaigns[i].unique_code
-  // + "&redirect_to=" + encodeURIComponent(o)
+String convertAffiliateUrl(
+    String url, String affiliateCode, String uniqueId, String userId) {
   final baseUrl =
       'https://event.2performant.com/events/click?ad_type=quicklink';
   final affCode = 'aff_code=$affiliateCode';
   final unique = 'unique=$uniqueId';
   final redirect = 'redirect_to=$url';
+  final tag = 'st=$userId';
 
-  return '$baseUrl&$affCode&$unique&$redirect';
+  return '$baseUrl&$affCode&$unique&$redirect&$tag';
 }

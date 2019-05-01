@@ -5,6 +5,7 @@ import 'package:charity_discount/models/promotions.dart'
 import 'package:charity_discount/ui/widgets/promotion.dart';
 import 'package:charity_discount/services/affiliate.dart';
 import 'package:charity_discount/util/url.dart';
+import 'package:charity_discount/state/state_model.dart';
 
 class ShopDetails extends StatelessWidget {
   final Program program;
@@ -20,7 +21,8 @@ class ShopDetails extends StatelessWidget {
       style: TextStyle(fontSize: 24.0),
     );
     final promotionsBuilder = FutureBuilder<List<AdvertiserPromotion>>(
-      future: affiliateService.getPromotions(program.id, program.uniqueCode),
+      future: affiliateService.getPromotions(
+          program.id, program.uniqueCode, AppModel.of(context).user.userId),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text("${snapshot.error}");
