@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final market = marketFromJson(jsonString);
-
 import 'dart:convert';
 
 Market marketFromJson(String str) => Market.fromJson(json.decode(str));
@@ -185,7 +181,6 @@ class Program {
   String name;
   String mainUrl;
   String baseUrl;
-  String description;
   DateTime activatedAt;
   int userId;
   String uniqueCode;
@@ -214,10 +209,7 @@ class Program {
   String logoPath;
   String userLogin;
   Category category;
-  List<IgnoreIp> ignoreIps;
   List<SellingCountry> sellingCountries;
-  PromotionalMethods promotionalMethods;
-  ProgramCommissionVariation commissionVariation;
   Affrequest affrequest;
 
   Program({
@@ -226,7 +218,6 @@ class Program {
     this.name,
     this.mainUrl,
     this.baseUrl,
-    this.description,
     this.activatedAt,
     this.userId,
     this.uniqueCode,
@@ -255,10 +246,7 @@ class Program {
     this.logoPath,
     this.userLogin,
     this.category,
-    this.ignoreIps,
     this.sellingCountries,
-    this.promotionalMethods,
-    this.commissionVariation,
     this.affrequest,
   });
 
@@ -268,7 +256,6 @@ class Program {
         name: json["name"],
         mainUrl: json["main_url"],
         baseUrl: json["base_url"],
-        description: json["description"],
         activatedAt: DateTime.parse(json["activated_at"]),
         userId: json["user_id"],
         uniqueCode: json["unique_code"],
@@ -297,14 +284,8 @@ class Program {
         logoPath: json["logo_path"],
         userLogin: json["user_login"],
         category: Category.fromJson(json["category"]),
-        ignoreIps: new List<IgnoreIp>.from(
-            json["ignore_ips"].map((x) => IgnoreIp.fromJson(x))),
         sellingCountries: new List<SellingCountry>.from(
             json["selling_countries"].map((x) => SellingCountry.fromJson(x))),
-        promotionalMethods:
-            PromotionalMethods.fromJson(json["promotional_methods"]),
-        commissionVariation:
-            ProgramCommissionVariation.fromJson(json["commission_variation"]),
         affrequest: Affrequest.fromJson(json["affrequest"]),
       );
 
@@ -314,7 +295,6 @@ class Program {
         "name": name,
         "main_url": mainUrl,
         "base_url": baseUrl,
-        "description": description,
         "activated_at": activatedAt.toIso8601String(),
         "user_id": userId,
         "unique_code": uniqueCode,
@@ -343,11 +323,8 @@ class Program {
         "logo_path": logoPath,
         "user_login": userLogin,
         "category": category.toJson(),
-        "ignore_ips": new List<dynamic>.from(ignoreIps.map((x) => x.toJson())),
         "selling_countries":
             new List<dynamic>.from(sellingCountries.map((x) => x.toJson())),
-        "promotional_methods": promotionalMethods.toJson(),
-        "commission_variation": commissionVariation.toJson(),
         "affrequest": affrequest.toJson(),
       };
 }
@@ -441,60 +418,6 @@ class Category {
         "average_approval_rate_count": averageApprovalRateCount,
         "oldest_pending_commission": oldestPendingCommission,
         "commission": commission,
-      };
-}
-
-class ProgramCommissionVariation {
-  String change;
-
-  ProgramCommissionVariation({
-    this.change,
-  });
-
-  factory ProgramCommissionVariation.fromJson(Map<String, dynamic> json) =>
-      new ProgramCommissionVariation(
-        change: json["change"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "change": change,
-      };
-}
-
-class IgnoreIp {
-  String ip;
-
-  IgnoreIp({
-    this.ip,
-  });
-
-  factory IgnoreIp.fromJson(Map<String, dynamic> json) => new IgnoreIp(
-        ip: json["ip"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "ip": ip,
-      };
-}
-
-class PromotionalMethods {
-  String googlePpc;
-  String paidSocialMedia;
-
-  PromotionalMethods({
-    this.googlePpc,
-    this.paidSocialMedia,
-  });
-
-  factory PromotionalMethods.fromJson(Map<String, dynamic> json) =>
-      new PromotionalMethods(
-        googlePpc: json["Google PPC"],
-        paidSocialMedia: json["Paid social media"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "Google PPC": googlePpc,
-        "Paid social media": paidSocialMedia,
       };
 }
 
