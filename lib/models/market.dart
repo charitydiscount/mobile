@@ -13,14 +13,14 @@ class Market {
     this.metadata,
   });
 
-  factory Market.fromJson(Map<String, dynamic> json) => new Market(
-        programs: new List<Program>.from(
+  factory Market.fromJson(Map<String, dynamic> json) => Market(
+        programs: List<Program>.from(
             json["programs"].map((x) => Program.fromJson(x))),
         metadata: Metadata.fromJson(json["metadata"]),
       );
 
   Map<String, dynamic> toJson() => {
-        "programs": new List<dynamic>.from(programs.map((x) => x.toJson())),
+        "programs": List<dynamic>.from(programs.map((x) => x.toJson())),
         "metadata": metadata.toJson(),
       };
 }
@@ -34,7 +34,7 @@ class Metadata {
     this.pagination,
   });
 
-  factory Metadata.fromJson(Map<String, dynamic> json) => new Metadata(
+  factory Metadata.fromJson(Map<String, dynamic> json) => Metadata(
         commissionVariation:
             MetadataCommissionVariation.fromJson(json["commission_variation"]),
         pagination: Pagination.fromJson(json["pagination"]),
@@ -56,7 +56,7 @@ class MetadataCommissionVariation {
   });
 
   factory MetadataCommissionVariation.fromJson(Map<String, dynamic> json) =>
-      new MetadataCommissionVariation(
+      MetadataCommissionVariation(
         days: json["days"],
         forTopProgramsNumber: json["for_top_programs_number"],
       );
@@ -76,7 +76,7 @@ class Facets {
     this.available,
   });
 
-  factory Facets.fromJson(Map<String, dynamic> json) => new Facets(
+  factory Facets.fromJson(Map<String, dynamic> json) => Facets(
         search: Available.fromJson(json["search"]),
         available: Available.fromJson(json["available"]),
       );
@@ -102,32 +102,30 @@ class Available {
     this.affrequestStatus,
   });
 
-  factory Available.fromJson(Map<String, dynamic> json) => new Available(
-        status: new List<CategoryName>.from(
+  factory Available.fromJson(Map<String, dynamic> json) => Available(
+        status: List<CategoryName>.from(
             json["status"].map((x) => CategoryName.fromJson(x))),
-        categoryName: new List<CategoryName>.from(
+        categoryName: List<CategoryName>.from(
             json["category_name"].map((x) => CategoryName.fromJson(x))),
-        countryName: new List<CategoryName>.from(
+        countryName: List<CategoryName>.from(
             json["country_name"].map((x) => CategoryName.fromJson(x))),
-        paymentType: new List<CategoryName>.from(
+        paymentType: List<CategoryName>.from(
             json["payment_type"].map((x) => CategoryName.fromJson(x))),
         affrequestStatus: json["affrequest_status"] == null
             ? null
-            : new List<CategoryName>.from(
+            : List<CategoryName>.from(
                 json["affrequest_status"].map((x) => CategoryName.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
-        "status": new List<dynamic>.from(status.map((x) => x.toJson())),
+        "status": List<dynamic>.from(status.map((x) => x.toJson())),
         "category_name":
-            new List<dynamic>.from(categoryName.map((x) => x.toJson())),
-        "country_name":
-            new List<dynamic>.from(countryName.map((x) => x.toJson())),
-        "payment_type":
-            new List<dynamic>.from(paymentType.map((x) => x.toJson())),
+            List<dynamic>.from(categoryName.map((x) => x.toJson())),
+        "country_name": List<dynamic>.from(countryName.map((x) => x.toJson())),
+        "payment_type": List<dynamic>.from(paymentType.map((x) => x.toJson())),
         "affrequest_status": affrequestStatus == null
             ? null
-            : new List<dynamic>.from(affrequestStatus.map((x) => x.toJson())),
+            : List<dynamic>.from(affrequestStatus.map((x) => x.toJson())),
       };
 }
 
@@ -140,7 +138,7 @@ class CategoryName {
     this.count,
   });
 
-  factory CategoryName.fromJson(Map<String, dynamic> json) => new CategoryName(
+  factory CategoryName.fromJson(Map<String, dynamic> json) => CategoryName(
         value: json["value"],
         count: json["count"],
       );
@@ -162,7 +160,7 @@ class Pagination {
     this.currentPage,
   });
 
-  factory Pagination.fromJson(Map<String, dynamic> json) => new Pagination(
+  factory Pagination.fromJson(Map<String, dynamic> json) => Pagination(
         results: json["results"],
         pages: json["pages"],
         currentPage: json["current_page"],
@@ -186,7 +184,6 @@ class Program {
   String uniqueCode;
   String status;
   int cookieLife;
-  String tos;
   int productFeedsCount;
   int productsCount;
   int bannersCount;
@@ -223,7 +220,6 @@ class Program {
     this.uniqueCode,
     this.status,
     this.cookieLife,
-    this.tos,
     this.productFeedsCount,
     this.productsCount,
     this.bannersCount,
@@ -250,7 +246,7 @@ class Program {
     this.affrequest,
   });
 
-  factory Program.fromJson(Map<String, dynamic> json) => new Program(
+  factory Program.fromJson(Map<String, dynamic> json) => Program(
         id: json["id"],
         slug: json["slug"],
         name: json["name"],
@@ -261,7 +257,6 @@ class Program {
         uniqueCode: json["unique_code"],
         status: json["status"],
         cookieLife: json["cookie_life"],
-        tos: json["tos"],
         productFeedsCount: json["product_feeds_count"],
         productsCount: json["products_count"],
         bannersCount: json["banners_count"],
@@ -284,7 +279,7 @@ class Program {
         logoPath: json["logo_path"],
         userLogin: json["user_login"],
         category: Category.fromJson(json["category"]),
-        sellingCountries: new List<SellingCountry>.from(
+        sellingCountries: List<SellingCountry>.from(
             json["selling_countries"].map((x) => SellingCountry.fromJson(x))),
         affrequest: Affrequest.fromJson(json["affrequest"]),
       );
@@ -300,7 +295,6 @@ class Program {
         "unique_code": uniqueCode,
         "status": status,
         "cookie_life": cookieLife,
-        "tos": tos,
         "product_feeds_count": productFeedsCount,
         "products_count": productsCount,
         "banners_count": bannersCount,
@@ -324,7 +318,7 @@ class Program {
         "user_login": userLogin,
         "category": category.toJson(),
         "selling_countries":
-            new List<dynamic>.from(sellingCountries.map((x) => x.toJson())),
+            List<dynamic>.from(sellingCountries.map((x) => x.toJson())),
         "affrequest": affrequest.toJson(),
       };
 }
@@ -354,7 +348,7 @@ class Affrequest {
     this.commissionLeadAmount,
   });
 
-  factory Affrequest.fromJson(Map<String, dynamic> json) => new Affrequest(
+  factory Affrequest.fromJson(Map<String, dynamic> json) => Affrequest(
         status: json["status"],
         id: json["id"],
         deleteAt: json["delete_at"],
@@ -400,7 +394,7 @@ class Category {
     this.commission,
   });
 
-  factory Category.fromJson(Map<String, dynamic> json) => new Category(
+  factory Category.fromJson(Map<String, dynamic> json) => Category(
         name: json["name"],
         id: json["id"],
         programsCount: json["programs_count"],
@@ -434,8 +428,7 @@ class SellingCountry {
     this.currency,
   });
 
-  factory SellingCountry.fromJson(Map<String, dynamic> json) =>
-      new SellingCountry(
+  factory SellingCountry.fromJson(Map<String, dynamic> json) => SellingCountry(
         id: json["id"],
         name: json["name"],
         code: json["code"],
