@@ -208,6 +208,7 @@ class Program {
   Category category;
   List<SellingCountry> sellingCountries;
   Affrequest affrequest;
+  bool favorited = false;
 
   Program({
     this.id,

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:charity_discount/models/market.dart';
 import 'package:charity_discount/models/promotions.dart';
 import 'package:charity_discount/util/url.dart';
+import 'package:charity_discount/services/firestore.dart';
 
 final String baseUrl = 'https://api.2performant.com/affiliate';
 
@@ -50,22 +51,35 @@ class AffiliateService {
       throw Exception('Could not load shops (${response.statusCode})');
     }
 
+    var favoriteShops = await firestoreService.getFavoriteShops(userId);
+
     Market market = Market.fromJson(json.decode(response.body));
 
     market.programs.forEach((p) {
       p.mainUrl = convertAffiliateUrl(
           p.mainUrl, _auth['unique-id'], p.uniqueCode, userId);
+
       if (p.defaultSaleCommissionRate != null) {
         double commission = double.tryParse(p.defaultSaleCommissionRate);
         commission = commission * 0.7;
         p.defaultSaleCommissionRate = commission.toStringAsFixed(2);
       }
+
       if (p.defaultLeadCommissionAmount != null) {
         double commission = double.tryParse(p.defaultLeadCommissionAmount);
         commission = commission * 0.7;
         p.defaultLeadCommissionAmount = commission.toStringAsFixed(2);
       }
+
+      if (favoriteShops.firstWhere((f) => f.shopId == p.uniqueCode,
+              orElse: () => null) !=
+          null) {
+        p.favorited = true;
+      }
     });
+
+    market.programs.sort(
+        (a, b) => a.favorited == b.favorited ? 0 : a.favorited == true ? 0 : 1);
 
     return market;
   }

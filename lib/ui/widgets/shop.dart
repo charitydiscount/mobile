@@ -28,6 +28,23 @@ class ShopWidget extends StatelessWidget {
     String cashback = program.defaultLeadCommissionAmount != null
         ? '${program.defaultLeadCommissionAmount} RON'
         : '${program.defaultSaleCommissionRate}%';
+
+    Widget favoriteButton = program.favorited
+        ? IconButton(
+            icon: const Icon(Icons.favorite),
+            color: Colors.red,
+            onPressed: () {
+              _toggleFavorite(program.uniqueCode);
+            },
+          )
+        : IconButton(
+            icon: const Icon(Icons.favorite_border),
+            color: Colors.grey,
+            onPressed: () {
+              _toggleFavorite(program.uniqueCode);
+            },
+          );
+
     return Card(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -47,19 +64,16 @@ class ShopWidget extends StatelessWidget {
           ButtonTheme.bar(
             child: ButtonBar(
               children: <Widget>[
-                FlatButton(
-                  child: const Icon(Icons.favorite_border),
-                  onPressed: () {/* ... */},
-                ),
+                favoriteButton,
                 FlatButton(
                   child: const Icon(Icons.details),
-                  onPressed: () => {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    ShopDetails(program: program)))
-                      },
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                ShopDetails(program: program)));
+                  },
                 ),
                 linkButton,
               ],
@@ -69,4 +83,6 @@ class ShopWidget extends StatelessWidget {
       ),
     );
   }
+
+  void _toggleFavorite(String shopId) {}
 }

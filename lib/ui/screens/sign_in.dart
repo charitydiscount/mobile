@@ -233,8 +233,8 @@ class _SignInScreenState extends State<SignInScreen> {
           Strategy.Google, AppModel.of(context).settings.lang);
       await Navigator.pushNamed(context, '/');
     } catch (e) {
+      await _toggleLoadingVisible();
       if (!(e is Error)) {
-        await _toggleLoadingVisible();
         String exception = getExceptionText(e);
         Flushbar(
           title: "Sign In Error",

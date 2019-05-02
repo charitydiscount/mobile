@@ -10,8 +10,9 @@ class CaseWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final logo = Image.network(
       charityCase.images[0].url,
-      width: 150,
-      fit: BoxFit.cover,
+      width: 120,
+      height: 120,
+      fit: BoxFit.fill,
     );
     return Card(
       margin: EdgeInsets.zero,
