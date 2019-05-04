@@ -69,9 +69,6 @@ class AffiliateService {
       }
     });
 
-    // market.programs.sort(
-    //     (a, b) => a.favorited == b.favorited ? 0 : a.favorited == true ? 0 : 1);
-
     return market;
   }
 

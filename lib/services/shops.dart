@@ -1,6 +1,7 @@
 import 'package:charity_discount/models/market.dart';
 import 'package:charity_discount/services/affiliate.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:charity_discount/models/favorite_shops.dart';
 
@@ -18,7 +19,11 @@ class ShopsService {
         .asBroadcastStream();
     _favRef.listen((snap) {
       _favorites.add(FavoriteShop(
-          userId: _userId, shopIds: List<String>.from(snap.data['shopIds'])));
+          userId: _userId,
+          shopIds: List<String>.from(
+              snap.data != null && snap.data.containsKey('shopIds')
+                  ? snap.data['shopIds']
+                  : List())));
     });
   }
 
@@ -40,7 +45,7 @@ class ShopsService {
     if (favorite) {
       return ref.updateData({
         'shopIds': FieldValue.arrayUnion([shopId])
-      }).catchError((e) => print(e));
+      }).catchError((e) => _handleFavDocNotExistent(e, userId, shopId));
     } else {
       return ref.updateData({
         'shopIds': FieldValue.arrayRemove([shopId])
@@ -70,6 +75,17 @@ class ShopsService {
 
   void closeFavoritesSink() {
     _favorites.close();
+  }
+
+  void _handleFavDocNotExistent(dynamic e, String userId, String shopId) {
+    if (!(e is PlatformException)) {
+      return;
+    }
+
+    DocumentReference ref = _db.collection('favoriteShops').document(userId);
+    ref.setData({
+      'shopIds': [shopId]
+    }, merge: true);
   }
 }
 
