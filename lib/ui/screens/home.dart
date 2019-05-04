@@ -1,3 +1,5 @@
+import 'package:charity_discount/models/points.dart';
+import 'package:charity_discount/ui/screens/points.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
@@ -25,6 +27,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return EasyLocalizationProvider(
         data: data,
         child: Scaffold(
+          appBar: AppBar(
+              title: Text('Charity Discount'),
+              actions: <Widget>[_buildPointsWidget('420')]),
           backgroundColor: Colors.white,
           bottomNavigationBar: BottomNavigationBar(
             items: <BottomNavigationBarItem>[
@@ -52,5 +57,33 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedNavIndex = index;
     });
+  }
+
+  Widget _buildPointsWidget(String points) {
+    return FlatButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      PointsScreen(points: Points(acceptedAmount: 420))));
+        },
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        child: Padding(
+          padding: EdgeInsets.zero,
+          child: Center(
+            child: Chip(
+              label: Text(
+                points,
+                style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0),
+              ),
+              backgroundColor: Colors.white,
+              shape: BeveledRectangleBorder(),
+            ),
+          ),
+        ));
   }
 }
