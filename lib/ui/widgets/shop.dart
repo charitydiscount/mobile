@@ -1,3 +1,4 @@
+import 'package:charity_discount/services/shops.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/market.dart';
 import 'package:charity_discount/ui/screens/shop_details.dart';
@@ -5,8 +6,9 @@ import 'package:charity_discount/util/url.dart';
 
 class ShopWidget extends StatelessWidget {
   final Program program;
+  final String userId;
 
-  ShopWidget({Key key, this.program});
+  ShopWidget({Key key, this.program, this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -34,14 +36,14 @@ class ShopWidget extends StatelessWidget {
             icon: const Icon(Icons.favorite),
             color: Colors.red,
             onPressed: () {
-              _toggleFavorite(program.uniqueCode);
+              _setFavorite(program.uniqueCode, false);
             },
           )
         : IconButton(
             icon: const Icon(Icons.favorite_border),
             color: Colors.grey,
             onPressed: () {
-              _toggleFavorite(program.uniqueCode);
+              _setFavorite(program.uniqueCode, true);
             },
           );
 
@@ -84,5 +86,7 @@ class ShopWidget extends StatelessWidget {
     );
   }
 
-  void _toggleFavorite(String shopId) {}
+  void _setFavorite(String shopId, bool favorite) async {
+    await getShopsService(userId).setFavoriteShop(userId, shopId, favorite);
+  }
 }
