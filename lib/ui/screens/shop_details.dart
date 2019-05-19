@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:charity_discount/models/market.dart';
+import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/models/promotions.dart'
     show AdvertiserPromotion;
 import 'package:charity_discount/ui/widgets/promotion.dart';
@@ -8,7 +8,7 @@ import 'package:charity_discount/util/url.dart';
 import 'package:charity_discount/state/state_model.dart';
 
 class ShopDetails extends StatelessWidget {
-  final Program program;
+  final models.Program program;
 
   ShopDetails({Key key, this.program});
 
@@ -19,7 +19,7 @@ class ShopDetails extends StatelessWidget {
     final category = Padding(
         padding: EdgeInsets.all(12),
         child: Chip(
-          label: Text(program.category.name),
+          label: Text(program.category),
         ));
     final promotionsTitle = Text(
       'Promotii',

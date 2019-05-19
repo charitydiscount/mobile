@@ -1,11 +1,11 @@
 import 'package:charity_discount/services/shops.dart';
 import 'package:flutter/material.dart';
-import 'package:charity_discount/models/market.dart';
+import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/ui/screens/shop_details.dart';
 import 'package:charity_discount/util/url.dart';
 
 class ShopWidget extends StatelessWidget {
-  final Program program;
+  final models.Program program;
   final String userId;
 
   ShopWidget({Key key, this.program, this.userId});
@@ -27,9 +27,9 @@ class ShopWidget extends StatelessWidget {
       ),
       onPressed: () => launchURL(program.mainUrl),
     );
-    String cashback = program.defaultLeadCommissionAmount != null
-        ? '${program.defaultLeadCommissionAmount} RON'
-        : '${program.defaultSaleCommissionRate}%';
+    String cashback = program.leadCommissionAmount != null
+        ? '${program.leadCommissionAmount} RON'
+        : '${program.saleCommissionRate}%';
 
     Widget favoriteButton = program.favorited
         ? IconButton(

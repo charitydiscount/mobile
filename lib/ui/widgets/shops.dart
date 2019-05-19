@@ -1,7 +1,8 @@
+import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:charity_discount/models/market.dart';
+import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/ui/widgets/loading.dart';
 import 'package:charity_discount/ui/widgets/shop.dart';
 import 'package:charity_discount/state/state_model.dart';
@@ -15,8 +16,10 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   bool _loadingVisible = false;
   final _perPage = 10;
   Completer<Null> _loadingCompleter = Completer<Null>();
-  List<Observable<Market>> _marketStreams = List();
-  List<BehaviorSubject<Market>> _marketSubjects = List();
+  List<Observable<List<models.Program>>> _marketStreams = List();
+  List<BehaviorSubject<List<models.Program>>> _marketSubjects = List();
+  ProgramMeta meta = ProgramMeta(count: 0, categories: []);
+
   int _totalPages;
   AppModel _appState;
 
@@ -24,7 +27,9 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   void initState() {
     super.initState();
     _appState = AppModel.of(context);
-
+    getShopsService(_appState.user.userId).getProgramsMeta().then((pMeta) {
+      meta = pMeta;
+    });
     _addMarketStream(1);
   }
 
@@ -37,7 +42,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
       _addMarketStream(pageNumber);
     }
 
-    return StreamBuilder<Market>(
+    return StreamBuilder<List<models.Program>>(
       stream: _marketSubjects[pageNumber - 1],
       builder: (context, snapshot) {
         if (snapshot.hasError) {
@@ -70,7 +75,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
           return Text('No data available');
         }
 
-        final List<Program> programs = snapshot.data.programs;
+        final List<models.Program> programs = snapshot.data;
 
         if (programs.length == 0) {
           return Container(width: 0, height: 0);
@@ -97,6 +102,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
         child: RefreshIndicator(
             onRefresh: () {
               _loadingCompleter = Completer<Null>();
+              getShopsService(_appState.user.userId).refreshCache();
               setState(() {});
               return _loadingCompleter.future;
             },
@@ -116,11 +122,18 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
 
   void _addMarketStream(int page) {
     _marketSubjects.add(BehaviorSubject());
-    _marketStreams.add(
-        getShopsService(_appState.user.userId).getShopsFull(page, _perPage));
+    int subjectIndex = _marketSubjects.length;
+    _marketStreams
+        .add(getShopsService(_appState.user.userId).getProgramsFull());
     _marketStreams.last.listen((market) {
-      _totalPages = market.metadata.pagination.pages;
-      _marketSubjects[market.metadata.pagination.currentPage - 1].add(market);
+      if (_totalPages == null) {
+        if (market.length == 0) {
+          _totalPages = 0;
+        } else {
+          _totalPages = (meta.count / market.length).ceil();
+        }
+      }
+      _marketSubjects[subjectIndex - 1].add(market);
     });
   }
 }

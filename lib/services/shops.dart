@@ -1,5 +1,5 @@
-import 'package:charity_discount/models/market.dart';
-import 'package:charity_discount/services/affiliate.dart';
+import 'package:charity_discount/models/meta.dart';
+import 'package:charity_discount/models/program.dart' as models;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
@@ -9,22 +9,59 @@ class ShopsService {
   final _db = Firestore.instance;
   final _userId;
   Observable<DocumentSnapshot> _favRef;
-  BehaviorSubject<FavoriteShop> _favorites = BehaviorSubject<FavoriteShop>();
+  BehaviorSubject<FavoriteShops> _favoritePrograms =
+      BehaviorSubject<FavoriteShops>();
+  DocumentSnapshot _lastProgramsDoc;
 
-  Observable<FavoriteShop> get favorites => _favorites.stream;
+  Observable<FavoriteShops> get favoritePrograms => _favoritePrograms.stream;
 
   ShopsService(this._userId) {
     _favRef = Observable(
-            _db.collection('favoriteShops').document(_userId).snapshots())
+            _db.collection('favoritePrograms').document(_userId).snapshots())
         .asBroadcastStream();
     _favRef.listen((snap) {
-      _favorites.add(FavoriteShop(
-          userId: _userId,
-          shopIds: List<String>.from(
-              snap.data != null && snap.data.containsKey('shopIds')
-                  ? snap.data['shopIds']
-                  : List())));
+      if (snap.exists) {
+        _favoritePrograms.add(FavoriteShops.fromJson(snap.data));
+      } else {
+        _favoritePrograms.add(FavoriteShops(userId: _userId, programs: []));
+      }
     });
+  }
+
+  Future<List<models.Program>> getPrograms(
+      {bool startAfterPrevious = false}) async {
+    QuerySnapshot query;
+    if (startAfterPrevious == true && _lastProgramsDoc != null) {
+      query = await _db
+          .collection('shops')
+          .orderBy('createdAt')
+          .startAfter([_lastProgramsDoc.data])
+          .limit(1)
+          .getDocuments();
+    } else {
+      query = await _db
+          .collection('shops')
+          .orderBy('createdAt')
+          .limit(1)
+          .getDocuments();
+    }
+
+    if (query.documents.length == 0) {
+      return [];
+    }
+
+    _lastProgramsDoc = query.documents.last;
+
+    return models.fromFirestoreBatch(_lastProgramsDoc);
+  }
+
+  Future<ProgramMeta> getProgramsMeta() async {
+    var programsMeta = await _db.collection('meta').document('programs').get();
+    if (programsMeta == null) {
+      return ProgramMeta(count: 0, categories: []);
+    }
+
+    return ProgramMeta.fromJson(programsMeta.data);
   }
 
   Future<FavoriteShop> getFavoriteShops(String userId) async {
@@ -53,28 +90,31 @@ class ShopsService {
     }
   }
 
-  Observable<Market> getShopsFull(int page, int perPage) {
-    var marketFuture = affiliateService.getMarket(
-        page: page, perPage: perPage, userId: _userId);
+  Observable<List<models.Program>> getProgramsFull() {
+    var programs = getPrograms(startAfterPrevious: true);
 
-    return Observable.combineLatest2(
-        Observable.fromFuture(marketFuture), getShopsService(_userId).favorites,
-        (Market market, FavoriteShop favorites) {
-      market.programs.forEach((p) {
-        if (favorites.shopIds
-                .firstWhere((f) => f == p.uniqueCode, orElse: () => null) !=
+    return Observable.combineLatest2(Observable.fromFuture(programs),
+        getShopsService(_userId).favoritePrograms,
+        (List<models.Program> programs, FavoriteShops favorites) {
+      programs.forEach((p) {
+        if (favorites.programs.firstWhere((f) => f.uniqueCode == p.uniqueCode,
+                orElse: () => null) !=
             null) {
           p.favorited = true;
         } else {
           p.favorited = false;
         }
       });
-      return market;
+      return programs;
     });
   }
 
   void closeFavoritesSink() {
-    _favorites.close();
+    _favoritePrograms.close();
+  }
+
+  void refreshCache() {
+    _lastProgramsDoc = null;
   }
 
   void _handleFavDocNotExistent(dynamic e, String userId, String shopId) {

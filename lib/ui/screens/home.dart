@@ -29,6 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Scaffold(
           appBar: AppBar(
               title: Text('Charity Discount'),
+              primary: true,
+              automaticallyImplyLeading: false,
               actions: <Widget>[_buildPointsWidget('420')]),
           backgroundColor: Colors.white,
           bottomNavigationBar: BottomNavigationBar(
