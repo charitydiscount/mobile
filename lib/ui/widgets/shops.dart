@@ -1,5 +1,7 @@
 import 'package:charity_discount/models/meta.dart';
+import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/shops.dart';
+import 'package:charity_discount/util/url.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:charity_discount/models/program.dart' as models;
@@ -19,6 +21,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   List<Observable<List<models.Program>>> _marketStreams = List();
   List<BehaviorSubject<List<models.Program>>> _marketSubjects = List();
   ProgramMeta meta = ProgramMeta(count: 0, categories: []);
+  ShopsService _service;
 
   int _totalPages;
   AppModel _appState;
@@ -27,10 +30,17 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   void initState() {
     super.initState();
     _appState = AppModel.of(context);
-    getShopsService(_appState.user.userId).getProgramsMeta().then((pMeta) {
+    _service = getShopsService(_appState.user.userId);
+    metaService.getProgramsMeta().then((pMeta) {
       meta = pMeta;
     });
     _addMarketStream(1);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _service.refreshCache();
   }
 
   Widget _loadPrograms(int pageNumber) {
@@ -77,6 +87,24 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
 
         final List<models.Program> programs = snapshot.data;
 
+        final userPercentage = _appState.affiliateMeta.percentage;
+        programs.forEach((program) {
+          program.leadCommissionAmount =
+              program.defaultLeadCommissionAmount != null
+                  ? (program.defaultLeadCommissionAmount * userPercentage)
+                      .toStringAsFixed(2)
+                  : null;
+          program.saleCommissionRate = program.defaultSaleCommissionRate != null
+              ? (program.defaultSaleCommissionRate * userPercentage)
+                  .toStringAsFixed(2)
+              : null;
+          program.affilitateUrl = convertAffiliateUrl(
+              program.mainUrl,
+              _appState.affiliateMeta.uniqueCode,
+              program.uniqueCode,
+              _appState.user.userId);
+        });
+
         if (programs.length == 0) {
           return Container(width: 0, height: 0);
         }
@@ -91,6 +119,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
             key: Key(pageNumber.toString()),
             children: shopWidgets,
             shrinkWrap: true,
+            addAutomaticKeepAlives: true,
             primary: false);
       },
     );
@@ -98,22 +127,48 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
 
   Widget build(BuildContext context) {
     super.build(context);
+
+    Widget categoriesButton = Expanded(
+        child: FlatButton(
+      child: const Text(
+        'Categorii',
+        style: TextStyle(color: Colors.white),
+      ),
+      onPressed: () {/* ... */},
+    ));
+    Widget favoritesButton = Expanded(
+        child: IconButton(
+      icon: const Icon(Icons.favorite),
+      color: Colors.white,
+      onPressed: () {},
+    ));
+
+    Widget toolbar = Container(
+      child: Row(children: <Widget>[categoriesButton, favoritesButton]),
+      color: Colors.redAccent.shade700,
+    );
+
     return LoadingScreen(
         child: RefreshIndicator(
             onRefresh: () {
               _loadingCompleter = Completer<Null>();
-              getShopsService(_appState.user.userId).refreshCache();
+              _service.refreshCache();
               setState(() {});
               return _loadingCompleter.future;
             },
             color: Colors.red,
-            child: ListView.builder(
-              padding: const EdgeInsets.all(12.0),
-              primary: true,
-              itemCount: _totalPages,
-              addAutomaticKeepAlives: true,
-              itemBuilder: (context, pageIndex) => _loadPrograms(pageIndex + 1),
-            )),
+            child: Column(children: [
+              toolbar,
+              Expanded(
+                  child: ListView.builder(
+                padding: const EdgeInsets.all(12.0),
+                primary: true,
+                itemCount: _totalPages,
+                addAutomaticKeepAlives: true,
+                itemBuilder: (context, pageIndex) =>
+                    _loadPrograms(pageIndex + 1),
+              ))
+            ])),
         inAsyncCall: _loadingVisible);
   }
 
@@ -123,8 +178,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   void _addMarketStream(int page) {
     _marketSubjects.add(BehaviorSubject());
     int subjectIndex = _marketSubjects.length;
-    _marketStreams
-        .add(getShopsService(_appState.user.userId).getProgramsFull());
+    _marketStreams.add(_service.getProgramsFull());
     _marketStreams.last.listen((market) {
       if (_totalPages == null) {
         if (market.length == 0) {

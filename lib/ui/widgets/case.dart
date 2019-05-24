@@ -4,7 +4,7 @@ import 'package:charity_discount/models/charity.dart';
 class CaseWidget extends StatelessWidget {
   final Charity charityCase;
 
-  CaseWidget({Key key, this.charityCase});
+  CaseWidget({Key key, this.charityCase}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,6 @@ class CaseWidget extends StatelessWidget {
       fit: BoxFit.fill,
     );
     return Card(
-      margin: EdgeInsets.zero,
       child: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -1,4 +1,3 @@
-import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/models/program.dart' as models;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -17,7 +16,7 @@ class ShopsService {
 
   ShopsService(this._userId) {
     _favRef = Observable(
-            _db.collection('favoritePrograms').document(_userId).snapshots())
+            _db.collection('favoriteShops').document(_userId).snapshots())
         .asBroadcastStream();
     _favRef.listen((snap) {
       if (snap.exists) {
@@ -55,37 +54,27 @@ class ShopsService {
     return models.fromFirestoreBatch(_lastProgramsDoc);
   }
 
-  Future<ProgramMeta> getProgramsMeta() async {
-    var programsMeta = await _db.collection('meta').document('programs').get();
-    if (programsMeta == null) {
-      return ProgramMeta(count: 0, categories: []);
-    }
-
-    return ProgramMeta.fromJson(programsMeta.data);
-  }
-
-  Future<FavoriteShop> getFavoriteShops(String userId) async {
+  Future<FavoriteShops> getFavoriteShops(String userId) async {
     return _db.collection('favoriteShops').document(userId).get().then((doc) {
       if (!doc.exists) {
         // User has no favorite shops
-        return FavoriteShop(userId: userId, shopIds: List());
+        return FavoriteShops(userId: userId, programs: []);
       }
-      return FavoriteShop(
-          userId: userId, shopIds: List<String>.from(doc.data['shopIds']));
+      return FavoriteShops.fromJson(doc.data);
     });
   }
 
   Future<void> setFavoriteShop(
-      String userId, String shopId, bool favorite) async {
+      String userId, models.Program program, bool favorite) async {
     DocumentReference ref = _db.collection('favoriteShops').document(userId);
 
     if (favorite) {
       return ref.updateData({
-        'shopIds': FieldValue.arrayUnion([shopId])
-      }).catchError((e) => _handleFavDocNotExistent(e, userId, shopId));
+        'programs': FieldValue.arrayUnion([program.toJson()])
+      }).catchError((e) => _handleFavDocNotExistent(e, userId, program));
     } else {
       return ref.updateData({
-        'shopIds': FieldValue.arrayRemove([shopId])
+        'programs': FieldValue.arrayRemove([program.toJson()])
       }).catchError((e) => print(e));
     }
   }
@@ -117,14 +106,16 @@ class ShopsService {
     _lastProgramsDoc = null;
   }
 
-  void _handleFavDocNotExistent(dynamic e, String userId, String shopId) {
+  void _handleFavDocNotExistent(
+      dynamic e, String userId, models.Program program) {
     if (!(e is PlatformException)) {
       return;
     }
 
     DocumentReference ref = _db.collection('favoriteShops').document(userId);
     ref.setData({
-      'shopIds': [shopId]
+      'userId': userId,
+      'programs': [program.toJson()]
     }, merge: true);
   }
 }

@@ -1,11 +1,12 @@
 class Charity {
+  String id;
   String title;
   String description;
   List<CharityImage> images;
 
-  Charity({this.title, this.description, this.images});
+  Charity({this.id, this.title, this.description, this.images});
 
-  factory Charity.fromJson(Map<String, dynamic> json) => new Charity(
+  factory Charity.fromJson(Map<String, dynamic> json) => Charity(
         title: json["title"] as String,
         description: json["description"] as String,
         images: (json["images"] as List)
@@ -21,7 +22,7 @@ class CharityImage {
 
   CharityImage({this.url});
 
-  factory CharityImage.fromJson(Map<String, dynamic> json) => new CharityImage(
+  factory CharityImage.fromJson(Map<String, dynamic> json) => CharityImage(
         url: json["url"] as String,
       );
 }

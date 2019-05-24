@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 List<Program> fromFirestoreBatch(DocumentSnapshot doc) {
   List data = doc.data['batch'] ?? [];
-  return List<Program>.from(data.map((program) => Program.fromJson(program)));
+  return List<Program>.from(
+      data.map((program) => Program.fromJson(program)).toList());
 }
 
 class Program {
@@ -13,13 +14,17 @@ class Program {
   final String category;
   final String mainUrl;
   final String logoPath;
-  final double saleCommissionRate;
-  final String saleCommissionType;
-  final double leadCommissionAmount;
-  final String leadCommissionType;
+  final double defaultSaleCommissionRate;
+  final String defaultSaleCommissionType;
+  final double defaultLeadCommissionAmount;
+  final String defaultLeadCommissionType;
   final String currency;
-  bool favorited;
   final String source;
+
+  bool favorited;
+  String affilitateUrl;
+  String saleCommissionRate;
+  String leadCommissionAmount;
 
   Program(
       {this.id,
@@ -29,10 +34,10 @@ class Program {
       this.category,
       this.mainUrl,
       this.logoPath,
-      this.saleCommissionRate,
-      this.saleCommissionType,
-      this.leadCommissionAmount,
-      this.leadCommissionType,
+      this.defaultSaleCommissionRate,
+      this.defaultSaleCommissionType,
+      this.defaultLeadCommissionAmount,
+      this.defaultLeadCommissionType,
       this.currency,
       this.favorited = false,
       this.source});
@@ -47,13 +52,35 @@ class Program {
         mainUrl: json['mainUrl'] ?? '',
         logoPath:
             json['logoPath'] ?? 'https://charitydiscount.ro/img/favicon.png',
-        saleCommissionRate:
-            double.parse(json['defaultSaleCommissionRate'] ?? '0'),
-        saleCommissionType: json['defaultSaleCommissionType'],
-        leadCommissionAmount:
-            double.parse(json['defaultLeadCommissionAmount'] ?? '0'),
-        leadCommissionType: json['defaultLeadCommissionType'],
+        defaultSaleCommissionRate: json['defaultSaleCommissionRate'] != null
+            ? double.parse(json['defaultSaleCommissionRate'])
+            : null,
+        defaultSaleCommissionType: json['defaultSaleCommissionType'],
+        defaultLeadCommissionAmount: json['defaultLeadCommissionAmount'] != null
+            ? double.parse(json['defaultLeadCommissionAmount'])
+            : null,
+        defaultLeadCommissionType: json['defaultLeadCommissionType'],
         currency: json['currency'] ?? 'RON',
         source: json['source'] ?? '');
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'uniqueCode': uniqueCode,
+        'status': status,
+        'name': name,
+        'category': category,
+        'mainUrl': mainUrl,
+        'logoPath': logoPath,
+        'defaultSaleCommissionRate': defaultSaleCommissionRate != null
+            ? defaultSaleCommissionRate.toString()
+            : null,
+        'defaultSaleCommissionType': defaultSaleCommissionType,
+        'defaultLeadCommissionAmount': defaultLeadCommissionAmount != null
+            ? defaultLeadCommissionAmount.toString()
+            : null,
+        'defaultLeadCommissionType': defaultLeadCommissionType,
+        'currency': currency,
+        'source': source
+      };
 }

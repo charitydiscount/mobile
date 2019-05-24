@@ -39,10 +39,15 @@ class _CharityState extends State<CharityWidget> {
           return Text('No data available');
         }
 
-        final shopWidgets = snapshot.data.values
-            .map((c) => CaseWidget(charityCase: c))
+        final caseWidgets = snapshot.data.entries
+            .map((entry) =>
+                CaseWidget(key: Key(entry.key), charityCase: entry.value))
             .toList();
-        return Column(mainAxisSize: MainAxisSize.min, children: shopWidgets);
+        return ListView(
+            children: caseWidgets,
+            shrinkWrap: true,
+            addAutomaticKeepAlives: true,
+            primary: true);
       },
     );
 

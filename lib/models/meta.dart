@@ -8,3 +8,14 @@ class ProgramMeta {
       count: json['count'] ?? 0,
       categories: List<String>.from(json['categories'] ?? []));
 }
+
+class TwoPerformantMeta {
+  final String uniqueCode;
+  final double percentage;
+
+  TwoPerformantMeta({this.uniqueCode, this.percentage});
+
+  factory TwoPerformantMeta.fromJson(Map<String, dynamic> json) =>
+      TwoPerformantMeta(
+          uniqueCode: json['uniqueCode'], percentage: json['percentage']);
+}

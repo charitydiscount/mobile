@@ -8,7 +8,7 @@ class ShopWidget extends StatelessWidget {
   final models.Program program;
   final String userId;
 
-  ShopWidget({Key key, this.program, this.userId});
+  ShopWidget({Key key, this.program, this.userId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,9 @@ class ShopWidget extends StatelessWidget {
         'Acceseaza magazin',
         style: TextStyle(fontSize: 12.0),
       ),
-      onPressed: () => launchURL(program.mainUrl),
+      onPressed: () {
+        launchURL(program.affilitateUrl);
+      },
     );
     String cashback = program.leadCommissionAmount != null
         ? '${program.leadCommissionAmount} RON'
@@ -36,14 +38,14 @@ class ShopWidget extends StatelessWidget {
             icon: const Icon(Icons.favorite),
             color: Colors.red,
             onPressed: () {
-              _setFavorite(program.uniqueCode, false);
+              _setFavorite(program, false);
             },
           )
         : IconButton(
             icon: const Icon(Icons.favorite_border),
             color: Colors.grey,
             onPressed: () {
-              _setFavorite(program.uniqueCode, true);
+              _setFavorite(program, true);
             },
           );
 
@@ -86,7 +88,7 @@ class ShopWidget extends StatelessWidget {
     );
   }
 
-  void _setFavorite(String shopId, bool favorite) async {
-    await getShopsService(userId).setFavoriteShop(userId, shopId, favorite);
+  void _setFavorite(models.Program program, bool favorite) async {
+    await getShopsService(userId).setFavoriteShop(userId, program, favorite);
   }
 }
