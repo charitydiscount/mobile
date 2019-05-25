@@ -18,22 +18,23 @@ class Promotions {
     this.shoppingEvents,
   });
 
-  factory Promotions.fromJson(Map<String, dynamic> json) => new Promotions(
+  factory Promotions.fromJson(Map<String, dynamic> json) => Promotions(
         facets: Facets.fromJson(json["facets"]),
         pagination: Pagination.fromJson(json["pagination"]),
-        advertiserPromotions: new List<AdvertiserPromotion>.from(
+        advertiserPromotions: List<AdvertiserPromotion>.from(
             json["advertiser_promotions"]
-                .map((x) => AdvertiserPromotion.fromJson(x))),
+                .map((x) => AdvertiserPromotion.fromJson(x))
+                .toList()),
         shoppingEvents:
-            new List<dynamic>.from(json["shopping_events"].map((x) => x)),
+            List<dynamic>.from(json["shopping_events"].map((x) => x)),
       );
 
   Map<String, dynamic> toJson() => {
         "facets": facets.toJson(),
         "pagination": pagination.toJson(),
-        "advertiser_promotions":
-            new List<dynamic>.from(advertiserPromotions.map((x) => x.toJson())),
-        "shopping_events": new List<dynamic>.from(shoppingEvents.map((x) => x)),
+        "advertiser_promotions": List<dynamic>.from(
+            advertiserPromotions.map((x) => x.toJson()).toList()),
+        "shopping_events": List<dynamic>.from(shoppingEvents.map((x) => x)),
       };
 }
 
@@ -83,7 +84,7 @@ class AdvertiserPromotion {
   });
 
   factory AdvertiserPromotion.fromJson(Map<String, dynamic> json) =>
-      new AdvertiserPromotion(
+      AdvertiserPromotion(
         id: json["id"],
         name: json["name"],
         description: json["description"],
@@ -107,7 +108,7 @@ class AdvertiserPromotion {
         campaignLogo: json["campaign_logo"],
         campaignSlug: slugValues.map[json["campaign_slug"]],
         program: Program.fromJson(json["program"]),
-        linkedFeeds: new List<dynamic>.from(json["linked_feeds"].map((x) => x)),
+        linkedFeeds: List<dynamic>.from(json["linked_feeds"].map((x) => x)),
       );
 
   Map<String, dynamic> toJson() => {
@@ -132,18 +133,18 @@ class AdvertiserPromotion {
         "campaign_logo": campaignLogo,
         "campaign_slug": slugValues.reverse[campaignSlug],
         "program": program.toJson(),
-        "linked_feeds": new List<dynamic>.from(linkedFeeds.map((x) => x)),
+        "linked_feeds": List<dynamic>.from(linkedFeeds.map((x) => x)),
       };
 }
 
 enum AffrequestStatusEnum { NOT_APPLIED }
 
 final affrequestStatusEnumValues =
-    new EnumValues({"not_applied": AffrequestStatusEnum.NOT_APPLIED});
+    EnumValues({"not_applied": AffrequestStatusEnum.NOT_APPLIED});
 
 enum Name { BRASTY_RO, LOVEISLAND_RO, IUBA_RO, LAVANDIERE_RO }
 
-final nameValues = new EnumValues({
+final nameValues = EnumValues({
   "brasty.ro": Name.BRASTY_RO,
   "iuba.ro": Name.IUBA_RO,
   "lavandiere.ro": Name.LAVANDIERE_RO,
@@ -152,7 +153,7 @@ final nameValues = new EnumValues({
 
 enum Slug { BRASTY_RO, LOVEISLAND_RO, IUBA_RO, LAVANDIERE_RO }
 
-final slugValues = new EnumValues({
+final slugValues = EnumValues({
   "brasty-ro": Slug.BRASTY_RO,
   "iuba-ro": Slug.IUBA_RO,
   "lavandiere-ro": Slug.LAVANDIERE_RO,
@@ -170,7 +171,7 @@ class Program {
     this.slug,
   });
 
-  factory Program.fromJson(Map<String, dynamic> json) => new Program(
+  factory Program.fromJson(Map<String, dynamic> json) => Program(
         id: json["id"],
         name: nameValues.map[json["name"]],
         slug: slugValues.map[json["slug"]],
@@ -185,7 +186,7 @@ class Program {
 
 enum Status { PUBLISHED }
 
-final statusValues = new EnumValues({"published": Status.PUBLISHED});
+final statusValues = EnumValues({"published": Status.PUBLISHED});
 
 class Facets {
   Available available;
@@ -194,7 +195,7 @@ class Facets {
     this.available,
   });
 
-  factory Facets.fromJson(Map<String, dynamic> json) => new Facets(
+  factory Facets.fromJson(Map<String, dynamic> json) => Facets(
         available: Available.fromJson(json["available"]),
       );
 
@@ -210,15 +211,15 @@ class Available {
     this.affrequestStatus,
   });
 
-  factory Available.fromJson(Map<String, dynamic> json) => new Available(
-        affrequestStatus: new List<AffrequestStatusElement>.from(
+  factory Available.fromJson(Map<String, dynamic> json) => Available(
+        affrequestStatus: List<AffrequestStatusElement>.from(
             json["affrequest_status"]
                 .map((x) => AffrequestStatusElement.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
         "affrequest_status":
-            new List<dynamic>.from(affrequestStatus.map((x) => x.toJson())),
+            List<dynamic>.from(affrequestStatus.map((x) => x.toJson())),
       };
 }
 
@@ -232,7 +233,7 @@ class AffrequestStatusElement {
   });
 
   factory AffrequestStatusElement.fromJson(Map<String, dynamic> json) =>
-      new AffrequestStatusElement(
+      AffrequestStatusElement(
         value: json["value"],
         count: json["count"],
       );
@@ -254,7 +255,7 @@ class Pagination {
     this.currentPage,
   });
 
-  factory Pagination.fromJson(Map<String, dynamic> json) => new Pagination(
+  factory Pagination.fromJson(Map<String, dynamic> json) => Pagination(
         results: json["results"],
         pages: json["pages"],
         currentPage: json["current_page"],
@@ -275,7 +276,7 @@ class EnumValues<T> {
 
   Map<T, String> get reverse {
     if (reverseMap == null) {
-      reverseMap = map.map((k, v) => new MapEntry(v, k));
+      reverseMap = map.map((k, v) => MapEntry(v, k));
     }
     return reverseMap;
   }

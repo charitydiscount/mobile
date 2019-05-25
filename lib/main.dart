@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -9,6 +11,8 @@ import 'package:charity_discount/ui/screens/sign_up.dart';
 import 'package:charity_discount/ui/screens/forgot_password.dart';
 import 'package:charity_discount/ui/screens/intro.dart';
 import 'package:charity_discount/state/state_model.dart';
+
+FirebaseAnalytics analytics = FirebaseAnalytics();
 
 class Main extends StatelessWidget {
   @override
@@ -49,6 +53,7 @@ class Main extends StatelessWidget {
             '/forgot-password': (context) =>
                 SafeArea(child: ForgotPasswordScreen()),
           },
+          navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
         ));
   }
 }

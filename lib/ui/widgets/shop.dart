@@ -76,7 +76,8 @@ class ShopWidget extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (BuildContext context) =>
-                                ShopDetails(program: program)));
+                                ShopDetails(program: program),
+                            settings: RouteSettings(name: 'Shop Details')));
                   },
                 ),
                 linkButton,

@@ -56,7 +56,7 @@ class ShopDetails extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(program.name)),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => launchURL(program.mainUrl),
+        onPressed: () => launchURL(program.affilitateUrl),
         backgroundColor: Colors.red,
         child: const Icon(Icons.add_shopping_cart),
       ),

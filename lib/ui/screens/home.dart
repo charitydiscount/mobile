@@ -68,7 +68,8 @@ class _HomeScreenState extends State<HomeScreen> {
               context,
               MaterialPageRoute(
                   builder: (BuildContext context) =>
-                      PointsScreen(points: Points(acceptedAmount: 420))));
+                      PointsScreen(points: Points(acceptedAmount: 420)),
+                  settings: RouteSettings(name: 'Points')));
         },
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         child: Padding(

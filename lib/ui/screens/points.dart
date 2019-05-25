@@ -20,7 +20,7 @@ class PointsScreen extends StatelessWidget {
               ),
               backgroundColor: Colors.white,
               iconTheme: IconThemeData(
-                color: Colors.black54, //change your color here
+                color: Colors.black54,
               ),
               bottom: TabBar(
                 isScrollable: false,
