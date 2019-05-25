@@ -25,6 +25,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
 
   int _totalPages;
   AppModel _appState;
+  bool _onlyFavorites = false;
 
   @override
   void initState() {
@@ -34,7 +35,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
     metaService.getProgramsMeta().then((pMeta) {
       meta = pMeta;
     });
-    _addMarketStream(1);
+    _displayNextPrograms(1);
   }
 
   @override
@@ -48,8 +49,8 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
       return null;
     }
 
-    if (_marketStreams.length < pageNumber) {
-      _addMarketStream(pageNumber);
+    if (_onlyFavorites == false && _marketStreams.length < pageNumber) {
+      _displayNextPrograms(pageNumber);
     }
 
     return StreamBuilder<List<models.Program>>(
@@ -138,9 +139,18 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
     ));
     Widget favoritesButton = Expanded(
         child: IconButton(
-      icon: const Icon(Icons.favorite),
+      icon: _onlyFavorites
+          ? const Icon(Icons.favorite)
+          : const Icon(Icons.favorite_border),
       color: Colors.white,
-      onPressed: () {},
+      onPressed: () {
+        _onlyFavorites = !_onlyFavorites;
+        if (_onlyFavorites == true) {
+          _displayFavoritePrograms();
+        } else {
+          _displayNextPrograms(1);
+        }
+      },
     ));
 
     Widget toolbar = Container(
@@ -175,10 +185,32 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
-  void _addMarketStream(int page) {
+  void _displayNextPrograms(int page) {
+    // TODO: Fix display after favorites
+    if (page == 1) {
+      _service.refreshCache();
+      setState(() {
+        _totalPages = null;
+      });
+      _clearMarketStreams();
+    }
+    _addMarketStream(_service.getProgramsFull());
+  }
+
+  void _displayFavoritePrograms() {
+    _clearMarketStreams();
+    setState(() {
+      _totalPages = 1;
+    });
+    _addMarketStream(
+        Observable.fromFuture(_service.getFavoriteShops(_appState.user.userId))
+            .switchMap((favShop) => BehaviorSubject.seeded(favShop.programs)));
+  }
+
+  void _addMarketStream(Observable<List<models.Program>> programsObs) {
     _marketSubjects.add(BehaviorSubject());
     int subjectIndex = _marketSubjects.length;
-    _marketStreams.add(_service.getProgramsFull());
+    _marketStreams.add(programsObs);
     _marketStreams.last.listen((market) {
       if (_totalPages == null) {
         if (market.length == 0) {
@@ -189,5 +221,10 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
       }
       _marketSubjects[subjectIndex - 1].add(market);
     });
+  }
+
+  void _clearMarketStreams() {
+    _marketSubjects.clear();
+    _marketStreams.clear();
   }
 }

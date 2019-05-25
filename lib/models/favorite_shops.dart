@@ -8,7 +8,9 @@ class FavoriteShops {
 
   factory FavoriteShops.fromJson(Map<String, dynamic> json) => FavoriteShops(
       userId: json['userId'],
-      programs: (List.from(json['programs'] ?? [])
-          .map((jsonProgram) => Program.fromJson(jsonProgram))
-          .toList()));
+      programs: (List.from(json['programs'] ?? []).map((jsonProgram) {
+        Program program = Program.fromJson(jsonProgram);
+        program.favorited = true;
+        return program;
+      }).toList()));
 }
