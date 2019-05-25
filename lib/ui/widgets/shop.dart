@@ -78,6 +78,7 @@ class ShopWidget extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
+                            maintainState: true,
                             builder: (BuildContext context) =>
                                 ShopDetails(program: program),
                             settings: RouteSettings(name: 'ShopDetails')));

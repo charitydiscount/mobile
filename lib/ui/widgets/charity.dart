@@ -8,7 +8,8 @@ class CharityWidget extends StatefulWidget {
   _CharityState createState() => _CharityState();
 }
 
-class _CharityState extends State<CharityWidget> {
+class _CharityState extends State<CharityWidget>
+    with AutomaticKeepAliveClientMixin {
   bool _loadingVisible = false;
   Future<Map<String, Charity>> cases;
 
@@ -19,6 +20,7 @@ class _CharityState extends State<CharityWidget> {
   }
 
   Widget build(BuildContext context) {
+    super.build(context);
     final casesBuilder = FutureBuilder<Map<String, Charity>>(
       future: cases,
       builder: (context, snapshot) {
@@ -44,6 +46,7 @@ class _CharityState extends State<CharityWidget> {
                 CaseWidget(key: Key(entry.key), charityCase: entry.value))
             .toList();
         return ListView(
+            key: Key('casesList'),
             children: caseWidgets,
             shrinkWrap: true,
             addAutomaticKeepAlives: true,
@@ -62,4 +65,7 @@ class _CharityState extends State<CharityWidget> {
         ),
         inAsyncCall: _loadingVisible);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

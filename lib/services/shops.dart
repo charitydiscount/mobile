@@ -54,6 +54,35 @@ class ShopsService {
     return models.fromFirestoreBatch(_lastProgramsDoc);
   }
 
+  Future<List<models.Program>> _getProgramsForCategory(
+      {bool startAfterPrevious = false, String category}) async {
+    QuerySnapshot query;
+    if (startAfterPrevious == true && _lastProgramsDoc != null) {
+      query = await _db
+          .collection('categories')
+          .where('category', isEqualTo: category)
+          .orderBy('createdAt')
+          .startAfter([_lastProgramsDoc.data])
+          .limit(1)
+          .getDocuments();
+    } else {
+      query = await _db
+          .collection('categories')
+          .where('category', isEqualTo: category)
+          .orderBy('createdAt')
+          .limit(1)
+          .getDocuments();
+    }
+
+    if (query.documents.length == 0) {
+      return [];
+    }
+
+    _lastProgramsDoc = query.documents.last;
+
+    return models.fromFirestoreBatch(_lastProgramsDoc);
+  }
+
   Future<FavoriteShops> getFavoriteShops(String userId) async {
     return _db.collection('favoriteShops').document(userId).get().then((doc) {
       if (!doc.exists) {
@@ -80,11 +109,30 @@ class ShopsService {
   }
 
   Observable<List<models.Program>> getProgramsFull() {
-    var programs = getPrograms(startAfterPrevious: true);
+    return _combineProgramsWithFavorites(getPrograms(startAfterPrevious: true));
+  }
 
+  Observable<List<models.Program>> getProgramsForCategory(String category) {
+    return _combineProgramsWithFavorites(
+        _getProgramsForCategory(startAfterPrevious: true, category: category));
+  }
+
+  void closeFavoritesSink() {
+    _favoritePrograms.close();
+  }
+
+  void refreshCache() {
+    _lastProgramsDoc = null;
+  }
+
+  Observable<List<models.Program>> _combineProgramsWithFavorites(
+      Future<List<models.Program>> programs) {
     return Observable.combineLatest2(Observable.fromFuture(programs),
         getShopsService(_userId).favoritePrograms,
         (List<models.Program> programs, FavoriteShops favorites) {
+      if (programs.length == 0) {
+        return [];
+      }
       programs.forEach((p) {
         if (favorites.programs.firstWhere((f) => f.uniqueCode == p.uniqueCode,
                 orElse: () => null) !=
@@ -96,14 +144,6 @@ class ShopsService {
       });
       return programs;
     });
-  }
-
-  void closeFavoritesSink() {
-    _favoritePrograms.close();
-  }
-
-  void refreshCache() {
-    _lastProgramsDoc = null;
   }
 
   void _handleFavDocNotExistent(
