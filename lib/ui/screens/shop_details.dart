@@ -10,7 +10,7 @@ import 'package:charity_discount/state/state_model.dart';
 class ShopDetails extends StatelessWidget {
   final models.Program program;
 
-  ShopDetails({Key key, this.program});
+  const ShopDetails({Key key, this.program}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,9 @@ class ShopDetails extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(program.name)),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => launchURL(program.affilitateUrl),
+        onPressed: () {
+          launchURL(program.affilitateUrl);
+        },
         backgroundColor: Colors.red,
         child: const Icon(Icons.add_shopping_cart),
       ),

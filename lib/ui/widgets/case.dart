@@ -1,3 +1,4 @@
+import 'package:charity_discount/ui/screens/case_details.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/charity.dart';
 
@@ -14,6 +15,16 @@ class CaseWidget extends StatelessWidget {
       height: 120,
       fit: BoxFit.fill,
     );
+    final donateButton = MaterialButton(
+      color: Colors.red,
+      textColor: Colors.white,
+      child: Text(
+        'Contribuie',
+        style: TextStyle(fontSize: 12.0),
+      ),
+      onPressed: () {},
+    );
+
     return Card(
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -34,9 +45,20 @@ class CaseWidget extends StatelessWidget {
             child: ButtonBar(
               children: <Widget>[
                 FlatButton(
-                  child: const Text('DETAILS'),
-                  onPressed: () {/* ... */},
+                  child: const Icon(
+                    Icons.details,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                CaseDetails(charity: charityCase),
+                            settings: RouteSettings(name: 'CaseDetails')));
+                  },
                 ),
+                donateButton
               ],
             ),
           ),

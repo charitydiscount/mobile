@@ -70,14 +70,17 @@ class ShopWidget extends StatelessWidget {
               children: <Widget>[
                 favoriteButton,
                 FlatButton(
-                  child: const Icon(Icons.details),
+                  child: const Icon(
+                    Icons.details,
+                    color: Colors.grey,
+                  ),
                   onPressed: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (BuildContext context) =>
                                 ShopDetails(program: program),
-                            settings: RouteSettings(name: 'Shop Details')));
+                            settings: RouteSettings(name: 'ShopDetails')));
                   },
                 ),
                 linkButton,
