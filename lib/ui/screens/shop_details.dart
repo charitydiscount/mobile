@@ -37,7 +37,8 @@ class ShopDetails extends StatelessWidget {
               padding: EdgeInsets.only(top: 16.0),
               child: Center(
                   child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(Colors.red),
+                valueColor:
+                    AlwaysStoppedAnimation(Theme.of(context).accentColor),
               )));
         }
         if (snapshot.data.length == 0) {
@@ -59,7 +60,6 @@ class ShopDetails extends StatelessWidget {
         onPressed: () {
           launchURL(program.affilitateUrl);
         },
-        backgroundColor: Colors.red,
         child: const Icon(Icons.add_shopping_cart),
       ),
       body: ListView(

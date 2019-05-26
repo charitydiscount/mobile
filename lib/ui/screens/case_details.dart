@@ -33,7 +33,6 @@ class CaseDetails extends StatelessWidget {
       appBar: AppBar(title: Text(charity.title)),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
-        backgroundColor: Colors.red,
         child: const Icon(Icons.favorite),
       ),
       body: ListView(

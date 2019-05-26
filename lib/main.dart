@@ -37,6 +37,7 @@ class Main extends StatelessWidget {
         child: MaterialApp(
           title: 'Charity Discount',
           theme: buildTheme(),
+          darkTheme: buildTheme(dark: true),
           debugShowCheckedModeBanner: false,
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,

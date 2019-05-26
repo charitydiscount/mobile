@@ -19,7 +19,7 @@ class ShopWidget extends StatelessWidget {
       fit: BoxFit.contain,
     );
     final linkButton = MaterialButton(
-      color: Colors.red,
+      color: Theme.of(context).primaryColor,
       textColor: Colors.white,
       child: Text(
         'Acceseaza magazin',
@@ -36,7 +36,7 @@ class ShopWidget extends StatelessWidget {
     Widget favoriteButton = program.favorited
         ? IconButton(
             icon: const Icon(Icons.favorite),
-            color: Colors.red,
+            color: Theme.of(context).primaryColor,
             onPressed: () {
               _setFavorite(program, false);
             },

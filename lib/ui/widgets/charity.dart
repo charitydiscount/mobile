@@ -33,7 +33,8 @@ class _CharityState extends State<CharityWidget>
               padding: EdgeInsets.only(top: 16.0),
               child: Center(
                   child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(Colors.red),
+                valueColor:
+                    AlwaysStoppedAnimation(Theme.of(context).accentColor),
               )));
         }
 

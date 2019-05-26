@@ -70,7 +70,8 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
                 padding: EdgeInsets.only(top: 16.0),
                 child: Center(
                     child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(Colors.red),
+                  valueColor:
+                      AlwaysStoppedAnimation(Theme.of(context).accentColor),
                 )))
           ];
           placeholders.addAll(List.generate(
@@ -200,7 +201,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
 
     Widget toolbar = Container(
       child: Row(children: <Widget>[categoriesButton, favoritesButton]),
-      color: Colors.redAccent.shade700,
+      color: Theme.of(context).accentColor,
     );
 
     return LoadingScreen(
@@ -211,7 +212,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
               setState(() {});
               return _loadingCompleter.future;
             },
-            color: Colors.red,
+            color: Theme.of(context).primaryColor,
             child: Column(children: [
               toolbar,
               Expanded(

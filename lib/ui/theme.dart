@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-ThemeData buildTheme() {
-  // We're going to define all of our font styles
-  // in this method:
+ThemeData buildTheme({bool dark = false}) {
   TextTheme _buildTextTheme(TextTheme base) {
     return base.copyWith(
         headline: base.headline.copyWith(
@@ -18,22 +16,18 @@ ThemeData buildTheme() {
         caption: base.caption.copyWith(
           color: const Color(0xFF555555),
         ),
-        body1: base.body1.copyWith(color: const Color(0xFF555555)));
+        body1: base.body1.copyWith(
+            fontFamily: 'Merriweather', color: const Color(0xFF555555)));
   }
 
-  // We want to override a default light blue theme.
-  final ThemeData base = ThemeData.light();
+  final ThemeData base = dark ? ThemeData.dark() : ThemeData.light();
 
-  // And apply changes on it:
   return base.copyWith(
     textTheme: _buildTextTheme(base.textTheme),
     primaryColor: const Color(0xFFE32029),
-    accentColor: const Color(0xFFFFFFFF),
-    iconTheme: IconThemeData(
-      color: const Color(0xFFCCCCCC),
-      size: 20.0,
-    ),
-    // buttonColor: Colors.white,
+    accentColor: const Color(0xFFA80000),
+    floatingActionButtonTheme: base.floatingActionButtonTheme
+        .copyWith(backgroundColor: const Color(0xFFA80000)),
     backgroundColor: Colors.white,
   );
 }

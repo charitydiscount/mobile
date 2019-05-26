@@ -32,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
               primary: true,
               automaticallyImplyLeading: false,
               actions: <Widget>[_buildPointsWidget('420')]),
-          backgroundColor: Colors.white,
           bottomNavigationBar: BottomNavigationBar(
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
@@ -46,7 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: Text(AppLocalizations.of(context).tr('profile'))),
             ],
             currentIndex: _selectedNavIndex,
-            fixedColor: Colors.red,
             onTap: _onItemTapped,
           ),
           body: LoadingScreen(
@@ -79,11 +77,11 @@ class _HomeScreenState extends State<HomeScreen> {
               label: Text(
                 points,
                 style: TextStyle(
-                    color: Colors.red,
+                    color: Theme.of(context).primaryColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 18.0),
               ),
-              backgroundColor: Colors.white,
+              backgroundColor: Theme.of(context).backgroundColor,
               shape: BeveledRectangleBorder(),
             ),
           ),

@@ -10,15 +10,18 @@ class HistoryPointsWidget extends StatelessWidget {
     List<TimelineModel> items = [
       TimelineModel(Placeholder(),
           position: TimelineItemPosition.right,
-          iconBackground: Colors.redAccent,
-          icon: Icon(Icons.blur_circular)),
+          iconBackground: Theme.of(context).primaryColor,
+          icon: Icon(Icons.blur_circular, color: Colors.white)),
       TimelineModel(Placeholder(),
           position: TimelineItemPosition.right,
-          iconBackground: Colors.redAccent,
-          icon: Icon(Icons.blur_circular)),
+          iconBackground: Theme.of(context).primaryColor,
+          icon: Icon(
+            Icons.blur_circular,
+            color: Colors.white,
+          )),
     ];
     return Padding(
-      padding: EdgeInsets.all(12.0),
-      child: Timeline(children: items, position: TimelinePosition.Left));
+        padding: EdgeInsets.all(12.0),
+        child: Timeline(children: items, position: TimelinePosition.Left));
   }
 }

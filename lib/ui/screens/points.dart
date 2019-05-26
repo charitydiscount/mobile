@@ -14,9 +14,9 @@ class PointsScreen extends StatelessWidget {
         length: choices.length,
         child: Scaffold(
           appBar: AppBar(
-              title: const Text(
+              title: Text(
                 'Charity Points',
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(color: Theme.of(context).primaryColor),
               ),
               backgroundColor: Colors.white,
               iconTheme: IconThemeData(
@@ -24,7 +24,7 @@ class PointsScreen extends StatelessWidget {
               ),
               bottom: TabBar(
                 isScrollable: false,
-                indicatorColor: Colors.red,
+                indicatorColor: Theme.of(context).primaryColor,
                 labelColor: Colors.black54,
                 tabs: choices.map((Choice choice) {
                   return Tab(
@@ -35,7 +35,6 @@ class PointsScreen extends StatelessWidget {
               )),
           floatingActionButton: FloatingActionButton(
             onPressed: () {},
-            backgroundColor: Colors.red,
             child: const Icon(Icons.local_mall),
           ),
           body: TabBarView(

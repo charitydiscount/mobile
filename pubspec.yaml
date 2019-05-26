@@ -14,7 +14,7 @@ description: Empowering charity.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: '>=2.1.0 <3.0.0'
 
 dependencies:
   flutter:
@@ -63,6 +63,9 @@ flutter:
     - family: SocialIcons
       fonts:
         - asset: assets/fonts/SocialIcons.ttf
+    - family: Merriweather
+      fonts:
+        - asset: assets/fonts/Merriweather.ttf
 
 flutter_icons:
   android: launcher_icon

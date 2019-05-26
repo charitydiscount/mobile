@@ -16,7 +16,7 @@ class CaseWidget extends StatelessWidget {
       fit: BoxFit.fill,
     );
     final donateButton = MaterialButton(
-      color: Colors.red,
+      color: Theme.of(context).primaryColor,
       textColor: Colors.white,
       child: Text(
         'Contribuie',
