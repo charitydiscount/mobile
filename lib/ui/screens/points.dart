@@ -18,14 +18,14 @@ class PointsScreen extends StatelessWidget {
                 'Charity Points',
                 style: TextStyle(color: Theme.of(context).primaryColor),
               ),
-              backgroundColor: Colors.white,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               iconTheme: IconThemeData(
-                color: Colors.black54,
+                color: Theme.of(context).textTheme.body2.color,
               ),
               bottom: TabBar(
                 isScrollable: false,
                 indicatorColor: Theme.of(context).primaryColor,
-                labelColor: Colors.black54,
+                labelColor: Theme.of(context).textTheme.body2.color,
                 tabs: choices.map((Choice choice) {
                   return Tab(
                     text: choice.title,

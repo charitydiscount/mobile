@@ -79,9 +79,8 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
               (int index) => Padding(
                   padding: EdgeInsets.only(top: 8.0),
                   child: Placeholder(
-                    fallbackHeight: 100.0,
-                    color: Colors.white,
-                  ))));
+                      fallbackHeight: 100.0,
+                      color: Theme.of(context).scaffoldBackgroundColor))));
           return ListView(
               primary: false, shrinkWrap: true, children: placeholders);
         }

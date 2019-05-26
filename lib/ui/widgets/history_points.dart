@@ -22,6 +22,10 @@ class HistoryPointsWidget extends StatelessWidget {
     ];
     return Padding(
         padding: EdgeInsets.all(12.0),
-        child: Timeline(children: items, position: TimelinePosition.Left));
+        child: Timeline(
+          children: items,
+          position: TimelinePosition.Left,
+          lineColor: Theme.of(context).textTheme.body2.color,
+        ));
   }
 }

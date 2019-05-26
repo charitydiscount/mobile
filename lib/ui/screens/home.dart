@@ -81,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontWeight: FontWeight.bold,
                     fontSize: 18.0),
               ),
-              backgroundColor: Theme.of(context).backgroundColor,
+              backgroundColor: Colors.white,
               shape: BeveledRectangleBorder(),
             ),
           ),
