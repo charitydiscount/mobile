@@ -11,36 +11,38 @@ class PointsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: choices.length,
-        child: Scaffold(
-          appBar: AppBar(
-              title: Text(
-                'Charity Points',
-                style: TextStyle(color: Theme.of(context).primaryColor),
-              ),
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              iconTheme: IconThemeData(
-                color: Theme.of(context).textTheme.body2.color,
-              ),
-              bottom: TabBar(
-                isScrollable: false,
-                indicatorColor: Theme.of(context).primaryColor,
-                labelColor: Theme.of(context).textTheme.body2.color,
-                tabs: choices.map((Choice choice) {
-                  return Tab(
-                    text: choice.title,
-                    icon: Icon(choice.icon),
-                  );
-                }).toList(),
-              )),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {},
-            child: const Icon(Icons.local_mall),
+      length: choices.length,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Charity Points',
+            style: TextStyle(color: Theme.of(context).primaryColor),
           ),
-          body: TabBarView(
-            children: choices.map((Choice choice) => choice.widget).toList(),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          iconTheme: IconThemeData(
+            color: Theme.of(context).textTheme.body2.color,
           ),
-        ));
+          bottom: TabBar(
+            isScrollable: false,
+            indicatorColor: Theme.of(context).primaryColor,
+            labelColor: Theme.of(context).textTheme.body2.color,
+            tabs: choices.map((Choice choice) {
+              return Tab(
+                text: choice.title,
+                icon: Icon(choice.icon),
+              );
+            }).toList(),
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          child: const Icon(Icons.local_mall),
+        ),
+        body: TabBarView(
+          children: choices.map((Choice choice) => choice.widget).toList(),
+        ),
+      ),
+    );
   }
 }
 
@@ -54,9 +56,15 @@ class Choice {
 
 const List<Choice> choices = const <Choice>[
   const Choice(
-      title: 'Despre Puncte',
-      icon: Icons.favorite,
-      widget: AboutPointsWidget(points: const Points(acceptedAmount: 420))),
+    title: 'Despre Puncte',
+    icon: Icons.favorite,
+    widget: AboutPointsWidget(
+      points: const Points(acceptedAmount: 420),
+    ),
+  ),
   const Choice(
-      title: 'Tranzactii', icon: Icons.history, widget: HistoryPointsWidget()),
+    title: 'Tranzactii',
+    icon: Icons.history,
+    widget: HistoryPointsWidget(),
+  ),
 ];

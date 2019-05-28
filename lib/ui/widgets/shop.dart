@@ -57,13 +57,16 @@ class ShopWidget extends StatelessWidget {
           ListTile(
             leading: logo,
             title: Center(
-                child: Text(
-              program.name,
-              style: TextStyle(
-                fontSize: 24.0,
+              child: Text(
+                program.name,
+                style: TextStyle(
+                  fontSize: 24.0,
+                ),
               ),
-            )),
-            subtitle: Center(child: Text(cashback)),
+            ),
+            subtitle: Center(
+              child: Text(cashback),
+            ),
           ),
           ButtonTheme.bar(
             child: ButtonBar(
@@ -76,12 +79,14 @@ class ShopWidget extends StatelessWidget {
                   ),
                   onPressed: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            maintainState: true,
-                            builder: (BuildContext context) =>
-                                ShopDetails(program: program),
-                            settings: RouteSettings(name: 'ShopDetails')));
+                      context,
+                      MaterialPageRoute(
+                        maintainState: true,
+                        builder: (BuildContext context) =>
+                            ShopDetails(program: program),
+                        settings: RouteSettings(name: 'ShopDetails'),
+                      ),
+                    );
                   },
                 ),
                 linkButton,

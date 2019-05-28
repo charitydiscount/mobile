@@ -50,22 +50,24 @@ class LoadingScreen extends StatelessWidget {
       Widget layOutProgressIndicator;
       if (offset == null) {
         layOutProgressIndicator = Center(
-            child: Container(
-                height: 60,
-                width: 60,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  shape: BoxShape.circle,
-                ),
-                //need this due to bug...https://github.com/flutter/flutter/issues/18399
-                child: Align(
-                  alignment: Alignment.center,
-                  child: SizedBox(
-                    child: CircularProgressIndicator(),
-                    height: 30.0,
-                    width: 30.0,
-                  ),
-                )));
+          child: Container(
+            height: 60,
+            width: 60,
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+              shape: BoxShape.circle,
+            ),
+            //need this due to bug...https://github.com/flutter/flutter/issues/18399
+            child: Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                child: CircularProgressIndicator(),
+                height: 30.0,
+                width: 30.0,
+              ),
+            ),
+          ),
+        );
       } else {
         layOutProgressIndicator = Positioned(
           child: progressIndicator,

@@ -61,30 +61,33 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildPointsWidget(String points) {
     return FlatButton(
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      PointsScreen(points: Points(acceptedAmount: 420)),
-                  settings: RouteSettings(name: 'Points')));
-        },
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        child: Padding(
-          padding: EdgeInsets.zero,
-          child: Center(
-            child: Chip(
-              label: Text(
-                points,
-                style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18.0),
-              ),
-              backgroundColor: Colors.white,
-              shape: BeveledRectangleBorder(),
-            ),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) =>
+                PointsScreen(points: Points(acceptedAmount: 420)),
+            settings: RouteSettings(name: 'Points'),
           ),
-        ));
+        );
+      },
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      child: Padding(
+        padding: EdgeInsets.zero,
+        child: Center(
+          child: Chip(
+            label: Text(
+              points,
+              style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.0),
+            ),
+            backgroundColor: Colors.white,
+            shape: BeveledRectangleBorder(),
+          ),
+        ),
+      ),
+    );
   }
 }

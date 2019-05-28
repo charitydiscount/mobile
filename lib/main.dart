@@ -33,31 +33,38 @@ class Main extends StatelessWidget {
       },
     );
     return EasyLocalizationProvider(
-        data: data,
-        child: MaterialApp(
-          title: 'Charity Discount',
-          theme: buildTheme(),
-          darkTheme: buildTheme(dark: true),
-          debugShowCheckedModeBanner: false,
-          localizationsDelegates: [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            EasylocaLizationDelegate(
-                locale: data.locale ?? Locale('ro'), path: 'assets/i18n'),
-          ],
-          supportedLocales: [Locale('en'), Locale('ro')],
-          locale: data.locale,
-          routes: {
-            '/': (context) => SafeArea(child: defaultWidget),
-            '/signin': (context) => SafeArea(child: SignInScreen()),
-            '/signup': (context) => SafeArea(child: SignUpScreen()),
-            '/forgot-password': (context) =>
-                SafeArea(child: ForgotPasswordScreen()),
-          },
-          navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
-        ));
+      data: data,
+      child: MaterialApp(
+        title: 'Charity Discount',
+        theme: buildTheme(),
+        darkTheme: buildTheme(dark: true),
+        debugShowCheckedModeBanner: false,
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          EasylocaLizationDelegate(
+              locale: data.locale ?? Locale('ro'), path: 'assets/i18n'),
+        ],
+        supportedLocales: [Locale('en'), Locale('ro')],
+        locale: data.locale,
+        routes: {
+          '/': (context) => SafeArea(child: defaultWidget),
+          '/signin': (context) => SafeArea(child: SignInScreen()),
+          '/signup': (context) => SafeArea(child: SignUpScreen()),
+          '/forgot-password': (context) =>
+              SafeArea(child: ForgotPasswordScreen()),
+        },
+        navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
+      ),
+    );
   }
 }
 
 void main() => runApp(
-    EasyLocalization(child: ScopedModel(model: AppModel(), child: Main())));
+      EasyLocalization(
+        child: ScopedModel(
+          model: AppModel(),
+          child: Main(),
+        ),
+      ),
+    );

@@ -67,12 +67,14 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
         if (snapshot.connectionState == ConnectionState.waiting) {
           List<Widget> placeholders = [
             Padding(
-                padding: EdgeInsets.only(top: 16.0),
-                child: Center(
-                    child: CircularProgressIndicator(
+              padding: EdgeInsets.only(top: 16.0),
+              child: Center(
+                child: CircularProgressIndicator(
                   valueColor:
                       AlwaysStoppedAnimation(Theme.of(context).accentColor),
-                )))
+                ),
+              ),
+            )
           ];
           placeholders.addAll(List.generate(
               _perPage,
@@ -101,6 +103,12 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
           programs.removeWhere((p) => p.category != _category);
         }
 
+        if (programs.length == 0) {
+          return Container(width: 0, height: 0);
+        }
+
+        programs.sort((p1, p2) => p1.name.compareTo(p2.name));
+
         final userPercentage = _appState.affiliateMeta.percentage;
         programs.forEach((program) {
           program.leadCommissionAmount =
@@ -119,10 +127,6 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
               _appState.user.userId);
         });
 
-        if (programs.length == 0) {
-          return Container(width: 0, height: 0);
-        }
-
         final List<Widget> shopWidgets = programs
             .map((p) => ShopWidget(
                 key: Key(p.uniqueCode),
@@ -133,7 +137,6 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
             key: Key(pageNumber.toString()),
             children: shopWidgets,
             shrinkWrap: true,
-            addAutomaticKeepAlives: true,
             primary: false);
       },
     );
@@ -141,13 +144,14 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
 
   Widget _buildCategoryButton(context, category) {
     return Padding(
-        padding: EdgeInsets.all(2),
-        child: FlatButton(
-          child: Text(category),
-          onPressed: () {
-            Navigator.pop(context, category);
-          },
-        ));
+      padding: EdgeInsets.all(2),
+      child: FlatButton(
+        child: Text(category),
+        onPressed: () {
+          Navigator.pop(context, category);
+        },
+      ),
+    );
   }
 
   Widget _dialogBuilder(BuildContext context) {
@@ -162,41 +166,56 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
     Widget categoriesButton = Expanded(
-        child: FlatButton(
-      child: Text(
-        _category == null ? 'Categorii' : _category,
-        style: TextStyle(color: Colors.white),
-      ),
-      onPressed: () {
-        showDialog(context: context, builder: _dialogBuilder).then((category) {
-          if (category != null) {
-            if (category == 'Toate' || category == 'All') {
-              _category = null;
-            } else {
-              _category = category;
+      child: FlatButton(
+        child: Text(
+          _category == null ? 'Categorii' : _category,
+          style: TextStyle(color: Colors.white),
+        ),
+        onPressed: () {
+          showDialog(context: context, builder: _dialogBuilder)
+              .then((category) {
+            if (category != null) {
+              if (category == 'Toate' || category == 'All') {
+                _category = null;
+              } else {
+                _category = category;
+              }
+              var controller = PrimaryScrollController.of(context);
+              controller.animateTo(
+                controller.position.minScrollExtent,
+                curve: Curves.easeOut,
+                duration: const Duration(milliseconds: 300),
+              );
+              _displayNextPrograms(1);
             }
+          });
+        },
+      ),
+    );
+    Widget favoritesButton = Expanded(
+      child: IconButton(
+        icon: _onlyFavorites
+            ? const Icon(Icons.favorite)
+            : const Icon(Icons.favorite_border),
+        color: Colors.white,
+        onPressed: () {
+          setState(() {
+            _onlyFavorites = !_onlyFavorites;
+          });
+          var controller = PrimaryScrollController.of(context);
+          controller.animateTo(
+            controller.position.minScrollExtent,
+            curve: Curves.easeOut,
+            duration: const Duration(milliseconds: 300),
+          );
+          if (_onlyFavorites == true) {
+            _displayFavoritePrograms();
+          } else {
             _displayNextPrograms(1);
           }
-        });
-      },
-    ));
-    Widget favoritesButton = Expanded(
-        child: IconButton(
-      icon: _onlyFavorites
-          ? const Icon(Icons.favorite)
-          : const Icon(Icons.favorite_border),
-      color: Colors.white,
-      onPressed: () {
-        setState(() {
-          _onlyFavorites = !_onlyFavorites;
-        });
-        if (_onlyFavorites == true) {
-          _displayFavoritePrograms();
-        } else {
-          _displayNextPrograms(1);
-        }
-      },
-    ));
+        },
+      ),
+    );
 
     Widget toolbar = Container(
       child: Row(children: <Widget>[categoriesButton, favoritesButton]),
@@ -205,25 +224,29 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
 
     return LoadingScreen(
         child: RefreshIndicator(
-            onRefresh: () {
-              _loadingCompleter = Completer<Null>();
-              _service.refreshCache();
-              setState(() {});
-              return _loadingCompleter.future;
-            },
-            color: Theme.of(context).primaryColor,
-            child: Column(children: [
+          onRefresh: () {
+            _loadingCompleter = Completer<Null>();
+            _service.refreshCache();
+            setState(() {});
+            return _loadingCompleter.future;
+          },
+          color: Theme.of(context).primaryColor,
+          child: Column(
+            children: [
               toolbar,
               Expanded(
-                  child: ListView.builder(
-                padding: const EdgeInsets.all(12.0),
-                primary: true,
-                itemCount: _totalPages,
-                shrinkWrap: true,
-                itemBuilder: (context, pageIndex) =>
-                    _loadPrograms(pageIndex + 1),
-              ))
-            ])),
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(12.0),
+                  primary: true,
+                  itemCount: _totalPages,
+                  shrinkWrap: true,
+                  itemBuilder: (context, pageIndex) =>
+                      _loadPrograms(pageIndex + 1),
+                ),
+              )
+            ],
+          ),
+        ),
         inAsyncCall: _loadingVisible);
   }
 

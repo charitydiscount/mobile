@@ -17,10 +17,11 @@ class ShopDetails extends StatelessWidget {
     final logo = Image.network(program.logoPath,
         width: 150, height: 40, fit: BoxFit.contain);
     final category = Padding(
-        padding: EdgeInsets.all(12),
-        child: Chip(
-          label: Text(program.category),
-        ));
+      padding: EdgeInsets.all(12),
+      child: Chip(
+        label: Text(program.category),
+      ),
+    );
     final promotionsTitle = Text(
       'Promotii',
       style: TextStyle(fontSize: 24.0),
@@ -34,12 +35,14 @@ class ShopDetails extends StatelessWidget {
         }
         if (!snapshot.hasData) {
           return Padding(
-              padding: EdgeInsets.only(top: 16.0),
-              child: Center(
-                  child: CircularProgressIndicator(
+            padding: EdgeInsets.only(top: 16.0),
+            child: Center(
+              child: CircularProgressIndicator(
                 valueColor:
                     AlwaysStoppedAnimation(Theme.of(context).accentColor),
-              )));
+              ),
+            ),
+          );
         }
         if (snapshot.data.length == 0) {
           return Text('');

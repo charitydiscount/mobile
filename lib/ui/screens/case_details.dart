@@ -17,17 +17,18 @@ class CaseDetails extends StatelessWidget {
         .toList();
 
     final description = Padding(
-        padding: EdgeInsets.only(top: 16, bottom: 16, right: 8, left: 8),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                charity.description,
-                style: TextStyle(fontSize: 20),
-              ),
-            )
-          ],
-        ));
+      padding: EdgeInsets.only(top: 16, bottom: 16, right: 8, left: 8),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Text(
+              charity.description,
+              style: TextStyle(fontSize: 20),
+            ),
+          )
+        ],
+      ),
+    );
 
     return Scaffold(
       appBar: AppBar(title: Text(charity.title)),

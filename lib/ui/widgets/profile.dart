@@ -36,11 +36,12 @@ class _ProfileState extends State<Profile> {
     final logo = Hero(
       tag: 'hero',
       child: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          radius: 60.0,
-          child: ClipOval(
-            child: logoImage,
-          )),
+        backgroundColor: Colors.transparent,
+        radius: 60.0,
+        child: ClipOval(
+          child: logoImage,
+        ),
+      ),
     );
 
     final signOutButton = Padding(

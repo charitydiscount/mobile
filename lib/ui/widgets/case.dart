@@ -33,12 +33,13 @@ class CaseWidget extends StatelessWidget {
           ListTile(
             leading: logo,
             title: Center(
-                child: Text(
-              charityCase.title,
-              style: TextStyle(
-                fontSize: 24.0,
+              child: Text(
+                charityCase.title,
+                style: TextStyle(
+                  fontSize: 24.0,
+                ),
               ),
-            )),
+            ),
             subtitle: Center(child: Text('')),
           ),
           ButtonTheme.bar(
@@ -51,11 +52,13 @@ class CaseWidget extends StatelessWidget {
                   ),
                   onPressed: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                CaseDetails(charity: charityCase),
-                            settings: RouteSettings(name: 'CaseDetails')));
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            CaseDetails(charity: charityCase),
+                        settings: RouteSettings(name: 'CaseDetails'),
+                      ),
+                    );
                   },
                 ),
                 donateButton

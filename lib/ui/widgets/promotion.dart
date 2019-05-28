@@ -21,13 +21,15 @@ class PromotionWidget extends StatelessWidget {
             title: Row(children: <Widget>[
               Icon(Icons.attach_money, color: Colors.green),
               Flexible(
-                  child: Center(
-                      child: Text(
-                promotion.name,
-                style: TextStyle(
-                  fontSize: 24.0,
+                child: Center(
+                  child: Text(
+                    promotion.name,
+                    style: TextStyle(
+                      fontSize: 24.0,
+                    ),
+                  ),
                 ),
-              )))
+              )
             ]),
             subtitle: Center(child: Text(promotion.description)),
           ),

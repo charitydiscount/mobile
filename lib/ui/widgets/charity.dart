@@ -30,12 +30,14 @@ class _CharityState extends State<CharityWidget>
 
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Padding(
-              padding: EdgeInsets.only(top: 16.0),
-              child: Center(
-                  child: CircularProgressIndicator(
+            padding: EdgeInsets.only(top: 16.0),
+            child: Center(
+              child: CircularProgressIndicator(
                 valueColor:
                     AlwaysStoppedAnimation(Theme.of(context).accentColor),
-              )));
+              ),
+            ),
+          );
         }
 
         if (!snapshot.hasData) {
