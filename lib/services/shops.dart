@@ -34,7 +34,7 @@ class ShopsService {
       query = await _db
           .collection('shops')
           .orderBy('createdAt')
-          .startAfter([_lastProgramsDoc.data])
+          .startAfter([_lastProgramsDoc.data['createdAt']])
           .limit(1)
           .getDocuments();
     } else {
@@ -62,7 +62,7 @@ class ShopsService {
           .collection('categories')
           .where('category', isEqualTo: category)
           .orderBy('createdAt')
-          .startAfter([_lastProgramsDoc.data])
+          .startAfter([_lastProgramsDoc.data['createdAt']])
           .limit(1)
           .getDocuments();
     } else {

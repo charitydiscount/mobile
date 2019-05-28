@@ -16,7 +16,7 @@ class Shops extends StatefulWidget {
 
 class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   bool _loadingVisible = false;
-  final _perPage = 10;
+  final _perPage = 25;
   Completer<Null> _loadingCompleter = Completer<Null>();
   List<Observable<List<models.Program>>> _marketStreams = List();
   List<BehaviorSubject<List<models.Program>>> _marketSubjects = List();
@@ -201,6 +201,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
         onPressed: () {
           setState(() {
             _onlyFavorites = !_onlyFavorites;
+            _totalPages = 1;
           });
           var controller = PrimaryScrollController.of(context);
           controller.animateTo(
@@ -256,9 +257,10 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   void _displayNextPrograms(int page) {
     if (page == 1) {
       _service.refreshCache();
-      _totalPages = 1;
       _clearMarketStreams();
-      setState(() {});
+      setState(() {
+        _totalPages = 1;
+      });
     }
     if (_category == null) {
       _addMarketStream(_service.getProgramsFull());
@@ -269,7 +271,6 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
 
   void _displayFavoritePrograms() {
     _clearMarketStreams();
-    _totalPages = 1;
     _addMarketStream(
         _service.favoritePrograms.asyncMap((favShop) => favShop.programs));
   }
@@ -281,10 +282,20 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
     _marketStreams.last.listen((market) {
       if (_totalPages == 1) {
         if (market.length == 0) {
-          _totalPages = 0;
+          setState(() {
+            _totalPages = 0;
+          });
         } else {
-          if (_meta.count < market.length) {
-            _totalPages = (_meta.count / market.length).ceil();
+          if (_meta.count > market.length) {
+            setState(() {
+              _totalPages = (_meta.count / market.length).ceil();
+            });
+          } else {
+            if (_totalPages != 1) {
+              setState(() {
+                _totalPages = 1;
+              });
+            }
           }
         }
       }
