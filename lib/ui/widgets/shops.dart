@@ -1,4 +1,3 @@
-import 'package:charity_discount/models/favorite_shops.dart';
 import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/shops.dart';
