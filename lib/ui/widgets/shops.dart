@@ -16,7 +16,7 @@ class Shops extends StatefulWidget {
 
 class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   bool _loadingVisible = false;
-  final _perPage = 25;
+  final _perPage = 50;
   Completer<Null> _loadingCompleter = Completer<Null>();
   List<Observable<List<models.Program>>> _marketStreams = List();
   List<BehaviorSubject<List<models.Program>>> _marketSubjects = List();
@@ -61,12 +61,12 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
       return null;
     }
 
-    if (_marketSubjects.length < pageNumber) {
-      return null;
-    }
-
     if (_onlyFavorites == false && _marketStreams.length < pageNumber) {
       _displayNextPrograms(pageNumber);
+    }
+
+    if (_marketSubjects.length < pageNumber) {
+      return null;
     }
 
     return StreamBuilder<List<models.Program>>(
@@ -305,7 +305,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
             _totalPages = 0;
           });
         } else {
-          if (_meta.count > market.length) {
+          if (_meta.count > market.length && _category == null) {
             setState(() {
               _totalPages = (_meta.count / market.length).ceil();
             });
