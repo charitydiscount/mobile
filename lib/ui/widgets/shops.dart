@@ -1,3 +1,4 @@
+import 'package:charity_discount/models/favorite_shops.dart';
 import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/shops.dart';
@@ -22,6 +23,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   List<BehaviorSubject<List<models.Program>>> _marketSubjects = List();
   ProgramMeta _meta = ProgramMeta(count: 0, categories: []);
   ShopsService _service;
+  List<models.Program> _favoritePrograms;
 
   int _totalPages = 1;
   AppModel _appState;
@@ -33,6 +35,11 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
     super.initState();
     _appState = AppModel.of(context);
     _service = getShopsService(_appState.user.userId);
+    _service.favoritePrograms.listen((favShops) {
+      setState(() {
+        _favoritePrograms = List.unmodifiable(favShops.programs);
+      });
+    });
     metaService.getProgramsMeta().then((pMeta) {
       _meta = pMeta;
       _displayNextPrograms(1);
@@ -42,6 +49,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   @override
   void dispose() {
     super.dispose();
+    _clearMarketStreams();
     _service.refreshCache();
   }
 
@@ -51,6 +59,10 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
     }
 
     if (_marketStreams.length == 0) {
+      return null;
+    }
+
+    if (_marketSubjects.length < pageNumber) {
       return null;
     }
 
@@ -93,7 +105,17 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
           return Text('No data available');
         }
 
-        final List<models.Program> programs = snapshot.data;
+        final List<models.Program> programs = List.of(snapshot.data);
+
+        programs.forEach((p) {
+          if (_favoritePrograms.firstWhere((f) => f.uniqueCode == p.uniqueCode,
+                  orElse: () => null) !=
+              null) {
+            p.favorited = true;
+          } else {
+            p.favorited = false;
+          }
+        });
 
         if (_onlyFavorites == true) {
           programs.removeWhere((p) => p.favorited != true);
@@ -101,10 +123,6 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
 
         if (_category != null) {
           programs.removeWhere((p) => p.category != _category);
-        }
-
-        if (programs.length == 0) {
-          return Container(width: 0, height: 0);
         }
 
         programs.sort((p1, p2) => p1.name.compareTo(p2.name));
@@ -263,7 +281,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
       });
     }
     if (_category == null) {
-      _addMarketStream(_service.getProgramsFull());
+      _addMarketStream(_service.getPrograms());
     } else {
       _addMarketStream(_service.getProgramsForCategory(_category));
     }
@@ -271,8 +289,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
 
   void _displayFavoritePrograms() {
     _clearMarketStreams();
-    _addMarketStream(
-        _service.favoritePrograms.asyncMap((favShop) => favShop.programs));
+    _addMarketStream(BehaviorSubject.seeded(_favoritePrograms));
   }
 
   void _addMarketStream(Observable<List<models.Program>> programsObs) {
@@ -280,6 +297,9 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
     int subjectIndex = _marketSubjects.length;
     _marketStreams.add(programsObs);
     _marketStreams.last.listen((market) {
+      if (mounted != true) {
+        return null;
+      }
       if (_totalPages == 1) {
         if (market.length == 0) {
           setState(() {

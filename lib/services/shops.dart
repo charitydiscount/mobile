@@ -12,7 +12,7 @@ class ShopsService {
       BehaviorSubject<FavoriteShops>();
   DocumentSnapshot _lastProgramsDoc;
 
-  Observable<FavoriteShops> get favoritePrograms => _favoritePrograms.stream;
+  BehaviorSubject<FavoriteShops> get favoritePrograms => _favoritePrograms;
 
   ShopsService(this._userId) {
     _favRef = Observable(
@@ -27,7 +27,7 @@ class ShopsService {
     });
   }
 
-  Future<List<models.Program>> getPrograms(
+  Future<List<models.Program>> _getPrograms(
       {bool startAfterPrevious = false}) async {
     QuerySnapshot query;
     if (startAfterPrevious == true && _lastProgramsDoc != null) {
@@ -83,16 +83,6 @@ class ShopsService {
     return models.fromFirestoreBatch(_lastProgramsDoc);
   }
 
-  Future<FavoriteShops> getFavoriteShops(String userId) async {
-    return _db.collection('favoriteShops').document(userId).get().then((doc) {
-      if (!doc.exists) {
-        // User has no favorite shops
-        return FavoriteShops(userId: userId, programs: []);
-      }
-      return FavoriteShops.fromJson(doc.data);
-    });
-  }
-
   Future<void> setFavoriteShop(
       String userId, models.Program program, bool favorite) async {
     DocumentReference ref = _db.collection('favoriteShops').document(userId);
@@ -108,13 +98,16 @@ class ShopsService {
     }
   }
 
-  Observable<List<models.Program>> getProgramsFull() {
-    return _combineProgramsWithFavorites(getPrograms(startAfterPrevious: true));
+  Observable<List<models.Program>> getPrograms() {
+    return Observable.fromFuture(
+      _getPrograms(startAfterPrevious: true),
+    );
   }
 
   Observable<List<models.Program>> getProgramsForCategory(String category) {
-    return _combineProgramsWithFavorites(
-        _getProgramsForCategory(startAfterPrevious: true, category: category));
+    return Observable.fromFuture(
+      _getProgramsForCategory(startAfterPrevious: true, category: category),
+    );
   }
 
   void closeFavoritesSink() {
@@ -123,27 +116,6 @@ class ShopsService {
 
   void refreshCache() {
     _lastProgramsDoc = null;
-  }
-
-  Observable<List<models.Program>> _combineProgramsWithFavorites(
-      Future<List<models.Program>> programs) {
-    return Observable.combineLatest2(Observable.fromFuture(programs),
-        getShopsService(_userId).favoritePrograms,
-        (List<models.Program> programs, FavoriteShops favorites) {
-      if (programs.length == 0) {
-        return [];
-      }
-      programs.forEach((p) {
-        if (favorites.programs.firstWhere((f) => f.uniqueCode == p.uniqueCode,
-                orElse: () => null) !=
-            null) {
-          p.favorited = true;
-        } else {
-          p.favorited = false;
-        }
-      });
-      return programs;
-    });
   }
 
   void _handleFavDocNotExistent(

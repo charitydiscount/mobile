@@ -1,8 +1,8 @@
 import 'package:charity_discount/models/program.dart';
 
 class FavoriteShops {
-  String userId;
-  List<Program> programs;
+  final String userId;
+  final List<Program> programs;
 
   FavoriteShops({this.userId, this.programs});
 
