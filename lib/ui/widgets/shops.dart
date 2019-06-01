@@ -37,7 +37,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
     _service = getShopsService(_appState.user.userId);
     _service.favoritePrograms.listen((favShops) {
       setState(() {
-        _favoritePrograms = List.unmodifiable(favShops.programs);
+        _favoritePrograms = favShops.programs;
       });
     });
     metaService.getProgramsMeta().then((pMeta) {
