@@ -14,8 +14,15 @@ class ShopDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logo = Image.network(program.logoPath,
-        width: 150, height: 40, fit: BoxFit.contain);
+    final logo = Hero(
+      tag: 'shopLogo-${program.id}',
+      child: Image.network(
+        program.logoPath,
+        width: 150,
+        height: 40,
+        fit: BoxFit.contain,
+      ),
+    );
     final category = Padding(
       padding: EdgeInsets.all(12),
       child: Chip(
@@ -58,7 +65,12 @@ class ShopDetails extends StatelessWidget {
     );
 
     return Scaffold(
-      appBar: AppBar(title: Text(program.name)),
+      appBar: AppBar(
+        title: Hero(
+          tag: 'shopName-${program.id}',
+          child: Text(program.name),
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           launchURL(program.affilitateUrl);

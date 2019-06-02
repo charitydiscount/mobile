@@ -61,6 +61,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildPointsWidget(String points) {
     return FlatButton(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       onPressed: () {
         Navigator.push(
           context,

@@ -48,12 +48,13 @@ class _CharityState extends State<CharityWidget>
             .map((entry) =>
                 CaseWidget(key: Key(entry.key), charityCase: entry.value))
             .toList();
-        return ListView(
-            key: Key('casesList'),
-            children: caseWidgets,
-            shrinkWrap: true,
-            addAutomaticKeepAlives: true,
-            primary: true);
+        return Expanded(
+          child: ListView(
+              key: Key('casesList'),
+              children: caseWidgets,
+              addAutomaticKeepAlives: true,
+              primary: true),
+        );
       },
     );
 

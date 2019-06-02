@@ -12,23 +12,30 @@ class ShopWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logo = Image.network(
-      program.logoPath,
-      width: 120,
-      height: 30,
-      fit: BoxFit.contain,
+    final logo = Hero(
+      tag: 'shopLogo-${program.id}',
+      child: Image.network(
+        program.logoPath,
+        width: 120,
+        height: 30,
+        fit: BoxFit.contain,
+      ),
     );
-    final linkButton = MaterialButton(
-      color: Theme.of(context).primaryColor,
-      textColor: Colors.white,
-      child: Text(
-        'Acceseaza magazin',
-        style: TextStyle(fontSize: 12.0),
+    final linkButton = RaisedButton(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
       onPressed: () {
         launchURL(program.affilitateUrl);
       },
+      padding: EdgeInsets.all(12),
+      color: Theme.of(context).primaryColor,
+      child: Text(
+        'Acceseaza magazin',
+        style: TextStyle(color: Colors.white),
+      ),
     );
+
     String cashback = program.leadCommissionAmount != null
         ? '${program.leadCommissionAmount} RON'
         : '${program.saleCommissionRate}%';
@@ -49,51 +56,49 @@ class ShopWidget extends StatelessWidget {
             },
           );
 
-    return Card(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          ListTile(
-            leading: logo,
-            title: Center(
-              child: Text(
-                program.name,
-                style: TextStyle(
-                  fontSize: 24.0,
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            maintainState: true,
+            builder: (BuildContext context) => ShopDetails(program: program),
+            settings: RouteSettings(name: 'ShopDetails'),
+          ),
+        );
+      },
+      child: Card(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            ListTile(
+              leading: logo,
+              title: Center(
+                child: Hero(
+                  tag: 'shopName-${program.id}',
+                  child: Text(
+                    program.name,
+                    style: TextStyle(
+                      fontSize: 24.0,
+                    ),
+                  ),
                 ),
               ),
+              subtitle: Center(
+                child: Text(cashback),
+              ),
             ),
-            subtitle: Center(
-              child: Text(cashback),
+            ButtonTheme.bar(
+              child: ButtonBar(
+                children: <Widget>[
+                  favoriteButton,
+                  linkButton,
+                ],
+              ),
             ),
-          ),
-          ButtonTheme.bar(
-            child: ButtonBar(
-              children: <Widget>[
-                favoriteButton,
-                FlatButton(
-                  child: const Icon(
-                    Icons.details,
-                    color: Colors.grey,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        maintainState: true,
-                        builder: (BuildContext context) =>
-                            ShopDetails(program: program),
-                        settings: RouteSettings(name: 'ShopDetails'),
-                      ),
-                    );
-                  },
-                ),
-                linkButton,
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

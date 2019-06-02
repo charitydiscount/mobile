@@ -15,57 +15,56 @@ class CaseWidget extends StatelessWidget {
       height: 120,
       fit: BoxFit.fill,
     );
-    final donateButton = MaterialButton(
-      color: Theme.of(context).primaryColor,
-      textColor: Colors.white,
-      child: Text(
-        'Contribuie',
-        style: TextStyle(fontSize: 12.0),
+    final donateButton = RaisedButton(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
       onPressed: () {},
+      padding: EdgeInsets.all(12),
+      color: Theme.of(context).primaryColor,
+      child: Text(
+        'Contribuie',
+        style: TextStyle(color: Colors.white),
+      ),
     );
 
-    return Card(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          ListTile(
-            leading: logo,
-            title: Center(
-              child: Text(
-                charityCase.title,
-                style: TextStyle(
-                  fontSize: 24.0,
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) =>
+                CaseDetails(charity: charityCase),
+            settings: RouteSettings(name: 'CaseDetails'),
+          ),
+        );
+      },
+      child: Card(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            ListTile(
+              leading: logo,
+              title: Center(
+                child: Text(
+                  charityCase.title,
+                  style: TextStyle(
+                    fontSize: 24.0,
+                  ),
                 ),
               ),
+              subtitle: Center(child: Text('')),
             ),
-            subtitle: Center(child: Text('')),
-          ),
-          ButtonTheme.bar(
-            child: ButtonBar(
-              children: <Widget>[
-                FlatButton(
-                  child: const Icon(
-                    Icons.details,
-                    color: Colors.grey,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            CaseDetails(charity: charityCase),
-                        settings: RouteSettings(name: 'CaseDetails'),
-                      ),
-                    );
-                  },
-                ),
-                donateButton
-              ],
+            ButtonTheme.bar(
+              child: ButtonBar(
+                children: <Widget>[
+                  donateButton,
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
