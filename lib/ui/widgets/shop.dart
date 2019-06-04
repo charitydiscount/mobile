@@ -75,13 +75,10 @@ class ShopWidget extends StatelessWidget {
             ListTile(
               leading: logo,
               title: Center(
-                child: Hero(
-                  tag: 'shopName-${program.id}',
-                  child: Text(
-                    program.name,
-                    style: TextStyle(
-                      fontSize: 24.0,
-                    ),
+                child: Text(
+                  program.name,
+                  style: TextStyle(
+                    fontSize: 24.0,
                   ),
                 ),
               ),

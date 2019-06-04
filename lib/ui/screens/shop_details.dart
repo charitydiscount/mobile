@@ -66,10 +66,7 @@ class ShopDetails extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Hero(
-          tag: 'shopName-${program.id}',
-          child: Text(program.name),
-        ),
+        title: Text(program.name),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

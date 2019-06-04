@@ -23,6 +23,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   ProgramMeta _meta = ProgramMeta(count: 0, categories: []);
   ShopsService _service;
   List<models.Program> _favoritePrograms;
+  StreamSubscription _favListener;
 
   int _totalPages = 1;
   AppModel _appState;
@@ -34,7 +35,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
     super.initState();
     _appState = AppModel.of(context);
     _service = getShopsService(_appState.user.userId);
-    _service.favoritePrograms.listen((favShops) {
+    _favListener = _service.favoritePrograms.listen((favShops) {
       setState(() {
         _favoritePrograms = favShops.programs;
       });
@@ -50,6 +51,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
     super.dispose();
     _clearMarketStreams();
     _service.refreshCache();
+    _favListener.cancel();
   }
 
   Widget _loadPrograms(int pageNumber) {
@@ -87,13 +89,17 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
               ),
             )
           ];
-          placeholders.addAll(List.generate(
+          placeholders.addAll(
+            List.generate(
               _perPage,
               (int index) => Padding(
-                  padding: EdgeInsets.only(top: 8.0),
-                  child: Placeholder(
-                      fallbackHeight: 100.0,
-                      color: Theme.of(context).scaffoldBackgroundColor))));
+                    padding: EdgeInsets.only(top: 8.0),
+                    child: Placeholder(
+                        fallbackHeight: 100.0,
+                        color: Theme.of(context).scaffoldBackgroundColor),
+                  ),
+            ),
+          );
           return ListView(
               primary: false, shrinkWrap: true, children: placeholders);
         }
@@ -145,10 +151,12 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
         });
 
         final List<Widget> shopWidgets = programs
-            .map((p) => ShopWidget(
-                key: Key(p.uniqueCode),
-                program: p,
-                userId: _appState.user.userId))
+            .map(
+              (p) => ShopWidget(
+                  key: Key(p.uniqueCode),
+                  program: p,
+                  userId: _appState.user.userId),
+            )
             .toList();
         return ListView(
             key: Key(pageNumber.toString()),
@@ -159,7 +167,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Widget _buildCategoryButton(context, category) {
+  Widget _buildCategoryButton(BuildContext context, String category) {
     return Padding(
       padding: EdgeInsets.all(2),
       child: FlatButton(
@@ -172,12 +180,16 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   }
 
   Widget _dialogBuilder(BuildContext context) {
-    List<Widget> categories = [_buildCategoryButton(context, 'Toate')];
+    List<Widget> categories = [
+      _buildCategoryButton(context, 'Toate'),
+    ];
     categories.addAll(
-        _meta.categories.map((c) => _buildCategoryButton(context, c)).toList());
+      _meta.categories.map((c) => _buildCategoryButton(context, c)).toList(),
+    );
     return SimpleDialog(
-        contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        children: categories);
+      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      children: categories,
+    );
   }
 
   Widget build(BuildContext context) {
@@ -235,8 +247,27 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
       ),
     );
 
+    Widget searchButton = Expanded(
+      child: IconButton(
+        icon: Icon(Icons.search),
+        color: Colors.white,
+        onPressed: () {
+          showSearch(
+            context: context,
+            delegate: ProgramsSearch(),
+          );
+        },
+      ),
+    );
+
     Widget toolbar = Container(
-      child: Row(children: <Widget>[categoriesButton, favoritesButton]),
+      child: Row(
+        children: <Widget>[
+          categoriesButton,
+          favoritesButton,
+          searchButton,
+        ],
+      ),
       color: Theme.of(context).accentColor,
     );
 
@@ -325,5 +356,48 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   void _clearMarketStreams() {
     _marketSubjects.clear();
     _marketStreams.clear();
+  }
+}
+
+class ProgramsSearch extends SearchDelegate<String> {
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.menu_arrow,
+        progress: transitionAnimation,
+      ),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    // TODO: implement buildResults
+    return Placeholder(
+      color: Colors.white,
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    // TODO: implement buildSuggestions
+    return Placeholder(
+      color: Colors.white,
+    );
   }
 }
