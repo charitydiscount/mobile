@@ -2,8 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 List<Program> fromFirestoreBatch(DocumentSnapshot doc) {
   List data = doc.data['batch'] ?? [];
+  return fromJsonArray(data);
+}
+
+List<Program> fromJsonArray(List json) {
   return List<Program>.from(
-      data.map((program) => Program.fromJson(program)).toList());
+      json.map((program) => Program.fromJson(program)).toList());
 }
 
 class Program {

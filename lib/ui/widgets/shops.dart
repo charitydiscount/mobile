@@ -1,5 +1,6 @@
 import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/services/meta.dart';
+import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/ui/widgets/loading.dart';
 import 'package:charity_discount/ui/widgets/shop.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:rxdart/rxdart.dart';
 
 class Shops extends StatefulWidget {
@@ -159,10 +161,11 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
             )
             .toList();
         return ListView(
-            key: Key(pageNumber.toString()),
-            children: shopWidgets,
-            shrinkWrap: true,
-            primary: false);
+          key: Key(pageNumber.toString()),
+          children: shopWidgets,
+          shrinkWrap: true,
+          primary: false,
+        );
       },
     );
   }
@@ -254,7 +257,10 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
         onPressed: () {
           showSearch(
             context: context,
-            delegate: ProgramsSearch(),
+            delegate: ProgramsSearch(
+              appState: _appState,
+              favoritePrograms: _favoritePrograms,
+            ),
           );
         },
       ),
@@ -360,6 +366,11 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
 }
 
 class ProgramsSearch extends SearchDelegate<String> {
+  final AppModel appState;
+  final List<models.Program> favoritePrograms;
+
+  ProgramsSearch({this.appState, this.favoritePrograms});
+
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -387,17 +398,129 @@ class ProgramsSearch extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    // TODO: implement buildResults
-    return Placeholder(
-      color: Colors.white,
+    return FutureBuilder(
+      future: searchService.search(query),
+      initialData: [],
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Padding(
+            padding: EdgeInsets.only(top: 16.0),
+            child: Center(
+              child: CircularProgressIndicator(
+                valueColor:
+                    AlwaysStoppedAnimation(Theme.of(context).accentColor),
+              ),
+            ),
+          );
+        }
+
+        if (!snapshot.hasData) {
+          return Text('No data available');
+        }
+
+        final List<models.Program> programs = List.of(snapshot.data);
+
+        programs.forEach((p) {
+          if (favoritePrograms.firstWhere((f) => f.uniqueCode == p.uniqueCode,
+                  orElse: () => null) !=
+              null) {
+            p.favorited = true;
+          } else {
+            p.favorited = false;
+          }
+        });
+
+        programs.sort((p1, p2) => p1.name.compareTo(p2.name));
+
+        final userPercentage = appState.affiliateMeta.percentage;
+        programs.forEach((program) {
+          program.leadCommissionAmount =
+              program.defaultLeadCommissionAmount != null
+                  ? (program.defaultLeadCommissionAmount * userPercentage)
+                      .toStringAsFixed(2)
+                  : null;
+          program.saleCommissionRate = program.defaultSaleCommissionRate != null
+              ? (program.defaultSaleCommissionRate * userPercentage)
+                  .toStringAsFixed(2)
+              : null;
+          program.affilitateUrl = convertAffiliateUrl(
+              program.mainUrl,
+              appState.affiliateMeta.uniqueCode,
+              program.uniqueCode,
+              appState.user.userId);
+        });
+
+        final List<Widget> shopWidgets = programs
+            .map(
+              (p) => ShopWidget(
+                  key: Key(p.uniqueCode),
+                  program: p,
+                  userId: appState.user.userId),
+            )
+            .toList();
+        return ListView(
+          children: shopWidgets,
+          shrinkWrap: true,
+          primary: false,
+        );
+      },
     );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    // TODO: implement buildSuggestions
-    return Placeholder(
-      color: Colors.white,
+    if (query == '' || query == null) {
+      return Container();
+    }
+    return FutureBuilder(
+      initialData: [],
+      future: searchService.getSuggestions(query),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Padding(
+            padding: EdgeInsets.only(top: 16.0),
+            child: Center(
+              child: CircularProgressIndicator(
+                valueColor:
+                    AlwaysStoppedAnimation(Theme.of(context).accentColor),
+              ),
+            ),
+          );
+        }
+
+        if (!snapshot.hasData) {
+          return Text('No data available');
+        }
+
+        List<Widget> suggestions = List<Widget>.from(
+          snapshot.data.map(
+            (hit) => InkWell(
+                  onTap: () {
+                    query = hit.name;
+                    showResults(context);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                    child: Html(data: hit.formattedName),
+                  ),
+                ),
+          ),
+        );
+
+        return ListView(
+          children: suggestions,
+          shrinkWrap: true,
+          primary: false,
+        );
+      },
     );
   }
 }
