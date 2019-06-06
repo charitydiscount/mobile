@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/models/promotions.dart'
@@ -16,8 +17,8 @@ class ShopDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     final logo = Hero(
       tag: 'shopLogo-${program.id}',
-      child: Image.network(
-        program.logoPath,
+      child: CachedNetworkImage(
+        imageUrl: program.logoPath,
         width: 150,
         height: 40,
         fit: BoxFit.contain,

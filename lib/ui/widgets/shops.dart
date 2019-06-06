@@ -1,3 +1,4 @@
+import 'package:async/async.dart';
 import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/search.dart';
@@ -114,57 +115,13 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
 
         final List<models.Program> programs = List.of(snapshot.data);
 
-        programs.forEach((p) {
-          if (_favoritePrograms.firstWhere((f) => f.uniqueCode == p.uniqueCode,
-                  orElse: () => null) !=
-              null) {
-            p.favorited = true;
-          } else {
-            p.favorited = false;
-          }
-        });
-
-        if (_onlyFavorites == true) {
-          programs.removeWhere((p) => p.favorited != true);
-        }
-
-        if (_category != null) {
-          programs.removeWhere((p) => p.category != _category);
-        }
-
-        programs.sort((p1, p2) => p1.name.compareTo(p2.name));
-
-        final userPercentage = _appState.affiliateMeta.percentage;
-        programs.forEach((program) {
-          program.leadCommissionAmount =
-              program.defaultLeadCommissionAmount != null
-                  ? (program.defaultLeadCommissionAmount * userPercentage)
-                      .toStringAsFixed(2)
-                  : null;
-          program.saleCommissionRate = program.defaultSaleCommissionRate != null
-              ? (program.defaultSaleCommissionRate * userPercentage)
-                  .toStringAsFixed(2)
-              : null;
-          program.affilitateUrl = convertAffiliateUrl(
-              program.mainUrl,
-              _appState.affiliateMeta.uniqueCode,
-              program.uniqueCode,
-              _appState.user.userId);
-        });
-
-        final List<Widget> shopWidgets = programs
-            .map(
-              (p) => ShopWidget(
-                  key: Key(p.uniqueCode),
-                  program: p,
-                  userId: _appState.user.userId),
-            )
-            .toList();
-        return ListView(
-          key: Key(pageNumber.toString()),
-          children: shopWidgets,
-          shrinkWrap: true,
-          primary: false,
+        return _buildShopList(
+          programs,
+          _appState,
+          onlyFavorites: _onlyFavorites,
+          favorites: _favoritePrograms,
+          category: _category,
+          pageNumber: pageNumber,
         );
       },
     );
@@ -368,6 +325,10 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
 class ProgramsSearch extends SearchDelegate<String> {
   final AppModel appState;
   final List<models.Program> favoritePrograms;
+  bool _exactMatch = false;
+  AsyncMemoizer _asyncMemoizer = AsyncMemoizer();
+  String _previousQuery;
+  bool _previousExact;
 
   ProgramsSearch({this.appState, this.favoritePrograms});
 
@@ -398,9 +359,21 @@ class ProgramsSearch extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
+    if (query == '' || query == null) {
+      return Container();
+    }
+
+    if (query != _previousQuery || _exactMatch != _previousExact) {
+      _asyncMemoizer = AsyncMemoizer();
+    }
+
+    _previousQuery = query;
+    _previousExact = _exactMatch;
+
     return FutureBuilder(
-      future: searchService.search(query),
-      initialData: [],
+      future: _asyncMemoizer.runOnce(
+        () => searchService.search(query, exact: _exactMatch),
+      ),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text("${snapshot.error}");
@@ -424,48 +397,10 @@ class ProgramsSearch extends SearchDelegate<String> {
 
         final List<models.Program> programs = List.of(snapshot.data);
 
-        programs.forEach((p) {
-          if (favoritePrograms.firstWhere((f) => f.uniqueCode == p.uniqueCode,
-                  orElse: () => null) !=
-              null) {
-            p.favorited = true;
-          } else {
-            p.favorited = false;
-          }
-        });
-
-        programs.sort((p1, p2) => p1.name.compareTo(p2.name));
-
-        final userPercentage = appState.affiliateMeta.percentage;
-        programs.forEach((program) {
-          program.leadCommissionAmount =
-              program.defaultLeadCommissionAmount != null
-                  ? (program.defaultLeadCommissionAmount * userPercentage)
-                      .toStringAsFixed(2)
-                  : null;
-          program.saleCommissionRate = program.defaultSaleCommissionRate != null
-              ? (program.defaultSaleCommissionRate * userPercentage)
-                  .toStringAsFixed(2)
-              : null;
-          program.affilitateUrl = convertAffiliateUrl(
-              program.mainUrl,
-              appState.affiliateMeta.uniqueCode,
-              program.uniqueCode,
-              appState.user.userId);
-        });
-
-        final List<Widget> shopWidgets = programs
-            .map(
-              (p) => ShopWidget(
-                  key: Key(p.uniqueCode),
-                  program: p,
-                  userId: appState.user.userId),
-            )
-            .toList();
-        return ListView(
-          children: shopWidgets,
-          shrinkWrap: true,
-          primary: false,
+        return _buildShopList(
+          programs,
+          appState,
+          favorites: favoritePrograms,
         );
       },
     );
@@ -476,6 +411,7 @@ class ProgramsSearch extends SearchDelegate<String> {
     if (query == '' || query == null) {
       return Container();
     }
+    _exactMatch = false;
     return FutureBuilder(
       initialData: [],
       future: searchService.getSuggestions(query),
@@ -505,6 +441,7 @@ class ProgramsSearch extends SearchDelegate<String> {
             (hit) => InkWell(
                   onTap: () {
                     query = hit.name;
+                    _exactMatch = true;
                     showResults(context);
                   },
                   child: Padding(
@@ -523,4 +460,67 @@ class ProgramsSearch extends SearchDelegate<String> {
       },
     );
   }
+}
+
+ListView _buildShopList(
+  List<models.Program> programs,
+  AppModel appState, {
+  bool onlyFavorites = false,
+  List<models.Program> favorites = const [],
+  String category,
+  int pageNumber = 1,
+}) {
+  programs.forEach((p) {
+    if (favorites.firstWhere((f) => f.uniqueCode == p.uniqueCode,
+            orElse: () => null) !=
+        null) {
+      p.favorited = true;
+    } else {
+      p.favorited = false;
+    }
+  });
+
+  if (onlyFavorites == true) {
+    programs.removeWhere((p) => p.favorited != true);
+  }
+
+  if (category != null) {
+    programs.removeWhere((p) => p.category != category);
+  }
+
+  programs.sort((p1, p2) => p1.name.compareTo(p2.name));
+
+  final userPercentage = appState.affiliateMeta.percentage;
+  programs.forEach((program) {
+    program.leadCommissionAmount = program.defaultLeadCommissionAmount != null
+        ? (program.defaultLeadCommissionAmount * userPercentage)
+            .toStringAsFixed(2)
+        : null;
+    program.saleCommissionRate = program.defaultSaleCommissionRate != null
+        ? (program.defaultSaleCommissionRate * userPercentage)
+            .toStringAsFixed(2)
+        : null;
+    program.affilitateUrl = convertAffiliateUrl(
+        program.mainUrl,
+        appState.affiliateMeta.uniqueCode,
+        program.uniqueCode,
+        appState.user.userId);
+  });
+
+  final List<Widget> shopWidgets = programs
+      .map(
+        (p) => ShopWidget(
+              key: Key(p.uniqueCode),
+              program: p,
+              userId: appState.user.userId,
+            ),
+      )
+      .toList();
+  return ListView(
+    key: Key(pageNumber.toString()),
+    addAutomaticKeepAlives: true,
+    children: shopWidgets,
+    shrinkWrap: true,
+    primary: false,
+  );
 }

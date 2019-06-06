@@ -1,5 +1,6 @@
 import 'package:charity_discount/models/charity.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class CaseDetails extends StatelessWidget {
   final Charity charity;
@@ -9,11 +10,21 @@ class CaseDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final images = charity.images
-        .map((image) => Padding(
-            padding: EdgeInsets.only(bottom: 16),
-            child: Row(children: <Widget>[
-              Expanded(child: Image.network(image.url, fit: BoxFit.cover))
-            ])))
+        .map(
+          (image) => Padding(
+                padding: EdgeInsets.only(bottom: 16),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: CachedNetworkImage(
+                        imageUrl: image.url,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+        )
         .toList();
 
     final description = Padding(

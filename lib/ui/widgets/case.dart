@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/ui/screens/case_details.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/charity.dart';
@@ -9,8 +10,8 @@ class CaseWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logo = Image.network(
-      charityCase.images[0].url,
+    final logo = CachedNetworkImage(
+      imageUrl: charityCase.images[0].url,
       width: 120,
       height: 120,
       fit: BoxFit.fill,

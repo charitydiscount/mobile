@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
@@ -21,8 +22,8 @@ class _ProfileState extends State<Profile> {
     var data = EasyLocalizationProvider.of(context).data;
 
     final logoImage = appState.user.photoUrl != null
-        ? Image.network(
-            appState.user.photoUrl,
+        ? CachedNetworkImage(
+            imageUrl: appState.user.photoUrl,
             fit: BoxFit.fill,
             width: 120.0,
             height: 120.0,
