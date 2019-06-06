@@ -1,3 +1,5 @@
+import 'package:charity_discount/models/meta.dart';
+import 'package:charity_discount/services/meta.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/user.dart';
@@ -10,6 +12,7 @@ class AppModel extends Model {
   bool _introCompleted = false;
   User _user;
   Settings _settings = Settings(lang: 'ro');
+  TwoPerformantMeta _affiliateMeta;
 
   AppModel() {
     authService.profile
@@ -18,6 +21,10 @@ class AppModel extends Model {
         .listen((settings) => this.setSettings(Settings.fromJson(settings)));
 
     initFromLocal();
+
+    metaService
+        .getTwoPerformantMeta()
+        .then((twoPMeta) => _affiliateMeta = twoPMeta);
   }
 
   static AppModel of(
@@ -66,4 +73,6 @@ class AppModel extends Model {
     _settings = settings;
     notifyListeners();
   }
+
+  TwoPerformantMeta get affiliateMeta => _affiliateMeta;
 }

@@ -8,7 +8,8 @@ class CharityWidget extends StatefulWidget {
   _CharityState createState() => _CharityState();
 }
 
-class _CharityState extends State<CharityWidget> {
+class _CharityState extends State<CharityWidget>
+    with AutomaticKeepAliveClientMixin {
   bool _loadingVisible = false;
   Future<Map<String, Charity>> cases;
 
@@ -19,6 +20,7 @@ class _CharityState extends State<CharityWidget> {
   }
 
   Widget build(BuildContext context) {
+    super.build(context);
     final casesBuilder = FutureBuilder<Map<String, Charity>>(
       future: cases,
       builder: (context, snapshot) {
@@ -28,21 +30,31 @@ class _CharityState extends State<CharityWidget> {
 
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Padding(
-              padding: EdgeInsets.only(top: 16.0),
-              child: Center(
-                  child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(Colors.red),
-              )));
+            padding: EdgeInsets.only(top: 16.0),
+            child: Center(
+              child: CircularProgressIndicator(
+                valueColor:
+                    AlwaysStoppedAnimation(Theme.of(context).accentColor),
+              ),
+            ),
+          );
         }
 
         if (!snapshot.hasData) {
           return Text('No data available');
         }
 
-        final shopWidgets = snapshot.data.values
-            .map((c) => CaseWidget(charityCase: c))
+        final caseWidgets = snapshot.data.entries
+            .map((entry) =>
+                CaseWidget(key: Key(entry.key), charityCase: entry.value))
             .toList();
-        return Column(mainAxisSize: MainAxisSize.min, children: shopWidgets);
+        return Expanded(
+          child: ListView(
+              key: Key('casesList'),
+              children: caseWidgets,
+              addAutomaticKeepAlives: true,
+              primary: true),
+        );
       },
     );
 
@@ -57,4 +69,7 @@ class _CharityState extends State<CharityWidget> {
         ),
         inAsyncCall: _loadingVisible);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

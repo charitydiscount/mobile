@@ -22,7 +22,7 @@ class CharityService {
     Map<String, Charity> cases = Map.fromIterable(qS.documents,
         key: (snap) => snap.documentID,
         value: (snap) => Charity.fromJson(snap.data));
-    return new Future<Map<String, Charity>>.value(cases);
+    return Future<Map<String, Charity>>.value(cases);
   }
 }
 

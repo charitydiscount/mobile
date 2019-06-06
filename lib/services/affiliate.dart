@@ -1,6 +1,5 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:charity_discount/models/market.dart';
 import 'package:charity_discount/models/promotions.dart';
 import 'package:charity_discount/util/url.dart';
 
@@ -29,47 +28,6 @@ class AffiliateService {
     _auth.removeWhere((key, value) => !relevantHeaders.contains(key));
     _auth.putIfAbsent('Content-Type', () => 'application/json');
     _auth.putIfAbsent('Accept', () => 'application/json');
-  }
-
-  Future<Market> getMarket({int page, int perPage, String userId}) async {
-    if (_auth == null) {
-      await _initAuth();
-    }
-
-    String url = baseUrl + '/programs?filter[relation]=accepted';
-    if (page != null) {
-      url = url + '&page=$page';
-    }
-    if (perPage != null) {
-      url = url + '&perpage=$perPage';
-    }
-
-    final response = await http.get(url, headers: _auth);
-
-    if (response.statusCode != 200) {
-      throw Exception('Could not load shops (${response.statusCode})');
-    }
-
-    Market market = Market.fromJson(json.decode(response.body));
-
-    market.programs.forEach((p) {
-      p.mainUrl = convertAffiliateUrl(
-          p.mainUrl, _auth['unique-id'], p.uniqueCode, userId);
-
-      if (p.defaultSaleCommissionRate != null) {
-        double commission = double.tryParse(p.defaultSaleCommissionRate);
-        commission = commission * 0.7;
-        p.defaultSaleCommissionRate = commission.toStringAsFixed(2);
-      }
-
-      if (p.defaultLeadCommissionAmount != null) {
-        double commission = double.tryParse(p.defaultLeadCommissionAmount);
-        commission = commission * 0.7;
-        p.defaultLeadCommissionAmount = commission.toStringAsFixed(2);
-      }
-    });
-
-    return market;
   }
 
   Future<List<AdvertiserPromotion>> getPromotions(

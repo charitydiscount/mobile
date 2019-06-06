@@ -18,18 +18,21 @@ class PromotionWidget extends StatelessWidget {
         children: <Widget>[
           ListTile(
             onTap: () => launchURL(promotion.landingPageLink),
-            title: Row(children: <Widget>[
-              Icon(Icons.attach_money, color: Colors.green),
-              Flexible(
+            title: Row(
+              children: <Widget>[
+                Icon(Icons.attach_money, color: Colors.green),
+                Flexible(
                   child: Center(
-                      child: Text(
-                promotion.name,
-                style: TextStyle(
-                  fontSize: 24.0,
-                ),
-              )))
-            ]),
-            subtitle: Center(child: Text(promotion.description)),
+                    child: Text(
+                      promotion.name,
+                      style: TextStyle(
+                        fontSize: 24.0,
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ],
       ),

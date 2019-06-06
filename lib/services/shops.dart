@@ -1,5 +1,4 @@
-import 'package:charity_discount/models/market.dart';
-import 'package:charity_discount/services/affiliate.dart';
+import 'package:charity_discount/models/program.dart' as models;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
@@ -9,82 +8,126 @@ class ShopsService {
   final _db = Firestore.instance;
   final _userId;
   Observable<DocumentSnapshot> _favRef;
-  BehaviorSubject<FavoriteShop> _favorites = BehaviorSubject<FavoriteShop>();
+  BehaviorSubject<FavoriteShops> _favoritePrograms =
+      BehaviorSubject<FavoriteShops>();
+  DocumentSnapshot _lastProgramsDoc;
 
-  Observable<FavoriteShop> get favorites => _favorites.stream;
+  BehaviorSubject<FavoriteShops> get favoritePrograms => _favoritePrograms;
 
   ShopsService(this._userId) {
     _favRef = Observable(
             _db.collection('favoriteShops').document(_userId).snapshots())
         .asBroadcastStream();
     _favRef.listen((snap) {
-      _favorites.add(FavoriteShop(
-          userId: _userId,
-          shopIds: List<String>.from(
-              snap.data != null && snap.data.containsKey('shopIds')
-                  ? snap.data['shopIds']
-                  : List())));
+      if (snap.exists) {
+        _favoritePrograms.add(FavoriteShops.fromJson(snap.data));
+      } else {
+        _favoritePrograms.add(FavoriteShops(userId: _userId, programs: []));
+      }
     });
   }
 
-  Future<FavoriteShop> getFavoriteShops(String userId) async {
-    return _db.collection('favoriteShops').document(userId).get().then((doc) {
-      if (!doc.exists) {
-        // User has no favorite shops
-        return FavoriteShop(userId: userId, shopIds: List());
-      }
-      return FavoriteShop(
-          userId: userId, shopIds: List<String>.from(doc.data['shopIds']));
-    });
+  Future<List<models.Program>> _getPrograms(
+      {bool startAfterPrevious = false}) async {
+    QuerySnapshot query;
+    if (startAfterPrevious == true && _lastProgramsDoc != null) {
+      query = await _db
+          .collection('shops')
+          .orderBy('createdAt')
+          .startAfter([_lastProgramsDoc.data['createdAt']])
+          .limit(1)
+          .getDocuments();
+    } else {
+      query = await _db
+          .collection('shops')
+          .orderBy('createdAt')
+          .limit(1)
+          .getDocuments();
+    }
+
+    if (query.documents.length == 0) {
+      return [];
+    }
+
+    _lastProgramsDoc = query.documents.last;
+
+    return models.fromFirestoreBatch(_lastProgramsDoc);
+  }
+
+  Future<List<models.Program>> _getProgramsForCategory(
+      {bool startAfterPrevious = false, String category}) async {
+    QuerySnapshot query;
+    if (startAfterPrevious == true && _lastProgramsDoc != null) {
+      query = await _db
+          .collection('categories')
+          .where('category', isEqualTo: category)
+          .orderBy('createdAt')
+          .startAfter([_lastProgramsDoc.data['createdAt']])
+          .limit(1)
+          .getDocuments();
+    } else {
+      query = await _db
+          .collection('categories')
+          .where('category', isEqualTo: category)
+          .orderBy('createdAt')
+          .limit(1)
+          .getDocuments();
+    }
+
+    if (query.documents.length == 0) {
+      return [];
+    }
+
+    _lastProgramsDoc = query.documents.last;
+
+    return models.fromFirestoreBatch(_lastProgramsDoc);
   }
 
   Future<void> setFavoriteShop(
-      String userId, String shopId, bool favorite) async {
+      String userId, models.Program program, bool favorite) async {
     DocumentReference ref = _db.collection('favoriteShops').document(userId);
 
     if (favorite) {
       return ref.updateData({
-        'shopIds': FieldValue.arrayUnion([shopId])
-      }).catchError((e) => _handleFavDocNotExistent(e, userId, shopId));
+        'programs': FieldValue.arrayUnion([program.toJson()])
+      }).catchError((e) => _handleFavDocNotExistent(e, userId, program));
     } else {
       return ref.updateData({
-        'shopIds': FieldValue.arrayRemove([shopId])
+        'programs': FieldValue.arrayRemove([program.toJson()])
       }).catchError((e) => print(e));
     }
   }
 
-  Observable<Market> getShopsFull(int page, int perPage) {
-    var marketFuture = affiliateService.getMarket(
-        page: page, perPage: perPage, userId: _userId);
+  Observable<List<models.Program>> getPrograms() {
+    return Observable.fromFuture(
+      _getPrograms(startAfterPrevious: true),
+    );
+  }
 
-    return Observable.combineLatest2(
-        Observable.fromFuture(marketFuture), getShopsService(_userId).favorites,
-        (Market market, FavoriteShop favorites) {
-      market.programs.forEach((p) {
-        if (favorites.shopIds
-                .firstWhere((f) => f == p.uniqueCode, orElse: () => null) !=
-            null) {
-          p.favorited = true;
-        } else {
-          p.favorited = false;
-        }
-      });
-      return market;
-    });
+  Observable<List<models.Program>> getProgramsForCategory(String category) {
+    return Observable.fromFuture(
+      _getProgramsForCategory(startAfterPrevious: true, category: category),
+    );
   }
 
   void closeFavoritesSink() {
-    _favorites.close();
+    _favoritePrograms.close();
   }
 
-  void _handleFavDocNotExistent(dynamic e, String userId, String shopId) {
+  void refreshCache() {
+    _lastProgramsDoc = null;
+  }
+
+  void _handleFavDocNotExistent(
+      dynamic e, String userId, models.Program program) {
     if (!(e is PlatformException)) {
       return;
     }
 
     DocumentReference ref = _db.collection('favoriteShops').document(userId);
     ref.setData({
-      'shopIds': [shopId]
+      'userId': userId,
+      'programs': [program.toJson()]
     }, merge: true);
   }
 }

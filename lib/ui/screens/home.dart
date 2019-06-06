@@ -29,8 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Scaffold(
           appBar: AppBar(
               title: Text('Charity Discount'),
+              primary: true,
+              automaticallyImplyLeading: false,
               actions: <Widget>[_buildPointsWidget('420')]),
-          backgroundColor: Colors.white,
           bottomNavigationBar: BottomNavigationBar(
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
@@ -44,7 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: Text(AppLocalizations.of(context).tr('profile'))),
             ],
             currentIndex: _selectedNavIndex,
-            fixedColor: Colors.red,
             onTap: _onItemTapped,
           ),
           body: LoadingScreen(
@@ -61,29 +61,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildPointsWidget(String points) {
     return FlatButton(
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      PointsScreen(points: Points(acceptedAmount: 420))));
-        },
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        child: Padding(
-          padding: EdgeInsets.zero,
-          child: Center(
-            child: Chip(
-              label: Text(
-                points,
-                style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18.0),
-              ),
-              backgroundColor: Colors.white,
-              shape: BeveledRectangleBorder(),
-            ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) =>
+                PointsScreen(points: Points(acceptedAmount: 420)),
+            settings: RouteSettings(name: 'Points'),
           ),
-        ));
+        );
+      },
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      child: Padding(
+        padding: EdgeInsets.zero,
+        child: Center(
+          child: Chip(
+            label: Text(
+              points,
+              style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.0),
+            ),
+            backgroundColor: Colors.white,
+            shape: BeveledRectangleBorder(),
+          ),
+        ),
+      ),
+    );
   }
 }

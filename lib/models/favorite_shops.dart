@@ -1,9 +1,16 @@
-class FavoriteShop {
-  String userId;
-  List<String> shopIds;
+import 'package:charity_discount/models/program.dart';
 
-  FavoriteShop({this.userId, this.shopIds});
+class FavoriteShops {
+  final String userId;
+  final List<Program> programs;
 
-  factory FavoriteShop.fromJson(Map<String, dynamic> json) =>
-      FavoriteShop(userId: json['userId'], shopIds: (json['shopId'] as List));
+  FavoriteShops({this.userId, this.programs});
+
+  factory FavoriteShops.fromJson(Map<String, dynamic> json) => FavoriteShops(
+      userId: json['userId'],
+      programs: (List.from(json['programs'] ?? []).map((jsonProgram) {
+        Program program = Program.fromJson(jsonProgram);
+        program.favorited = true;
+        return program;
+      }).toList()));
 }

@@ -1,5 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:charity_discount/models/market.dart';
+import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/models/promotions.dart'
     show AdvertiserPromotion;
 import 'package:charity_discount/ui/widgets/promotion.dart';
@@ -8,19 +9,27 @@ import 'package:charity_discount/util/url.dart';
 import 'package:charity_discount/state/state_model.dart';
 
 class ShopDetails extends StatelessWidget {
-  final Program program;
+  final models.Program program;
 
-  ShopDetails({Key key, this.program});
+  const ShopDetails({Key key, this.program}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final logo = Image.network(program.logoPath,
-        width: 150, height: 40, fit: BoxFit.contain);
+    final logo = Hero(
+      tag: 'shopLogo-${program.id}',
+      child: CachedNetworkImage(
+        imageUrl: program.logoPath,
+        width: 150,
+        height: 40,
+        fit: BoxFit.contain,
+      ),
+    );
     final category = Padding(
-        padding: EdgeInsets.all(12),
-        child: Chip(
-          label: Text(program.category.name),
-        ));
+      padding: EdgeInsets.all(12),
+      child: Chip(
+        label: Text(program.category),
+      ),
+    );
     final promotionsTitle = Text(
       'Promotii',
       style: TextStyle(fontSize: 24.0),
@@ -34,11 +43,14 @@ class ShopDetails extends StatelessWidget {
         }
         if (!snapshot.hasData) {
           return Padding(
-              padding: EdgeInsets.only(top: 16.0),
-              child: Center(
-                  child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(Colors.red),
-              )));
+            padding: EdgeInsets.only(top: 16.0),
+            child: Center(
+              child: CircularProgressIndicator(
+                valueColor:
+                    AlwaysStoppedAnimation(Theme.of(context).accentColor),
+              ),
+            ),
+          );
         }
         if (snapshot.data.length == 0) {
           return Text('');
@@ -54,10 +66,13 @@ class ShopDetails extends StatelessWidget {
     );
 
     return Scaffold(
-      appBar: AppBar(title: Text(program.name)),
+      appBar: AppBar(
+        title: Text(program.name),
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => launchURL(program.mainUrl),
-        backgroundColor: Colors.red,
+        onPressed: () {
+          launchURL(program.affilitateUrl);
+        },
         child: const Icon(Icons.add_shopping_cart),
       ),
       body: ListView(

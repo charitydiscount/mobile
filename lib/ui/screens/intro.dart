@@ -186,7 +186,7 @@ var pageList = [
 ];
 
 List<List<Color>> gradients = [
-  [Colors.red, Colors.lightBlue],
+  [Color(0xFFE32029), Color(0xFF558FC1)],
   [Color(0xFFE2859F), Color(0xFFFCCF31)],
   [Color(0xFF5EFCE8), Color(0xFF736EFE)],
 ];
