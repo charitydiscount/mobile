@@ -16,7 +16,7 @@ class PromotionWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           ListTile(
-            onTap: () => launchURL(promotion.landingPageLink),
+            onTap: () => launchURL(promotion.affilitateUrl),
             title: Row(
               children: <Widget>[
                 Icon(Icons.attach_money, color: Colors.green),
