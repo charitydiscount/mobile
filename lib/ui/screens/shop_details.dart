@@ -1,8 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:charity_discount/models/promotion.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/program.dart' as models;
-import 'package:charity_discount/models/promotions.dart'
-    show AdvertiserPromotion;
 import 'package:charity_discount/ui/widgets/promotion.dart';
 import 'package:charity_discount/services/affiliate.dart';
 import 'package:charity_discount/util/url.dart';
@@ -34,9 +33,16 @@ class ShopDetails extends StatelessWidget {
       'Promotii',
       style: TextStyle(fontSize: 24.0),
     );
-    final promotionsBuilder = FutureBuilder<List<AdvertiserPromotion>>(
+
+    final appState = AppModel.of(context);
+
+    final promotionsBuilder = FutureBuilder<List<Promotion>>(
       future: affiliateService.getPromotions(
-          program.id, program.uniqueCode, AppModel.of(context).user.userId),
+        affiliateUniqueCode: appState.affiliateMeta.uniqueCode,
+        programId: program.id,
+        programUniqueCode: program.uniqueCode,
+        userId: appState.user.userId,
+      ),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text("${snapshot.error}");

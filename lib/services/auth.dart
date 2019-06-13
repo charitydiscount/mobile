@@ -11,14 +11,16 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _db = Firestore.instance;
 
-  Observable<FirebaseUser> user;
+  Observable<FirebaseUser> _user;
+  FirebaseUser currentUser;
   Observable<Map<String, dynamic>> profile;
   Observable<Map<String, dynamic>> settings;
 
   AuthService() {
-    user = Observable(_auth.onAuthStateChanged);
+    _user = Observable(_auth.onAuthStateChanged);
 
-    profile = user.switchMap((FirebaseUser u) {
+    profile = _user.switchMap((FirebaseUser u) {
+      currentUser = u;
       if (u != null) {
         return _db
             .collection('users')
@@ -30,7 +32,7 @@ class AuthService {
       }
     });
 
-    settings = user.switchMap((FirebaseUser u) {
+    settings = _user.switchMap((FirebaseUser u) {
       if (u != null) {
         return _db
             .collection('settings')
