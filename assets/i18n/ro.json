@@ -7,5 +7,7 @@
   "accessShop": "Acceseaza magazin",
   "contribute": "Contribuie",
   "firstName": "Prenume",
-  "lastName": "Nume de familie"
+  "lastName": "Nume de familie",
+  "wallet": "Portofel",
+  "transactionHistory": "Istoric Tranzactii"
 }
