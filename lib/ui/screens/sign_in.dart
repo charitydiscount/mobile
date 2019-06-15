@@ -36,14 +36,14 @@ class _SignInScreenState extends State<SignInScreen> {
       );
 
   Widget build(BuildContext context) {
-    var data = EasyLocalizationProvider.of(context).data;
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     ScreenUtil.instance =
         ScreenUtil(width: 750, height: 1334, allowFontScaling: true);
 
     final logo = Hero(
-        tag: 'hero',
-        child: Image.asset('assets/icons/icon.png', scale: 3, height: 120));
+      tag: 'hero',
+      child: Image.asset('assets/icons/icon.png', scale: 3, height: 120),
+    );
 
     final email = TextFormField(
       keyboardType: TextInputType.emailAddress,
@@ -60,7 +60,9 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
         hintText: 'Email',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
       ),
     );
 
@@ -79,7 +81,9 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
         hintText: AppLocalizations.of(context).tr('password'),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
       ),
     );
 
@@ -93,8 +97,10 @@ class _SignInScreenState extends State<SignInScreen> {
             email: _email.text, password: _password.text, context: context),
         padding: EdgeInsets.all(12),
         color: Theme.of(context).primaryColor,
-        child: Text(AppLocalizations.of(context).tr('signIn').toUpperCase(),
-            style: TextStyle(color: Colors.white)),
+        child: Text(
+          AppLocalizations.of(context).tr('signIn').toUpperCase(),
+          style: TextStyle(color: Colors.white),
+        ),
       ),
     );
 
@@ -131,61 +137,62 @@ class _SignInScreenState extends State<SignInScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         MaterialButton(
-            shape: CircleBorder(),
-            onPressed: () async => _googleLogin(context),
-            color: Color(0xffdd4b39),
-            height: 65,
-            elevation: 0,
-            child: Icon(SocialIcons.google, color: Colors.white)),
+          shape: CircleBorder(),
+          onPressed: () async => _googleLogin(context),
+          color: Color(0xffdd4b39),
+          height: 65,
+          elevation: 0,
+          child: Icon(SocialIcons.google, color: Colors.white),
+        ),
         MaterialButton(
-            shape: CircleBorder(),
-            onPressed: () => {},
-            color: Color(0xff3b5998),
-            height: 65,
-            elevation: 0,
-            child: Icon(SocialIcons.facebook, color: Colors.white))
+          shape: CircleBorder(),
+          onPressed: () => {},
+          color: Color(0xff3b5998),
+          height: 65,
+          elevation: 0,
+          child: Icon(SocialIcons.facebook, color: Colors.white),
+        )
       ],
     );
 
-    return EasyLocalizationProvider(
-        data: data,
-        child: Scaffold(
-          backgroundColor: Colors.white,
-          body: LoadingScreen(
-              child: Form(
-                key: _formKey,
-                autovalidate: _autoValidate,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Center(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          SizedBox(height: 12.0),
-                          logo,
-                          SizedBox(height: 24.0),
-                          email,
-                          SizedBox(height: 12.0),
-                          password,
-                          SizedBox(height: 12.0),
-                          loginButton,
-                          forgotLabel,
-                          SizedBox(height: 18.0),
-                          socialDivider,
-                          SizedBox(height: 12.0),
-                          socialMethods,
-                          SizedBox(height: 24.0),
-                          signUpLabel
-                        ],
-                      ),
-                    ),
-                  ),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: LoadingScreen(
+        child: Form(
+          key: _formKey,
+          autovalidate: _autoValidate,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    SizedBox(height: 12.0),
+                    logo,
+                    SizedBox(height: 24.0),
+                    email,
+                    SizedBox(height: 12.0),
+                    password,
+                    SizedBox(height: 12.0),
+                    loginButton,
+                    forgotLabel,
+                    SizedBox(height: 18.0),
+                    socialDivider,
+                    SizedBox(height: 12.0),
+                    socialMethods,
+                    SizedBox(height: 24.0),
+                    signUpLabel,
+                  ],
                 ),
               ),
-              inAsyncCall: _loadingVisible),
-        ));
+            ),
+          ),
+        ),
+        inAsyncCall: _loadingVisible,
+      ),
+    );
   }
 
   @override

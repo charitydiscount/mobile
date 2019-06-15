@@ -232,31 +232,32 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
     );
 
     return LoadingScreen(
-        child: RefreshIndicator(
-          onRefresh: () {
-            _loadingCompleter = Completer<Null>();
-            _service.refreshCache();
-            setState(() {});
-            return _loadingCompleter.future;
-          },
-          color: Theme.of(context).primaryColor,
-          child: Column(
-            children: [
-              toolbar,
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(12.0),
-                  primary: true,
-                  itemCount: _totalPages,
-                  shrinkWrap: true,
-                  itemBuilder: (context, pageIndex) =>
-                      _loadPrograms(pageIndex + 1),
-                ),
-              )
-            ],
-          ),
+      child: RefreshIndicator(
+        onRefresh: () {
+          _loadingCompleter = Completer<Null>();
+          _service.refreshCache();
+          setState(() {});
+          return _loadingCompleter.future;
+        },
+        color: Theme.of(context).primaryColor,
+        child: Column(
+          children: [
+            toolbar,
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(12.0),
+                primary: true,
+                itemCount: _totalPages,
+                shrinkWrap: true,
+                itemBuilder: (context, pageIndex) =>
+                    _loadPrograms(pageIndex + 1),
+              ),
+            )
+          ],
         ),
-        inAsyncCall: _loadingVisible);
+      ),
+      inAsyncCall: _loadingVisible,
+    );
   }
 
   @override
@@ -327,6 +328,16 @@ class ProgramsSearch extends SearchDelegate<String> {
   bool _previousExact;
 
   ProgramsSearch({this.appState});
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    ThemeData appTheme = Theme.of(context);
+    return appTheme.copyWith(
+      textTheme: appTheme.textTheme.copyWith(
+        title: TextStyle(color: Colors.white),
+      ),
+    );
+  }
 
   @override
   List<Widget> buildActions(BuildContext context) {

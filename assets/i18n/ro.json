@@ -3,5 +3,9 @@
   "signIn": "Intra",
   "charity": "Caritate",
   "shops": "Magazine",
-  "profile": "Profil"
+  "profile": "Profil",
+  "accessShop": "Acceseaza magazin",
+  "contribute": "Contribuie",
+  "firstName": "Prenume",
+  "lastName": "Nume de familie"
 }

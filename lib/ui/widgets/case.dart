@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/ui/screens/case_details.dart';
+import 'package:easy_localization/easy_localization_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/charity.dart';
 
@@ -24,7 +25,7 @@ class CaseWidget extends StatelessWidget {
       padding: EdgeInsets.all(12),
       color: Theme.of(context).primaryColor,
       child: Text(
-        'Contribuie',
+        AppLocalizations.of(context).tr('contribute'),
         style: TextStyle(color: Colors.white),
       ),
     );

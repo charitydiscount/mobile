@@ -22,35 +22,44 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget build(BuildContext context) {
-    var data = EasyLocalizationProvider.of(context).data;
-
-    return EasyLocalizationProvider(
-        data: data,
-        child: Scaffold(
-          appBar: AppBar(
-              title: Text('Charity Discount'),
-              primary: true,
-              automaticallyImplyLeading: false,
-              actions: <Widget>[_buildPointsWidget('420')]),
-          bottomNavigationBar: BottomNavigationBar(
-            items: <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.favorite),
-                  title: Text(AppLocalizations.of(context).tr('charity'))),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.add_shopping_cart),
-                  title: Text(AppLocalizations.of(context).tr('shops'))),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.account_circle),
-                  title: Text(AppLocalizations.of(context).tr('profile'))),
-            ],
-            currentIndex: _selectedNavIndex,
-            onTap: _onItemTapped,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Charity Discount'),
+        primary: true,
+        automaticallyImplyLeading: false,
+        actions: <Widget>[
+          _buildPointsWidget('420'),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            title: Text(
+              AppLocalizations.of(context).tr('charity'),
+            ),
           ),
-          body: LoadingScreen(
-              child: _widgets.elementAt(_selectedNavIndex),
-              inAsyncCall: _loadingVisible),
-        ));
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_shopping_cart),
+            title: Text(
+              AppLocalizations.of(context).tr('shops'),
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            title: Text(
+              AppLocalizations.of(context).tr('profile'),
+            ),
+          ),
+        ],
+        currentIndex: _selectedNavIndex,
+        onTap: _onItemTapped,
+      ),
+      body: LoadingScreen(
+        child: _widgets.elementAt(_selectedNavIndex),
+        inAsyncCall: _loadingVisible,
+      ),
+    );
   }
 
   void _onItemTapped(int index) {

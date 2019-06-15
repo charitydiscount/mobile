@@ -3,5 +3,9 @@
   "signIn": "Sign in",
   "charity": "Charity",
   "shops": "Shops",
-  "profile": "Profile"
+  "profile": "Profile",
+  "accessShop": "Open Shop",
+  "contribute": "Contribute",
+  "firstName": "First Name",
+  "lastName": "Last Name"
 }

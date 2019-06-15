@@ -59,15 +59,16 @@ class _CharityState extends State<CharityWidget>
     );
 
     return LoadingScreen(
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[casesBuilder],
-          ),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[casesBuilder],
         ),
-        inAsyncCall: _loadingVisible);
+      ),
+      inAsyncCall: _loadingVisible,
+    );
   }
 
   @override

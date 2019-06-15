@@ -21,7 +21,6 @@ class Main extends StatelessWidget {
 
     Widget defaultWidget = ScopedModelDescendant<AppModel>(
       builder: (context, child, appModel) {
-        // data.changeLocale(Locale(appModel.settings.lang));
         if (appModel.introCompleted == false) {
           return Intro();
         }
@@ -46,7 +45,7 @@ class Main extends StatelessWidget {
               locale: data.locale ?? Locale('ro'), path: 'assets/i18n'),
         ],
         supportedLocales: [Locale('en'), Locale('ro')],
-        locale: data.locale,
+        locale: data.locale ?? Locale('ro'),
         routes: {
           '/': (context) => SafeArea(child: defaultWidget),
           '/signin': (context) => SafeArea(child: SignInScreen()),
