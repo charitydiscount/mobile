@@ -13,50 +13,54 @@ class PointsScreen extends StatelessWidget {
     return ListView(
       primary: true,
       children: <Widget>[
-        AboutPointsWidget(
-          points: Points(acceptedAmount: 150),
-          headingLeading: Icon(
-            Icons.favorite,
-            color: Colors.red,
-          ),
-          heading: 'Charity Points',
-          subtitle: 'Puncte dobandite in schimbul donatiilor',
-          acceptedTitle: 'Puncte disponibile',
-          acceptedDescription:
-              'Acestea pot fi folosite in magazinele partenere',
-          acceptedAction: IconButton(
-            icon: Icon(
-              Icons.shopping_cart,
-              color: Theme.of(context).accentColor,
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: AboutPointsWidget(
+            points: Points(acceptedAmount: 150),
+            headingLeading: Icon(
+              Icons.favorite,
+              color: Colors.red,
             ),
-            iconSize: 30,
-            onPressed: () {},
+            heading: 'Charity Points',
+            subtitle: 'Puncte dobandite in schimbul donatiilor',
+            acceptedTitle: 'Puncte disponibile',
+            acceptedDescription:
+                'Acestea pot fi folosite in magazinele partenere',
+            acceptedAction: IconButton(
+              icon: Icon(
+                Icons.shopping_cart,
+                color: Theme.of(context).accentColor,
+              ),
+              iconSize: 25,
+              onPressed: () {},
+            ),
           ),
         ),
-        Divider(),
-        AboutPointsWidget(
-          points: Points(acceptedAmount: 35, pendingAmount: 120),
-          headingLeading: Icon(
-            Icons.monetization_on,
-            color: Colors.green,
-          ),
-          heading: 'Cashback',
-          subtitle: 'Banii primiti in urma cumparaturilor',
-          acceptedTitle: 'Cashback disponibil',
-          acceptedDescription: 'Bani care pot fi donati sau retrasi',
-          acceptedAction: IconButton(
-            icon: Icon(
-              Icons.payment,
-              color: Theme.of(context).accentColor,
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: AboutPointsWidget(
+            points: Points(acceptedAmount: 35, pendingAmount: 120),
+            headingLeading: Icon(
+              Icons.monetization_on,
+              color: Colors.green,
             ),
-            iconSize: 30,
-            onPressed: () {},
+            heading: 'Cashback',
+            subtitle: 'Banii primiti in urma cumparaturilor',
+            acceptedTitle: 'Cashback disponibil',
+            acceptedDescription: 'Bani care pot fi donati sau retrasi',
+            acceptedAction: IconButton(
+              icon: Icon(
+                Icons.payment,
+                color: Theme.of(context).accentColor,
+              ),
+              iconSize: 25,
+              onPressed: () {},
+            ),
+            pendingTitle: 'Cashback in asteptare',
+            pendingDescription:
+                'Bani care urmeaza sa fie primiti pe baza cumparaturilor facute',
           ),
-          pendingTitle: 'Cashback in asteptare',
-          pendingDescription:
-              'Bani care urmeaza sa fie primiti pe baza cumparaturilor facute',
         ),
-        Divider(),
         FlatButton(
           child: Text(
             'Istoric tranzactii',

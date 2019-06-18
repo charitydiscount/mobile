@@ -18,10 +18,9 @@ class User {
   String email;
   String photoUrl;
 
-  User(
-      {this.userId, this.firstName, this.lastName, this.email, this.photoUrl});
+  User({this.userId, this.firstName, this.lastName, this.email, this.photoUrl});
 
-  factory User.fromJson(Map<String, dynamic> json) => new User(
+  factory User.fromJson(Map<String, dynamic> json) => User(
       userId: json["userId"],
       firstName: json["firstName"],
       lastName: json["lastName"],

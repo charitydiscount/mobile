@@ -19,8 +19,11 @@ class AuthService {
   AuthService() {
     _user = Observable(_auth.onAuthStateChanged);
 
-    profile = _user.switchMap((FirebaseUser u) {
+    _user.listen((FirebaseUser u) {
       currentUser = u;
+    });
+
+    profile = _user.switchMap((FirebaseUser u) {
       if (u != null) {
         return _db
             .collection('users')
@@ -57,7 +60,7 @@ class AuthService {
   }
 
   Future<void> signOut() async {
-    _auth.signOut();
+    await _auth.signOut();
   }
 
   Future<FirebaseUser> signInWithGoogle(lang) async {
@@ -120,4 +123,4 @@ class AuthService {
   }
 }
 
-final AuthService authService = new AuthService();
+final AuthService authService = AuthService();

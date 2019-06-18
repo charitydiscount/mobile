@@ -58,4 +58,4 @@ class LocalService {
   }
 }
 
-final LocalService localService = new LocalService();
+final LocalService localService = LocalService();

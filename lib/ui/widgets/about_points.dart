@@ -44,17 +44,18 @@ class AboutPointsWidget extends StatelessWidget {
     ListTile availablePoints = ListTile(
       leading: Container(
         width: 80,
+        alignment: Alignment.center,
         child: Text(
           points.acceptedAmount.toString(),
+          textAlign: TextAlign.center,
           style: TextStyle(fontSize: 30, color: Colors.green),
         ),
       ),
       title: Text(acceptedTitle),
-      subtitle: Text(acceptedDescription),
-      trailing: Container(
-        width: 35,
-        child: acceptedAction,
+      subtitle: Container(
+        child: Text(acceptedDescription),
       ),
+      trailing: acceptedAction,
       isThreeLine: true,
     );
 
@@ -68,8 +69,10 @@ class AboutPointsWidget extends StatelessWidget {
       pendingPoints = ListTile(
         leading: Container(
           width: 80,
+          alignment: Alignment.center,
           child: Text(
             points.pendingAmount.toString(),
+            textAlign: TextAlign.center,
             style: TextStyle(fontSize: 30, color: Colors.yellow),
           ),
         ),

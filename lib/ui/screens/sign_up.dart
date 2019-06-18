@@ -13,10 +13,10 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _firstName = new TextEditingController();
-  final TextEditingController _lastName = new TextEditingController();
-  final TextEditingController _email = new TextEditingController();
-  final TextEditingController _password = new TextEditingController();
+  final TextEditingController _firstName = TextEditingController();
+  final TextEditingController _lastName = TextEditingController();
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
 
   bool _autoValidate = false;
   bool _loadingVisible = false;
