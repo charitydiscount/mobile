@@ -1,12 +1,11 @@
+import 'package:charity_discount/models/promotion.dart';
 import 'package:flutter/material.dart';
-import 'package:charity_discount/models/promotions.dart'
-    show AdvertiserPromotion;
 import 'package:charity_discount/util/url.dart';
 
 class PromotionWidget extends StatelessWidget {
-  final AdvertiserPromotion promotion;
+  final Promotion promotion;
 
-  PromotionWidget({Key key, this.promotion});
+  PromotionWidget({Key key, this.promotion}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +16,7 @@ class PromotionWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           ListTile(
-            onTap: () => launchURL(promotion.landingPageLink),
+            onTap: () => launchURL(promotion.affilitateUrl),
             title: Row(
               children: <Widget>[
                 Icon(Icons.attach_money, color: Colors.green),

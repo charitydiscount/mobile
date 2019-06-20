@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:charity_discount/models/program.dart' as models;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -6,8 +7,9 @@ import 'package:charity_discount/models/favorite_shops.dart';
 
 class ShopsService {
   final _db = Firestore.instance;
-  final _userId;
+  final String _userId;
   Observable<DocumentSnapshot> _favRef;
+  StreamSubscription _favListener;
   BehaviorSubject<FavoriteShops> _favoritePrograms =
       BehaviorSubject<FavoriteShops>();
   DocumentSnapshot _lastProgramsDoc;
@@ -16,9 +18,8 @@ class ShopsService {
 
   ShopsService(this._userId) {
     _favRef = Observable(
-            _db.collection('favoriteShops').document(_userId).snapshots())
-        .asBroadcastStream();
-    _favRef.listen((snap) {
+        _db.collection('favoriteShops').document(_userId).snapshots());
+    _favListener = _favRef.listen((snap) {
       if (snap.exists) {
         _favoritePrograms.add(FavoriteShops.fromJson(snap.data));
       } else {
@@ -111,6 +112,7 @@ class ShopsService {
   }
 
   void closeFavoritesSink() {
+    _favListener.cancel();
     _favoritePrograms.close();
   }
 
@@ -134,7 +136,7 @@ class ShopsService {
 
 ShopsService _shopsService;
 
-ShopsService getShopsService(userId) {
+ShopsService getShopsService(String userId) {
   if (_shopsService == null) {
     _shopsService = ShopsService(userId);
   }

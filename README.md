@@ -1,6 +1,6 @@
-# charity_discount
+# Charity Discount
 
-A new Flutter project.
+Charity Discount Mobile (Flutter) App. 
 
 ## Getting Started
 

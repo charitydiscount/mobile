@@ -13,10 +13,10 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _firstName = new TextEditingController();
-  final TextEditingController _lastName = new TextEditingController();
-  final TextEditingController _email = new TextEditingController();
-  final TextEditingController _password = new TextEditingController();
+  final TextEditingController _firstName = TextEditingController();
+  final TextEditingController _lastName = TextEditingController();
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
 
   bool _autoValidate = false;
   bool _loadingVisible = false;
@@ -150,36 +150,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: LoadingScreen(
-          child: Form(
-            key: _formKey,
-            autovalidate: _autoValidate,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      logo,
-                      SizedBox(height: 48.0),
-                      firstName,
-                      SizedBox(height: 24.0),
-                      lastName,
-                      SizedBox(height: 24.0),
-                      email,
-                      SizedBox(height: 24.0),
-                      password,
-                      SizedBox(height: 12.0),
-                      signUpButton,
-                      signInLabel
-                    ],
-                  ),
+        child: Form(
+          key: _formKey,
+          autovalidate: _autoValidate,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    logo,
+                    SizedBox(height: 48.0),
+                    firstName,
+                    SizedBox(height: 24.0),
+                    lastName,
+                    SizedBox(height: 24.0),
+                    email,
+                    SizedBox(height: 24.0),
+                    password,
+                    SizedBox(height: 12.0),
+                    signUpButton,
+                    signInLabel
+                  ],
                 ),
               ),
             ),
           ),
-          inAsyncCall: _loadingVisible),
+        ),
+        inAsyncCall: _loadingVisible,
+      ),
     );
   }
 

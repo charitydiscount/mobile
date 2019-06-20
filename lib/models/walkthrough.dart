@@ -8,7 +8,7 @@ class Walkthrough {
 
   Walkthrough({this.icon, this.title, this.description, this.extraWidget}) {
     if (extraWidget == null) {
-      extraWidget = new Container();
+      extraWidget = Container();
     }
   }
 }

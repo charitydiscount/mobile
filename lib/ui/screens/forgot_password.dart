@@ -12,7 +12,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _email = new TextEditingController();
+  final TextEditingController _email = TextEditingController();
 
   bool _autoValidate = false;
   bool _loadingVisible = false;
@@ -83,30 +83,31 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     return Scaffold(
       body: LoadingScreen(
-          child: Form(
-            key: _formKey,
-            autovalidate: _autoValidate,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      logo,
-                      SizedBox(height: 48.0),
-                      email,
-                      SizedBox(height: 12.0),
-                      forgotPasswordButton,
-                      signInLabel
-                    ],
-                  ),
+        child: Form(
+          key: _formKey,
+          autovalidate: _autoValidate,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    logo,
+                    SizedBox(height: 48.0),
+                    email,
+                    SizedBox(height: 12.0),
+                    forgotPasswordButton,
+                    signInLabel
+                  ],
                 ),
               ),
             ),
           ),
-          inAsyncCall: _loadingVisible),
+        ),
+        inAsyncCall: _loadingVisible,
+      ),
     );
   }
 

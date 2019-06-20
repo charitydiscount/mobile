@@ -19,7 +19,6 @@ class _ProfileState extends State<Profile> {
 
   Widget build(BuildContext context) {
     var appState = AppModel.of(context);
-    var data = EasyLocalizationProvider.of(context).data;
 
     final logoImage = appState.user.photoUrl != null
         ? CachedNetworkImage(
@@ -62,46 +61,45 @@ class _ProfileState extends State<Profile> {
     final firstName = appState?.user?.firstName ?? '';
     final lastName = appState?.user?.lastName ?? '';
     final emailLabel = Text('Email: ');
-    final firstNameLabel = Text('First Name: ');
-    final lastNameLabel = Text('Last Name: ');
+    final firstNameLabel =
+        Text('${AppLocalizations.of(context).tr('firstName')}:');
+    final lastNameLabel =
+        Text('${AppLocalizations.of(context).tr('lastName')}:');
 
-    return EasyLocalizationProvider(
-      data: data,
-      child: LoadingScreen(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 48.0),
-            child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    logo,
-                    SizedBox(height: 48.0),
-                    SizedBox(height: 12.0),
-                    emailLabel,
-                    Text(email, style: TextStyle(fontWeight: FontWeight.bold)),
-                    SizedBox(height: 12.0),
-                    firstNameLabel,
-                    Text(firstName,
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    SizedBox(height: 12.0),
-                    lastNameLabel,
-                    Text(lastName,
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    SizedBox(height: 12.0),
-                    SizedBox(height: 12.0),
-                    signOutButton,
-                  ],
-                ),
-              ),
+    return LoadingScreen(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 48.0),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                logo,
+                SizedBox(height: 48.0),
+                SizedBox(height: 12.0),
+                emailLabel,
+                Text(email, style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(height: 12.0),
+                firstNameLabel,
+                Text(firstName, style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(height: 12.0),
+                lastNameLabel,
+                Text(lastName, style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(height: 12.0),
+                SizedBox(height: 12.0),
+                signOutButton,
+              ],
             ),
           ),
-          inAsyncCall: _loadingVisible),
+        ),
+      ),
+      inAsyncCall: _loadingVisible,
     );
   }
 
   Future<void> _signOut(BuildContext context) async {
+    AppModel.of(context).closeListeners();
     await userController.signOut();
     await Navigator.pushNamed(context, '/signin');
   }

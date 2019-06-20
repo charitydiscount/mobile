@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/services/shops.dart';
+import 'package:easy_localization/easy_localization_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/ui/screens/shop_details.dart';
@@ -32,7 +33,7 @@ class ShopWidget extends StatelessWidget {
       padding: EdgeInsets.all(12),
       color: Theme.of(context).primaryColor,
       child: Text(
-        'Acceseaza magazin',
+        AppLocalizations.of(context).tr('accessShop'),
         style: TextStyle(color: Colors.white),
       ),
     );
