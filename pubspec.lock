@@ -112,7 +112,7 @@ packages:
       name: cloud_firestore
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.12.5+1"
+    version: "0.12.5+2"
   code_builder:
     dependency: transitive
     description:
@@ -175,21 +175,21 @@ packages:
       name: firebase_analytics
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.2"
+    version: "3.0.3"
   firebase_auth:
     dependency: "direct main"
     description:
       name: firebase_auth
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.11.1+6"
+    version: "0.11.1+7"
   firebase_core:
     dependency: "direct main"
     description:
       name: firebase_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.0+5"
+    version: "0.4.0+6"
   fixnum:
     dependency: transitive
     description:
@@ -222,7 +222,7 @@ packages:
       name: flutter_html
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.10.1+hotfix.1"
+    version: "0.10.2"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -351,7 +351,7 @@ packages:
       name: json_serializable
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.3.0"
+    version: "3.0.0"
   kernel:
     dependency: transitive
     description:
@@ -463,7 +463,7 @@ packages:
       name: rxdart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.21.0"
+    version: "0.22.0"
   scoped_model:
     dependency: "direct main"
     description:
@@ -552,7 +552,7 @@ packages:
       name: synchronized
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.0+1"
   term_glyph:
     dependency: transitive
     description:
