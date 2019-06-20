@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/points.dart';
+import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/screens/points.dart';
+import 'package:charity_discount/ui/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
-import 'package:charity_discount/ui/widgets/profile.dart';
 import 'package:charity_discount/ui/widgets/charity.dart';
 import 'package:charity_discount/ui/widgets/shops.dart';
 
@@ -14,7 +16,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _loadingVisible = false;
   int _selectedNavIndex = 0;
-  final _widgets = [CharityWidget(), Shops(), Profile()];
+  final _widgets = [
+    CharityWidget(),
+    Shops(),
+    PointsScreen(
+      points: Points(acceptedAmount: 100),
+    )
+  ];
 
   @override
   void initState() {
@@ -22,13 +30,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget build(BuildContext context) {
+    var appState = AppModel.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Charity Discount'),
         primary: true,
         automaticallyImplyLeading: false,
         actions: <Widget>[
-          _buildPointsWidget('420'),
+          _buildProfileButton(photoUrl: appState.user.photoUrl),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -46,9 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
+            icon: Icon(Icons.account_balance_wallet),
             title: Text(
-              AppLocalizations.of(context).tr('profile'),
+              AppLocalizations.of(context).tr('wallet'),
             ),
           ),
         ],
@@ -68,37 +77,29 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Widget _buildPointsWidget(String points) {
-    return FlatButton(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      onPressed: () {
+  Widget _buildProfileButton({String photoUrl}) {
+    final logoImage = photoUrl != null
+        ? CachedNetworkImage(
+            imageUrl: photoUrl,
+            fit: BoxFit.fill,
+          )
+        : Image.asset(
+            'assets/images/default.png',
+            fit: BoxFit.cover,
+          );
+    return InkWell(
+      onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (BuildContext context) =>
-                PointsScreen(points: Points(acceptedAmount: 420)),
-            settings: RouteSettings(name: 'Points'),
+            builder: (BuildContext context) => ProfileScreen(),
+            settings: RouteSettings(name: 'Profile'),
           ),
         );
       },
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       child: Padding(
-        padding: EdgeInsets.zero,
-        child: Center(
-          child: Chip(
-            label: Text(
-              points,
-              style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.0),
-            ),
-            backgroundColor: Colors.white,
-            shape: BeveledRectangleBorder(),
-          ),
-        ),
+        padding: const EdgeInsets.all(5.0),
+        child: ClipOval(child: logoImage),
       ),
     );
   }

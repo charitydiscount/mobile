@@ -38,9 +38,7 @@ class LoadingScreen extends StatelessWidget {
     this.offset,
     this.dismissible = false,
     @required this.child,
-  })  : assert(child != null),
-        assert(inAsyncCall != null),
-        super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +59,9 @@ class LoadingScreen extends StatelessWidget {
             child: Align(
               alignment: Alignment.center,
               child: SizedBox(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                ),
                 height: 30.0,
                 width: 30.0,
               ),
@@ -76,15 +76,15 @@ class LoadingScreen extends StatelessWidget {
         );
       }
       final modal = [
-        new Opacity(
-          child: new ModalBarrier(dismissible: dismissible, color: color),
+        Opacity(
+          child: ModalBarrier(dismissible: dismissible, color: color),
           opacity: opacity,
         ),
         layOutProgressIndicator
       ];
       widgetList += modal;
     }
-    return new Stack(
+    return Stack(
       children: widgetList,
     );
   }

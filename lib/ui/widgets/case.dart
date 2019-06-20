@@ -56,7 +56,9 @@ class CaseWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              subtitle: Center(child: Text('')),
+              subtitle: Center(
+                child: Text(''),
+              ),
             ),
             ButtonTheme.bar(
               child: ButtonBar(

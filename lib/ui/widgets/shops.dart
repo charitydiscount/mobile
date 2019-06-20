@@ -53,9 +53,9 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
   @override
   void dispose() {
     super.dispose();
+    _favListener.cancel();
     _clearMarketStreams();
     _service.refreshCache();
-    _favListener.cancel();
   }
 
   Widget _loadPrograms(int pageNumber) {
@@ -491,7 +491,7 @@ class ShopsWidget extends StatelessWidget {
         }
 
         FavoriteShops favoriteShops = snapshot.data;
-        final favoritePrograms = List.of(favoriteShops.programs);
+        final favoritePrograms = List.of(favoriteShops.programs).toList();
         return _buildShopList(
           programs,
           appState,

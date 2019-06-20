@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -13,18 +15,36 @@ class AppModel extends Model {
   User _user;
   Settings _settings = Settings(lang: 'ro');
   TwoPerformantMeta _affiliateMeta;
+  StreamSubscription _profileListener;
+  StreamSubscription _settingsListener;
 
   AppModel() {
-    authService.profile
-        .listen((profile) => this.setUser(User.fromJson(profile)));
-    authService.settings
-        .listen((settings) => this.setSettings(Settings.fromJson(settings)));
+    _profileListener = authService.profile.listen(
+      (profile) {
+        User currentUser = User.fromJson(profile);
+        this.setUser(currentUser);
+        if (currentUser.userId == null) {
+          return;
+        }
+        _settingsListener = authService.settings.listen(
+          (settings) {
+            this.setSettings(
+              Settings.fromJson(settings),
+            );
+          },
+        );
+        metaService.getTwoPerformantMeta().then(
+              (twoPMeta) => _affiliateMeta = twoPMeta,
+            );
+      },
+    );
 
     initFromLocal();
+  }
 
-    metaService
-        .getTwoPerformantMeta()
-        .then((twoPMeta) => _affiliateMeta = twoPMeta);
+  void closeListeners() {
+    _profileListener.cancel();
+    _settingsListener.cancel();
   }
 
   static AppModel of(

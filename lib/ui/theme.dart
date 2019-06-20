@@ -5,11 +5,13 @@ ThemeData buildTheme({bool dark = false}) {
     return base.copyWith(
       headline: base.headline.copyWith(
         fontFamily: 'Merriweather',
-        fontSize: 40.0,
+        fontSize: 30.0,
+        color: dark ? Colors.grey.shade100 : Colors.grey.shade700,
       ),
       title: base.title.copyWith(
         fontFamily: 'Merriweather',
         fontSize: 15.0,
+        color: dark ? Colors.grey.shade100 : Colors.grey.shade700,
       ),
       body1: base.body1.copyWith(fontFamily: 'Merriweather'),
     );

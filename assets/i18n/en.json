@@ -7,5 +7,7 @@
   "accessShop": "Open Shop",
   "contribute": "Contribute",
   "firstName": "First Name",
-  "lastName": "Last Name"
+  "lastName": "Last Name",
+  "wallet": "Wallet",
+  "transactionHistory": "Transaction History"
 }
