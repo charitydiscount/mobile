@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/promotion.dart';
+import 'package:charity_discount/util/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/ui/widgets/promotion.dart';
@@ -44,30 +45,22 @@ class ShopDetails extends StatelessWidget {
         userId: appState.user.userId,
       ),
       builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        }
-        if (!snapshot.hasData) {
-          return Padding(
-            padding: EdgeInsets.only(top: 16.0),
-            child: Center(
-              child: CircularProgressIndicator(
-                valueColor:
-                    AlwaysStoppedAnimation(Theme.of(context).accentColor),
-              ),
-            ),
-          );
-        }
-        if (snapshot.data.length == 0) {
-          return Text('');
+        final loading = buildConnectionLoading(
+          context: context,
+          snapshot: snapshot,
+        );
+        if (loading != null) {
+          return loading;
         }
         List<Widget> shopWidgets = [promotionsTitle];
         shopWidgets.addAll(
-            snapshot.data.map((p) => PromotionWidget(promotion: p)).toList());
+          snapshot.data.map((p) => PromotionWidget(promotion: p)).toList(),
+        );
         return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: shopWidgets);
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: shopWidgets,
+        );
       },
     );
 

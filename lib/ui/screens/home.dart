@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:charity_discount/models/points.dart';
 import 'package:charity_discount/state/state_model.dart';
-import 'package:charity_discount/ui/screens/points.dart';
+import 'package:charity_discount/ui/screens/wallet.dart';
 import 'package:charity_discount/ui/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -16,13 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _loadingVisible = false;
   int _selectedNavIndex = 0;
-  final _widgets = [
-    CharityWidget(),
-    Shops(),
-    PointsScreen(
-      points: Points(acceptedAmount: 100),
-    )
-  ];
+  final _widgets = [CharityWidget(), Shops(), WalletScreen()];
 
   @override
   void initState() {
@@ -81,11 +74,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final logoImage = photoUrl != null
         ? CachedNetworkImage(
             imageUrl: photoUrl,
-            fit: BoxFit.fill,
+            fit: BoxFit.contain,
           )
         : Image.asset(
             'assets/images/default.png',
-            fit: BoxFit.cover,
+            fit: BoxFit.scaleDown,
           );
     return InkWell(
       onTap: () {
@@ -98,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
       child: Padding(
-        padding: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(10.0),
         child: ClipOval(child: logoImage),
       ),
     );

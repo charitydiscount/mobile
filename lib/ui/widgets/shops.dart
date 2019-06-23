@@ -4,6 +4,7 @@ import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
+import 'package:charity_discount/util/ui.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -87,8 +88,9 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
               padding: EdgeInsets.only(top: 16.0),
               child: Center(
                 child: CircularProgressIndicator(
-                  valueColor:
-                      AlwaysStoppedAnimation(Theme.of(context).accentColor),
+                  valueColor: AlwaysStoppedAnimation(
+                    Theme.of(context).accentColor,
+                  ),
                 ),
               ),
             )
@@ -96,16 +98,21 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
           placeholders.addAll(
             List.generate(
               _perPage,
-              (int index) => Padding(
+              (index) => Padding(
                     padding: EdgeInsets.only(top: 8.0),
                     child: Placeholder(
-                        fallbackHeight: 100.0,
-                        color: Theme.of(context).scaffoldBackgroundColor),
+                      fallbackHeight: 100.0,
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                    ),
                   ),
             ),
           );
+
           return ListView(
-              primary: false, shrinkWrap: true, children: placeholders);
+            primary: false,
+            shrinkWrap: true,
+            children: placeholders,
+          );
         }
         if (!_loadingCompleter.isCompleted) {
           _loadingCompleter.complete();
@@ -382,24 +389,12 @@ class ProgramsSearch extends SearchDelegate<String> {
         () => searchService.search(query, exact: _exactMatch),
       ),
       builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Padding(
-            padding: EdgeInsets.only(top: 16.0),
-            child: Center(
-              child: CircularProgressIndicator(
-                valueColor:
-                    AlwaysStoppedAnimation(Theme.of(context).accentColor),
-              ),
-            ),
-          );
-        }
-
-        if (!snapshot.hasData) {
-          return Text('No data available');
+        final loading = buildConnectionLoading(
+          context: context,
+          snapshot: snapshot,
+        );
+        if (loading != null) {
+          return loading;
         }
 
         final List<models.Program> programs = List.of(snapshot.data);
@@ -418,24 +413,12 @@ class ProgramsSearch extends SearchDelegate<String> {
       initialData: [],
       future: searchService.getSuggestions(query),
       builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Padding(
-            padding: EdgeInsets.only(top: 16.0),
-            child: Center(
-              child: CircularProgressIndicator(
-                valueColor:
-                    AlwaysStoppedAnimation(Theme.of(context).accentColor),
-              ),
-            ),
-          );
-        }
-
-        if (!snapshot.hasData) {
-          return Text('No data available');
+        final loading = buildConnectionLoading(
+          context: context,
+          snapshot: snapshot,
+        );
+        if (loading != null) {
+          return loading;
         }
 
         List<Widget> suggestions = List<Widget>.from(

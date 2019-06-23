@@ -1,3 +1,4 @@
+import 'package:charity_discount/util/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/charity.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
@@ -24,24 +25,12 @@ class _CharityState extends State<CharityWidget>
     final casesBuilder = FutureBuilder<Map<String, Charity>>(
       future: cases,
       builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Padding(
-            padding: EdgeInsets.only(top: 16.0),
-            child: Center(
-              child: CircularProgressIndicator(
-                valueColor:
-                    AlwaysStoppedAnimation(Theme.of(context).accentColor),
-              ),
-            ),
-          );
-        }
-
-        if (!snapshot.hasData) {
-          return Text('No data available');
+        final loading = buildConnectionLoading(
+          context: context,
+          snapshot: snapshot,
+        );
+        if (loading != null) {
+          return loading;
         }
 
         final caseWidgets = snapshot.data.entries

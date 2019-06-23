@@ -240,10 +240,13 @@ class _SignInScreenState extends State<SignInScreen> {
     _toggleLoadingVisible();
     try {
       await userController.signIn(
-          Strategy.Google, AppModel.of(context).settings.lang);
+        Strategy.Google,
+        AppModel.of(context).settings.lang,
+      );
       _toggleLoadingVisible();
       await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
     } catch (e) {
+      _toggleLoadingVisible();
       if (!(e is Error)) {
         String exception = getExceptionText(e);
         Flushbar(

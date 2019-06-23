@@ -190,19 +190,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
   }
 
-  void _emailSignUp(
-      {String firstName,
-      String lastName,
-      String email,
-      String password,
-      BuildContext context}) async {
+  void _emailSignUp({
+    String firstName,
+    String lastName,
+    String email,
+    String password,
+    BuildContext context,
+  }) async {
     if (_formKey.currentState.validate()) {
       try {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         await _toggleLoadingVisible();
-        await userController.signUp(email, password, firstName, lastName,
-            AppModel.of(context).settings.lang);
-        await Navigator.pushNamed(context, '/signin');
+        await userController.signUp(
+          email,
+          password,
+          firstName,
+          lastName,
+          AppModel.of(context).settings.lang,
+        );
+        await userController.signIn(
+          Strategy.EmailAndPass,
+          AppModel.of(context).settings.lang,
+          {"email": email, "password": password},
+        );
+        _toggleLoadingVisible();
+        await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
       } catch (e) {
         _toggleLoadingVisible();
         print("Sign Up Error: $e");
