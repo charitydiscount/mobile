@@ -215,11 +215,12 @@ class _SignInScreenState extends State<SignInScreen> {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         _toggleLoadingVisible();
         await userController.signIn(
-            Strategy.EmailAndPass,
-            AppModel.of(context).settings.lang,
-            {"email": email, "password": password});
+          Strategy.EmailAndPass,
+          AppModel.of(context).settings.lang,
+          {"email": email, "password": password},
+        );
         _toggleLoadingVisible();
-        await Navigator.pushNamed(context, '/');
+        await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
       } catch (e) {
         if (!(e is Error)) {
           String exception = getExceptionText(e);
@@ -241,7 +242,7 @@ class _SignInScreenState extends State<SignInScreen> {
       await userController.signIn(
           Strategy.Google, AppModel.of(context).settings.lang);
       _toggleLoadingVisible();
-      await Navigator.pushNamed(context, '/');
+      await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
     } catch (e) {
       if (!(e is Error)) {
         String exception = getExceptionText(e);
