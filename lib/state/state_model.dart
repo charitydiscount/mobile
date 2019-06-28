@@ -19,18 +19,25 @@ class AppModel extends Model {
   StreamSubscription _settingsListener;
 
   AppModel() {
+    createListeners();
+    initFromLocal();
+  }
+
+  void createListeners() {
     _profileListener = authService.profile.listen(
       (profile) {
-        User currentUser = User.fromJson(profile);
-        this.setUser(currentUser);
-        if (currentUser.userId == null) {
+        if (profile == null) {
           return;
         }
+        User currentUser = User.fromJson(profile);
+        this.setUser(currentUser);
         _settingsListener = authService.settings.listen(
           (settings) {
-            this.setSettings(
-              Settings.fromJson(settings),
-            );
+            if (settings != null) {
+              this.setSettings(
+                Settings.fromJson(settings),
+              );
+            }
           },
         );
         metaService.getTwoPerformantMeta().then(
@@ -38,8 +45,6 @@ class AppModel extends Model {
             );
       },
     );
-
-    initFromLocal();
   }
 
   void closeListeners() {

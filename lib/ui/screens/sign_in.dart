@@ -219,6 +219,7 @@ class _SignInScreenState extends State<SignInScreen> {
           AppModel.of(context).settings.lang,
           {"email": email, "password": password},
         );
+        AppModel.of(context).createListeners();
         _toggleLoadingVisible();
         await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
       } catch (e) {
@@ -243,6 +244,7 @@ class _SignInScreenState extends State<SignInScreen> {
         Strategy.Google,
         AppModel.of(context).settings.lang,
       );
+      AppModel.of(context).createListeners();
       _toggleLoadingVisible();
       await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
     } catch (e) {

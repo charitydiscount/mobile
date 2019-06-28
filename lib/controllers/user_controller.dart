@@ -7,12 +7,22 @@ import 'package:charity_discount/services/shops.dart';
 enum Strategy { EmailAndPass, Google, Facebook }
 
 class UserController {
-  Future<void> signIn(Strategy provider, String lang,
-      [Map<String, dynamic> credentials]) async {
-    authService.profile.take(1).listen(
-        (profile) => localService.storeUserLocal(User.fromJson(profile)));
-    authService.settings.take(1).listen((settings) =>
-        localService.storeSettingsLocal(Settings.fromJson(settings)));
+  Future<void> signIn(
+    Strategy provider,
+    String lang, [
+    Map<String, dynamic> credentials,
+  ]) async {
+    authService.profile.listen((profile) {
+      if (profile != null) {
+        User currentUser = User.fromJson(profile);
+        localService.storeUserLocal(currentUser);
+      }
+    });
+    authService.settings.listen((settings) {
+      if (settings != null) {
+        localService.storeSettingsLocal(Settings.fromJson(settings));
+      }
+    });
 
     switch (provider) {
       case Strategy.EmailAndPass:

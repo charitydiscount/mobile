@@ -13,37 +13,37 @@ class AuthService {
 
   Observable<FirebaseUser> _user;
   FirebaseUser currentUser;
-  Observable<Map<String, dynamic>> profile;
-  Observable<Map<String, dynamic>> settings;
+  BehaviorSubject<Map<String, dynamic>> profile = BehaviorSubject();
+  BehaviorSubject<Map<String, dynamic>> settings = BehaviorSubject();
 
   AuthService() {
     _user = Observable(_auth.onAuthStateChanged);
 
     _user.listen((FirebaseUser u) {
       currentUser = u;
-    });
 
-    profile = _user.switchMap((FirebaseUser u) {
       if (u != null) {
-        return _db
+        _db
             .collection('users')
             .document(u.uid)
             .snapshots()
-            .map((snap) => snap.exists ? snap.data : {});
+            .map((snap) => snap.exists ? snap.data : {})
+            .listen((data) => profile.add(data));
       } else {
-        return Observable.just({});
+        profile.add(null);
       }
     });
 
-    settings = _user.switchMap((FirebaseUser u) {
+    _user.listen((FirebaseUser u) {
       if (u != null) {
-        return _db
+        _db
             .collection('settings')
             .document(u.uid)
             .snapshots()
-            .map((snap) => snap.data);
+            .map((snap) => snap.data)
+            .listen((data) => settings.add(data));
       } else {
-        return Observable.just({'lang': 'ro'});
+        settings.add(null);
       }
     });
   }
