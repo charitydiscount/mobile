@@ -47,9 +47,9 @@ class AppModel extends Model {
     );
   }
 
-  void closeListeners() {
-    _profileListener.cancel();
-    _settingsListener.cancel();
+  Future<void> closeListeners() async {
+    await _profileListener.cancel();
+    await _settingsListener.cancel();
   }
 
   static AppModel of(

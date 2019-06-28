@@ -38,7 +38,7 @@ class UserController {
   }
 
   Future<void> signOut() async {
-    getShopsService(authService.currentUser.uid).closeFavoritesSink();
+    await getShopsService(authService.currentUser.uid).closeFavoritesSink();
     await authService.signOut();
     await localService.clear();
   }

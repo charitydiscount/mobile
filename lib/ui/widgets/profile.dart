@@ -99,7 +99,7 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> _signOut(BuildContext context) async {
-    AppModel.of(context).closeListeners();
+    await AppModel.of(context).closeListeners();
     await userController.signOut();
     await Navigator.pushNamedAndRemoveUntil(context, '/signin', (r) => false);
   }

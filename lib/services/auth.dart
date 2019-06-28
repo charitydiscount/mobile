@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,6 +18,9 @@ class AuthService {
   BehaviorSubject<Map<String, dynamic>> profile = BehaviorSubject();
   BehaviorSubject<Map<String, dynamic>> settings = BehaviorSubject();
 
+  StreamSubscription _usersListener;
+  StreamSubscription _settingsListener;
+
   AuthService() {
     _user = Observable(_auth.onAuthStateChanged);
 
@@ -23,7 +28,10 @@ class AuthService {
       currentUser = u;
 
       if (u != null) {
-        _db
+        if (_usersListener != null) {
+          _usersListener.cancel();
+        }
+        _usersListener = _db
             .collection('users')
             .document(u.uid)
             .snapshots()
@@ -36,7 +44,10 @@ class AuthService {
 
     _user.listen((FirebaseUser u) {
       if (u != null) {
-        _db
+        if (_settingsListener != null) {
+          _settingsListener.cancel();
+        }
+        _settingsListener = _db
             .collection('settings')
             .document(u.uid)
             .snapshots()
@@ -60,6 +71,12 @@ class AuthService {
   }
 
   Future<void> signOut() async {
+    if (_usersListener != null) {
+      await _usersListener.cancel();
+    }
+    if (_settingsListener != null) {
+      await _settingsListener.cancel();
+    }
     await _auth.signOut();
   }
 

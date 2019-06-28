@@ -7,7 +7,7 @@ import 'package:charity_discount/models/favorite_shops.dart';
 
 class ShopsService {
   final _db = Firestore.instance;
-  final String _userId;
+  final String userId;
   Observable<DocumentSnapshot> _favRef;
   StreamSubscription _favListener;
   BehaviorSubject<FavoriteShops> _favoritePrograms =
@@ -16,14 +16,14 @@ class ShopsService {
 
   BehaviorSubject<FavoriteShops> get favoritePrograms => _favoritePrograms;
 
-  ShopsService(this._userId) {
+  ShopsService(this.userId) {
     _favRef = Observable(
-        _db.collection('favoriteShops').document(_userId).snapshots());
+        _db.collection('favoriteShops').document(userId).snapshots());
     _favListener = _favRef.listen((snap) {
       if (snap.exists) {
         _favoritePrograms.add(FavoriteShops.fromJson(snap.data));
       } else {
-        _favoritePrograms.add(FavoriteShops(userId: _userId, programs: []));
+        _favoritePrograms.add(FavoriteShops(userId: userId, programs: []));
       }
     });
   }
@@ -111,9 +111,9 @@ class ShopsService {
     );
   }
 
-  void closeFavoritesSink() {
-    _favListener.cancel();
-    _favoritePrograms.close();
+  Future<void> closeFavoritesSink() async {
+    await _favListener.cancel();
+    await _favoritePrograms.close();
   }
 
   void refreshCache() {
@@ -137,7 +137,7 @@ class ShopsService {
 ShopsService _shopsService;
 
 ShopsService getShopsService(String userId) {
-  if (_shopsService == null) {
+  if (_shopsService == null || _shopsService.userId != userId) {
     _shopsService = ShopsService(userId);
   }
 
