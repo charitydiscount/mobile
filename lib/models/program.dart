@@ -30,42 +30,44 @@ class Program {
   String saleCommissionRate;
   String leadCommissionAmount;
 
-  Program(
-      {this.id,
-      this.uniqueCode,
-      this.status,
-      this.name,
-      this.category,
-      this.mainUrl,
-      this.logoPath,
-      this.defaultSaleCommissionRate,
-      this.defaultSaleCommissionType,
-      this.defaultLeadCommissionAmount,
-      this.defaultLeadCommissionType,
-      this.currency,
-      this.favorited = false,
-      this.source});
+  Program({
+    this.id,
+    this.uniqueCode,
+    this.status,
+    this.name,
+    this.category,
+    this.mainUrl,
+    this.logoPath,
+    this.defaultSaleCommissionRate,
+    this.defaultSaleCommissionType,
+    this.defaultLeadCommissionAmount,
+    this.defaultLeadCommissionType,
+    this.currency,
+    this.favorited = false,
+    this.source,
+  });
 
   factory Program.fromJson(Map json) {
     return Program(
-        id: json['id'],
-        uniqueCode: json['uniqueCode'],
-        status: json['status'] ?? 'active',
-        name: json['name'] ?? '',
-        category: json['category'] ?? '',
-        mainUrl: json['mainUrl'] ?? '',
-        logoPath:
-            json['logoPath'] ?? 'https://charitydiscount.ro/img/favicon.png',
-        defaultSaleCommissionRate: json['defaultSaleCommissionRate'] != null
-            ? double.parse(json['defaultSaleCommissionRate'])
-            : null,
-        defaultSaleCommissionType: json['defaultSaleCommissionType'],
-        defaultLeadCommissionAmount: json['defaultLeadCommissionAmount'] != null
-            ? double.parse(json['defaultLeadCommissionAmount'])
-            : null,
-        defaultLeadCommissionType: json['defaultLeadCommissionType'],
-        currency: json['currency'] ?? 'RON',
-        source: json['source'] ?? '');
+      id: json['id'],
+      uniqueCode: json['uniqueCode'],
+      status: json['status'] ?? 'active',
+      name: json['name'] ?? '',
+      category: json['category'] ?? '',
+      mainUrl: json['mainUrl'] ?? '',
+      logoPath:
+          json['logoPath'] ?? 'https://charitydiscount.ro/img/favicon.png',
+      defaultSaleCommissionRate: json['defaultSaleCommissionRate'] != null
+          ? double.parse(json['defaultSaleCommissionRate'])
+          : null,
+      defaultSaleCommissionType: json['defaultSaleCommissionType'],
+      defaultLeadCommissionAmount: json['defaultLeadCommissionAmount'] != null
+          ? double.parse(json['defaultLeadCommissionAmount'])
+          : null,
+      defaultLeadCommissionType: json['defaultLeadCommissionType'],
+      currency: json['currency'] ?? 'RON',
+      source: json['source'] ?? '',
+    );
   }
 
   Map<String, dynamic> toJson() => {
@@ -85,6 +87,6 @@ class Program {
             : null,
         'defaultLeadCommissionType': defaultLeadCommissionType,
         'currency': currency,
-        'source': source
+        'source': source,
       };
 }

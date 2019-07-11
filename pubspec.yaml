@@ -20,17 +20,17 @@ dependencies:
   flutter:
     sdk: flutter
   firebase_core: ^0.4.0+6
-  google_sign_in: ^4.0.2
+  google_sign_in: ^4.0.4
   firebase_auth: ^0.11.1+7
   firebase_analytics: ^3.0.3
-  cloud_firestore: ^0.12.5+2
+  cloud_firestore: ^0.12.7
   rxdart: ^0.22.0
   http: ^0.12.0+2
-  flushbar: ^1.7.0
+  flushbar: ^1.7.1
   shared_preferences: ^0.5.3+1
-  easy_localization: ^1.0.3+1
+  easy_localization: ^1.1.1
   flutter_screenutil: ^0.5.3
-  url_launcher: ^5.0.3
+  url_launcher: ^5.0.5
   gradient_text: ^1.0.2
   scoped_model: ^1.0.1
   timeline_list: ^0.0.4
@@ -59,7 +59,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
-    - assets/i18n/
+    - assets/i18n/en-US.json
+    - assets/i18n/ro-RO.json
     - assets/icons/
   fonts:
     - family: SocialIcons
