@@ -22,6 +22,8 @@ class WalletScreen extends StatelessWidget {
           return loading;
         }
 
+        snapshot.data.transactions.sort((t1, t2) => t2.date.compareTo(t1.date));
+
         return ListView(
           primary: true,
           children: <Widget>[
@@ -82,7 +84,9 @@ class WalletScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (BuildContext context) => TransactionsScreen(),
+                    builder: (BuildContext context) => TransactionsScreen(
+                      transactions: snapshot.data.transactions,
+                    ),
                     settings: RouteSettings(name: 'Transactions'),
                   ),
                 );

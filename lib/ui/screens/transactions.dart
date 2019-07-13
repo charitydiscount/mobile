@@ -1,8 +1,13 @@
+import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/ui/widgets/history_points.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class TransactionsScreen extends StatelessWidget {
+  final List<Transaction> transactions;
+
+  const TransactionsScreen({Key key, this.transactions}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +21,10 @@ class TransactionsScreen extends StatelessWidget {
           color: Theme.of(context).textTheme.body2.color,
         ),
       ),
-      body: HistoryPointsWidget(),
+      body: Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: HistoryPointsWidget(transactions: transactions),
+      ),
     );
   }
 }

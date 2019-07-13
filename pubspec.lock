@@ -168,7 +168,7 @@ packages:
       name: easy_localization
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.1"
+    version: "1.2.0+1"
   firebase_analytics:
     dependency: "direct main"
     description:
@@ -182,7 +182,7 @@ packages:
       name: firebase_auth
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.11.1+7"
+    version: "0.11.1+8"
   firebase_core:
     dependency: "direct main"
     description:
@@ -318,7 +318,7 @@ packages:
     source: hosted
     version: "2.1.4"
   intl:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: intl
       url: "https://pub.dartlang.org"
@@ -615,7 +615,7 @@ packages:
       name: watcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.7+10"
+    version: "0.9.7+12"
   web_socket_channel:
     dependency: transitive
     description:

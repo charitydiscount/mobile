@@ -1,35 +1,70 @@
+import 'package:charity_discount/models/wallet.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:timeline_list/timeline.dart';
 import 'package:timeline_list/timeline_model.dart';
 
 class HistoryPointsWidget extends StatelessWidget {
-  const HistoryPointsWidget({Key key}) : super(key: key);
+  final List<Transaction> transactions;
+
+  HistoryPointsWidget({Key key, this.transactions}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    List<TimelineModel> items = [
-      TimelineModel(
-        Placeholder(),
-        position: TimelineItemPosition.right,
-        iconBackground: Theme.of(context).primaryColor,
-        icon: Icon(Icons.blur_circular, color: Colors.white),
-      ),
-      TimelineModel(
-        Placeholder(),
-        position: TimelineItemPosition.right,
-        iconBackground: Theme.of(context).primaryColor,
-        icon: Icon(
-          Icons.blur_circular,
-          color: Colors.white,
-        ),
-      ),
-    ];
+    List<TimelineModel> items = transactions.map((tx) {
+      Icon txIcon;
+      Color iconBackground;
+      switch (tx.type) {
+        case TxType.bonus:
+          txIcon = Icon(Icons.add_circle_outline, color: Colors.white);
+          iconBackground = Colors.green;
+          break;
+        case TxType.cashout:
+          txIcon = Icon(Icons.file_upload, color: Colors.white);
+          iconBackground = Colors.blueGrey;
+          break;
+        case TxType.donation:
+          txIcon = Icon(Icons.favorite_border, color: Colors.white);
+          iconBackground = Colors.red;
+          break;
+        default:
+      }
+      return TimelineModel(
+        TransactionDetails(tx: tx),
+        position: TimelineItemPosition.random,
+        iconBackground: iconBackground,
+        icon: txIcon,
+      );
+    }).toList();
     return Padding(
-      padding: EdgeInsets.all(12.0),
+      padding: const EdgeInsets.only(left: 8.0, top: 8.0),
       child: Timeline(
         children: items,
         position: TimelinePosition.Left,
         lineColor: Theme.of(context).textTheme.body2.color,
+      ),
+    );
+  }
+}
+
+class TransactionDetails extends StatelessWidget {
+  final Transaction tx;
+
+  const TransactionDetails({Key key, this.tx}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ListTile(
+            // leading: Icon(Icons.album),
+            title: Text('${tx.amount.toString()} ${tx.currency}'),
+            subtitle: Text(DateFormat.yMd('ro_RO').add_jm().format(tx.date)),
+          ),
+        ],
       ),
     );
   }
