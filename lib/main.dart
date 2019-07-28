@@ -42,12 +42,12 @@ class Main extends StatelessWidget {
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           EasylocaLizationDelegate(
-            locale: data.locale ?? Locale('ro'),
+            locale: data.locale ?? Locale('ro', 'RO'),
             path: 'assets/i18n',
           ),
         ],
-        supportedLocales: [Locale('en'), Locale('ro')],
-        locale: data.locale ?? Locale('ro'),
+        supportedLocales: [Locale('en', 'US'), Locale('ro', 'RO')],
+        locale: data.locale ?? Locale('ro', 'RO'),
         routes: {
           '/': (context) => SafeArea(child: defaultWidget),
           '/signin': (context) => SafeArea(child: SignInScreen()),

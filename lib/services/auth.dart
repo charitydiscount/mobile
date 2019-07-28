@@ -60,10 +60,12 @@ class AuthService {
   }
 
   Future<FirebaseUser> signInWithEmailAndPass(email, password) async {
-    FirebaseUser user = await _auth.signInWithEmailAndPassword(
-        email: email, password: password);
+    AuthResult authResult = await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-    return user;
+    return authResult.user;
   }
 
   Future<void> resetPassword(String email) async {
@@ -87,7 +89,8 @@ class AuthService {
     AuthCredential credential = GoogleAuthProvider.getCredential(
         accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
-    FirebaseUser user = await _auth.signInWithCredential(credential);
+    AuthResult authResult = await _auth.signInWithCredential(credential);
+    FirebaseUser user = authResult.user;
 
     final googleApisUrl =
         'https://www.googleapis.com/oauth2/v3/userinfo?alt=json&access_token=${googleAuth.accessToken}';
@@ -100,7 +103,7 @@ class AuthService {
         'email': googleUser.email,
         'firstName': userInfoJson['given_name'],
         'lastName': userInfoJson['family_name'],
-        'photoUrl': user.photoUrl
+        'photoUrl': user.photoUrl,
       });
     }
 
@@ -125,18 +128,20 @@ class AuthService {
 
   Future<FirebaseUser> createUser(String email, String password,
       String firstName, String lastName, String lang) async {
-    FirebaseUser newUser = await _auth.createUserWithEmailAndPassword(
-        email: email, password: password);
-    await updateUserData(newUser.uid, {
-      'userId': newUser.uid,
+    AuthResult authResult = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    await updateUserData(authResult.user.uid, {
+      'userId': authResult.user.uid,
       'email': email,
       'firstName': firstName,
       'lastName': lastName
     });
 
-    await updateUserSettings(newUser.uid, {'lang': lang});
+    await updateUserSettings(authResult.user.uid, {'lang': lang});
 
-    return newUser;
+    return authResult.user;
   }
 }
 
