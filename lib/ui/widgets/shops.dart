@@ -9,7 +9,6 @@ import 'package:charity_discount/util/url.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:charity_discount/models/program.dart' as models;
-import 'package:charity_discount/ui/widgets/loading.dart';
 import 'package:charity_discount/ui/widgets/shop.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -20,7 +19,6 @@ class Shops extends StatefulWidget {
 }
 
 class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
-  bool _loadingVisible = false;
   final _perPage = 50;
   Completer<Null> _loadingCompleter = Completer<Null>();
   List<Observable<List<models.Program>>> _marketStreams = List();
@@ -99,12 +97,12 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
             List.generate(
               _perPage,
               (index) => Padding(
-                    padding: EdgeInsets.only(top: 8.0),
-                    child: Placeholder(
-                      fallbackHeight: 100.0,
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                    ),
-                  ),
+                padding: EdgeInsets.only(top: 8.0),
+                child: Placeholder(
+                  fallbackHeight: 100.0,
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                ),
+              ),
             ),
           );
 
@@ -124,7 +122,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
         final List<models.Program> programs = List.of(snapshot.data);
 
         return ShopsWidget(
-          key: Key(pageNumber.toString()),
+          key: Key('PrimaryListPage${pageNumber.toString()}'),
           appState: _appState,
           programs: programs,
           category: _category,
@@ -238,32 +236,29 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
       color: Theme.of(context).accentColor,
     );
 
-    return LoadingScreen(
-      child: RefreshIndicator(
-        onRefresh: () {
-          _loadingCompleter = Completer<Null>();
-          _service.refreshCache();
-          setState(() {});
-          return _loadingCompleter.future;
-        },
-        color: Theme.of(context).primaryColor,
-        child: Column(
-          children: [
-            toolbar,
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.all(12.0),
-                primary: true,
-                itemCount: _totalPages,
-                shrinkWrap: true,
-                itemBuilder: (context, pageIndex) =>
-                    _loadPrograms(pageIndex + 1),
-              ),
-            )
-          ],
-        ),
+    return RefreshIndicator(
+      onRefresh: () {
+        _loadingCompleter = Completer<Null>();
+        _service.refreshCache();
+        setState(() {});
+        return _loadingCompleter.future;
+      },
+      color: Theme.of(context).primaryColor,
+      child: Column(
+        children: [
+          toolbar,
+          Expanded(
+            child: ListView.builder(
+              key: Key('PrimaryList'),
+              padding: const EdgeInsets.all(12.0),
+              primary: true,
+              itemCount: _totalPages,
+              shrinkWrap: true,
+              itemBuilder: (context, pageIndex) => _loadPrograms(pageIndex + 1),
+            ),
+          )
+        ],
       ),
-      inAsyncCall: _loadingVisible,
     );
   }
 
@@ -424,16 +419,16 @@ class ProgramsSearch extends SearchDelegate<String> {
         List<Widget> suggestions = List<Widget>.from(
           snapshot.data.map(
             (hit) => InkWell(
-                  onTap: () {
-                    query = hit.name;
-                    _exactMatch = true;
-                    showResults(context);
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                    child: Html(data: hit.formattedName),
-                  ),
-                ),
+              onTap: () {
+                query = hit.name;
+                _exactMatch = true;
+                showResults(context);
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                child: Html(data: hit.formattedName),
+              ),
+            ),
           ),
         );
 
@@ -494,8 +489,10 @@ class ShopsWidget extends StatelessWidget {
     String category,
   }) {
     programs.forEach((p) {
-      if (favorites.firstWhere((f) => f.uniqueCode == p.uniqueCode,
-              orElse: () => null) !=
+      if (favorites.firstWhere(
+            (f) => f.uniqueCode == p.uniqueCode,
+            orElse: () => null,
+          ) !=
           null) {
         p.favorited = true;
       } else {
@@ -533,10 +530,10 @@ class ShopsWidget extends StatelessWidget {
     final List<Widget> shopWidgets = programs
         .map(
           (p) => ShopWidget(
-                key: Key(p.uniqueCode),
-                program: p,
-                userId: appState.user.userId,
-              ),
+            key: Key(p.uniqueCode),
+            program: p,
+            userId: appState.user.userId,
+          ),
         )
         .toList();
     return ListView(
