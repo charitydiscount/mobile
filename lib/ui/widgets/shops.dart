@@ -197,7 +197,7 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
             _onlyFavorites = !_onlyFavorites;
             _totalPages = 1;
           });
-          var controller = PrimaryScrollController.of(context);
+          ScrollController controller = PrimaryScrollController.of(context);
           controller.animateTo(
             controller.position.minScrollExtent,
             curve: Curves.easeOut,
@@ -252,8 +252,8 @@ class _ShopsState extends State<Shops> with AutomaticKeepAliveClientMixin {
               key: Key('PrimaryList'),
               padding: const EdgeInsets.all(12.0),
               primary: true,
-              itemCount: _totalPages,
               shrinkWrap: true,
+              itemCount: _totalPages,
               itemBuilder: (context, pageIndex) => _loadPrograms(pageIndex + 1),
             ),
           )
@@ -442,7 +442,7 @@ class ProgramsSearch extends SearchDelegate<String> {
   }
 }
 
-class ShopsWidget extends StatelessWidget {
+class ShopsWidget extends StatefulWidget {
   final List<models.Program> programs;
   final AppModel appState;
   final bool onlyFavorites;
@@ -457,10 +457,17 @@ class ShopsWidget extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _ShopsWidgetState createState() => _ShopsWidgetState();
+}
+
+class _ShopsWidgetState extends State<ShopsWidget>
+    with AutomaticKeepAliveClientMixin {
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return StreamBuilder(
       initialData: [],
-      stream: getShopsService(appState.user.userId).favoritePrograms,
+      stream: getShopsService(widget.appState.user.userId).favoritePrograms,
       builder: (context, snapshot) {
         if (snapshot.hasError ||
             snapshot.connectionState == ConnectionState.waiting ||
@@ -471,11 +478,11 @@ class ShopsWidget extends StatelessWidget {
         FavoriteShops favoriteShops = snapshot.data;
         final favoritePrograms = List.of(favoriteShops.programs).toList();
         return _buildShopList(
-          programs,
-          appState,
+          widget.programs,
+          widget.appState,
           favorites: favoritePrograms,
-          onlyFavorites: onlyFavorites,
-          category: category,
+          onlyFavorites: widget.onlyFavorites,
+          category: widget.category,
         );
       },
     );
@@ -537,11 +544,14 @@ class ShopsWidget extends StatelessWidget {
         )
         .toList();
     return ListView(
-      key: Key('ProgramsListView${key.toString()}'),
+      key: Key('ProgramsListView${widget.key.toString()}'),
       addAutomaticKeepAlives: true,
       children: shopWidgets,
       shrinkWrap: true,
       primary: false,
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
