@@ -37,11 +37,12 @@ class HistoryPointsWidget extends StatelessWidget {
       );
     }).toList();
     return Padding(
-      padding: const EdgeInsets.only(left: 8.0, top: 8.0),
+      padding: const EdgeInsets.only(top: 8.0),
       child: Timeline(
         children: items,
-        position: TimelinePosition.Left,
+        position: TimelinePosition.Center,
         lineColor: Theme.of(context).textTheme.body2.color,
+        shrinkWrap: true,
       ),
     );
   }
@@ -56,15 +57,11 @@ class TransactionDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ListTile(
-            // leading: Icon(Icons.album),
-            title: Text('${tx.amount.toString()} ${tx.currency}'),
-            subtitle: Text(DateFormat.yMd('ro_RO').add_jm().format(tx.date)),
-          ),
-        ],
+      child: Card(
+        child: ListTile(
+          title: Text('${tx.amount.toString()} ${tx.currency}'),
+          subtitle: Text(DateFormat.yMd('ro_RO').add_jm().format(tx.date)),
+        ),
       ),
     );
   }
