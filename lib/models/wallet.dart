@@ -1,5 +1,5 @@
-import 'package:charity_discount/models/points.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:charity_discount/models/points.dart';
 
 class Wallet {
   final Points charityPoints;
@@ -44,12 +44,13 @@ class Wallet {
   }
 }
 
-enum TxType { donation, cashout, bonus }
+enum TxType { DONATION, CASHOUT, BONUS }
 
 TxType txTypeFromString(String txTypeString) {
-  String fruit = 'TxType.$txTypeString';
+  String txTypeUpper = txTypeString.toUpperCase();
+  String txEnumString = 'TxType.$txTypeUpper';
   return TxType.values.firstWhere(
-    (f) => f.toString() == fruit,
+    (f) => f.toString() == txEnumString,
     orElse: () => null,
   );
 }

@@ -14,8 +14,9 @@ class WalletScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Wallet>(
-      future: charityService.getPoints(AppModel.of(context).user.userId),
+    return StreamBuilder<Wallet>(
+      stream:
+          charityService.getPointsListener(AppModel.of(context).user.userId),
       builder: (context, snapshot) {
         final loading = buildConnectionLoading(
           context: context,
@@ -83,20 +84,13 @@ class WalletScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               maintainState: true,
-                              builder: (BuildContext context) {
-                                return Scaffold(
-                                  appBar: AppBar(
-                                    title: Text('Doneaza'),
-                                  ),
-                                  body: CharityWidget(),
-                                );
-                              },
+                              builder: _donateViewBuilder,
                               settings: RouteSettings(name: 'Donate'),
                             ),
                           );
                           break;
                         case CashbackAction.CASHOUT:
-                          break;
+                          return;
                         default:
                           return;
                       }
@@ -143,21 +137,54 @@ class WalletScreen extends StatelessWidget {
             Navigator.of(context).pop(CashbackAction.CANCEL);
           },
         ),
-        RaisedButton(
-          color: Theme.of(context).primaryColor,
-          child: Text('DONEAZA', style: TextStyle(color: Colors.white)),
+        FlatButton(
+          child: Row(
+            children: <Widget>[
+              Icon(
+                Icons.favorite,
+                color: Colors.red,
+              ),
+              Text(
+                'DONEAZA',
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
+            ],
+          ),
           onPressed: () {
             Navigator.of(context).pop(CashbackAction.DONATE);
           },
         ),
-        RaisedButton(
-          color: Colors.green,
-          child: Text('RETRAGE', style: TextStyle(color: Colors.white)),
+        FlatButton(
+          child: Row(
+            children: <Widget>[
+              Icon(
+                Icons.monetization_on,
+                color: Colors.green,
+              ),
+              Text(
+                'RETRAGE',
+                style: TextStyle(color: Colors.green),
+              ),
+            ],
+          ),
           onPressed: () {
-            Navigator.of(context).pop(CashbackAction.DONATE);
+            Navigator.of(context).pop(CashbackAction.CASHOUT);
           },
         )
       ],
+    );
+  }
+
+  Widget _donateViewBuilder(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Doneaza'),
+      ),
+      body: Column(
+        children: <Widget>[
+          Expanded(child: CharityWidget()),
+        ],
+      ),
     );
   }
 }

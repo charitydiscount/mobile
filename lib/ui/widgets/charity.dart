@@ -34,18 +34,27 @@ class _CharityState extends State<CharityWidget>
         }
 
         final caseWidgets = snapshot.data.entries
-            .map((entry) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child:
-                      CaseWidget(key: Key(entry.key), charityCase: entry.value),
-                ))
+            .map(
+              (entry) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child:
+                    CaseWidget(key: Key(entry.key), charityCase: entry.value),
+              ),
+            )
             .toList();
-        return Expanded(
-          child: ListView(
-            key: Key('casesList'),
-            children: caseWidgets,
-            addAutomaticKeepAlives: true,
-            primary: true,
+        return SizedBox.expand(
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: ListView(
+                  key: Key('casesList'),
+                  children: caseWidgets,
+                  shrinkWrap: true,
+                  addAutomaticKeepAlives: true,
+                  primary: true,
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -56,11 +65,7 @@ class _CharityState extends State<CharityWidget>
         padding: const EdgeInsets.only(
           top: 12.0,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[casesBuilder],
-        ),
+        child: casesBuilder,
       ),
       inAsyncCall: _loadingVisible,
     );

@@ -15,15 +15,15 @@ class HistoryPointsWidget extends StatelessWidget {
       Icon txIcon;
       Color iconBackground;
       switch (tx.type) {
-        case TxType.bonus:
+        case TxType.BONUS:
           txIcon = Icon(Icons.add_circle_outline, color: Colors.white);
           iconBackground = Colors.green;
           break;
-        case TxType.cashout:
+        case TxType.CASHOUT:
           txIcon = Icon(Icons.file_upload, color: Colors.white);
           iconBackground = Colors.blueGrey;
           break;
-        case TxType.donation:
+        case TxType.DONATION:
           txIcon = Icon(Icons.favorite_border, color: Colors.white);
           iconBackground = Colors.red;
           break;

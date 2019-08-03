@@ -1,8 +1,8 @@
 class Charity {
   String id;
-  String title;
-  String description;
-  List<CharityImage> images;
+  final String title;
+  final String description;
+  final List<CharityImage> images;
 
   Charity({
     this.id,
@@ -27,7 +27,7 @@ class Charity {
 }
 
 class CharityImage {
-  String url;
+  final String url;
 
   CharityImage({this.url});
 
