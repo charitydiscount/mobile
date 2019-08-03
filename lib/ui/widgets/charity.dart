@@ -61,12 +61,7 @@ class _CharityState extends State<CharityWidget>
     );
 
     return LoadingScreen(
-      child: Padding(
-        padding: const EdgeInsets.only(
-          top: 12.0,
-        ),
-        child: casesBuilder,
-      ),
+      child: casesBuilder,
       inAsyncCall: _loadingVisible,
     );
   }

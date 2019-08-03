@@ -23,12 +23,14 @@ class _DonateDialogState extends State<DonateDialog> {
   Widget build(BuildContext context) {
     return SimpleDialog(
       title: Text('Contribuie la ${widget.charityCase.title}'),
-      titlePadding: const EdgeInsets.fromLTRB(12.0, 16.0, 12.0, 2.0),
-      contentPadding: const EdgeInsets.fromLTRB(12.0, 16.0, 12.0, 2.0),
+      contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 2.0),
       children: <Widget>[
-        DonateWidget(
-          charityCase: widget.charityCase,
-          formKey: _formKey,
+        Container(
+          child: DonateWidget(
+            charityCase: widget.charityCase,
+            formKey: _formKey,
+          ),
+          width: MediaQuery.of(context).size.width,
         ),
       ],
     );
@@ -183,10 +185,12 @@ class _CashoutDialogState extends State<CashoutDialog> {
   Widget build(BuildContext context) {
     return SimpleDialog(
       title: Text('Cashout'),
-      titlePadding: const EdgeInsets.fromLTRB(12.0, 16.0, 12.0, 2.0),
-      contentPadding: const EdgeInsets.fromLTRB(12.0, 16.0, 12.0, 2.0),
+      contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 2.0),
       children: <Widget>[
-        CashoutWidget(formKey: _formKey),
+        Container(
+          child: CashoutWidget(formKey: _formKey),
+          width: MediaQuery.of(context).size.width,
+        ),
       ],
     );
   }
