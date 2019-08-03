@@ -4,6 +4,7 @@ import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/screens/transactions.dart';
 import 'package:charity_discount/ui/widgets/about_points.dart';
 import 'package:charity_discount/ui/widgets/charity.dart';
+import 'package:charity_discount/ui/widgets/operations.dart';
 import 'package:charity_discount/util/ui.dart';
 import 'package:flutter/material.dart';
 
@@ -90,7 +91,14 @@ class WalletScreen extends StatelessWidget {
                           );
                           break;
                         case CashbackAction.CASHOUT:
-                          return;
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return CashoutDialog();
+                            },
+                          ).then((donateResult) {});
+                          break;
                         default:
                           return;
                       }
