@@ -21,18 +21,12 @@ class _DonateDialogState extends State<DonateDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return SimpleDialog(
+    return OperationDialog(
       title: Text('Contribuie la ${widget.charityCase.title}'),
-      contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 2.0),
-      children: <Widget>[
-        Container(
-          child: DonateWidget(
-            charityCase: widget.charityCase,
-            formKey: _formKey,
-          ),
-          width: MediaQuery.of(context).size.width,
-        ),
-      ],
+      body: DonateWidget(
+        charityCase: widget.charityCase,
+        formKey: _formKey,
+      ),
     );
   }
 }
@@ -116,19 +110,17 @@ class _DonateWidgetState extends State<DonateWidget> {
                     labelText: "Suma cu care doresti sa contribui",
                   ),
                   keyboardType: TextInputType.number,
-                  inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                  inputFormatters: [
+                    WhitelistingTextInputFormatter(
+                      RegExp(r'^\d+\.?\d{0,2}$'),
+                    ),
+                  ],
                 ),
               ),
             ),
             ButtonTheme.bar(
               child: ButtonBar(
                 children: [
-                  FlatButton(
-                    child: Text('RENUNTA'),
-                    onPressed: () {
-                      Navigator.of(context).pop(null);
-                    },
-                  ),
                   FlatButton(
                     child: Row(
                       children: <Widget>[
@@ -183,15 +175,9 @@ class _CashoutDialogState extends State<CashoutDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return SimpleDialog(
+    return OperationDialog(
       title: Text('Cashout'),
-      contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 2.0),
-      children: <Widget>[
-        Container(
-          child: CashoutWidget(formKey: _formKey),
-          width: MediaQuery.of(context).size.width,
-        ),
-      ],
+      body: CashoutWidget(formKey: _formKey),
     );
   }
 }
@@ -257,7 +243,7 @@ class _CashoutWidgetState extends State<CashoutWidget> {
 
                     double amount = double.tryParse(value);
                     if (amount == null) {
-                      return 'Doar cifre';
+                      return 'Doar numere';
                     }
 
                     if (double.parse(value) > balance) {
@@ -274,19 +260,17 @@ class _CashoutWidgetState extends State<CashoutWidget> {
                     labelText: "Suma pe care doresti sa o retragi",
                   ),
                   keyboardType: TextInputType.number,
-                  inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                  inputFormatters: [
+                    WhitelistingTextInputFormatter(
+                      RegExp(r'^\d+\.?\d{0,2}$'),
+                    ),
+                  ],
                 ),
               ),
             ),
             ButtonTheme.bar(
               child: ButtonBar(
                 children: [
-                  FlatButton(
-                    child: Text('RENUNTA'),
-                    onPressed: () {
-                      Navigator.of(context).pop(null);
-                    },
-                  ),
                   FlatButton(
                     child: Row(
                       children: <Widget>[
@@ -325,6 +309,44 @@ class _CashoutWidgetState extends State<CashoutWidget> {
           ],
         );
       },
+    );
+  }
+}
+
+class OperationDialog extends StatelessWidget {
+  final Text title;
+  final Widget body;
+
+  const OperationDialog({
+    Key key,
+    @required this.title,
+    @required this.body,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      title: Row(
+        children: <Widget>[
+          title,
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                CloseButton(),
+              ],
+            ),
+          ),
+        ],
+      ),
+      titlePadding: const EdgeInsets.fromLTRB(16.0, 10.0, 8.0, 2.0),
+      contentPadding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 2.0),
+      children: <Widget>[
+        Container(
+          child: body,
+          width: MediaQuery.of(context).size.width,
+        ),
+      ],
     );
   }
 }

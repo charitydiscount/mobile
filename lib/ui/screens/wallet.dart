@@ -135,16 +135,28 @@ class WalletScreen extends StatelessWidget {
 
   Widget _dialogCashbackBuilder(BuildContext context) {
     return AlertDialog(
-      title: Text('Ce doresti sa faci cu cashback-ul obtinut?'),
+      title: Row(
+        children: <Widget>[
+          Expanded(
+            child: Text(
+              'Ce doresti sa faci cu cashback-ul obtinut?',
+              softWrap: true,
+            ),
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              CloseButton(),
+            ],
+          ),
+        ],
+      ),
+      titlePadding: const EdgeInsets.fromLTRB(16.0, 16.0, 8.0, 2.0),
       content: Text(
-          'Ai posibilitatea fie sa contribui la o lume mai buna, fie sa ii retragi (total sau partial).'),
+        'Ai posibilitatea fie sa contribui la o lume mai buna, fie sa ii retragi (total sau partial).',
+      ),
       actions: <Widget>[
-        FlatButton(
-          child: Text('RENUNTA'),
-          onPressed: () {
-            Navigator.of(context).pop(CashbackAction.CANCEL);
-          },
-        ),
         FlatButton(
           child: Row(
             children: <Widget>[
