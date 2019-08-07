@@ -1,6 +1,7 @@
 import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/suggestion.dart';
 import 'package:charity_discount/services/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -14,9 +15,9 @@ class SearchService {
       url = url + '&exact=true';
     }
 
-    String authToken = await authService.currentUser.getIdToken();
+    IdTokenResult authToken = await authService.currentUser.getIdToken();
     final response = await http.get(url, headers: {
-      'Authorization': 'Bearer $authToken',
+      'Authorization': 'Bearer ${authToken.token}',
     });
 
     if (response.statusCode != 200) {
@@ -38,9 +39,9 @@ class SearchService {
     List hits = data ?? [];
     List<Suggestion> suggestions = List<Suggestion>.from(hits.map(
       (hit) => Suggestion(
-            name: hit['name'],
-            formattedName: hit['_highlightResult']['name']['value'],
-          ),
+        name: hit['name'],
+        formattedName: hit['_highlightResult']['name']['value'],
+      ),
     ));
 
     return suggestions;

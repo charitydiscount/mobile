@@ -1,10 +1,11 @@
 import 'package:charity_discount/models/promotion.dart';
 import 'package:charity_discount/services/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:charity_discount/util/url.dart';
 
-final String baseUrl = 'https://charity-proxy.appspot.com';
+final String baseUrl = 'https://affiliate-dot-charity-proxy.appspot.com';
 
 class AffiliateService {
   Future<List<Promotion>> getPromotions({
@@ -15,9 +16,9 @@ class AffiliateService {
   }) async {
     final url = '$baseUrl/programs/$programId/promotions';
 
-    String authToken = await authService.currentUser.getIdToken();
+    IdTokenResult authToken = await authService.currentUser.getIdToken();
     final response = await http.get(url, headers: {
-      'Authorization': 'Bearer $authToken',
+      'Authorization': 'Bearer ${authToken.token}',
     });
 
     if (response.statusCode != 200) {
