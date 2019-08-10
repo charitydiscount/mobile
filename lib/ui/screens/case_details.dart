@@ -1,29 +1,30 @@
 import 'package:charity_discount/models/charity.dart';
+import 'package:charity_discount/ui/widgets/operations.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class CaseDetails extends StatelessWidget {
   final Charity charity;
 
-  const CaseDetails({Key key, this.charity}) : super(key: key);
+  CaseDetails({Key key, this.charity}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final images = charity.images
         .map(
           (image) => Padding(
-                padding: EdgeInsets.only(bottom: 16),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: CachedNetworkImage(
-                        imageUrl: image.url,
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  ],
-                ),
-              ),
+            padding: EdgeInsets.only(bottom: 16),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: CachedNetworkImage(
+                    imageUrl: image.url,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              ],
+            ),
+          ),
         )
         .toList();
 
@@ -44,7 +45,17 @@ class CaseDetails extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(charity.title)),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return DonateDialog(
+                charityCase: charity,
+              );
+            },
+          ).then((donateResult) {});
+        },
         child: const Icon(Icons.favorite),
       ),
       body: ListView(
