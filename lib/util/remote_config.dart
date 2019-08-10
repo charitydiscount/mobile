@@ -4,12 +4,12 @@ class RemoteConfigWrapper {
   RemoteConfig _remoteConfig;
 
   Future<String> getSearchEndpoint() async {
-    RemoteConfigValue configValue = await _getValue('affiliate_endpoint');
+    RemoteConfigValue configValue = await _getValue('search_endpoint');
     return configValue.asString();
   }
 
   Future<String> getAffiliateEndpoint() async {
-    RemoteConfigValue configValue = await _getValue('search_endpoint');
+    RemoteConfigValue configValue = await _getValue('affiliate_endpoint');
     return configValue.asString();
   }
   
