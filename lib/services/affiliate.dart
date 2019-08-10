@@ -1,20 +1,25 @@
 import 'package:charity_discount/models/promotion.dart';
 import 'package:charity_discount/services/auth.dart';
+import 'package:charity_discount/util/remote_config.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:charity_discount/util/url.dart';
 
-final String baseUrl = 'https://affiliate-dot-charity-proxy.appspot.com';
-
 class AffiliateService {
+  String _baseUrl;
+
   Future<List<Promotion>> getPromotions({
     String affiliateUniqueCode,
     int programId,
     String programUniqueCode,
     String userId,
   }) async {
-    final url = '$baseUrl/programs/$programId/promotions';
+    if (_baseUrl == null) {
+      await _setBaseUrl();
+    }
+
+    final url = '$_baseUrl/programs/$programId/promotions';
 
     IdTokenResult authToken = await authService.currentUser.getIdToken();
     final response = await http.get(url, headers: {
@@ -39,6 +44,10 @@ class AffiliateService {
     });
 
     return promotions;
+  }
+
+  Future<void> _setBaseUrl() async {
+    _baseUrl = await remoteConfig.getAffiliateEndpoint();
   }
 }
 
