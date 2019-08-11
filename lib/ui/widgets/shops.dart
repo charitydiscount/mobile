@@ -1,6 +1,7 @@
 import 'package:async/async.dart';
 import 'package:charity_discount/models/favorite_shops.dart';
 import 'package:charity_discount/models/meta.dart';
+import 'package:charity_discount/models/suggestion.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
@@ -11,7 +12,6 @@ import 'dart:async';
 import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/ui/widgets/shop.dart';
 import 'package:charity_discount/state/state_model.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:rxdart/rxdart.dart';
 
 class Shops extends StatefulWidget {
@@ -418,7 +418,7 @@ class ProgramsSearch extends SearchDelegate<String> {
 
         List<Widget> suggestions = List<Widget>.from(
           snapshot.data.map(
-            (hit) => InkWell(
+            (Suggestion hit) => InkWell(
               onTap: () {
                 query = hit.name;
                 _exactMatch = true;
@@ -426,7 +426,21 @@ class ProgramsSearch extends SearchDelegate<String> {
               },
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                child: Html(data: hit.formattedName),
+                child: RichText(
+                  text: TextSpan(
+                    text: hit.query,
+                    style: DefaultTextStyle.of(context).style,
+                    children: [
+                      TextSpan(
+                        text: hit.name.split(hit.query)[1],
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: DefaultTextStyle.of(context).style.color,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),

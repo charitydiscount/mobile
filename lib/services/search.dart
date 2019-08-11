@@ -10,14 +10,15 @@ class SearchService {
   String _baseUrl;
 
   dynamic _search(String query, exact) async {
+    String trimmedQuery = query.trim();
     if (_baseUrl == null) {
       await _setBaseUrl();
     }
 
-    String url = '$_baseUrl/search?query=$query';
+    String url = '$_baseUrl/search?query=$trimmedQuery';
 
     if (exact == true) {
-      url = url + '&exact=true';
+      url = '$url&exact=true';
     }
 
     IdTokenResult authToken = await authService.currentUser.getIdToken();
@@ -33,21 +34,34 @@ class SearchService {
   }
 
   Future<List<Program>> search(String query, {bool exact = false}) async {
-    dynamic data = await _search(query, exact);
-    List<Program> programs = fromJsonArray(data);
+    Map<String, dynamic> data = await _search(query, exact);
+    if (!data.containsKey('hits')) {
+      return [];
+    }
+    List hits = data['hits'];
+    List<Program> programs = fromElasticsearch(hits);
 
     return programs;
   }
 
   Future<List<Suggestion>> getSuggestions(String query) async {
-    dynamic data = await _search(query, false);
-    List hits = data ?? [];
-    List<Suggestion> suggestions = List<Suggestion>.from(hits.map(
-      (hit) => Suggestion(
-        name: hit['name'],
-        formattedName: hit['_highlightResult']['name']['value'],
+    Map<String, dynamic> data = await _search(query, false);
+    if (!data.containsKey('hits')) {
+      return [];
+    }
+    List hits = data['hits'];
+    List<Suggestion> suggestions = List<Suggestion>.from(
+      hits.map(
+        (hit) => Suggestion(
+          name: hit['_source']['name'],
+          query: query,
+        ),
       ),
-    ));
+    );
+
+    suggestions.removeWhere(
+      (suggestion) => !suggestion.name.startsWith(suggestion.query),
+    );
 
     return suggestions;
   }

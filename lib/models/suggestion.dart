@@ -1,6 +1,6 @@
 class Suggestion {
   final String name;
-  final String formattedName;
+  final String query;
 
-  Suggestion({this.name, this.formattedName});
+  Suggestion({this.name, this.query});
 }

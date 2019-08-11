@@ -7,7 +7,14 @@ List<Program> fromFirestoreBatch(DocumentSnapshot doc) {
 
 List<Program> fromJsonArray(List json) {
   return List<Program>.from(
-      json.map((program) => Program.fromJson(program)).toList());
+    json.map((program) => Program.fromJson(program)).toList(),
+  );
+}
+
+List<Program> fromElasticsearch(List json) {
+  return List<Program>.from(
+    json.map((program) => Program.fromJson(program['_source'])).toList(),
+  );
 }
 
 class Program {
