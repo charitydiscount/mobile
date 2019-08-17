@@ -8,6 +8,7 @@
   "contribute": "Contribute",
   "firstName": "First Name",
   "lastName": "Last Name",
+  "name": "Name",
   "wallet": "Wallet",
   "transactionHistory": "Transaction History"
 }

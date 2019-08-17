@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/ui/screens/case_details.dart';
 import 'package:charity_discount/ui/widgets/operations.dart';
+import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/charity.dart';
@@ -18,6 +19,16 @@ class CaseWidget extends StatelessWidget {
       height: 120,
       fit: BoxFit.fill,
     );
+    final websiteButton = charityCase.site != null
+        ? Padding(
+            padding: EdgeInsets.only(right: 12.0),
+            child: FlatButton(
+              onPressed: () {
+                launchURL(charityCase.site);
+              },
+              child: Text('Website'),
+            ))
+        : Container();
     final donateButton = RaisedButton(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -58,7 +69,10 @@ class CaseWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             ListTile(
-              leading: logo,
+              leading: Hero(
+                tag: 'case-${charityCase.id}',
+                child: logo,
+              ),
               title: Center(
                 child: Text(
                   charityCase.title,
@@ -74,6 +88,7 @@ class CaseWidget extends StatelessWidget {
             ButtonTheme.bar(
               child: ButtonBar(
                 children: <Widget>[
+                  websiteButton,
                   donateButton,
                 ],
               ),

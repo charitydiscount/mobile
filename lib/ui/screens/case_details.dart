@@ -10,7 +10,26 @@ class CaseDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final leadImage = charity.images.isNotEmpty
+        ? Padding(
+            padding: EdgeInsets.only(bottom: 16),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Hero(
+                    tag: 'case-${charity.id}',
+                    child: CachedNetworkImage(
+                      imageUrl: charity.images.first.url,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          )
+        : Container();
     final images = charity.images
+        .skip(1)
         .map(
           (image) => Padding(
             padding: EdgeInsets.only(bottom: 16),
@@ -59,7 +78,7 @@ class CaseDetails extends StatelessWidget {
         child: const Icon(Icons.favorite),
       ),
       body: ListView(
-        children: List.from([description])..addAll(images),
+        children: List.from([leadImage, description])..addAll(images),
       ),
     );
   }

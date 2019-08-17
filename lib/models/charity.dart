@@ -3,12 +3,14 @@ class Charity {
   final String title;
   final String description;
   final List<CharityImage> images;
+  final String site;
 
   Charity({
     this.id,
     this.title,
     this.description,
     this.images,
+    this.site,
   });
 
   factory Charity.fromJson(Map<String, dynamic> json) => Charity(
@@ -23,6 +25,7 @@ class Charity {
                     ),
             )
             ?.toList(),
+        site: json["site"] ?? null,
       );
 }
 
