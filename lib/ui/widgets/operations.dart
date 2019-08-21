@@ -1,6 +1,8 @@
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/ui.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/models/charity.dart';
@@ -74,7 +76,7 @@ class _DonateWidgetState extends State<DonateWidget> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
-                'Cashback disponibil: ${balance.toString()} RON',
+                'Cashback disponibil: ${balance.toStringAsFixed(2)} RON',
                 textAlign: TextAlign.left,
               ),
             ),
@@ -139,17 +141,15 @@ class _DonateWidgetState extends State<DonateWidget> {
                     onPressed: () {
                       if (widget.formKey.currentState.validate() &&
                           _amountController.text.isNotEmpty) {
-                        charityService
-                            .createTransaction(
+                        var txRef = charityService.createTransaction(
                           AppModel.of(context).user.userId,
                           TxType.DONATION,
                           double.tryParse(_amountController.text),
                           'RON',
                           widget.charityCase.id,
-                        )
-                            .then((createResult) {
-                          Navigator.of(context).pop(true);
-                        });
+                        );
+
+                        Navigator.of(context).pop(txRef);
                       }
                     },
                   ),
@@ -224,7 +224,7 @@ class _CashoutWidgetState extends State<CashoutWidget> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
-                'Cashback disponibil: ${balance.toString()} RON',
+                'Cashback disponibil: ${balance.toStringAsFixed(2)} RON',
                 textAlign: TextAlign.left,
               ),
             ),
@@ -289,17 +289,15 @@ class _CashoutWidgetState extends State<CashoutWidget> {
                     onPressed: () {
                       if (widget.formKey.currentState.validate() &&
                           _amountController.text.isNotEmpty) {
-                        charityService
-                            .createTransaction(
+                        var txRef = charityService.createTransaction(
                           AppModel.of(context).user.userId,
                           TxType.CASHOUT,
                           double.tryParse(_amountController.text),
                           'RON',
                           AppModel.of(context).user.userId,
-                        )
-                            .then((createResult) {
-                          Navigator.of(context).pop(true);
-                        });
+                        );
+
+                        Navigator.of(context).pop(txRef);
                       }
                     },
                   ),
@@ -349,4 +347,49 @@ class OperationDialog extends StatelessWidget {
       ],
     );
   }
+}
+
+void showOperationResult(DocumentReference txRef, BuildContext context) {
+  txRef.snapshots().skip(1).takeWhile((tx) {
+    return !tx.data.containsKey('status') || tx.data['status'] != 'PENDING';
+  }).listen(
+    (tx) {
+      String title;
+      String message;
+      String status = tx.data['status'];
+      TxType txType = txTypeFromString(tx.data['type']);
+      switch (txType) {
+        case TxType.DONATION:
+          if (status == 'ACCEPTED') {
+            title = 'Donatie aprobata';
+            message = 'Donatia a fost procesata cu success. Multumim!';
+          } else if (status == 'PENDING') {
+            title = 'Multumim!';
+            message = 'Donatia este in curs de procesare';
+          } else {
+            title = 'Donation respinsa';
+            message = 'Tranzactia nu a putut fi procesata';
+          }
+          break;
+        case TxType.CASHOUT:
+          if (status == 'ACCEPTED') {
+            title = 'Cashout aprobat';
+            message =
+                'Poate dura 2-3 zile lucratoare pana bancile proceseaza tranzactia';
+          } else if (status == 'PENDING') {
+            title = 'Multumim!';
+            message = 'Tranzactia este in curs de procesare';
+          } else {
+            title = 'Cashout respins';
+            message = 'Tranzactia nu a putut fi procesata';
+          }
+          break;
+        default:
+      }
+      Flushbar(
+        title: title,
+        message: message,
+      )..show(context);
+    },
+  );
 }

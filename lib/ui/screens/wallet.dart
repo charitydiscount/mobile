@@ -97,7 +97,9 @@ class WalletScreen extends StatelessWidget {
                             builder: (BuildContext context) {
                               return CashoutDialog();
                             },
-                          ).then((donateResult) {});
+                          ).then((txRef) {
+                            showOperationResult(txRef, context);
+                          });
                           break;
                         default:
                           return;

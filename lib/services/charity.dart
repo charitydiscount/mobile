@@ -36,14 +36,14 @@ class CharityService {
     );
   }
 
-  Future<void> createTransaction(
+  Future<DocumentReference> createTransaction(
     String userId,
     TxType type,
     double amount,
     String currency,
     String target,
   ) async {
-    await _db.collection('transactions').add({
+    return _db.collection('transactions').add({
       'userId': userId,
       'type': describeEnum(type),
       'amount': amount,

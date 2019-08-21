@@ -42,7 +42,9 @@ class CaseWidget extends StatelessWidget {
               charityCase: charityCase,
             );
           },
-        ).then((donateResult) {});
+        ).then((txRef) {
+          showOperationResult(txRef, context);
+        });
       },
       padding: EdgeInsets.all(12),
       color: Theme.of(context).primaryColor,

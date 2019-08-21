@@ -39,6 +39,10 @@ class CaseDetails extends StatelessWidget {
                   child: CachedNetworkImage(
                     imageUrl: image.url,
                     fit: BoxFit.cover,
+                    errorWidget:
+                        (BuildContext context, String url, Object error) {
+                      return Container();
+                    },
                   ),
                 )
               ],
@@ -73,7 +77,9 @@ class CaseDetails extends StatelessWidget {
                 charityCase: charity,
               );
             },
-          ).then((donateResult) {});
+          ).then((txRef) {
+            showOperationResult(txRef, context);
+          });
         },
         child: const Icon(Icons.favorite),
       ),
