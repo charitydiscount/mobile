@@ -1,5 +1,6 @@
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/ui/widgets/loading.dart';
 import 'package:charity_discount/util/ui.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flushbar/flushbar.dart';
@@ -349,47 +350,89 @@ class OperationDialog extends StatelessWidget {
   }
 }
 
-void showOperationResult(DocumentReference txRef, BuildContext context) {
-  txRef.snapshots().skip(1).takeWhile((tx) {
-    return !tx.data.containsKey('status') || tx.data['status'] != 'PENDING';
-  }).listen(
-    (tx) {
-      String title;
-      String message;
-      String status = tx.data['status'];
-      TxType txType = txTypeFromString(tx.data['type']);
-      switch (txType) {
-        case TxType.DONATION:
-          if (status == 'ACCEPTED') {
-            title = 'Donatie aprobata';
-            message = 'Donatia a fost procesata cu success. Multumim!';
-          } else if (status == 'PENDING') {
-            title = 'Multumim!';
-            message = 'Donatia este in curs de procesare';
-          } else {
-            title = 'Donation respinsa';
-            message = 'Tranzactia nu a putut fi procesata';
-          }
-          break;
-        case TxType.CASHOUT:
-          if (status == 'ACCEPTED') {
-            title = 'Cashout aprobat';
-            message =
-                'Poate dura 2-3 zile lucratoare pana bancile proceseaza tranzactia';
-          } else if (status == 'PENDING') {
-            title = 'Multumim!';
-            message = 'Tranzactia este in curs de procesare';
-          } else {
-            title = 'Cashout respins';
-            message = 'Tranzactia nu a putut fi procesata';
-          }
-          break;
-        default:
+Future<Widget> _waitForTx(DocumentReference txRef, BuildContext context) async {
+  DocumentSnapshot tx = await txRef.snapshots().skip(1).firstWhere((tx) {
+    return tx.data.containsKey('status');
+  });
+  String title;
+  String message;
+  String status = tx.data['status'];
+  IconData notificationIcon;
+  Color notifIconColor;
+
+  TxType txType = txTypeFromString(tx.data['type']);
+  switch (txType) {
+    case TxType.DONATION:
+      if (status == 'ACCEPTED') {
+        title = 'Donatie aprobata';
+        message = 'Donatia a fost procesata cu success. Multumim!';
+        notificationIcon = Icons.check;
+        notifIconColor = Colors.greenAccent;
+      } else if (status == 'PENDING') {
+        title = 'Multumim!';
+        message = 'Donatia este in curs de procesare';
+        notificationIcon = Icons.info;
+        notifIconColor = Colors.blueAccent;
+      } else {
+        title = 'Donation respinsa';
+        message = 'Tranzactia nu a putut fi procesata';
+        notificationIcon = Icons.mood_bad;
+        notifIconColor = Colors.redAccent;
       }
-      Flushbar(
-        title: title,
-        message: message,
-      )..show(context);
+      break;
+    case TxType.CASHOUT:
+      if (status == 'ACCEPTED') {
+        title = 'Cashout aprobat';
+        message =
+            'Poate dura 2-3 zile lucratoare pana bancile proceseaza tranzactia';
+        notificationIcon = Icons.check;
+        notifIconColor = Colors.greenAccent;
+      } else if (status == 'PENDING') {
+        title = 'Multumim!';
+        message = 'Tranzactia este in curs de procesare';
+        notificationIcon = Icons.info;
+        notifIconColor = Colors.blueAccent;
+      } else {
+        title = 'Cashout respins';
+        message = 'Tranzactia nu a putut fi procesata';
+        notificationIcon = Icons.mood_bad;
+        notifIconColor = Colors.redAccent;
+      }
+      break;
+    default:
+  }
+
+  return Flushbar(
+    title: title,
+    message: message,
+    icon: Icon(
+      notificationIcon,
+      color: notifIconColor,
+    ),
+  );
+}
+
+Future<void> showTxResult(DocumentReference txRef, BuildContext context) async {
+  var actualContext = context;
+  var flushBar = await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return FutureBuilder(
+        future: _waitForTx(txRef, actualContext),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return LoadingScreen(
+              inAsyncCall: true,
+              child: Container(),
+            );
+          }
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.of(context).pop(snapshot.data);
+          });
+          return Container();
+        },
+      );
     },
   );
+  flushBar.show(actualContext);
 }

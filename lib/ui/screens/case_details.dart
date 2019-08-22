@@ -77,9 +77,7 @@ class CaseDetails extends StatelessWidget {
                 charityCase: charity,
               );
             },
-          ).then((txRef) {
-            showOperationResult(txRef, context);
-          });
+          ).then((txRef) => showTxResult(txRef, context));
         },
         child: const Icon(Icons.favorite),
       ),
