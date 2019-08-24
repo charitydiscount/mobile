@@ -21,6 +21,7 @@ class _ProgramsListState extends State<ProgramsList>
     with AutomaticKeepAliveClientMixin {
   AppModel _appState;
   bool _onlyFavorites = false;
+  bool _displayAsGrid = false;
   String _category;
   Completer<Null> _loadingCompleter = Completer<Null>();
   AsyncMemoizer _asyncMemoizer = AsyncMemoizer();
@@ -37,6 +38,7 @@ class _ProgramsListState extends State<ProgramsList>
     Widget categoriesButton = _buildCategoriesButton(context);
     Widget favoritesButton = _buildFavoritesButton(context);
     Widget searchButton = _buildSearchButton(context);
+    Widget layoutButton = _buildLayoutButton(context);
 
     Widget toolbar = Container(
       child: Row(
@@ -44,6 +46,7 @@ class _ProgramsListState extends State<ProgramsList>
           categoriesButton,
           favoritesButton,
           searchButton,
+          layoutButton,
         ],
       ),
       color: Theme.of(context).accentColor,
@@ -82,6 +85,7 @@ class _ProgramsListState extends State<ProgramsList>
                   programs: programs,
                   category: _category,
                   onlyFavorites: _onlyFavorites,
+                  displayAsGrid: _displayAsGrid,
                 ),
               );
             },
@@ -116,6 +120,23 @@ class _ProgramsListState extends State<ProgramsList>
         onPressed: () {
           setState(() {
             _onlyFavorites = !_onlyFavorites;
+          });
+          _scrollToTop(context);
+        },
+      ),
+    );
+  }
+
+  Expanded _buildLayoutButton(BuildContext context) {
+    return Expanded(
+      child: IconButton(
+        icon: _displayAsGrid
+            ? const Icon(Icons.view_headline)
+            : const Icon(Icons.view_module),
+        color: Colors.white,
+        onPressed: () {
+          setState(() {
+            _displayAsGrid = !_displayAsGrid;
           });
           _scrollToTop(context);
         },
@@ -195,6 +216,7 @@ class ShopsWidget extends StatefulWidget {
   final List<Program> programs;
   final AppModel appState;
   final bool onlyFavorites;
+  final bool displayAsGrid;
   final String category;
 
   const ShopsWidget({
@@ -203,6 +225,7 @@ class ShopsWidget extends StatefulWidget {
     this.appState,
     this.onlyFavorites = false,
     this.category,
+    this.displayAsGrid = false,
   }) : super(key: key);
 
   @override
@@ -233,7 +256,7 @@ class _ShopsWidgetState extends State<ShopsWidget>
     );
   }
 
-  ListView _buildShopList(
+  Widget _buildShopList(
     List<Program> programs,
     AppModel appState, {
     bool onlyFavorites = false,
@@ -260,25 +283,45 @@ class _ShopsWidgetState extends State<ShopsWidget>
       programs.removeWhere((p) => p.category != category);
     }
 
+    int itemCount =
+        widget.displayAsGrid ? programs.length ~/ 2 : programs.length;
+
     return ListView.builder(
       key: Key('ProgramsListView${widget.key.toString()}'),
       addAutomaticKeepAlives: true,
       shrinkWrap: true,
       primary: true,
-      itemCount: programs.length,
+      itemCount: itemCount,
       itemBuilder: (context, index) {
-        Program currentProgram = programs[index];
-        _prepareProgram(appState, currentProgram);
-        return ShopWidget(
-          key: Key(currentProgram.uniqueCode),
-          program: currentProgram,
-          userId: appState.user.userId,
+        int rangeStart = widget.displayAsGrid ? index * 2 : index;
+        int rangeEnd = rangeStart + (widget.displayAsGrid ? 2 : 1);
+        List<Program> programsToDisplay = programs
+            .getRange(rangeStart, rangeEnd)
+            .map((p) => _prepareProgram(appState, p))
+            .toList();
+
+        return Row(
+          children: programsToDisplay
+              .map((p) => Expanded(
+                    child: widget.displayAsGrid
+                        ? ShopHalfTile(
+                            key: Key(p.uniqueCode),
+                            program: p,
+                            userId: appState.user.userId,
+                          )
+                        : ShopFullTile(
+                            key: Key(p.uniqueCode),
+                            program: p,
+                            userId: appState.user.userId,
+                          ),
+                  ))
+              .toList(),
         );
       },
     );
   }
 
-  void _prepareProgram(AppModel appState, Program program) {
+  Program _prepareProgram(AppModel appState, Program program) {
     final userPercentage = appState.affiliateMeta.percentage;
     program.leadCommissionAmount = program.defaultLeadCommissionAmount != null
         ? (program.defaultLeadCommissionAmount * userPercentage)
@@ -293,6 +336,7 @@ class _ShopsWidgetState extends State<ShopsWidget>
         appState.affiliateMeta.uniqueCode,
         program.uniqueCode,
         appState.user.userId);
+    return program;
   }
 
   @override
