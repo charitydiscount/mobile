@@ -1,3 +1,4 @@
+import 'package:charity_discount/models/program.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/models/settings.dart';
@@ -55,6 +56,21 @@ class LocalService {
     }
 
     return prefs.getBool('introCompleted');
+  }
+
+  Future<void> setPrograms(List<Program> programs) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('programs', programsToJson(programs));
+  }
+
+  Future<List<Program>> getPrograms() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var jsonPrograms = prefs.getStringList('programs');
+    if (jsonPrograms == null) {
+      return null;
+    }
+
+    return fromJsonStringList(jsonPrograms);
   }
 }
 

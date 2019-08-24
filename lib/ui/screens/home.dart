@@ -2,11 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/screens/wallet.dart';
 import 'package:charity_discount/ui/screens/profile.dart';
+import 'package:charity_discount/ui/widgets/programs.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
 import 'package:charity_discount/ui/widgets/charity.dart';
-import 'package:charity_discount/ui/widgets/shops.dart';
 
 class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
@@ -15,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _loadingVisible = false;
   int _selectedNavIndex = 0;
-  final _widgets = [CharityWidget(), Shops(), WalletScreen()];
+  final _widgets = [CharityWidget(), ProgramsList(), WalletScreen()];
 
   @override
   void initState() {

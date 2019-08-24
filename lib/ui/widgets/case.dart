@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/ui/screens/case_details.dart';
-import 'package:charity_discount/ui/widgets/loading.dart';
 import 'package:charity_discount/ui/widgets/operations.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';

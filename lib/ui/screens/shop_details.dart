@@ -52,14 +52,14 @@ class ShopDetails extends StatelessWidget {
         if (loading != null) {
           return loading;
         }
-        List<Widget> shopWidgets = [promotionsTitle];
-        shopWidgets.addAll(
+        List<Widget> promotionsWidgets = [promotionsTitle];
+        promotionsWidgets.addAll(
           snapshot.data.map((p) => PromotionWidget(promotion: p)).toList(),
         );
         return Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: shopWidgets,
+          children: promotionsWidgets,
         );
       },
     );

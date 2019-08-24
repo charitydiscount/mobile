@@ -30,11 +30,11 @@ class AffiliateService {
       throw Exception('Could not load shops (${response.statusCode})');
     }
 
-    List<dynamic> responseBody = json.decode(response.body);
+    List responseBody = List<dynamic>.from(json.decode(response.body));
     if (responseBody.isEmpty) {
       return [];
     }
-    List<Promotion> promotions = promotionsFromJsonArray(responseBody[0]);
+    List<Promotion> promotions = promotionsFromJsonArray(responseBody);
 
     promotions.forEach((p) {
       p.affilitateUrl = convertAffiliateUrl(

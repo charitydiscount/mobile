@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 List<Program> fromFirestoreBatch(DocumentSnapshot doc) {
@@ -14,6 +16,16 @@ List<Program> fromJsonArray(List json) {
 List<Program> fromElasticsearch(List json) {
   return List<Program>.from(
     json.map((program) => Program.fromJson(program['_source'])).toList(),
+  );
+}
+
+List<String> programsToJson(List<Program> programs) {
+  return programs.map((p) => json.encode(p.toJson())).toList();
+}
+
+List<Program> fromJsonStringList(List<String> jsonList) {
+  return List<Program>.from(
+    jsonList.map((program) => Program.fromJson(json.decode(program))).toList(),
   );
 }
 

@@ -12,7 +12,6 @@ class ShopsService {
   StreamSubscription _favListener;
   BehaviorSubject<FavoriteShops> _favoritePrograms =
       BehaviorSubject<FavoriteShops>();
-  DocumentSnapshot _lastProgramsDoc;
 
   BehaviorSubject<FavoriteShops> get favoritePrograms => _favoritePrograms;
 
@@ -26,62 +25,6 @@ class ShopsService {
         _favoritePrograms.add(FavoriteShops(userId: userId, programs: []));
       }
     });
-  }
-
-  Future<List<models.Program>> _getPrograms(
-      {bool startAfterPrevious = false}) async {
-    QuerySnapshot query;
-    if (startAfterPrevious == true && _lastProgramsDoc != null) {
-      query = await _db
-          .collection('shops')
-          .orderBy('createdAt')
-          .startAfter([_lastProgramsDoc.data['createdAt']])
-          .limit(1)
-          .getDocuments();
-    } else {
-      query = await _db
-          .collection('shops')
-          .orderBy('createdAt')
-          .limit(1)
-          .getDocuments();
-    }
-
-    if (query.documents.length == 0) {
-      return [];
-    }
-
-    _lastProgramsDoc = query.documents.last;
-
-    return models.fromFirestoreBatch(_lastProgramsDoc);
-  }
-
-  Future<List<models.Program>> _getProgramsForCategory(
-      {bool startAfterPrevious = false, String category}) async {
-    QuerySnapshot query;
-    if (startAfterPrevious == true && _lastProgramsDoc != null) {
-      query = await _db
-          .collection('categories')
-          .where('category', isEqualTo: category)
-          .orderBy('createdAt')
-          .startAfter([_lastProgramsDoc.data['createdAt']])
-          .limit(1)
-          .getDocuments();
-    } else {
-      query = await _db
-          .collection('categories')
-          .where('category', isEqualTo: category)
-          .orderBy('createdAt')
-          .limit(1)
-          .getDocuments();
-    }
-
-    if (query.documents.length == 0) {
-      return [];
-    }
-
-    _lastProgramsDoc = query.documents.last;
-
-    return models.fromFirestoreBatch(_lastProgramsDoc);
   }
 
   Future<void> setFavoriteShop(
@@ -99,25 +42,9 @@ class ShopsService {
     }
   }
 
-  Observable<List<models.Program>> getPrograms() {
-    return Observable.fromFuture(
-      _getPrograms(startAfterPrevious: true),
-    );
-  }
-
-  Observable<List<models.Program>> getProgramsForCategory(String category) {
-    return Observable.fromFuture(
-      _getProgramsForCategory(startAfterPrevious: true, category: category),
-    );
-  }
-
   Future<void> closeFavoritesSink() async {
     await _favListener.cancel();
     await _favoritePrograms.close();
-  }
-
-  void refreshCache() {
-    _lastProgramsDoc = null;
   }
 
   void _handleFavDocNotExistent(
@@ -131,6 +58,22 @@ class ShopsService {
       'userId': userId,
       'programs': [program.toJson()]
     }, merge: true);
+  }
+
+  Future<List<models.Program>> getAllPrograms() async {
+    QuerySnapshot snapshot =
+        await _db.collection('shops').orderBy('createdAt').getDocuments();
+
+    List<models.Program> programs = [];
+    snapshot.documents.forEach((doc) {
+      programs.addAll(
+        models.fromFirestoreBatch(doc),
+      );
+    });
+    programs.sort((p1, p2) =>
+        p1.name.trim().toLowerCase().compareTo(p2.name.trim().toLowerCase()));
+
+    return programs;
   }
 }
 
