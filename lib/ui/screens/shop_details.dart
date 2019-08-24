@@ -48,6 +48,7 @@ class ShopDetails extends StatelessWidget {
         final loading = buildConnectionLoading(
           context: context,
           snapshot: snapshot,
+          waitingDisplay: Text('Cautam promotii active'),
         );
         if (loading != null) {
           return loading;

@@ -70,33 +70,36 @@ class ShopFullTile extends StatelessWidget {
         );
       },
       child: Card(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            ListTile(
-              leading: logo,
-              title: Center(
-                child: Text(
-                  program.name,
-                  style: TextStyle(
-                    fontSize: 24.0,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              ListTile(
+                leading: logo,
+                title: Center(
+                  child: Text(
+                    program.name,
+                    style: TextStyle(
+                      fontSize: 24.0,
+                    ),
                   ),
                 ),
+                subtitle: Center(
+                  child: Text(cashback),
+                ),
               ),
-              subtitle: Center(
-                child: Text(cashback),
+              ButtonTheme.bar(
+                child: ButtonBar(
+                  children: <Widget>[
+                    favoriteButton,
+                    linkButton,
+                  ],
+                ),
               ),
-            ),
-            ButtonTheme.bar(
-              child: ButtonBar(
-                children: <Widget>[
-                  favoriteButton,
-                  linkButton,
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
