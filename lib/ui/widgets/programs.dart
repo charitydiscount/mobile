@@ -284,7 +284,7 @@ class _ShopsWidgetState extends State<ShopsWidget>
     }
 
     int itemCount =
-        widget.displayAsGrid ? programs.length ~/ 2 : programs.length;
+        widget.displayAsGrid ? (programs.length / 2).ceil() : programs.length;
 
     return ListView.builder(
       key: Key('ProgramsListView${widget.key.toString()}'),
@@ -294,9 +294,9 @@ class _ShopsWidgetState extends State<ShopsWidget>
       itemCount: itemCount,
       itemBuilder: (context, index) {
         int rangeStart = widget.displayAsGrid ? index * 2 : index;
-        int rangeEnd = rangeStart + (widget.displayAsGrid ? 2 : 1);
         List<Program> programsToDisplay = programs
-            .getRange(rangeStart, rangeEnd)
+            .skip(rangeStart)
+            .take(widget.displayAsGrid ? 2 : 1)
             .map((p) => _prepareProgram(appState, p))
             .toList();
 
