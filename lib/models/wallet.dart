@@ -60,13 +60,24 @@ class Transaction {
   final DateTime date;
   final double amount;
   final String currency;
+  final String status;
+  final String target;
 
-  Transaction({this.type, this.date, this.amount, this.currency});
+  Transaction({
+    this.type,
+    this.date,
+    this.amount,
+    this.currency,
+    this.status,
+    this.target,
+  });
 
   factory Transaction.fromJson(dynamic json) => Transaction(
         type: txTypeFromString(json["type"] as String),
         date: (json["date"] as Timestamp).toDate(),
         amount: json['amount'] != null ? json['amount'].toDouble() : null,
         currency: json['currency'] ?? 'RON',
+        status: json['status'] ?? '',
+        target: json['target'] ?? '',
       );
 }
