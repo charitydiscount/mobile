@@ -43,7 +43,7 @@ class CharityService {
     String currency,
     String target,
   ) async {
-    return _db.collection('transactions').add({
+    return _db.collection('requests').add({
       'userId': userId,
       'type': describeEnum(type),
       'amount': amount,
