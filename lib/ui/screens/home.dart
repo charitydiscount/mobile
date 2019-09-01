@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/screens/wallet.dart';
 import 'package:charity_discount/ui/screens/profile.dart';
@@ -30,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
         primary: true,
         automaticallyImplyLeading: false,
         actions: <Widget>[
-          _buildProfileButton(photoUrl: appState.user.photoUrl),
+          _buildProfileButton(context: context, user: appState.user),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -70,29 +71,97 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Widget _buildProfileButton({String photoUrl}) {
-    final logoImage = photoUrl != null
-        ? CachedNetworkImage(
-            imageUrl: photoUrl,
-            fit: BoxFit.contain,
-          )
-        : Image.asset(
-            'assets/images/default.png',
-            fit: BoxFit.scaleDown,
-          );
+  Widget _buildProfileButton({BuildContext context, User user}) {
+    final logoImage = ClipOval(
+      child: user.photoUrl != null
+          ? CachedNetworkImage(
+              imageUrl: user.photoUrl,
+              fit: BoxFit.contain,
+            )
+          : Image.asset(
+              'assets/images/default.png',
+              fit: BoxFit.scaleDown,
+            ),
+    );
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (BuildContext context) => ProfileScreen(),
-            settings: RouteSettings(name: 'Profile'),
-          ),
+        showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) {
+            TextStyle titleStyle = Theme.of(context).textTheme.title;
+            ListTile profileTile = ListTile(
+              leading: logoImage,
+              title: Text(
+                '${user.firstName} ${user.lastName}',
+                style: titleStyle,
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => ProfileScreen(),
+                    settings: RouteSettings(name: 'Profile'),
+                  ),
+                );
+              },
+            );
+
+            ListTile news = ListTile(
+              leading: Icon(Icons.update),
+              title: Text(
+                'Noutati',
+                style: titleStyle,
+              ),
+            );
+
+            ListTile settings = ListTile(
+              leading: Icon(Icons.settings),
+              title: Text(
+                'Setari',
+                style: titleStyle,
+              ),
+            );
+
+            ListTile terms = ListTile(
+              leading: Icon(Icons.help_outline),
+              title: Text(
+                'Termeni si conditii',
+                style: titleStyle,
+              ),
+            );
+
+            ListTile privacy = ListTile(
+              leading: Icon(Icons.verified_user),
+              title: Text(
+                'Confidentialitate',
+                style: titleStyle,
+              ),
+            );
+            return Container(
+              alignment: Alignment.center,
+              child: ListView(
+                padding: EdgeInsets.all(12.0),
+                primary: false,
+                children: <Widget>[
+                  profileTile,
+                  Divider(),
+                  news,
+                  Divider(),
+                  settings,
+                  Divider(),
+                  terms,
+                  Divider(),
+                  privacy,
+                  Divider(),
+                ],
+              ),
+            );
+          },
         );
       },
       child: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: ClipOval(child: logoImage),
+        child: logoImage,
       ),
     );
   }
