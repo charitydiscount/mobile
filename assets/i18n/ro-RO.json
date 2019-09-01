@@ -10,5 +10,6 @@
   "lastName": "Nume de familie",
   "name": "Nume",
   "wallet": "Portofel",
-  "transactionHistory": "Istoric Tranzactii"
+  "transactionHistory": "Istoric Tranzactii",
+  "settings": "Setari"
 }

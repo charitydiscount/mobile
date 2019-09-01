@@ -10,5 +10,6 @@
   "lastName": "Last Name",
   "name": "Name",
   "wallet": "Wallet",
-  "transactionHistory": "Transaction History"
+  "transactionHistory": "Transaction History",
+  "settings": "Settings"
 }

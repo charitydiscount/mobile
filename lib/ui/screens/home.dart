@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/ui/screens/settings.dart';
 import 'package:charity_discount/ui/screens/wallet.dart';
 import 'package:charity_discount/ui/screens/profile.dart';
 import 'package:charity_discount/ui/widgets/programs.dart';
@@ -72,16 +73,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildProfileButton({BuildContext context, User user}) {
+    final image = user.photoUrl != null
+        ? CachedNetworkImage(
+            imageUrl: user.photoUrl,
+            fit: BoxFit.scaleDown,
+          )
+        : Image.asset(
+            'assets/images/default.png',
+            fit: BoxFit.scaleDown,
+          );
     final logoImage = ClipOval(
-      child: user.photoUrl != null
-          ? CachedNetworkImage(
-              imageUrl: user.photoUrl,
-              fit: BoxFit.contain,
-            )
-          : Image.asset(
-              'assets/images/default.png',
-              fit: BoxFit.scaleDown,
-            ),
+      child: image,
     );
     return InkWell(
       onTap: () {
@@ -89,8 +91,13 @@ class _HomeScreenState extends State<HomeScreen> {
           context: context,
           builder: (BuildContext context) {
             TextStyle titleStyle = Theme.of(context).textTheme.title;
+
+            List<ListTile> menuTiles = [];
             ListTile profileTile = ListTile(
-              leading: logoImage,
+              leading: CircleAvatar(
+                child: logoImage,
+                radius: 16,
+              ),
               title: Text(
                 '${user.firstName} ${user.lastName}',
                 style: titleStyle,
@@ -105,6 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             );
+            menuTiles.add(profileTile);
 
             ListTile news = ListTile(
               leading: Icon(Icons.update),
@@ -113,6 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: titleStyle,
               ),
             );
+            menuTiles.add(news);
 
             ListTile settings = ListTile(
               leading: Icon(Icons.settings),
@@ -120,7 +129,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 'Setari',
                 style: titleStyle,
               ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => SettingsScreen(),
+                    settings: RouteSettings(name: 'Settings'),
+                  ),
+                );
+              },
             );
+            menuTiles.add(settings);
 
             ListTile terms = ListTile(
               leading: Icon(Icons.help_outline),
@@ -129,6 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: titleStyle,
               ),
             );
+            menuTiles.add(terms);
 
             ListTile privacy = ListTile(
               leading: Icon(Icons.verified_user),
@@ -137,23 +157,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: titleStyle,
               ),
             );
+            menuTiles.add(privacy);
+
             return Container(
               alignment: Alignment.center,
-              child: ListView(
+              child: ListView.separated(
                 padding: EdgeInsets.all(12.0),
                 primary: false,
-                children: <Widget>[
-                  profileTile,
-                  Divider(),
-                  news,
-                  Divider(),
-                  settings,
-                  Divider(),
-                  terms,
-                  Divider(),
-                  privacy,
-                  Divider(),
-                ],
+                separatorBuilder: (context, index) {
+                  return Divider();
+                },
+                itemBuilder: (context, index) {
+                  return menuTiles[index];
+                },
+                itemCount: menuTiles.length,
               ),
             );
           },
