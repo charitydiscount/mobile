@@ -11,5 +11,23 @@
   "name": "Name",
   "wallet": "Wallet",
   "transactionHistory": "Transaction History",
-  "settings": "Settings"
+  "settings": "Settings",
+  "language": "Language",
+  "recoverPassword": "Reset password",
+  "resetPassEmailSentTitle": "Password Reset Email Sent",
+  "resetPassEmailSentMessage": "Check your email and follow the instructions to reset your password.",
+  "intro": {
+    "getInvolved": {
+      "title": "Get Involved",
+      "body": "Contribute to the future of your country!"
+    },
+    "saveMoney": {
+      "title": "Save Money",
+      "body": "You buy, stores donate"
+    },
+    "findAnything": {
+      "title": "Find Anything",
+      "body": "Hundreds of partner stores"
+    }
+  }
 }

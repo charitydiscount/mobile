@@ -11,5 +11,23 @@
   "name": "Nume",
   "wallet": "Portofel",
   "transactionHistory": "Istoric Tranzactii",
-  "settings": "Setari"
+  "settings": "Setari",
+  "language": "Limba",
+  "recoverPassword": "Reseteaza parola",
+  "resetPassEmailSentTitle": "E-mailul pentru resetarea parolei a fost trimis",
+  "resetPassEmailSentMessage": "Urmeaza instructiunile primite pe e-mail pentru a-ti reseta parola.",
+  "intro": {
+    "getInvolved": {
+      "title": "Implica-te",
+      "body": "Ofera un viitor tarii tale!"
+    },
+    "saveMoney": {
+      "title": "Economiseste",
+      "body": "Tu cumperi, magazinele doneaza"
+    },
+    "findAnything": {
+      "title": "Gaseste orice",
+      "body": "Sute de magazine partenere"
+    }
+  }
 }

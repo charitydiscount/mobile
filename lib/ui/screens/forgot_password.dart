@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
@@ -67,7 +68,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         },
         padding: EdgeInsets.all(12),
         color: Theme.of(context).primaryColor,
-        child: Text('FORGOT PASSWORD', style: TextStyle(color: Colors.white)),
+        child: Text(
+          AppLocalizations.of(context).tr('recoverPassword'),
+          style: TextStyle(color: Colors.white),
+        ),
       ),
     );
 
@@ -125,9 +129,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         await userController.resetPassword(email);
         await _changeLoadingVisible();
         Flushbar(
-          title: "Password Reset Email Sent",
-          message:
-              'Check your email and follow the instructions to reset your password.',
+          title: AppLocalizations.of(context).tr('resetPassEmailSentTitle'),
+          message: AppLocalizations.of(context).tr('resetPassEmailSentMessage'),
           duration: Duration(seconds: 20),
         )..show(context);
       } catch (e) {

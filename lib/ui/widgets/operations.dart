@@ -434,5 +434,5 @@ Future<void> showTxResult(DocumentReference txRef, BuildContext context) async {
       );
     },
   );
-  flushBar.show(actualContext);
+  flushBar?.show(actualContext);
 }

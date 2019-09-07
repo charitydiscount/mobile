@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_text/gradient_text.dart';
 import 'package:charity_discount/ui/widgets/page_indicator.dart';
@@ -94,9 +95,9 @@ class _IntroState extends State<Intro> with TickerProviderStateMixin {
                               Opacity(
                                 opacity: .10,
                                 child: GradientText(
-                                  page.title,
+                                  AppLocalizations.of(context).tr(page.title),
                                   gradient: LinearGradient(
-                                      colors: pageList[index].titleGradient),
+                                      colors: page.titleGradient),
                                   style: TextStyle(
                                       fontSize: 80.0, letterSpacing: 1.0),
                                 ),
@@ -104,9 +105,9 @@ class _IntroState extends State<Intro> with TickerProviderStateMixin {
                               Padding(
                                 padding: EdgeInsets.only(top: 30.0, left: 22.0),
                                 child: GradientText(
-                                  page.title,
+                                  AppLocalizations.of(context).tr(page.title),
                                   gradient: LinearGradient(
-                                      colors: pageList[index].titleGradient),
+                                      colors: page.titleGradient),
                                   style: TextStyle(
                                     fontSize: 50.0,
                                   ),
@@ -121,9 +122,11 @@ class _IntroState extends State<Intro> with TickerProviderStateMixin {
                             transform:
                                 Matrix4.translationValues(0, 50.0 * (1 - y), 0),
                             child: Text(
-                              page.body,
+                              AppLocalizations.of(context).tr(page.body),
                               style: TextStyle(
-                                  fontSize: 20.0, color: Color(0xFF9B9B9B)),
+                                fontSize: 20.0,
+                                color: Color(0xFF9B9B9B),
+                              ),
                             ),
                           ),
                         )
@@ -137,8 +140,12 @@ class _IntroState extends State<Intro> with TickerProviderStateMixin {
               left: 30.0,
               bottom: 35.0,
               child: Container(
-                  width: 160.0,
-                  child: PageIndicator(currentPage, pageList.length)),
+                width: 160.0,
+                child: PageIndicator(
+                  currentPage,
+                  pageList.length,
+                ),
+              ),
             ),
             Positioned(
               right: 30.0,
@@ -169,19 +176,19 @@ class _IntroState extends State<Intro> with TickerProviderStateMixin {
 
 var pageList = [
   PageModel(
-      imageUrl: "assets/icons/icon.png",
-      title: "Implica-te",
-      body: "Ofera un viitor tarii tale!",
+      imageUrl: 'assets/icons/icon.png',
+      title: 'intro.getInvolved.title',
+      body: 'intro.getInvolved.body',
       titleGradient: gradients[0]),
   PageModel(
-      imageUrl: "assets/images/save_money.png",
-      title: "Economiseste",
-      body: "Tu cumperi, magazinele doneaza",
+      imageUrl: 'assets/images/save_money.png',
+      title: 'intro.saveMoney.title',
+      body: 'intro.saveMoney.body',
       titleGradient: gradients[1]),
   PageModel(
-      imageUrl: "assets/images/shopping.png",
-      title: "Gaseste orice",
-      body: "Sute de magazine partenere",
+      imageUrl: 'assets/images/shopping.png',
+      title: 'intro.findAnything.title',
+      body: 'intro.findAnything.body',
       titleGradient: gradients[2]),
 ];
 

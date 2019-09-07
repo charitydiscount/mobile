@@ -1,5 +1,7 @@
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/util/locale.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';
+import 'package:easy_localization/easy_localization_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -11,56 +13,22 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  AppModel _state;
+
+  @override
+  void initState() {
+    super.initState();
+    _state = AppModel.of(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Widget> settingTiles = [];
-    AppModel state = AppModel.of(context);
-
     Widget language = ExpansionTile(
       leading: Icon(Icons.language),
-      title: Text('Limba'),
-      children: <Widget>[
-        ListTile(
-          leading: Padding(
-            padding: const EdgeInsets.all(6.0),
-            child: SvgPicture.asset(
-              'assets/icons/ro.svg',
-              fit: BoxFit.cover,
-              width: 16,
-              alignment: Alignment.center,
-            ),
-          ),
-          title: Text('Romana'),
-          trailing: state.settings.lang == 'ro' ? Icon(Icons.check) : null,
-          onTap: () {
-            var newSettings = state.settings;
-            newSettings.lang = 'ro';
-            setState(() {
-              state.setSettings(newSettings);
-            });
-          },
-        ),
-        ListTile(
-          leading: Padding(
-            padding: const EdgeInsets.all(6.0),
-            child: SvgPicture.asset(
-              'assets/icons/gb.svg',
-              fit: BoxFit.cover,
-              width: 16,
-              alignment: Alignment.center,
-            ),
-          ),
-          title: Text('English'),
-          trailing: state.settings.lang == 'en' ? Icon(Icons.check) : null,
-          onTap: () {
-            var newSettings = state.settings;
-            newSettings.lang = 'en';
-            setState(() {
-              state.setSettings(newSettings);
-            });
-          },
-        ),
-      ],
+      title: Text(AppLocalizations.of(context).tr('language')),
+      children:
+          supportedLanguages.map((lang) => _buildLanguageTile(lang)).toList(),
     );
     settingTiles.add(language);
 
@@ -68,12 +36,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       leading: Icon(Icons.notifications),
       title: Text('Notificari'),
       trailing: Switch.adaptive(
-        value: state.settings.notifications,
+        value: _state.settings.notifications,
         onChanged: (bool newValue) {
-          var newSettings = state.settings;
+          var newSettings = _state.settings;
           newSettings.notifications = newValue;
           setState(() {
-            state.setSettings(newSettings);
+            _state.setSettings(newSettings);
           });
         },
       ),
@@ -98,6 +66,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
         },
         itemCount: settingTiles.length,
       ),
+    );
+  }
+
+  Widget _buildLanguageTile(SupportedLanguage language) {
+    return ListTile(
+      leading: Padding(
+        padding: const EdgeInsets.all(6.0),
+        child: SvgPicture.asset(
+          language.iconPath,
+          fit: BoxFit.cover,
+          width: 16,
+          alignment: Alignment.center,
+        ),
+      ),
+      title: Text(language.name),
+      trailing:
+          _state.settings.lang == language.code ? Icon(Icons.check) : null,
+      onTap: () {
+        var newSettings = _state.settings;
+        newSettings.lang = language.code;
+        setState(() {
+          _state.setSettings(newSettings);
+          EasyLocalizationProvider.of(context)
+              .data
+              .changeLocale(language.locale);
+        });
+      },
     );
   }
 }
