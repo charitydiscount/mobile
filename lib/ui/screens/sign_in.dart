@@ -208,15 +208,17 @@ class _SignInScreenState extends State<SignInScreen> {
     }
   }
 
-  void _emailLogin(
-      {String email, String password, BuildContext context}) async {
+  void _emailLogin({
+    String email,
+    String password,
+    BuildContext context,
+  }) async {
     if (_formKey.currentState.validate()) {
       try {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         _toggleLoadingVisible();
         await userController.signIn(
           Strategy.EmailAndPass,
-          AppModel.of(context).settings.lang,
           {"email": email, "password": password},
         );
         AppModel.of(context).createListeners();
@@ -225,6 +227,7 @@ class _SignInScreenState extends State<SignInScreen> {
       } catch (e) {
         if (!(e is Error)) {
           String exception = getExceptionText(e);
+          _toggleLoadingVisible();
           Flushbar(
             title: "Sign In Error",
             message: exception,
@@ -240,10 +243,7 @@ class _SignInScreenState extends State<SignInScreen> {
   void _googleLogin(BuildContext context) async {
     _toggleLoadingVisible();
     try {
-      await userController.signIn(
-        Strategy.Google,
-        AppModel.of(context).settings.lang,
-      );
+      await userController.signIn(Strategy.Google);
       AppModel.of(context).createListeners();
       _toggleLoadingVisible();
       await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);

@@ -1,6 +1,7 @@
 import 'package:charity_discount/models/promotion.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/util/url.dart';
+import 'package:intl/intl.dart';
 
 class PromotionWidget extends StatelessWidget {
   final Promotion promotion;
@@ -17,9 +18,18 @@ class PromotionWidget extends StatelessWidget {
         children: <Widget>[
           ListTile(
             onTap: () => launchURL(promotion.affilitateUrl),
+            leading: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(Icons.attach_money, color: Colors.green),
+            ),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+              child: Text(
+                '${DateFormat.yMd('ro_RO').add_jm().format(promotion.promotionStart.toLocal())} - ${DateFormat.yMd('ro_RO').add_jm().format(promotion.promotionEnd.toLocal())}',
+              ),
+            ),
             title: Row(
               children: <Widget>[
-                Icon(Icons.attach_money, color: Colors.green),
                 Flexible(
                   child: Center(
                     child: Text(

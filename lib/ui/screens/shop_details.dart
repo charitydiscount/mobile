@@ -30,10 +30,6 @@ class ShopDetails extends StatelessWidget {
         label: Text(program.category),
       ),
     );
-    final promotionsTitle = Text(
-      'Promotii',
-      style: TextStyle(fontSize: 24.0),
-    );
 
     final appState = AppModel.of(context);
 
@@ -53,6 +49,15 @@ class ShopDetails extends StatelessWidget {
         if (loading != null) {
           return loading;
         }
+        final titleColor =
+            snapshot.data.isEmpty ? Colors.grey.shade500 : Colors.grey.shade800;
+        final promotionsTitle = Text(
+          'Promotii',
+          style: TextStyle(
+            fontSize: 24.0,
+            color: titleColor,
+          ),
+        );
         List<Widget> promotionsWidgets = [promotionsTitle];
         promotionsWidgets.addAll(
           snapshot.data.map((p) => PromotionWidget(promotion: p)).toList(),

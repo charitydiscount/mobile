@@ -82,7 +82,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       title: Text(language.name),
       trailing:
-          _state.settings.lang == language.code ? Icon(Icons.check) : null,
+          AppLocalizations.of(context).locale.languageCode == language.code
+              ? Icon(Icons.check)
+              : null,
       onTap: () {
         var newSettings = _state.settings;
         newSettings.lang = language.code;

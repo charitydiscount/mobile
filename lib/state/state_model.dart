@@ -14,7 +14,7 @@ import 'package:charity_discount/services/local.dart';
 class AppModel extends Model {
   bool _introCompleted = false;
   User _user;
-  Settings _settings = Settings(lang: 'ro');
+  Settings _settings;
   StreamSubscription _profileListener;
   StreamSubscription _settingsListener;
   List<Program> _programs;

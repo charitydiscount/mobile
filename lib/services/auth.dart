@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -82,7 +81,7 @@ class AuthService {
     await _auth.signOut();
   }
 
-  Future<FirebaseUser> signInWithGoogle(lang) async {
+  Future<FirebaseUser> signInWithGoogle() async {
     GoogleSignInAccount googleUser = await _googleSignIn.signIn();
 
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
@@ -107,8 +106,6 @@ class AuthService {
       });
     }
 
-    await updateUserSettings(user.uid, {'lang': lang});
-
     return user;
   }
 
@@ -126,8 +123,12 @@ class AuthService {
     return ref.setData(settings, merge: true);
   }
 
-  Future<FirebaseUser> createUser(String email, String password,
-      String firstName, String lastName, String lang) async {
+  Future<FirebaseUser> createUser(
+    String email,
+    String password,
+    String firstName,
+    String lastName,
+  ) async {
     AuthResult authResult = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
@@ -138,8 +139,6 @@ class AuthService {
       'firstName': firstName,
       'lastName': lastName
     });
-
-    await updateUserSettings(authResult.user.uid, {'lang': lang});
 
     return authResult.user;
   }

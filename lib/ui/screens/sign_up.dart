@@ -5,7 +5,6 @@ import 'package:charity_discount/util/validator.dart';
 import 'package:charity_discount/controllers/user_controller.dart';
 import 'package:charity_discount/util/firebase_errors.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
-import 'package:charity_discount/state/state_model.dart';
 
 class SignUpScreen extends StatefulWidget {
   _SignUpScreenState createState() => _SignUpScreenState();
@@ -201,16 +200,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
       try {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         await _toggleLoadingVisible();
-        await userController.signUp(
-          email,
-          password,
-          firstName,
-          lastName,
-          AppModel.of(context).settings.lang,
-        );
+        await userController.signUp(email, password, firstName, lastName);
         await userController.signIn(
           Strategy.EmailAndPass,
-          AppModel.of(context).settings.lang,
           {"email": email, "password": password},
         );
         _toggleLoadingVisible();

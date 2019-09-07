@@ -33,7 +33,7 @@ class Main extends StatelessWidget {
       },
     );
 
-    var defaultLocale = getDefaultLanguage().locale;
+    var defaultLocale = data.savedLocale ?? getDefaultLanguage().locale;
 
     return EasyLocalizationProvider(
       data: data,
@@ -46,12 +46,12 @@ class Main extends StatelessWidget {
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           EasylocaLizationDelegate(
-            locale: data.savedLocale ?? defaultLocale,
+            locale: defaultLocale,
             path: 'assets/i18n',
           ),
         ],
         supportedLocales: supportedLanguages.map((l) => l.locale).toList(),
-        locale: data.savedLocale ?? defaultLocale,
+        locale: defaultLocale,
         routes: {
           '/': (context) => SafeArea(child: defaultWidget),
           '/signin': (context) => SafeArea(child: SignInScreen()),

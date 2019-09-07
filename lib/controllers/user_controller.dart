@@ -7,11 +7,8 @@ import 'package:charity_discount/services/shops.dart';
 enum Strategy { EmailAndPass, Google, Facebook }
 
 class UserController {
-  Future<void> signIn(
-    Strategy provider,
-    String lang, [
-    Map<String, dynamic> credentials,
-  ]) async {
+  Future<void> signIn(Strategy provider,
+      [Map<String, dynamic> credentials]) async {
     authService.profile.listen((profile) {
       if (profile != null) {
         User currentUser = User.fromJson(profile);
@@ -30,7 +27,7 @@ class UserController {
             credentials["email"], credentials["password"]);
         break;
       case Strategy.Google:
-        await authService.signInWithGoogle(lang);
+        await authService.signInWithGoogle();
         break;
       default:
         return; //throw("Unknown authentication strategy");
@@ -47,8 +44,8 @@ class UserController {
     await authService.resetPassword(email);
   }
 
-  Future<void> signUp(email, password, firstName, lastName, lang) async {
-    await authService.createUser(email, password, firstName, lastName, lang);
+  Future<void> signUp(email, password, firstName, lastName) async {
+    await authService.createUser(email, password, firstName, lastName);
   }
 }
 
