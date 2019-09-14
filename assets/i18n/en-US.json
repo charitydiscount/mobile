@@ -29,5 +29,11 @@
       "title": "Find Anything",
       "body": "Hundreds of partner stores"
     }
+  },
+  "account": {
+    "save": "Save account",
+    "name": "Account name",
+    "account": "Account",
+    "amount": "Amount"
   }
 }

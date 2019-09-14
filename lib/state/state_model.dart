@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:charity_discount/models/favorite_shops.dart';
 import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/models/program.dart';
+import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -21,6 +22,7 @@ class AppModel extends Model {
   FavoriteShops _favoriteShops = FavoriteShops(programs: []);
   TwoPerformantMeta _affiliateMeta;
   ProgramMeta _programsMeta;
+  Wallet wallet;
 
   AppModel() {
     createListeners();
@@ -138,5 +140,14 @@ class AppModel extends Model {
   Future<void> refreshPrograms() async {
     _programs = await getShopsService(_user.userId).getAllPrograms();
     await localService.setPrograms(_programs);
+  }
+
+  void addSavedAccount(SavedAccount savedAccount) {
+    wallet.savedAccounts.add(savedAccount);
+  }
+
+  void deleteSavedAccount(SavedAccount savedAccount) {
+    wallet.savedAccounts
+        .removeWhere((account) => account.iban == savedAccount.iban);
   }
 }

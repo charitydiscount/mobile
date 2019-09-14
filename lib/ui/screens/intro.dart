@@ -1,3 +1,4 @@
+import 'package:charity_discount/util/animated_pages.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_text/gradient_text.dart';
@@ -10,7 +11,6 @@ class Intro extends StatefulWidget {
 }
 
 class _IntroState extends State<Intro> with TickerProviderStateMixin {
-  PageController _controller;
   int currentPage = 0;
   bool lastPage = false;
   AnimationController animationController;
@@ -19,18 +19,9 @@ class _IntroState extends State<Intro> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _controller = PageController(
-      initialPage: currentPage,
-    );
     animationController =
         AnimationController(duration: Duration(milliseconds: 300), vsync: this);
     _scaleAnimation = Tween(begin: 0.6, end: 1.0).animate(animationController);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
@@ -49,9 +40,8 @@ class _IntroState extends State<Intro> with TickerProviderStateMixin {
         body: Stack(
           fit: StackFit.expand,
           children: <Widget>[
-            PageView.builder(
+            AnimatedPages(
               itemCount: pageList.length,
-              controller: _controller,
               onPageChanged: (index) {
                 setState(() {
                   currentPage = index;
@@ -64,29 +54,30 @@ class _IntroState extends State<Intro> with TickerProviderStateMixin {
                   }
                 });
               },
-              itemBuilder: (context, index) {
+              itemBuilder: (context, index, pageController) {
                 return AnimatedBuilder(
-                  animation: _controller,
+                  animation: pageController,
                   builder: (context, child) {
                     var page = pageList[index];
-                    var delta;
-                    var y = 1.0;
+                    // var delta;
+                    // var y = 1.0;
 
-                    if (_controller.position.haveDimensions) {
-                      delta = _controller.page - index;
-                      y = 1 - delta.abs().clamp(0.0, 1.0);
-                    }
+                    // if (pageController.position.haveDimensions) {
+                    //   delta = pageController.page - index;
+                    //   y = 1 - delta.abs().clamp(0.0, 1.0);
+                    // }
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Padding(
-                            padding: EdgeInsets.all(12),
-                            child: Image.asset(
-                              page.imageUrl,
-                              fit: BoxFit.fill,
-                            )),
+                          padding: EdgeInsets.all(12),
+                          child: Image.asset(
+                            page.imageUrl,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
                         Container(
                           margin: EdgeInsets.only(left: 12.0),
                           height: 90.0,
@@ -118,15 +109,11 @@ class _IntroState extends State<Intro> with TickerProviderStateMixin {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 34.0, top: 8.0),
-                          child: Transform(
-                            transform:
-                                Matrix4.translationValues(0, 50.0 * (1 - y), 0),
-                            child: Text(
-                              AppLocalizations.of(context).tr(page.body),
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: Color(0xFF9B9B9B),
-                              ),
+                          child: Text(
+                            AppLocalizations.of(context).tr(page.body),
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              color: Color(0xFF9B9B9B),
                             ),
                           ),
                         )

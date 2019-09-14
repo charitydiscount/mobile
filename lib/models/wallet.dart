@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:charity_discount/models/points.dart';
+import 'package:flutter/widgets.dart';
+import 'package:iban_form_field/iban_form_field.dart';
 
 class Wallet {
   final Points charityPoints;
   final Points cashback;
   final List<Transaction> transactions;
+  List<SavedAccount> savedAccounts = [];
 
   Wallet({this.charityPoints, this.cashback, this.transactions});
 
@@ -80,4 +83,23 @@ class Transaction {
         status: json['status'] ?? '',
         target: json['target'] ?? '',
       );
+}
+
+class SavedAccount {
+  final String name;
+  final String iban;
+
+  SavedAccount({this.name, @required this.iban});
+
+  factory SavedAccount.fromIban(Iban iban, String name) {
+    return SavedAccount(iban: iban.electronicFormat, name: name);
+  }
+
+  Iban get fullIban {
+    Iban fullIban = Iban(iban.substring(0, 2));
+    fullIban.checkDigits = iban.substring(2, 4);
+    fullIban.basicBankAccountNumber = iban.substring(4);
+
+    return fullIban;
+  }
 }

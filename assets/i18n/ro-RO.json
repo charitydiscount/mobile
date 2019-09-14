@@ -29,5 +29,11 @@
       "title": "Gaseste orice",
       "body": "Sute de magazine partenere"
     }
+  },
+  "account": {
+    "save": "Salveaza cont",
+    "name": "Nume cont",
+    "account": "Cont",
+    "amount": "Suma"
   }
 }

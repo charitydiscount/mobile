@@ -1,10 +1,10 @@
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/ui/screens/cashout.dart';
 import 'package:charity_discount/ui/screens/transactions.dart';
 import 'package:charity_discount/ui/widgets/about_points.dart';
 import 'package:charity_discount/ui/widgets/charity.dart';
-import 'package:charity_discount/ui/widgets/operations.dart';
 import 'package:charity_discount/util/ui.dart';
 import 'package:flutter/material.dart';
 
@@ -26,6 +26,8 @@ class WalletScreen extends StatelessWidget {
         if (loading != null) {
           return loading;
         }
+
+        AppModel.of(context).wallet = snapshot.data;
 
         snapshot.data.transactions.sort((t1, t2) => t2.date.compareTo(t1.date));
 
@@ -91,13 +93,21 @@ class WalletScreen extends StatelessWidget {
                           );
                           break;
                         case CashbackAction.CASHOUT:
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (BuildContext context) {
-                              return CashoutDialog();
-                            },
-                          ).then((txRef) => showTxResult(txRef, context));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              maintainState: true,
+                              builder: (context) => CashoutScreen(),
+                              settings: RouteSettings(name: 'Cashout'),
+                            ),
+                          );
+                          // showDialog(
+                          //   context: context,
+                          //   barrierDismissible: false,
+                          //   builder: (BuildContext context) {
+                          //     return CashoutDialog();
+                          //   },
+                          // ).then((txRef) => showTxResult(txRef, context));
                           break;
                         default:
                           return;
