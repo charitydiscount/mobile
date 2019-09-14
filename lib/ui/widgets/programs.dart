@@ -12,7 +12,14 @@ import 'package:charity_discount/util/url.dart';
 import 'package:flutter/material.dart';
 
 class ProgramsList extends StatefulWidget {
-  ProgramsList({Key key}) : super(key: key);
+  final ShopsService shopsService;
+  final SearchServiceBase searchService;
+
+  ProgramsList({
+    Key key,
+    @required this.shopsService,
+    @required this.searchService,
+  }) : super(key: key);
 
   _ProgramsListState createState() => _ProgramsListState();
 }
@@ -86,6 +93,8 @@ class _ProgramsListState extends State<ProgramsList>
                   category: _category,
                   onlyFavorites: _onlyFavorites,
                   displayAsGrid: _displayAsGrid,
+                  searchService: widget.searchService,
+                  shopsService: widget.shopsService,
                 ),
               );
             },
@@ -103,7 +112,11 @@ class _ProgramsListState extends State<ProgramsList>
         onPressed: () {
           showSearch(
             context: context,
-            delegate: ProgramsSearch(appState: _appState),
+            delegate: ProgramsSearch(
+              appState: _appState,
+              searchService: widget.searchService,
+              shopsService: widget.shopsService,
+            ),
           );
         },
       ),
@@ -218,14 +231,18 @@ class ShopsWidget extends StatefulWidget {
   final bool onlyFavorites;
   final bool displayAsGrid;
   final String category;
+  final ShopsService shopsService;
+  final SearchServiceBase searchService;
 
   const ShopsWidget({
     Key key,
-    this.programs,
-    this.appState,
+    @required this.programs,
+    @required this.appState,
     this.onlyFavorites = false,
     this.category,
     this.displayAsGrid = false,
+    @required this.shopsService,
+    @required this.searchService,
   }) : super(key: key);
 
   @override
@@ -239,7 +256,7 @@ class _ShopsWidgetState extends State<ShopsWidget>
     super.build(context);
     return StreamBuilder(
       initialData: widget.appState.favoriteShops,
-      stream: getShopsService(widget.appState.user.userId).favoritePrograms,
+      stream: widget.shopsService.favoritePrograms,
       builder: (context, snapshot) {
         FavoriteShops favoriteShops = snapshot.data;
         widget.appState.setFavoriteShops(favoriteShops);
@@ -308,11 +325,13 @@ class _ShopsWidgetState extends State<ShopsWidget>
                             key: Key(p.uniqueCode),
                             program: p,
                             userId: appState.user.userId,
+                            shopsService: widget.shopsService,
                           )
                         : ShopFullTile(
                             key: Key(p.uniqueCode),
                             program: p,
                             userId: appState.user.userId,
+                            shopsService: widget.shopsService,
                           ),
                   ))
               .toList(),
@@ -349,8 +368,14 @@ class ProgramsSearch extends SearchDelegate<String> {
   AsyncMemoizer _asyncMemoizer = AsyncMemoizer();
   String _previousQuery;
   bool _previousExact;
+  final ShopsService shopsService;
+  final SearchServiceBase searchService;
 
-  ProgramsSearch({this.appState});
+  ProgramsSearch({
+    this.appState,
+    @required this.shopsService,
+    @required this.searchService,
+  });
 
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -414,7 +439,12 @@ class ProgramsSearch extends SearchDelegate<String> {
         }
 
         final List<Program> programs = List.of(snapshot.data);
-        return ShopsWidget(programs: programs, appState: appState);
+        return ShopsWidget(
+          programs: programs,
+          appState: appState,
+          searchService: searchService,
+          shopsService: shopsService,
+        );
       },
     );
   }

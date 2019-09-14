@@ -1,8 +1,8 @@
 import 'package:charity_discount/services/auth.dart';
+import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/services/local.dart';
 import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/models/settings.dart';
-import 'package:charity_discount/services/shops.dart';
 
 enum Strategy { EmailAndPass, Google, Facebook }
 
@@ -35,7 +35,7 @@ class UserController {
   }
 
   Future<void> signOut() async {
-    await getShopsService(authService.currentUser.uid).closeFavoritesSink();
+    await getFirebaseShopsService(authService.currentUser.uid).closeFavoritesSink();
     await authService.signOut();
     await localService.clear();
   }

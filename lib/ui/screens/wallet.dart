@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 enum CashbackAction { CANCEL, DONATE, CASHOUT }
 
 class WalletScreen extends StatelessWidget {
-  WalletScreen({Key key}) : super(key: key);
+  final CharityService charityService;
+
+  WalletScreen({Key key, @required this.charityService}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -212,7 +214,9 @@ class WalletScreen extends StatelessWidget {
       ),
       body: Column(
         children: <Widget>[
-          Expanded(child: CharityWidget()),
+          Expanded(
+            child: CharityWidget(charityService: charityService),
+          ),
         ],
       ),
     );

@@ -23,10 +23,15 @@ class AppModel extends Model {
   TwoPerformantMeta _affiliateMeta;
   ProgramMeta _programsMeta;
   Wallet wallet;
+  ShopsService shopsService;
 
   AppModel() {
     createListeners();
     initFromLocal();
+  }
+
+  void setShopsService(ShopsService service) {
+    shopsService = service;
   }
 
   void createListeners() {
@@ -129,7 +134,7 @@ class AppModel extends Model {
       if (localPrograms != null) {
         _programs = localPrograms;
       } else {
-        _programs = await getShopsService(_user.userId).getAllPrograms();
+        _programs = await shopsService.getAllPrograms();
         localService.setPrograms(_programs);
       }
     }
@@ -138,7 +143,7 @@ class AppModel extends Model {
   }
 
   Future<void> refreshPrograms() async {
-    _programs = await getShopsService(_user.userId).getAllPrograms();
+    _programs = await shopsService.getAllPrograms();
     await localService.setPrograms(_programs);
   }
 

@@ -6,7 +6,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class SearchService {
+class SearchServiceBase {
+  Future<List<Program>> search(String query, {bool exact = false}) async {
+    throw Error();
+  }
+
+  Future<List<Suggestion>> getSuggestions(String query) async {
+    throw Error();
+  }
+}
+
+class SearchService implements SearchServiceBase {
   String _baseUrl;
 
   dynamic _search(String query, exact) async {
@@ -33,6 +43,7 @@ class SearchService {
     return json.decode(response.body);
   }
 
+  @override
   Future<List<Program>> search(String query, {bool exact = false}) async {
     Map<String, dynamic> data = await _search(query, exact);
     if (!data.containsKey('hits')) {
@@ -44,6 +55,7 @@ class SearchService {
     return programs;
   }
 
+  @override
   Future<List<Suggestion>> getSuggestions(String query) async {
     Map<String, dynamic> data = await _search(query, false);
     if (!data.containsKey('hits')) {
@@ -70,5 +82,3 @@ class SearchService {
     _baseUrl = await remoteConfig.getSearchEndpoint();
   }
 }
-
-final SearchService searchService = SearchService();

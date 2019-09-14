@@ -12,8 +12,13 @@ import 'package:rxdart/rxdart.dart';
 
 class DonateDialog extends StatefulWidget {
   final Charity charityCase;
+  final CharityService charityService;
 
-  DonateDialog({Key key, this.charityCase}) : super(key: key);
+  DonateDialog({
+    Key key,
+    @required this.charityCase,
+    @required this.charityService,
+  }) : super(key: key);
 
   @override
   _DonateDialogState createState() => _DonateDialogState();
@@ -29,6 +34,7 @@ class _DonateDialogState extends State<DonateDialog> {
       body: DonateWidget(
         charityCase: widget.charityCase,
         formKey: _formKey,
+        charityService: widget.charityService,
       ),
     );
   }
@@ -37,8 +43,14 @@ class _DonateDialogState extends State<DonateDialog> {
 class DonateWidget extends StatefulWidget {
   final Charity charityCase;
   final GlobalKey<FormState> formKey;
+  final CharityService charityService;
 
-  DonateWidget({Key key, this.charityCase, this.formKey}) : super(key: key);
+  DonateWidget({
+    Key key,
+    @required this.charityCase,
+    @required this.formKey,
+    @required this.charityService,
+  }) : super(key: key);
 
   @override
   _DonateWidgetState createState() => _DonateWidgetState();
@@ -50,7 +62,7 @@ class _DonateWidgetState extends State<DonateWidget> {
 
   @override
   void initState() {
-    _pointsListener = charityService.getPointsListener(
+    _pointsListener = widget.charityService.getPointsListener(
       AppModel.of(context).user.userId,
     );
     super.initState();
@@ -142,7 +154,7 @@ class _DonateWidgetState extends State<DonateWidget> {
                     onPressed: () {
                       if (widget.formKey.currentState.validate() &&
                           _amountController.text.isNotEmpty) {
-                        var txRef = charityService.createTransaction(
+                        var txRef = widget.charityService.createTransaction(
                           AppModel.of(context).user.userId,
                           TxType.DONATION,
                           double.tryParse(_amountController.text),
@@ -165,7 +177,9 @@ class _DonateWidgetState extends State<DonateWidget> {
 }
 
 class CashoutDialog extends StatefulWidget {
-  CashoutDialog({Key key}) : super(key: key);
+  final CharityService charityService;
+
+  CashoutDialog({Key key, @required this.charityService}) : super(key: key);
 
   _CashoutDialogState createState() => _CashoutDialogState();
 }
@@ -178,15 +192,23 @@ class _CashoutDialogState extends State<CashoutDialog> {
   Widget build(BuildContext context) {
     return OperationDialog(
       title: Text('Cashout'),
-      body: CashoutWidget(formKey: _formKey),
+      body: CashoutWidget(
+        formKey: _formKey,
+        charityService: widget.charityService,
+      ),
     );
   }
 }
 
 class CashoutWidget extends StatefulWidget {
   final GlobalKey<FormState> formKey;
+  final CharityService charityService;
 
-  CashoutWidget({Key key, this.formKey}) : super(key: key);
+  CashoutWidget({
+    Key key,
+    @required this.formKey,
+    @required this.charityService,
+  }) : super(key: key);
 
   @override
   _CashoutWidgetState createState() => _CashoutWidgetState();
@@ -198,7 +220,7 @@ class _CashoutWidgetState extends State<CashoutWidget> {
 
   @override
   void initState() {
-    _pointsListener = charityService.getPointsListener(
+    _pointsListener = widget.charityService.getPointsListener(
       AppModel.of(context).user.userId,
     );
     super.initState();
@@ -290,7 +312,7 @@ class _CashoutWidgetState extends State<CashoutWidget> {
                     onPressed: () {
                       if (widget.formKey.currentState.validate() &&
                           _amountController.text.isNotEmpty) {
-                        var txRef = charityService.createTransaction(
+                        var txRef = widget.charityService.createTransaction(
                           AppModel.of(context).user.userId,
                           TxType.CASHOUT,
                           double.tryParse(_amountController.text),

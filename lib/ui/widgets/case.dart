@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/ui/screens/case_details.dart';
 import 'package:charity_discount/ui/widgets/operations.dart';
 import 'package:charity_discount/util/url.dart';
@@ -8,8 +9,13 @@ import 'package:charity_discount/models/charity.dart';
 
 class CaseWidget extends StatelessWidget {
   final Charity charityCase;
+  final CharityService charityService;
 
-  CaseWidget({Key key, this.charityCase}) : super(key: key);
+  CaseWidget({
+    Key key,
+    @required this.charityCase,
+    @required this.charityService,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +46,7 @@ class CaseWidget extends StatelessWidget {
           builder: (BuildContext context) {
             return DonateDialog(
               charityCase: charityCase,
+              charityService: charityService,
             );
           },
         ).then((txRef) => showTxResult(txRef, context));
@@ -57,8 +64,10 @@ class CaseWidget extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (BuildContext context) =>
-                CaseDetails(charity: charityCase),
+            builder: (BuildContext context) => CaseDetails(
+              charity: charityCase,
+              charityService: charityService,
+            ),
             settings: RouteSettings(name: 'CaseDetails'),
           ),
         );

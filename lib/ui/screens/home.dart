@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/user.dart';
+import 'package:charity_discount/services/factory.dart';
+import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/screens/settings.dart';
 import 'package:charity_discount/ui/screens/wallet.dart';
@@ -17,7 +19,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _loadingVisible = false;
   int _selectedNavIndex = 0;
-  final _widgets = [CharityWidget(), ProgramsList(), WalletScreen()];
+  List<Widget> _widgets = [];
 
   @override
   void initState() {
@@ -26,6 +28,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget build(BuildContext context) {
     var appState = AppModel.of(context);
+    if (_widgets.isEmpty) {
+      final CharityWidget charityList = CharityWidget(
+        charityService: getFirebaseCharityService(),
+      );
+      final ProgramsList programsList = ProgramsList(
+        searchService: SearchService(),
+        shopsService: getFirebaseShopsService(appState.user.userId),
+      );
+      final WalletScreen walletScreen = WalletScreen(
+        charityService: getFirebaseCharityService(),
+      );
+
+      appState.setShopsService(getFirebaseShopsService(appState.user.userId));
+
+      _widgets.addAll([
+        charityList,
+        programsList,
+        walletScreen,
+      ]);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Charity Discount'),

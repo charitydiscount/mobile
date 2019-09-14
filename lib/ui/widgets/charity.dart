@@ -6,6 +6,13 @@ import 'package:charity_discount/ui/widgets/case.dart';
 import 'package:charity_discount/services/charity.dart';
 
 class CharityWidget extends StatefulWidget {
+  final CharityService charityService;
+
+  const CharityWidget({
+    Key key,
+    @required this.charityService,
+  }) : super(key: key);
+
   _CharityState createState() => _CharityState();
 }
 
@@ -17,7 +24,7 @@ class _CharityState extends State<CharityWidget>
   @override
   void initState() {
     super.initState();
-    cases = charityService.getCases();
+    cases = widget.charityService.getCases();
   }
 
   Widget build(BuildContext context) {
@@ -37,8 +44,11 @@ class _CharityState extends State<CharityWidget>
             .map(
               (entry) => Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child:
-                    CaseWidget(key: Key(entry.key), charityCase: entry.value),
+                child: CaseWidget(
+                  key: Key(entry.key),
+                  charityCase: entry.value,
+                  charityService: widget.charityService,
+                ),
               ),
             )
             .toList();

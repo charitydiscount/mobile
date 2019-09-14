@@ -9,8 +9,14 @@ import 'package:charity_discount/util/url.dart';
 class ShopFullTile extends StatelessWidget {
   final models.Program program;
   final String userId;
+  final ShopsService shopsService;
 
-  ShopFullTile({Key key, this.program, this.userId}) : super(key: key);
+  ShopFullTile({
+    Key key,
+    @required this.program,
+    @required this.userId,
+    @required this.shopsService,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -106,15 +112,21 @@ class ShopFullTile extends StatelessWidget {
   }
 
   void _setFavorite(models.Program program, bool favorite) async {
-    await getShopsService(userId).setFavoriteShop(userId, program, favorite);
+    await shopsService.setFavoriteShop(userId, program, favorite);
   }
 }
 
 class ShopHalfTile extends StatelessWidget {
   final models.Program program;
   final String userId;
+  final ShopsService shopsService;
 
-  ShopHalfTile({Key key, this.program, this.userId}) : super(key: key);
+  ShopHalfTile({
+    Key key,
+    this.program,
+    this.userId,
+    this.shopsService,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -210,6 +222,6 @@ class ShopHalfTile extends StatelessWidget {
   }
 
   void _setFavorite(models.Program program, bool favorite) async {
-    await getShopsService(userId).setFavoriteShop(userId, program, favorite);
+    await shopsService.setFavoriteShop(userId, program, favorite);
   }
 }

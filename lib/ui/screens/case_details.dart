@@ -1,12 +1,18 @@
 import 'package:charity_discount/models/charity.dart';
+import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/ui/widgets/operations.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class CaseDetails extends StatelessWidget {
   final Charity charity;
+  final CharityService charityService;
 
-  CaseDetails({Key key, this.charity}) : super(key: key);
+  CaseDetails({
+    Key key,
+    @required this.charity,
+    @required this.charityService,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +81,7 @@ class CaseDetails extends StatelessWidget {
             builder: (BuildContext context) {
               return DonateDialog(
                 charityCase: charity,
+                charityService: charityService,
               );
             },
           ).then((txRef) => showTxResult(txRef, context));

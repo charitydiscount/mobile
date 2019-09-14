@@ -6,6 +6,22 @@ import 'package:rxdart/rxdart.dart';
 import 'package:charity_discount/models/favorite_shops.dart';
 
 class ShopsService {
+  BehaviorSubject<FavoriteShops> get favoritePrograms => throw Error();
+
+  Future<List<models.Program>> getAllPrograms() async {
+    throw Error();
+  }
+
+  Future<void> setFavoriteShop(
+    String userId,
+    models.Program program,
+    bool favorite,
+  ) async {
+    throw Error();
+  }
+}
+
+class FirebaseShopsService implements ShopsService {
   final _db = Firestore.instance;
   final String userId;
   Observable<DocumentSnapshot> _favRef;
@@ -15,7 +31,7 @@ class ShopsService {
 
   BehaviorSubject<FavoriteShops> get favoritePrograms => _favoritePrograms;
 
-  ShopsService(this.userId) {
+  FirebaseShopsService(this.userId) {
     _favRef = Observable(
         _db.collection('favoriteShops').document(userId).snapshots());
     _favListener = _favRef.listen((snap) {
@@ -27,6 +43,7 @@ class ShopsService {
     });
   }
 
+  @override
   Future<void> setFavoriteShop(
       String userId, models.Program program, bool favorite) async {
     DocumentReference ref = _db.collection('favoriteShops').document(userId);
@@ -60,6 +77,7 @@ class ShopsService {
     }, merge: true);
   }
 
+  @override
   Future<List<models.Program>> getAllPrograms() async {
     QuerySnapshot snapshot =
         await _db.collection('shops').orderBy('createdAt').getDocuments();
@@ -75,14 +93,4 @@ class ShopsService {
 
     return programs;
   }
-}
-
-ShopsService _shopsService;
-
-ShopsService getShopsService(String userId) {
-  if (_shopsService == null || _shopsService.userId != userId) {
-    _shopsService = ShopsService(userId);
-  }
-
-  return _shopsService;
 }
