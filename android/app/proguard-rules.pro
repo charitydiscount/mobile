@@ -6,3 +6,4 @@
 -keep class io.flutter.**  { *; }
 -keep class io.flutter.plugins.**  { *; }
 -keep class com.google.firebase.** { *; }
+-ignorewarnings
