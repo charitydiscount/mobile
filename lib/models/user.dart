@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:iban_form_field/iban_form_field.dart';
 
 User userFromJson(String str) {
   final jsonData = json.decode(str);
@@ -17,15 +19,29 @@ class User {
   String lastName;
   String email;
   String photoUrl;
+  List<SavedAccount> savedAccounts = [];
 
-  User({this.userId, this.firstName, this.lastName, this.email, this.photoUrl});
+  User({
+    this.userId,
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.photoUrl,
+    this.savedAccounts,
+  });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
-      userId: json["userId"],
-      firstName: json["firstName"],
-      lastName: json["lastName"],
-      email: json["email"],
-      photoUrl: json["photoUrl"]);
+        userId: json["userId"],
+        firstName: json["firstName"],
+        lastName: json["lastName"],
+        email: json["email"],
+        photoUrl: json["photoUrl"],
+        savedAccounts: List<SavedAccount>.from(
+          (json['accounts'] ?? [])
+              .map((accountJson) => SavedAccount.fromJson(accountJson))
+              .toList(),
+        ),
+      );
 
   Map<String, dynamic> toJson() => {
         "userId": userId,
@@ -38,4 +54,33 @@ class User {
   factory User.fromDocument(DocumentSnapshot doc) {
     return User.fromJson(doc.data);
   }
+}
+
+class SavedAccount {
+  final String name;
+  final String iban;
+
+  SavedAccount({this.name, @required this.iban});
+
+  factory SavedAccount.fromIban(Iban iban, String name) {
+    return SavedAccount(iban: iban.electronicFormat, name: name);
+  }
+
+  factory SavedAccount.fromJson(dynamic json) => SavedAccount(
+        iban: json['iban'],
+        name: json['name'],
+      );
+
+  Iban get fullIban {
+    Iban fullIban = Iban(iban.substring(0, 2));
+    fullIban.checkDigits = iban.substring(2, 4);
+    fullIban.basicBankAccountNumber = iban.substring(4);
+
+    return fullIban;
+  }
+
+  Map<String, dynamic> toJson() => {
+        'iban': iban,
+        'name': name,
+      };
 }

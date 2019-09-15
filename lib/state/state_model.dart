@@ -3,6 +3,7 @@ import 'package:charity_discount/models/favorite_shops.dart';
 import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/wallet.dart';
+import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -23,15 +24,17 @@ class AppModel extends Model {
   TwoPerformantMeta _affiliateMeta;
   ProgramMeta _programsMeta;
   Wallet wallet;
-  ShopsService shopsService;
+  ShopsService _shopsService;
+  CharityService _charityService;
 
   AppModel() {
     createListeners();
     initFromLocal();
   }
 
-  void setShopsService(ShopsService service) {
-    shopsService = service;
+  void setServices(ShopsService shopService, CharityService charityService) {
+    _shopsService = shopService;
+    _charityService = charityService;
   }
 
   void createListeners() {
@@ -134,7 +137,7 @@ class AppModel extends Model {
       if (localPrograms != null) {
         _programs = localPrograms;
       } else {
-        _programs = await shopsService.getAllPrograms();
+        _programs = await _shopsService.getAllPrograms();
         localService.setPrograms(_programs);
       }
     }
@@ -143,16 +146,18 @@ class AppModel extends Model {
   }
 
   Future<void> refreshPrograms() async {
-    _programs = await shopsService.getAllPrograms();
+    _programs = await _shopsService.getAllPrograms();
     await localService.setPrograms(_programs);
   }
 
   void addSavedAccount(SavedAccount savedAccount) {
-    wallet.savedAccounts.add(savedAccount);
+    user.savedAccounts.add(savedAccount);
+    _charityService.saveAccount(user.userId, savedAccount);
   }
 
   void deleteSavedAccount(SavedAccount savedAccount) {
-    wallet.savedAccounts
+    user.savedAccounts
         .removeWhere((account) => account.iban == savedAccount.iban);
+    _charityService.removeAccount(user.userId, savedAccount);
   }
 }

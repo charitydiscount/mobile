@@ -40,7 +40,10 @@ class _HomeScreenState extends State<HomeScreen> {
         charityService: getFirebaseCharityService(),
       );
 
-      appState.setShopsService(getFirebaseShopsService(appState.user.userId));
+      appState.setServices(
+        getFirebaseShopsService(appState.user.userId),
+        getFirebaseCharityService(),
+      );
 
       _widgets.addAll([
         charityList,

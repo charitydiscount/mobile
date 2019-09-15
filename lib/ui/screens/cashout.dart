@@ -1,4 +1,3 @@
-import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/animated_pages.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';
@@ -6,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:iban_form_field/iban_form_field.dart';
+
+import '../../models/user.dart';
 
 class CashoutScreen extends StatefulWidget {
   CashoutScreen({Key key}) : super(key: key);
@@ -96,7 +97,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
           ),
           ListView(
             shrinkWrap: true,
-            children: _state.wallet.savedAccounts
+            children: _state.user.savedAccounts
                 .map(
                   (account) => Card(
                     child: ListTile(
@@ -231,7 +232,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
                 : () {
                     setState(() {
                       if (_saveIban &&
-                          _state.wallet.savedAccounts.firstWhere(
+                          _state.user.savedAccounts.firstWhere(
                                   (saved) =>
                                       saved.iban == _iban.electronicFormat,
                                   orElse: () => null) ==
