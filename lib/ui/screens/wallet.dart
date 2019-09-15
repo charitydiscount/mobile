@@ -99,7 +99,8 @@ class WalletScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               maintainState: true,
-                              builder: (context) => CashoutScreen(),
+                              builder: (context) =>
+                                  CashoutScreen(charityService: charityService),
                               settings: RouteSettings(name: 'Cashout'),
                             ),
                           );

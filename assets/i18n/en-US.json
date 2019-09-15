@@ -34,6 +34,12 @@
     "save": "Save account",
     "name": "Account name",
     "account": "Account",
-    "amount": "Amount"
-  }
+    "amount": "Amount",
+    "summary": "Summary",
+    "insufficientCashback": "Insufficient cashback",
+    "amountHint": "The amount you want to withdraw",
+    "availableCashback": "Available cashback"
+  },
+  "next": "Next",
+  "send": "Send"
 }
