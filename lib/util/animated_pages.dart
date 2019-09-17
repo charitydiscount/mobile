@@ -36,21 +36,36 @@ class _AnimatedPagesState extends State<AnimatedPages>
 
   @override
   Widget build(BuildContext context) {
-    return PageView.builder(
-      itemCount: widget.itemCount,
-      controller: _controller,
-      physics: widget.physics,
-      onPageChanged: widget.onPageChanged,
-      itemBuilder: (context, index) {
-        return Transform(
-          transform: Matrix4.translationValues(0, 0, 0),
-          child: widget.itemBuilder(
-            context,
-            index,
-            _controller,
-          ),
-        );
-      },
+    return WillPopScope(
+      onWillPop: () => Future.sync(_onWillPop),
+      child: PageView.builder(
+        itemCount: widget.itemCount,
+        controller: _controller,
+        physics: widget.physics,
+        onPageChanged: widget.onPageChanged,
+        itemBuilder: (context, index) {
+          return Transform(
+            transform: Matrix4.translationValues(0, 0, 0),
+            child: widget.itemBuilder(
+              context,
+              index,
+              _controller,
+            ),
+          );
+        },
+      ),
     );
+  }
+
+  bool _onWillPop() {
+    if (_controller.page.round() == _controller.initialPage)
+      return true;
+    else {
+      _controller.previousPage(
+        duration: Duration(milliseconds: 200),
+        curve: Curves.linear,
+      );
+    }
+    return false;
   }
 }
