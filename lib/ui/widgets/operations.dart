@@ -30,7 +30,9 @@ class _DonateDialogState extends State<DonateDialog> {
   @override
   Widget build(BuildContext context) {
     return OperationDialog(
-      title: Text('Contribuie la ${widget.charityCase.title}'),
+      title: Text(
+        'Contribuie la ${widget.charityCase.title}',
+      ),
       body: DonateWidget(
         charityCase: widget.charityCase,
         formKey: _formKey,
@@ -191,8 +193,9 @@ class OperationDialog extends StatelessWidget {
     return SimpleDialog(
       title: Row(
         children: <Widget>[
-          title,
-          Expanded(
+          Expanded(child: title),
+          Flexible(
+            flex: 0,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[

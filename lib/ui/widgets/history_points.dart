@@ -55,11 +55,12 @@ class TransactionDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int decimalsToDisplay = tx.type == TxType.BONUS ? 4 : 2;
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Card(
         child: ListTile(
-          title: Text('${tx.amount.toString()} ${tx.currency}'),
+          title: Text('${tx.amount.toStringAsFixed(decimalsToDisplay)} ${tx.currency}'),
           subtitle: Text(DateFormat.yMd('ro_RO').add_jm().format(tx.date)),
         ),
       ),

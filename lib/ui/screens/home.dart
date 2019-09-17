@@ -7,6 +7,7 @@ import 'package:charity_discount/ui/screens/settings.dart';
 import 'package:charity_discount/ui/screens/wallet.dart';
 import 'package:charity_discount/ui/screens/profile.dart';
 import 'package:charity_discount/ui/widgets/programs.dart';
+import 'package:charity_discount/util/url.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
@@ -173,6 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 'Termeni si conditii',
                 style: titleStyle,
               ),
+              onTap: () => launchURL('https://charitydiscount.ro/tos'),
             );
             menuTiles.add(terms);
 
@@ -182,6 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 'Confidentialitate',
                 style: titleStyle,
               ),
+              onTap: () => launchURL('https://charitydiscount.ro/privacy'),
             );
             menuTiles.add(privacy);
 
