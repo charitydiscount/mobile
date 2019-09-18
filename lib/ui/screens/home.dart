@@ -3,6 +3,7 @@ import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/ui/screens/news.dart';
 import 'package:charity_discount/ui/screens/settings.dart';
 import 'package:charity_discount/ui/screens/wallet.dart';
 import 'package:charity_discount/ui/screens/profile.dart';
@@ -147,6 +148,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 'Noutati',
                 style: titleStyle,
               ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => NewsScreen(
+                      charityService: getFirebaseCharityService(),
+                    ),
+                    settings: RouteSettings(name: 'News'),
+                  ),
+                );
+              },
             );
             menuTiles.add(news);
 

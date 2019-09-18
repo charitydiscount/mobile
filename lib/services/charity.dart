@@ -1,3 +1,4 @@
+import 'package:charity_discount/models/news.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/models/charity.dart';
@@ -37,6 +38,10 @@ class CharityService {
     String userId,
     SavedAccount savedAccount,
   ) async {
+    throw Error();
+  }
+
+  Future<List<News>> getNews() {
     throw Error();
   }
 }
@@ -123,5 +128,28 @@ class FirebaseCharityService implements CharityService {
     return userRef.updateData({
       'accounts': FieldValue.arrayRemove([savedAccount.toJson()])
     }).catchError((e) {});
+  }
+
+  @override
+  Future<List<News>> getNews() {
+    List<News> mockedNews = [
+      News(
+        id: '1',
+        createdAt: DateTime.now(),
+        title: 'Charity Discount Launched',
+        imageUrl: 'https://charitydiscount.ro/img/charity_discount.png',
+        body:
+            'It is a pleasure to announce the launch of <strong>Charity Discount</strong>',
+      ),
+      News(
+        id: '1',
+        createdAt: DateTime.now(),
+        title: 'New Charity Case Supported',
+        imageUrl: 'http://teachforromania.org/wp-content/uploads/105.jpg',
+        body:
+            '<p><i>Knowledge is power. Information is liberating. Education is the premise of progress, in every society, in every family.</i></p>',
+      ),
+    ];
+    return Future.value(mockedNews);
   }
 }

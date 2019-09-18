@@ -8,8 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:iban_form_field/iban_form_field.dart';
 import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/models/wallet.dart';
-
-import '../widgets/operations.dart';
+import 'package:charity_discount/ui/widgets/operations.dart';
 
 class CashoutScreen extends StatefulWidget {
   final CharityService charityService;
