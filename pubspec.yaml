@@ -41,7 +41,7 @@ dependencies:
   flutter_svg: ^0.14.1
   iban_form_field: ^0.1.7
   flutter_html: ^0.11.0
-  smooth_star_rating: ^1.0.3
+  flutter_rating_bar: ^3.0.0
 
 dev_dependencies:
   flutter_test:

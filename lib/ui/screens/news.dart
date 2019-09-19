@@ -57,7 +57,6 @@ class NewsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double imageHeight = MediaQuery.of(context).size.height / 3.5;
-    print(imageHeight);
     Widget image = news.imageUrl == null
         ? Container()
         : Container(

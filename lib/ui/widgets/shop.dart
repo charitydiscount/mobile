@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/ui/screens/shop_details.dart';
 import 'package:charity_discount/util/url.dart';
-import 'package:smooth_star_rating/smooth_star_rating.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class ShopFullTile extends StatelessWidget {
   final models.Program program;
@@ -45,15 +45,26 @@ class ShopFullTile extends StatelessWidget {
       ),
     );
 
-    Widget cashback = Text(program.leadCommissionAmount != null
-        ? '${program.leadCommissionAmount} RON'
-        : '${program.saleCommissionRate}%',
-        style: Theme.of(context).textTheme.caption,);
+    Widget cashback = Text(
+      program.leadCommissionAmount != null
+          ? '${program.leadCommissionAmount} RON'
+          : '${program.saleCommissionRate}%',
+      style: Theme.of(context).textTheme.caption,
+    );
 
-    Widget rating = SmoothStarRating(
-      rating: 4.49,
+    Widget rating = RatingBar(
+      initialRating: 3.5,
+      direction: Axis.horizontal,
       allowHalfRating: true,
-      color: Colors.green,
+      glow: false,
+      ignoreGestures: true,
+      itemCount: 5,
+      itemSize: 30,
+      itemBuilder: (context, _) => Icon(
+        Icons.star,
+        color: Colors.green,
+      ),
+      onRatingUpdate: (rating) {},
     );
 
     Widget favoriteButton = program.favorited
@@ -149,6 +160,7 @@ class ShopHalfTile extends StatelessWidget {
       ),
     );
     final linkButton = IconButton(
+      padding: EdgeInsets.zero,
       icon: const Icon(Icons.add_shopping_cart),
       color: Theme.of(context).primaryColor,
       onPressed: () {
@@ -156,12 +168,31 @@ class ShopHalfTile extends StatelessWidget {
       },
     );
 
-    String cashback = program.leadCommissionAmount != null
-        ? '${program.leadCommissionAmount} RON'
-        : '${program.saleCommissionRate}%';
+    Widget cashback = Text(
+      program.leadCommissionAmount != null
+          ? '${program.leadCommissionAmount}lei'
+          : '${program.saleCommissionRate}%',
+      style: Theme.of(context).textTheme.caption,
+    );
+
+    Widget rating = RatingBar(
+      initialRating: 3.5,
+      direction: Axis.horizontal,
+      allowHalfRating: true,
+      glow: false,
+      ignoreGestures: true,
+      itemCount: 5,
+      itemSize: 20,
+      itemBuilder: (context, _) => Icon(
+        Icons.star,
+        color: Colors.green,
+      ),
+      onRatingUpdate: (rating) {},
+    );
 
     Widget favoriteButton = program.favorited
         ? IconButton(
+            padding: EdgeInsets.zero,
             icon: const Icon(Icons.favorite),
             color: Theme.of(context).primaryColor,
             onPressed: () {
@@ -169,6 +200,7 @@ class ShopHalfTile extends StatelessWidget {
             },
           )
         : IconButton(
+            padding: EdgeInsets.zero,
             icon: const Icon(Icons.favorite_border),
             color: Colors.grey,
             onPressed: () {
@@ -209,15 +241,13 @@ class ShopHalfTile extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Center(
-                  child: Text(
-                    cashback,
-                    style: Theme.of(context).textTheme.caption,
-                  ),
+                  child: rating,
                 ),
               ),
               ButtonTheme.bar(
                 child: ButtonBar(
                   children: <Widget>[
+                    cashback,
                     favoriteButton,
                     linkButton,
                   ],
