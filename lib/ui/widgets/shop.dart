@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/ui/screens/shop_details.dart';
 import 'package:charity_discount/util/url.dart';
+import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 class ShopFullTile extends StatelessWidget {
   final models.Program program;
@@ -44,9 +45,16 @@ class ShopFullTile extends StatelessWidget {
       ),
     );
 
-    String cashback = program.leadCommissionAmount != null
+    Widget cashback = Text(program.leadCommissionAmount != null
         ? '${program.leadCommissionAmount} RON'
-        : '${program.saleCommissionRate}%';
+        : '${program.saleCommissionRate}%',
+        style: Theme.of(context).textTheme.caption,);
+
+    Widget rating = SmoothStarRating(
+      rating: 4.49,
+      allowHalfRating: true,
+      color: Colors.green,
+    );
 
     Widget favoriteButton = program.favorited
         ? IconButton(
@@ -93,12 +101,13 @@ class ShopFullTile extends StatelessWidget {
                   ),
                 ),
                 subtitle: Center(
-                  child: Text(cashback),
+                  child: rating,
                 ),
               ),
               ButtonTheme.bar(
                 child: ButtonBar(
                   children: <Widget>[
+                    cashback,
                     favoriteButton,
                     linkButton,
                   ],

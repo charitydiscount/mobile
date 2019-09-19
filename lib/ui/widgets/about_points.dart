@@ -100,6 +100,5 @@ class AboutPointsWidget extends StatelessWidget {
         ).toList(),
       ),
     );
-    //'Acumuleaza puncte si beneficiezi de acces la oferte speciale'));
   }
 }

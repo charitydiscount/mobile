@@ -59,13 +59,6 @@ class _IntroState extends State<Intro> with TickerProviderStateMixin {
                   animation: pageController,
                   builder: (context, child) {
                     var page = pageList[index];
-                    // var delta;
-                    // var y = 1.0;
-
-                    // if (pageController.position.haveDimensions) {
-                    //   delta = pageController.page - index;
-                    //   y = 1 - delta.abs().clamp(0.0, 1.0);
-                    // }
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,

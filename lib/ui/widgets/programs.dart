@@ -319,21 +319,23 @@ class _ShopsWidgetState extends State<ShopsWidget>
 
         return Row(
           children: programsToDisplay
-              .map((p) => Expanded(
-                    child: widget.displayAsGrid
-                        ? ShopHalfTile(
-                            key: Key(p.uniqueCode),
-                            program: p,
-                            userId: appState.user.userId,
-                            shopsService: widget.shopsService,
-                          )
-                        : ShopFullTile(
-                            key: Key(p.uniqueCode),
-                            program: p,
-                            userId: appState.user.userId,
-                            shopsService: widget.shopsService,
-                          ),
-                  ))
+              .map(
+                (p) => Expanded(
+                  child: widget.displayAsGrid
+                      ? ShopHalfTile(
+                          key: Key(p.uniqueCode),
+                          program: p,
+                          userId: appState.user.userId,
+                          shopsService: widget.shopsService,
+                        )
+                      : ShopFullTile(
+                          key: Key(p.uniqueCode),
+                          program: p,
+                          userId: appState.user.userId,
+                          shopsService: widget.shopsService,
+                        ),
+                ),
+              )
               .toList(),
         );
       },

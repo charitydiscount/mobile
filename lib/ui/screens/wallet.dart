@@ -104,13 +104,6 @@ class WalletScreen extends StatelessWidget {
                               settings: RouteSettings(name: 'Cashout'),
                             ),
                           );
-                          // showDialog(
-                          //   context: context,
-                          //   barrierDismissible: false,
-                          //   builder: (BuildContext context) {
-                          //     return CashoutDialog();
-                          //   },
-                          // ).then((txRef) => showTxResult(txRef, context));
                           break;
                         default:
                           return;
