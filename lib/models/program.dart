@@ -43,6 +43,7 @@ class Program {
   final String defaultLeadCommissionType;
   final String currency;
   final String source;
+  OverallRating rating;
 
   bool favorited;
   String affilitateUrl;
@@ -64,6 +65,7 @@ class Program {
     this.currency,
     this.favorited = false,
     this.source,
+    this.rating,
   });
 
   factory Program.fromJson(Map json) {
@@ -86,6 +88,9 @@ class Program {
       defaultLeadCommissionType: json['defaultLeadCommissionType'],
       currency: json['currency'] ?? 'RON',
       source: json['source'] ?? '',
+      rating: json['rating'] != null
+          ? OverallRating.fromJson(json['rating'])
+          : OverallRating.fromJson({}),
     );
   }
 
@@ -108,4 +113,16 @@ class Program {
         'currency': currency,
         'source': source,
       };
+}
+
+class OverallRating {
+  int count;
+  double overall;
+
+  OverallRating({this.count, this.overall});
+
+  factory OverallRating.fromJson(Map json) => OverallRating(
+        count: json['count'] ?? 0,
+        overall: json['overall'] ?? null,
+      );
 }

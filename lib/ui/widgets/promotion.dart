@@ -35,7 +35,7 @@ class PromotionWidget extends StatelessWidget {
                     child: Text(
                       promotion.name,
                       style: TextStyle(
-                        fontSize: 24.0,
+                        fontSize: 20.0,
                       ),
                     ),
                   ),

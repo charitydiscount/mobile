@@ -7,7 +7,7 @@ packages:
       name: analyzer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.38.2"
+    version: "0.38.3"
   archive:
     dependency: transitive
     description:
@@ -281,7 +281,7 @@ packages:
       name: front_end
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.24"
+    version: "0.1.25"
   glob:
     dependency: transitive
     description:
@@ -400,7 +400,7 @@ packages:
       name: kernel
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.24"
+    version: "0.3.25"
   logging:
     dependency: transitive
     description:
@@ -706,7 +706,7 @@ packages:
       name: yaml
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.16"
+    version: "2.2.0"
 sdks:
   dart: ">=2.5.0 <3.0.0"
   flutter: ">=1.5.9-pre.94 <2.0.0"
