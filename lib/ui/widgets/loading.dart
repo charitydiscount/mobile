@@ -51,16 +51,12 @@ class LoadingScreen extends StatelessWidget {
           child: Container(
             height: 60,
             width: 60,
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
-              shape: BoxShape.circle,
-            ),
-            //need this due to bug...https://github.com/flutter/flutter/issues/18399
             child: Align(
               alignment: Alignment.center,
               child: SizedBox(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                  valueColor:
+                      AlwaysStoppedAnimation(Theme.of(context).primaryColor),
                 ),
                 height: 30.0,
                 width: 30.0,

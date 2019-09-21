@@ -46,7 +46,7 @@ class AboutPointsWidget extends StatelessWidget {
         width: 80,
         alignment: Alignment.center,
         child: Text(
-          points.acceptedAmount.toString(),
+          points.acceptedAmount.toStringAsFixed(2),
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 30, color: Colors.green),
         ),
@@ -100,6 +100,5 @@ class AboutPointsWidget extends StatelessWidget {
         ).toList(),
       ),
     );
-    //'Acumuleaza puncte si beneficiezi de acces la oferte speciale'));
   }
 }

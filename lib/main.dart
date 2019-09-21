@@ -1,3 +1,4 @@
+import 'package:charity_discount/util/locale.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,9 @@ class Main extends StatelessWidget {
         return SignInScreen();
       },
     );
+
+    var defaultLocale = data.savedLocale ?? getDefaultLanguage().locale;
+
     return EasyLocalizationProvider(
       data: data,
       child: MaterialApp(
@@ -42,12 +46,12 @@ class Main extends StatelessWidget {
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           EasylocaLizationDelegate(
-            locale: data.locale ?? Locale('ro'),
+            locale: defaultLocale,
             path: 'assets/i18n',
           ),
         ],
-        supportedLocales: [Locale('en'), Locale('ro')],
-        locale: data.locale ?? Locale('ro'),
+        supportedLocales: supportedLanguages.map((l) => l.locale).toList(),
+        locale: defaultLocale,
         routes: {
           '/': (context) => SafeArea(child: defaultWidget),
           '/signin': (context) => SafeArea(child: SignInScreen()),

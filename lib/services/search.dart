@@ -1,22 +1,39 @@
 import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/suggestion.dart';
 import 'package:charity_discount/services/auth.dart';
+import 'package:charity_discount/util/remote_config.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class SearchService {
-  final baseUrl = 'https://charity-proxy.appspot.com/search';
+class SearchServiceBase {
+  Future<List<Program>> search(String query, {bool exact = false}) async {
+    throw Error();
+  }
+
+  Future<List<Suggestion>> getSuggestions(String query) async {
+    throw Error();
+  }
+}
+
+class SearchService implements SearchServiceBase {
+  String _baseUrl;
 
   dynamic _search(String query, exact) async {
-    String url = '$baseUrl?query=$query';
-
-    if (exact == true) {
-      url = url + '&exact=true';
+    String trimmedQuery = query.trim();
+    if (_baseUrl == null) {
+      await _setBaseUrl();
     }
 
-    String authToken = await authService.currentUser.getIdToken();
+    String url = '$_baseUrl/search?query=$trimmedQuery';
+
+    if (exact == true) {
+      url = '$url&exact=true';
+    }
+
+    IdTokenResult authToken = await authService.currentUser.getIdToken();
     final response = await http.get(url, headers: {
-      'Authorization': 'Bearer $authToken',
+      'Authorization': 'Bearer ${authToken.token}',
     });
 
     if (response.statusCode != 200) {
@@ -26,25 +43,42 @@ class SearchService {
     return json.decode(response.body);
   }
 
+  @override
   Future<List<Program>> search(String query, {bool exact = false}) async {
-    dynamic data = await _search(query, exact);
-    List<Program> programs = fromJsonArray(data);
+    Map<String, dynamic> data = await _search(query, exact);
+    if (!data.containsKey('hits')) {
+      return [];
+    }
+    List hits = data['hits'];
+    List<Program> programs = fromElasticsearch(hits);
 
     return programs;
   }
 
+  @override
   Future<List<Suggestion>> getSuggestions(String query) async {
-    dynamic data = await _search(query, false);
-    List hits = data ?? [];
-    List<Suggestion> suggestions = List<Suggestion>.from(hits.map(
-      (hit) => Suggestion(
-            name: hit['name'],
-            formattedName: hit['_highlightResult']['name']['value'],
-          ),
-    ));
+    Map<String, dynamic> data = await _search(query, false);
+    if (!data.containsKey('hits')) {
+      return [];
+    }
+    List hits = data['hits'];
+    List<Suggestion> suggestions = List<Suggestion>.from(
+      hits.map(
+        (hit) => Suggestion(
+          name: hit['_source']['name'],
+          query: query,
+        ),
+      ),
+    );
+
+    suggestions.removeWhere(
+      (suggestion) => !suggestion.name.startsWith(suggestion.query),
+    );
 
     return suggestions;
   }
-}
 
-final SearchService searchService = SearchService();
+  Future<void> _setBaseUrl() async {
+    _baseUrl = await remoteConfig.getSearchEndpoint();
+  }
+}

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,46 +14,57 @@ class AuthService {
 
   Observable<FirebaseUser> _user;
   FirebaseUser currentUser;
-  Observable<Map<String, dynamic>> profile;
-  Observable<Map<String, dynamic>> settings;
+  BehaviorSubject<Map<String, dynamic>> profile = BehaviorSubject();
+  BehaviorSubject<Map<String, dynamic>> settings = BehaviorSubject();
+
+  StreamSubscription _usersListener;
+  StreamSubscription _settingsListener;
 
   AuthService() {
     _user = Observable(_auth.onAuthStateChanged);
 
     _user.listen((FirebaseUser u) {
       currentUser = u;
-    });
 
-    profile = _user.switchMap((FirebaseUser u) {
       if (u != null) {
-        return _db
+        if (_usersListener != null) {
+          _usersListener.cancel();
+        }
+        _usersListener = _db
             .collection('users')
             .document(u.uid)
             .snapshots()
-            .map((snap) => snap.exists ? snap.data : {});
+            .map((snap) => snap.exists ? snap.data : {})
+            .listen((data) => profile.add(data));
       } else {
-        return Observable.just({});
+        profile.add(null);
       }
     });
 
-    settings = _user.switchMap((FirebaseUser u) {
+    _user.listen((FirebaseUser u) {
       if (u != null) {
-        return _db
+        if (_settingsListener != null) {
+          _settingsListener.cancel();
+        }
+        _settingsListener = _db
             .collection('settings')
             .document(u.uid)
             .snapshots()
-            .map((snap) => snap.data);
+            .map((snap) => snap.data)
+            .listen((data) => settings.add(data));
       } else {
-        return Observable.just({'lang': 'ro'});
+        settings.add(null);
       }
     });
   }
 
   Future<FirebaseUser> signInWithEmailAndPass(email, password) async {
-    FirebaseUser user = await _auth.signInWithEmailAndPassword(
-        email: email, password: password);
+    AuthResult authResult = await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-    return user;
+    return authResult.user;
   }
 
   Future<void> resetPassword(String email) async {
@@ -60,17 +72,24 @@ class AuthService {
   }
 
   Future<void> signOut() async {
+    if (_usersListener != null) {
+      await _usersListener.cancel();
+    }
+    if (_settingsListener != null) {
+      await _settingsListener.cancel();
+    }
     await _auth.signOut();
   }
 
-  Future<FirebaseUser> signInWithGoogle(lang) async {
+  Future<FirebaseUser> signInWithGoogle() async {
     GoogleSignInAccount googleUser = await _googleSignIn.signIn();
 
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
     AuthCredential credential = GoogleAuthProvider.getCredential(
         accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
-    FirebaseUser user = await _auth.signInWithCredential(credential);
+    AuthResult authResult = await _auth.signInWithCredential(credential);
+    FirebaseUser user = authResult.user;
 
     final googleApisUrl =
         'https://www.googleapis.com/oauth2/v3/userinfo?alt=json&access_token=${googleAuth.accessToken}';
@@ -83,11 +102,9 @@ class AuthService {
         'email': googleUser.email,
         'firstName': userInfoJson['given_name'],
         'lastName': userInfoJson['family_name'],
-        'photoUrl': user.photoUrl
+        'photoUrl': user.photoUrl,
       });
     }
-
-    await updateUserSettings(user.uid, {'lang': lang});
 
     return user;
   }
@@ -106,20 +123,24 @@ class AuthService {
     return ref.setData(settings, merge: true);
   }
 
-  Future<FirebaseUser> createUser(String email, String password,
-      String firstName, String lastName, String lang) async {
-    FirebaseUser newUser = await _auth.createUserWithEmailAndPassword(
-        email: email, password: password);
-    await updateUserData(newUser.uid, {
-      'userId': newUser.uid,
+  Future<FirebaseUser> createUser(
+    String email,
+    String password,
+    String firstName,
+    String lastName,
+  ) async {
+    AuthResult authResult = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    await updateUserData(authResult.user.uid, {
+      'userId': authResult.user.uid,
       'email': email,
       'firstName': firstName,
       'lastName': lastName
     });
 
-    await updateUserSettings(newUser.uid, {'lang': lang});
-
-    return newUser;
+    return authResult.user;
   }
 }
 

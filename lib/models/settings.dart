@@ -13,6 +13,7 @@ String settingsToJson(Settings data) {
 
 class Settings {
   String lang;
+  bool notifications = false;
 
   Settings({this.lang});
 

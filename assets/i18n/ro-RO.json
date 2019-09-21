@@ -1,0 +1,58 @@
+{
+  "password": "Parola",
+  "signIn": "Intra",
+  "charity": "Caritate",
+  "shops": "Magazine",
+  "profile": "Profil",
+  "accessShop": "Acceseaza magazin",
+  "contribute": "Contribuie",
+  "firstName": "Prenume",
+  "lastName": "Nume de familie",
+  "name": "Nume",
+  "wallet": "Portofel",
+  "transactionHistory": "Istoric Tranzactii",
+  "settings": "Setari",
+  "language": "Limba",
+  "recoverPassword": "Reseteaza parola",
+  "resetPassEmailSentTitle": "E-mailul pentru resetarea parolei a fost trimis",
+  "resetPassEmailSentMessage": "Urmeaza instructiunile primite pe e-mail pentru a-ti reseta parola.",
+  "intro": {
+    "getInvolved": {
+      "title": "Implica-te",
+      "body": "Ofera un viitor tarii tale!"
+    },
+    "saveMoney": {
+      "title": "Economiseste",
+      "body": "Tu cumperi, magazinele doneaza"
+    },
+    "findAnything": {
+      "title": "Gaseste orice",
+      "body": "Sute de magazine partenere"
+    }
+  },
+  "account": {
+    "save": "Salveaza cont",
+    "name": "Nume cont",
+    "account": "Cont",
+    "amount": "Suma",
+    "summary": "Rezumat",
+    "insufficientCashback": "Cashback insuficient",
+    "amountHint": "Suma pe care doresti sa o retragi",
+    "availableCashback": "Cashback disponibil"
+  },
+  "next": "Urmatorul",
+  "send": "Trimite",
+  "review": {
+    "add": "Adauga review",
+    "edit": "Actualizeaza review",
+    "publish": "Publica",
+    "addHeadline": "Spune-ne parerea ta despre {}",
+    "notRecommended": "Nu recomand",
+    "disappointing": "Dezamagitor",
+    "decent": "Decent",
+    "satisfied": "Multumit",
+    "excellent": "Excelent",
+    "descriptionTooLong": "Cel mult {} caractere",
+    "opinion": "Parerea ta"
+  }
+}

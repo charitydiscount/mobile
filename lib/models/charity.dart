@@ -1,24 +1,36 @@
 class Charity {
   String id;
-  String title;
-  String description;
-  List<CharityImage> images;
+  final String title;
+  final String description;
+  final List<CharityImage> images;
+  final String site;
 
-  Charity({this.id, this.title, this.description, this.images});
+  Charity({
+    this.id,
+    this.title,
+    this.description,
+    this.images,
+    this.site,
+  });
 
   factory Charity.fromJson(Map<String, dynamic> json) => Charity(
         title: json["title"] as String,
         description: json["description"] as String,
         images: (json["images"] as List)
-            ?.map((img) => img == null
-                ? null
-                : CharityImage.fromJson(Map<String, String>.from(img)))
+            ?.map(
+              (img) => img == null
+                  ? null
+                  : CharityImage.fromJson(
+                      Map<String, String>.from(img),
+                    ),
+            )
             ?.toList(),
+        site: json["site"] ?? null,
       );
 }
 
 class CharityImage {
-  String url;
+  final String url;
 
   CharityImage({this.url});
 

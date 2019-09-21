@@ -1,29 +1,59 @@
 import 'package:charity_discount/models/charity.dart';
+import 'package:charity_discount/services/charity.dart';
+import 'package:charity_discount/ui/widgets/operations.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class CaseDetails extends StatelessWidget {
   final Charity charity;
+  final CharityService charityService;
 
-  const CaseDetails({Key key, this.charity}) : super(key: key);
+  CaseDetails({
+    Key key,
+    @required this.charity,
+    @required this.charityService,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final leadImage = charity.images.isNotEmpty
+        ? Padding(
+            padding: EdgeInsets.only(bottom: 16),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Hero(
+                    tag: 'case-${charity.id}',
+                    child: CachedNetworkImage(
+                      imageUrl: charity.images.first.url,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          )
+        : Container();
     final images = charity.images
+        .skip(1)
         .map(
           (image) => Padding(
-                padding: EdgeInsets.only(bottom: 16),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: CachedNetworkImage(
-                        imageUrl: image.url,
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  ],
-                ),
-              ),
+            padding: EdgeInsets.only(bottom: 16),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: CachedNetworkImage(
+                    imageUrl: image.url,
+                    fit: BoxFit.cover,
+                    errorWidget:
+                        (BuildContext context, String url, Object error) {
+                      return Container();
+                    },
+                  ),
+                )
+              ],
+            ),
+          ),
         )
         .toList();
 
@@ -44,11 +74,22 @@ class CaseDetails extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(charity.title)),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return DonateDialog(
+                charityCase: charity,
+                charityService: charityService,
+              );
+            },
+          ).then((txRef) => showTxResult(txRef, context));
+        },
         child: const Icon(Icons.favorite),
       ),
       body: ListView(
-        children: List.from([description])..addAll(images),
+        children: List.from([leadImage, description])..addAll(images),
       ),
     );
   }

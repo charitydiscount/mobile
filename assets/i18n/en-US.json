@@ -1,0 +1,58 @@
+{
+  "password": "Password",
+  "signIn": "Sign in",
+  "charity": "Charity",
+  "shops": "Shops",
+  "profile": "Profile",
+  "accessShop": "Open Shop",
+  "contribute": "Contribute",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "name": "Name",
+  "wallet": "Wallet",
+  "transactionHistory": "Transaction History",
+  "settings": "Settings",
+  "language": "Language",
+  "recoverPassword": "Reset password",
+  "resetPassEmailSentTitle": "Password Reset Email Sent",
+  "resetPassEmailSentMessage": "Check your email and follow the instructions to reset your password.",
+  "intro": {
+    "getInvolved": {
+      "title": "Get Involved",
+      "body": "Contribute to the future of your country!"
+    },
+    "saveMoney": {
+      "title": "Save Money",
+      "body": "You buy, stores donate"
+    },
+    "findAnything": {
+      "title": "Find Anything",
+      "body": "Hundreds of partner stores"
+    }
+  },
+  "account": {
+    "save": "Save account",
+    "name": "Account name",
+    "account": "Account",
+    "amount": "Amount",
+    "summary": "Summary",
+    "insufficientCashback": "Insufficient cashback",
+    "amountHint": "The amount you want to withdraw",
+    "availableCashback": "Available cashback"
+  },
+  "next": "Next",
+  "send": "Send",
+  "review": {
+    "add": "Add review",
+    "edit": "Update review",
+    "publish": "Publica",
+    "addHeadline": "Tell us what you think about {}",
+    "notRecommended": "Not recommended",
+    "disappointing": "Disappointing",
+    "decent": "Decent",
+    "satisfied": "Satisfied",
+    "excellent": "Excellent",
+    "descriptionTooLong": "At most {} characters",
+    "opinion": "Your opinion"
+  }
+}

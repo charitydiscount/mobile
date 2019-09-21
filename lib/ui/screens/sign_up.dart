@@ -5,7 +5,6 @@ import 'package:charity_discount/util/validator.dart';
 import 'package:charity_discount/controllers/user_controller.dart';
 import 'package:charity_discount/util/firebase_errors.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
-import 'package:charity_discount/state/state_model.dart';
 
 class SignUpScreen extends StatefulWidget {
   _SignUpScreenState createState() => _SignUpScreenState();
@@ -29,16 +28,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final logo = Hero(
       tag: 'hero',
       child: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          radius: 60.0,
-          child: ClipOval(
-            child: Image.asset(
-              'assets/images/default.png',
-              fit: BoxFit.cover,
-              width: 120.0,
-              height: 120.0,
-            ),
-          )),
+        backgroundColor: Colors.transparent,
+        radius: 60.0,
+        child: ClipOval(
+          child: Image.asset(
+            'assets/images/default.png',
+            fit: BoxFit.cover,
+            width: 120.0,
+            height: 120.0,
+          ),
+        ),
+      ),
     );
 
     final firstName = TextFormField(
@@ -190,19 +190,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
   }
 
-  void _emailSignUp(
-      {String firstName,
-      String lastName,
-      String email,
-      String password,
-      BuildContext context}) async {
+  void _emailSignUp({
+    String firstName,
+    String lastName,
+    String email,
+    String password,
+    BuildContext context,
+  }) async {
     if (_formKey.currentState.validate()) {
       try {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         await _toggleLoadingVisible();
-        await userController.signUp(email, password, firstName, lastName,
-            AppModel.of(context).settings.lang);
-        await Navigator.pushNamed(context, '/signin');
+        await userController.signUp(email, password, firstName, lastName);
+        await userController.signIn(
+          Strategy.EmailAndPass,
+          {"email": email, "password": password},
+        );
+        _toggleLoadingVisible();
+        await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
       } catch (e) {
         _toggleLoadingVisible();
         print("Sign Up Error: $e");

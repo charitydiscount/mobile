@@ -53,18 +53,19 @@ class _ProfileState extends State<Profile> {
         onPressed: () => _signOut(context),
         padding: EdgeInsets.all(12),
         color: Theme.of(context).primaryColor,
-        child: Text('SIGN OUT', style: TextStyle(color: Colors.white)),
+        child: Text(
+          'LOG OUT',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
     );
 
-    final email = appState?.user?.email ?? '';
-    final firstName = appState?.user?.firstName ?? '';
-    final lastName = appState?.user?.lastName ?? '';
     final emailLabel = Text('Email: ');
-    final firstNameLabel =
-        Text('${AppLocalizations.of(context).tr('firstName')}:');
-    final lastNameLabel =
-        Text('${AppLocalizations.of(context).tr('lastName')}:');
+    final email = appState?.user?.email ?? '';
+
+    final nameLabel = Text('${AppLocalizations.of(context).tr('name')}:');
+    final name =
+        '${appState?.user?.firstName ?? ''} ${appState?.user?.lastName ?? ''}';
 
     return LoadingScreen(
       child: Padding(
@@ -81,11 +82,8 @@ class _ProfileState extends State<Profile> {
                 emailLabel,
                 Text(email, style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 12.0),
-                firstNameLabel,
-                Text(firstName, style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 12.0),
-                lastNameLabel,
-                Text(lastName, style: TextStyle(fontWeight: FontWeight.bold)),
+                nameLabel,
+                Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 12.0),
                 SizedBox(height: 12.0),
                 signOutButton,
@@ -99,8 +97,8 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> _signOut(BuildContext context) async {
-    AppModel.of(context).closeListeners();
+    await AppModel.of(context).closeListeners();
     await userController.signOut();
-    await Navigator.pushNamed(context, '/signin');
+    await Navigator.pushNamedAndRemoveUntil(context, '/signin', (r) => false);
   }
 }

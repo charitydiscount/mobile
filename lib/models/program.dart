@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 List<Program> fromFirestoreBatch(DocumentSnapshot doc) {
@@ -7,7 +9,24 @@ List<Program> fromFirestoreBatch(DocumentSnapshot doc) {
 
 List<Program> fromJsonArray(List json) {
   return List<Program>.from(
-      json.map((program) => Program.fromJson(program)).toList());
+    json.map((program) => Program.fromJson(program)).toList(),
+  );
+}
+
+List<Program> fromElasticsearch(List json) {
+  return List<Program>.from(
+    json.map((program) => Program.fromJson(program['_source'])).toList(),
+  );
+}
+
+List<String> programsToJson(List<Program> programs) {
+  return programs.map((p) => json.encode(p.toJson())).toList();
+}
+
+List<Program> fromJsonStringList(List<String> jsonList) {
+  return List<Program>.from(
+    jsonList.map((program) => Program.fromJson(json.decode(program))).toList(),
+  );
 }
 
 class Program {
@@ -24,48 +43,55 @@ class Program {
   final String defaultLeadCommissionType;
   final String currency;
   final String source;
+  OverallRating rating;
 
   bool favorited;
   String affilitateUrl;
   String saleCommissionRate;
   String leadCommissionAmount;
 
-  Program(
-      {this.id,
-      this.uniqueCode,
-      this.status,
-      this.name,
-      this.category,
-      this.mainUrl,
-      this.logoPath,
-      this.defaultSaleCommissionRate,
-      this.defaultSaleCommissionType,
-      this.defaultLeadCommissionAmount,
-      this.defaultLeadCommissionType,
-      this.currency,
-      this.favorited = false,
-      this.source});
+  Program({
+    this.id,
+    this.uniqueCode,
+    this.status,
+    this.name,
+    this.category,
+    this.mainUrl,
+    this.logoPath,
+    this.defaultSaleCommissionRate,
+    this.defaultSaleCommissionType,
+    this.defaultLeadCommissionAmount,
+    this.defaultLeadCommissionType,
+    this.currency,
+    this.favorited = false,
+    this.source,
+    this.rating,
+  });
 
   factory Program.fromJson(Map json) {
     return Program(
-        id: json['id'],
-        uniqueCode: json['uniqueCode'],
-        status: json['status'] ?? 'active',
-        name: json['name'] ?? '',
-        category: json['category'] ?? '',
-        mainUrl: json['mainUrl'] ?? '',
-        logoPath:
-            json['logoPath'] ?? 'https://charitydiscount.ro/img/favicon.png',
-        defaultSaleCommissionRate: json['defaultSaleCommissionRate'] != null
-            ? double.parse(json['defaultSaleCommissionRate'])
-            : null,
-        defaultSaleCommissionType: json['defaultSaleCommissionType'],
-        defaultLeadCommissionAmount: json['defaultLeadCommissionAmount'] != null
-            ? double.parse(json['defaultLeadCommissionAmount'])
-            : null,
-        defaultLeadCommissionType: json['defaultLeadCommissionType'],
-        currency: json['currency'] ?? 'RON',
-        source: json['source'] ?? '');
+      id: json['id'],
+      uniqueCode: json['uniqueCode'],
+      status: json['status'] ?? 'active',
+      name: json['name'] ?? '',
+      category: json['category'] ?? '',
+      mainUrl: json['mainUrl'] ?? '',
+      logoPath:
+          json['logoPath'] ?? 'https://charitydiscount.ro/img/favicon.png',
+      defaultSaleCommissionRate: json['defaultSaleCommissionRate'] != null
+          ? double.parse(json['defaultSaleCommissionRate'])
+          : null,
+      defaultSaleCommissionType: json['defaultSaleCommissionType'],
+      defaultLeadCommissionAmount: json['defaultLeadCommissionAmount'] != null
+          ? double.parse(json['defaultLeadCommissionAmount'])
+          : null,
+      defaultLeadCommissionType: json['defaultLeadCommissionType'],
+      currency: json['currency'] ?? 'RON',
+      source: json['source'] ?? '',
+      rating: json['rating'] != null
+          ? OverallRating.fromJson(json['rating'])
+          : OverallRating.fromJson({}),
+    );
   }
 
   Map<String, dynamic> toJson() => {
@@ -85,6 +111,18 @@ class Program {
             : null,
         'defaultLeadCommissionType': defaultLeadCommissionType,
         'currency': currency,
-        'source': source
+        'source': source,
       };
+}
+
+class OverallRating {
+  int count;
+  double overall;
+
+  OverallRating({this.count, this.overall});
+
+  factory OverallRating.fromJson(Map json) => OverallRating(
+        count: json['count'] ?? 0,
+        overall: json['overall'] ?? null,
+      );
 }
