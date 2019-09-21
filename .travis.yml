@@ -43,15 +43,17 @@ script:
   - flutter build apk --split-per-abi
 deploy:
   provider: releases
-  overwrite: true
   api_key:
     secure: nu6xzpXjMrWGSoGRZaX3Q3Ll23AVUNDoydDzhF3pn/3bXLiypFDPV51q8veWEQRoqcp2SSKFIDjxkshBaLEv/RiteYOYY8R7OicYRmxqh5ZvqkeFJToa4hGmn9ekc7IUx9tUHBiASmjD+TrDHbFSq+QFZhwkwnamO1hMeqj0Wk4zqyVCi7HA/0YZpfZr/krMbYBnuu7ddGunM2tXEfHJhxVz89deOqS9WCG1a47VLEY54BBtjd4isiyZcq1OOkxgR8TDOIbDgljT5UMK7Tj7GcP3FaXWPxTnKLAGQ4p+FAmI4LbFyFa2exjLHxXEb39IyfCzGQzOJQg5zVnms/U/DsTKo3iHJxEBI/6s1CPJKUqxnOOKJovrq4SE6AagYX69PqdGnRBpXwVJEd2KQCN9E4TKpSBmta+pIDkNXm0kOR21QdxiW7cMJzF0wIbKubpzgRsKP+iYfpSrsqKKHPYvI/wowBS4oDmUkw+6afpbGb+pMWg9lL4AlY5zt/w01GHQ0wQKBbRo38uRlm1I8Zs0O3ssXlvPK/cB56FgTb1xfMxNuNVO/VKYjU0cx3/npf+aoJdTrvggOBmlVOsso9sKqtsK6K3XUMlpQhr6EDbqoAdYdxBSHtHLEfdmXqPAmxWban+Do3q3lRDpj+Unr1mxp3jDkxWjAMfGj7JLn2NDNFU=
   file: build/app/outputs/apk/release/app*release.apk
   file_glob: true
   skip_cleanup: true
+  overwrite: true
+  draft: true
   on:
     repo: charitydiscount/mobile
     branch: ci/cd
+    tags: true
 before_install:
   - openssl aes-256-cbc -K $encrypted_6e434ff896ba_key -iv $encrypted_6e434ff896ba_iv
     -in key.jks.enc -out ./android/app/key.jks -d
