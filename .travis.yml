@@ -3,44 +3,44 @@ dist: trusty
 jdk: oraclejdk8
 language: node_js
 node_js:
-- '12'
+  - '12'
 env:
   global:
-  - ANDROID_SDK_ROOT=/opt/android
+    - ANDROID_SDK_ROOT=/opt/android
 sudo: required
 addons:
   apt:
     sources:
-    - ubuntu-toolchain-r-test
+      - ubuntu-toolchain-r-test
     packages:
-    - lib32stdc++6
-    - libstdc++6
-    - curl
+      - lib32stdc++6
+      - libstdc++6
+      - curl
 cache:
   directories:
-  - "$HOME/.pub-cache"
-  - node_modules
+    - '$HOME/.pub-cache'
+    - node_modules
 before_script:
-- wget https://services.gradle.org/distributions/gradle-4.10.3-bin.zip
-- unzip -qq gradle-4.10.3-bin.zip
-- export GRADLE_HOME=`pwd`/gradle-4.10.3
-- export PATH=$GRADLE_HOME/bin:$PATH
-- mkdir -p /home/travis/.android
-- echo 'count=0' > /home/travis/.android/repositories.cfg
-- wget https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
-- mkdir android-sdk-tools
-- unzip -qq sdk-tools-linux-4333796.zip -d android-sdk-tools
-- export PATH=`pwd`/android-sdk-tools/tools/bin:$PATH
-- mkdir -p $ANDROID_SDK_ROOT
-- yes | sdkmanager --sdk_root=$ANDROID_SDK_ROOT "tools" "build-tools;28.0.3" "extras;android;m2repository"
-  > /dev/null
-- export PATH=${ANDROID_SDK_ROOT}/tools/bin:$PATH
-- sdkmanager --list
-- git clone https://github.com/flutter/flutter.git -b beta --depth 1
-- export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
+  - wget https://services.gradle.org/distributions/gradle-4.10.3-bin.zip
+  - unzip -qq gradle-4.10.3-bin.zip
+  - export GRADLE_HOME=`pwd`/gradle-4.10.3
+  - export PATH=$GRADLE_HOME/bin:$PATH
+  - mkdir -p /home/travis/.android
+  - echo 'count=0' > /home/travis/.android/repositories.cfg
+  - wget https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
+  - mkdir android-sdk-tools
+  - unzip -qq sdk-tools-linux-4333796.zip -d android-sdk-tools
+  - export PATH=`pwd`/android-sdk-tools/tools/bin:$PATH
+  - mkdir -p $ANDROID_SDK_ROOT
+  - yes | sdkmanager --sdk_root=$ANDROID_SDK_ROOT "tools" "build-tools;28.0.3" "extras;android;m2repository"
+    > /dev/null
+  - export PATH=${ANDROID_SDK_ROOT}/tools/bin:$PATH
+  - sdkmanager --list
+  - git clone https://github.com/flutter/flutter.git -b beta --depth 1
+  - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
 script:
-- flutter doctor -v
-- flutter build apk --split-per-abi
+  - flutter doctor -v
+  - flutter build apk --split-per-abi
 deploy:
   provider: releases
   overwrite: true
@@ -53,7 +53,5 @@ deploy:
     repo: charitydiscount/mobile
     branch: ci/cd
 before_install:
-- openssl aes-256-cbc -K $encrypted_e4729ca3e9e7_key -iv $encrypted_e4729ca3e9e7_iv
-  -in key.properties.enc -out ./android/key.properties -d
-- openssl aes-256-cbc -K $encrypted_e4729ca3e9e7_key -iv $encrypted_e4729ca3e9e7_iv
-  -in key.jks.enc -out ./android/app/key.jks -d
+  - openssl aes-256-cbc -K $encrypted_e4729ca3e9e7_key -iv $encrypted_e4729ca3e9e7_iv
+    -in key.jks.enc -out ./android/app/key.jks -d
