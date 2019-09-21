@@ -41,5 +41,18 @@
     "availableCashback": "Available cashback"
   },
   "next": "Next",
-  "send": "Send"
+  "send": "Send",
+  "review": {
+    "add": "Add review",
+    "edit": "Update review",
+    "publish": "Publica",
+    "addHeadline": "Tell us what you think about {}",
+    "notRecommended": "Not recommended",
+    "disappointing": "Disappointing",
+    "decent": "Decent",
+    "satisfied": "Satisfied",
+    "excellent": "Excellent",
+    "descriptionTooLong": "At most {} characters",
+    "opinion": "Your opinion"
+  }
 }

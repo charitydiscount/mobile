@@ -1,17 +1,32 @@
-class Rating {
+import 'package:charity_discount/models/user.dart';
+import 'package:flutter/material.dart';
+
+class Review {
   final Reviewer reviewer;
-  final double rating;
+  final int rating;
   final String description;
   final DateTime createdAt;
 
-  Rating({this.reviewer, this.rating, this.description, this.createdAt});
+  Review({
+    @required this.reviewer,
+    @required this.rating,
+    @required this.description,
+    this.createdAt,
+  });
 
-  factory Rating.fromJson(Map json) => Rating(
+  factory Review.fromJson(Map json) => Review(
         reviewer: Reviewer.fromJson(json['reviewer']),
-        rating: json['rating'],
+        rating: int.tryParse(json['rating']) ?? 0,
         description: json['description'],
-        createdAt: json['createdAt'],
+        createdAt: DateTime.parse(json['createdAt']),
       );
+
+  Map<String, dynamic> toJson() => {
+        'reviewer': reviewer.toJson(),
+        'rating': rating.toString(),
+        'description': description,
+        'createdAt': createdAt.toString(),
+      };
 }
 
 class Reviewer {
@@ -26,4 +41,16 @@ class Reviewer {
         name: json['name'] ?? '',
         photoUrl: json['photoUrl'] ?? '',
       );
+
+  factory Reviewer.fromUser(User user) => Reviewer(
+        userId: user.userId,
+        name: '${user.firstName} ${user.lastName}',
+        photoUrl: user.photoUrl,
+      );
+
+  Map<String, String> toJson() => {
+        'userId': userId,
+        'name': name,
+        'photoUrl': photoUrl,
+      };
 }

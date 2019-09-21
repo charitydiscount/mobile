@@ -41,5 +41,18 @@
     "availableCashback": "Cashback disponibil"
   },
   "next": "Urmatorul",
-  "send": "Trimite"
+  "send": "Trimite",
+  "review": {
+    "add": "Adauga review",
+    "edit": "Actualizeaza review",
+    "publish": "Publica",
+    "addHeadline": "Spune-ne parerea ta despre {}",
+    "notRecommended": "Nu recomand",
+    "disappointing": "Dezamagitor",
+    "decent": "Decent",
+    "satisfied": "Multumit",
+    "excellent": "Excelent",
+    "descriptionTooLong": "Cel mult {} caractere",
+    "opinion": "Parerea ta"
+  }
 }

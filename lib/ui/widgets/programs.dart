@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:async/async.dart';
 import 'package:charity_discount/models/favorite_shops.dart';
 import 'package:charity_discount/models/program.dart';
@@ -358,10 +357,6 @@ class _ShopsWidgetState extends State<ShopsWidget>
         appState.affiliateMeta.uniqueCode,
         program.uniqueCode,
         appState.user.userId);
-    program.rating = OverallRating(
-      count: Random().nextInt(20),
-      overall: Random().nextDouble() * 5,
-    );
     return program;
   }
 

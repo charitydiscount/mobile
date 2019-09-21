@@ -31,11 +31,11 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
-        userId: json["userId"],
-        firstName: json["firstName"],
-        lastName: json["lastName"],
-        email: json["email"],
-        photoUrl: json["photoUrl"],
+        userId: json['userId'],
+        firstName: json['firstName'],
+        lastName: json['lastName'],
+        email: json['email'],
+        photoUrl: json['photoUrl'],
         savedAccounts: List<SavedAccount>.from(
           (json['accounts'] ?? [])
               .map((accountJson) => SavedAccount.fromJson(accountJson))
@@ -44,11 +44,11 @@ class User {
       );
 
   Map<String, dynamic> toJson() => {
-        "userId": userId,
-        "firstName": firstName,
-        "lastName": lastName,
-        "email": email,
-        "photoUrl": photoUrl
+        'userId': userId,
+        'firstName': firstName,
+        'lastName': lastName,
+        'email': email,
+        'photoUrl': photoUrl
       };
 
   factory User.fromDocument(DocumentSnapshot doc) {

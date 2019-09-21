@@ -6,7 +6,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 
 class RatingWidget extends StatelessWidget {
-  final Rating rating;
+  final Review rating;
 
   const RatingWidget({Key key, this.rating}) : super(key: key);
 
@@ -36,7 +36,7 @@ class RatingWidget extends StatelessWidget {
       style: Theme.of(context).textTheme.caption,
     );
     Widget stars = RatingBar(
-      initialRating: rating.rating,
+      initialRating: rating.rating.toDouble(),
       direction: Axis.horizontal,
       allowHalfRating: true,
       glow: false,
@@ -51,7 +51,7 @@ class RatingWidget extends StatelessWidget {
     );
 
     return Container(
-      height: 350,
+      height: 320,
       width: MediaQuery.of(context).size.width * 0.8,
       child: Card(
         child: ListView(
@@ -71,9 +71,9 @@ class RatingWidget extends StatelessWidget {
                         children: <Widget>[
                           userName,
                           reviewDate,
+                          stars,
                         ],
                       ),
-                      stars,
                     ],
                   ),
                 ),

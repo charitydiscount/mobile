@@ -6,6 +6,7 @@ Widget buildConnectionLoading({
   Widget waitingDisplay,
 }) {
   if (snapshot.hasError) {
+    print(snapshot.error);
     return Row(
       children: <Widget>[
         Padding(

@@ -21,7 +21,11 @@ class ShopsService {
     throw Error();
   }
 
-  Future<List<Rating>> getProgramRating(String programId) async {
+  Future<List<Review>> getProgramRating(String programId) async {
+    throw Error();
+  }
+
+  Future<void> saveReview(models.Program program, Review review) async {
     throw Error();
   }
 }
@@ -100,35 +104,48 @@ class FirebaseShopsService implements ShopsService {
   }
 
   @override
-  Future<List<Rating>> getProgramRating(String programId) {
-    return Future.delayed(
-      Duration(milliseconds: 500),
-      () => [
-        Rating(
-          reviewer: Reviewer(
-            name: 'Test',
-            photoUrl:
-                'https://lh3.googleusercontent.com/-ObKekHwOJsI/AAAAAAAAAAI/AAAAAAAABm8/JgnGjSb-M_M/s96-c/photo.jpg',
-            userId: '123',
-          ),
-          rating: 3.5,
-          description:
-              'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-          createdAt: DateTime.now(),
-        ),
-        Rating(
-          reviewer: Reviewer(
-            name: 'Test 2',
-            photoUrl:
-                'https://lh3.googleusercontent.com/-ObKekHwOJsI/AAAAAAAAAAI/AAAAAAAABm8/JgnGjSb-M_M/s96-c/photo.jpg',
-            userId: '123',
-          ),
-          rating: 4.2,
-          description:
-              'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-          createdAt: DateTime.now(),
-        ),
-      ],
+  Future<List<Review>> getProgramRating(String programId) async {
+    DocumentSnapshot snap =
+        await _db.collection('reviews').document(programId).get();
+
+    if (!snap.exists) {
+      return [];
+    }
+
+    Map reviews = snap.data['reviews'];
+    return List.from(reviews.entries)
+        .map((r) => Review.fromJson(r.value))
+        .toList();
+  }
+
+  @override
+  Future<void> saveReview(models.Program program, Review review) async {
+    await _db.collection('reviews').document(program.uniqueCode).updateData(
+      {
+        'shopUniqueCode': program.uniqueCode,
+        'reviews.${review.reviewer.userId}': review.toJson(),
+      },
+    ).catchError((e) => _handleFirstReview(e, program, review));
+  }
+
+  Future<void> _handleFirstReview(
+    dynamic e,
+    models.Program program,
+    Review review,
+  ) async {
+    if (!(e is PlatformException)) {
+      return null;
+    }
+
+    DocumentReference ref =
+        _db.collection('reviews').document(program.uniqueCode);
+    return ref.setData(
+      {
+        'shopUniqueCode': program.uniqueCode,
+        'reviews': {
+          review.reviewer.userId: review.toJson(),
+        }
+      },
     );
   }
 }
