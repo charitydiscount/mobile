@@ -123,6 +123,8 @@ class OverallRating {
 
   factory OverallRating.fromJson(Map json) => OverallRating(
         count: json['count'] ?? 0,
-        overall: json['overall'] ?? null,
+        overall: json['rating'] != null
+            ? double.tryParse(json['rating'].toString()) ?? null
+            : null,
       );
 }

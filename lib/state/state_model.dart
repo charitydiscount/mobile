@@ -57,9 +57,7 @@ class AppModel extends Model {
         metaService.getTwoPerformantMeta().then((twoPMeta) {
           _affiliateMeta = twoPMeta;
         });
-        metaService.getProgramsMeta().then((programsMeta) {
-          _programsMeta = programsMeta;
-        });
+        updateProgramsMeta();
       },
     );
   }
@@ -119,6 +117,13 @@ class AppModel extends Model {
 
   TwoPerformantMeta get affiliateMeta => _affiliateMeta;
   ProgramMeta get programsMeta => _programsMeta;
+
+  void updateProgramsMeta() {
+    metaService.getProgramsMeta().then((programsMeta) {
+      _programsMeta = programsMeta;
+      notifyListeners();
+    });
+  }
 
   List<Program> get programs => _programs;
   void addPrograms(List<Program> programs) {

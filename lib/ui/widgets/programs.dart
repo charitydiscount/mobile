@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:async/async.dart';
 import 'package:charity_discount/models/favorite_shops.dart';
+import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/settings.dart';
 import 'package:charity_discount/models/suggestion.dart';
+import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/state/state_model.dart';
@@ -264,12 +266,18 @@ class _ShopsWidgetState extends State<ShopsWidget>
         widget.appState.setFavoriteShops(favoriteShops);
 
         final favoritePrograms = List.of(favoriteShops.programs).toList();
-        return _buildShopList(
-          widget.programs,
-          widget.appState,
-          favorites: favoritePrograms,
-          onlyFavorites: widget.onlyFavorites,
-          category: widget.category,
+        return StreamBuilder<ProgramMeta>(
+          stream: metaService.programsMetaStream,
+          builder: (context, snapshot) {
+            return _buildShopList(
+              widget.programs,
+              widget.appState,
+              favorites: favoritePrograms,
+              onlyFavorites: widget.onlyFavorites,
+              category: widget.category,
+              overallRatings: snapshot.data?.ratings ?? {},
+            );
+          },
         );
       },
     );
@@ -281,6 +289,7 @@ class _ShopsWidgetState extends State<ShopsWidget>
     bool onlyFavorites = false,
     List<Program> favorites = const [],
     String category,
+    Map<String, OverallRating> overallRatings,
   }) {
     programs.forEach((p) {
       if (favorites.firstWhere(
@@ -318,7 +327,7 @@ class _ShopsWidgetState extends State<ShopsWidget>
         List<Program> programsToDisplay = programs
             .skip(rangeStart)
             .take(displayAsGrid ? 2 : 1)
-            .map((p) => _prepareProgram(appState, p))
+            .map((p) => _prepareProgram(appState, p, overallRatings))
             .toList();
 
         return Row(
@@ -346,7 +355,11 @@ class _ShopsWidgetState extends State<ShopsWidget>
     );
   }
 
-  Program _prepareProgram(AppModel appState, Program program) {
+  Program _prepareProgram(
+    AppModel appState,
+    Program program,
+    Map<String, OverallRating> overallRatings,
+  ) {
     final userPercentage = appState.affiliateMeta.percentage;
     program.leadCommissionAmount = program.defaultLeadCommissionAmount != null
         ? (program.defaultLeadCommissionAmount * userPercentage)
@@ -361,6 +374,10 @@ class _ShopsWidgetState extends State<ShopsWidget>
         appState.affiliateMeta.uniqueCode,
         program.uniqueCode,
         appState.user.userId);
+    if (overallRatings.containsKey(program.uniqueCode)) {
+      program.rating = overallRatings[program.uniqueCode];
+    }
+
     return program;
   }
 

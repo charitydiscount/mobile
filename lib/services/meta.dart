@@ -1,5 +1,6 @@
 import 'package:charity_discount/models/meta.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rxdart/rxdart.dart';
 
 class MetaService {
   final _db = Firestore.instance;
@@ -17,6 +18,14 @@ class MetaService {
 
     return ProgramMeta.fromJson(programsMeta.data);
   }
+
+  Observable<ProgramMeta> get programsMetaStream => Observable(
+        _db
+            .collection('meta')
+            .document('programs')
+            .snapshots()
+            .asyncMap((snap) => ProgramMeta.fromJson(snap.data)),
+      );
 }
 
 MetaService metaService = MetaService();
