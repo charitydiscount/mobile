@@ -11,16 +11,35 @@ String settingsToJson(Settings data) {
   return json.encode(dyn);
 }
 
+enum DisplayMode { LIST, GRID }
+
+DisplayMode displayModeFromString(String displayModeString) {
+  return DisplayMode.values.firstWhere(
+    (f) => f.toString() == displayModeString,
+    orElse: () => null,
+  );
+}
+
 class Settings {
   String lang;
   bool notifications = false;
+  DisplayMode displayMode = DisplayMode.LIST;
 
-  Settings({this.lang});
+  Settings({this.lang, this.notifications, this.displayMode});
 
-  factory Settings.fromJson(Map<String, dynamic> json) =>
-      Settings(lang: json["lang"]);
+  factory Settings.fromJson(Map<String, dynamic> json) => Settings(
+        lang: json['lang'] ?? 'en',
+        notifications: json['notifications'] ?? false,
+        displayMode: displayModeFromString(
+          json['displayMode'] ?? DisplayMode.LIST.toString(),
+        ),
+      );
 
-  Map<String, dynamic> toJson() => {"lang": lang};
+  Map<String, dynamic> toJson() => {
+        'lang': lang,
+        'notifications': notifications,
+        'displayMode': displayMode.toString(),
+      };
 
   factory Settings.fromDocument(DocumentSnapshot doc) {
     return Settings.fromJson(doc.data);

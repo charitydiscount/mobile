@@ -2,7 +2,6 @@ import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/services/local.dart';
 import 'package:charity_discount/models/user.dart';
-import 'package:charity_discount/models/settings.dart';
 
 enum Strategy { EmailAndPass, Google, Facebook }
 
@@ -13,11 +12,6 @@ class UserController {
       if (profile != null) {
         User currentUser = User.fromJson(profile);
         localService.storeUserLocal(currentUser);
-      }
-    });
-    authService.settings.listen((settings) {
-      if (settings != null) {
-        localService.storeSettingsLocal(Settings.fromJson(settings));
       }
     });
 

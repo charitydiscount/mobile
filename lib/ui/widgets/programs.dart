@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:async/async.dart';
 import 'package:charity_discount/models/favorite_shops.dart';
 import 'package:charity_discount/models/program.dart';
+import 'package:charity_discount/models/settings.dart';
 import 'package:charity_discount/models/suggestion.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
@@ -28,7 +29,6 @@ class _ProgramsListState extends State<ProgramsList>
     with AutomaticKeepAliveClientMixin {
   AppModel _appState;
   bool _onlyFavorites = false;
-  bool _displayAsGrid = false;
   String _category;
   Completer<Null> _loadingCompleter = Completer<Null>();
   AsyncMemoizer _asyncMemoizer = AsyncMemoizer();
@@ -92,7 +92,6 @@ class _ProgramsListState extends State<ProgramsList>
                   programs: programs,
                   category: _category,
                   onlyFavorites: _onlyFavorites,
-                  displayAsGrid: _displayAsGrid,
                   searchService: widget.searchService,
                   shopsService: widget.shopsService,
                 ),
@@ -149,7 +148,10 @@ class _ProgramsListState extends State<ProgramsList>
         color: Colors.white,
         onPressed: () {
           setState(() {
-            _displayAsGrid = !_displayAsGrid;
+            var newSettings = _appState.settings;
+            newSettings.displayMode =
+                _displayAsGrid ? DisplayMode.LIST : DisplayMode.GRID;
+            _appState.setSettings(newSettings, storeLocal: true);
           });
           _scrollToTop(context);
         },
@@ -223,13 +225,14 @@ class _ProgramsListState extends State<ProgramsList>
 
   @override
   bool get wantKeepAlive => true;
+
+  bool get _displayAsGrid => _appState.settings.displayMode == DisplayMode.GRID;
 }
 
 class ShopsWidget extends StatefulWidget {
   final List<Program> programs;
   final AppModel appState;
   final bool onlyFavorites;
-  final bool displayAsGrid;
   final String category;
   final ShopsService shopsService;
   final SearchServiceBase searchService;
@@ -240,7 +243,6 @@ class ShopsWidget extends StatefulWidget {
     @required this.appState,
     this.onlyFavorites = false,
     this.category,
-    this.displayAsGrid = false,
     @required this.shopsService,
     @required this.searchService,
   }) : super(key: key);
@@ -300,8 +302,10 @@ class _ShopsWidgetState extends State<ShopsWidget>
       programs.removeWhere((p) => p.category != category);
     }
 
+    bool displayAsGrid = appState.settings.displayMode == DisplayMode.GRID;
+
     int itemCount =
-        widget.displayAsGrid ? (programs.length / 2).ceil() : programs.length;
+        displayAsGrid ? (programs.length / 2).ceil() : programs.length;
 
     return ListView.builder(
       key: Key('ProgramsListView${widget.key.toString()}'),
@@ -310,10 +314,10 @@ class _ShopsWidgetState extends State<ShopsWidget>
       primary: true,
       itemCount: itemCount,
       itemBuilder: (context, index) {
-        int rangeStart = widget.displayAsGrid ? index * 2 : index;
+        int rangeStart = displayAsGrid ? index * 2 : index;
         List<Program> programsToDisplay = programs
             .skip(rangeStart)
-            .take(widget.displayAsGrid ? 2 : 1)
+            .take(displayAsGrid ? 2 : 1)
             .map((p) => _prepareProgram(appState, p))
             .toList();
 
@@ -321,7 +325,7 @@ class _ShopsWidgetState extends State<ShopsWidget>
           children: programsToDisplay
               .map(
                 (p) => Expanded(
-                  child: widget.displayAsGrid
+                  child: displayAsGrid
                       ? ShopHalfTile(
                           key: Key(p.uniqueCode),
                           program: p,

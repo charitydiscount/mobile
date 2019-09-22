@@ -16,9 +16,9 @@ import 'package:charity_discount/services/local.dart';
 class AppModel extends Model {
   bool _introCompleted = false;
   User _user;
-  Settings _settings;
+  Settings _settings = Settings(displayMode: DisplayMode.LIST, lang: 'en');
   StreamSubscription _profileListener;
-  StreamSubscription _settingsListener;
+  // StreamSubscription _settingsListener;
   List<Program> _programs;
   FavoriteShops _favoriteShops = FavoriteShops(programs: []);
   TwoPerformantMeta _affiliateMeta;
@@ -45,15 +45,15 @@ class AppModel extends Model {
         }
         User currentUser = User.fromJson(profile);
         this.setUser(currentUser);
-        _settingsListener = authService.settings.listen(
-          (settings) {
-            if (settings != null) {
-              this.setSettings(
-                Settings.fromJson(settings),
-              );
-            }
-          },
-        );
+        // _settingsListener = authService.settings.listen(
+        //   (settings) {
+        //     if (settings != null) {
+        //       this.setSettings(
+        //         Settings.fromJson(settings),
+        //       );
+        //     }
+        //   },
+        // );
         metaService.getTwoPerformantMeta().then((twoPMeta) {
           _affiliateMeta = twoPMeta;
         });
@@ -66,7 +66,7 @@ class AppModel extends Model {
 
   Future<void> closeListeners() async {
     await _profileListener.cancel();
-    await _settingsListener.cancel();
+    // await _settingsListener.cancel();
   }
 
   static AppModel of(
@@ -109,8 +109,11 @@ class AppModel extends Model {
   }
 
   Settings get settings => _settings;
-  void setSettings(Settings settings) {
+  void setSettings(Settings settings, {bool storeLocal = false}) {
     _settings = settings;
+    if (storeLocal) {
+      localService.storeSettingsLocal(_settings);
+    }
     notifyListeners();
   }
 
