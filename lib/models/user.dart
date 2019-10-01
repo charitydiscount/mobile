@@ -59,16 +59,30 @@ class User {
 class SavedAccount {
   final String name;
   final String iban;
+  final String alias;
 
-  SavedAccount({this.name, @required this.iban});
+  SavedAccount({
+    @required this.name,
+    @required this.iban,
+    this.alias,
+  });
 
-  factory SavedAccount.fromIban(Iban iban, String name) {
-    return SavedAccount(iban: iban.electronicFormat, name: name);
+  factory SavedAccount.fromIban(
+    Iban iban,
+    String name,
+    String nickname,
+  ) {
+    return SavedAccount(
+      iban: iban.electronicFormat,
+      name: name,
+      alias: nickname,
+    );
   }
 
   factory SavedAccount.fromJson(dynamic json) => SavedAccount(
         iban: json['iban'],
         name: json['name'],
+        alias: json['nickname'] ?? '',
       );
 
   Iban get fullIban {
@@ -82,5 +96,6 @@ class SavedAccount {
   Map<String, dynamic> toJson() => {
         'iban': iban,
         'name': name,
+        'nickname': alias,
       };
 }

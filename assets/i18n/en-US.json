@@ -32,8 +32,9 @@
   },
   "account": {
     "save": "Save account",
-    "name": "Account name",
+    "name": "Beneficiary name",
     "account": "Account",
+    "alias": "Alias",
     "amount": "Amount",
     "summary": "Summary",
     "insufficientCashback": "Insufficient cashback",

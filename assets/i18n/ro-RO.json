@@ -32,8 +32,9 @@
   },
   "account": {
     "save": "Salveaza cont",
-    "name": "Nume cont",
+    "name": "Nume beneficiar",
     "account": "Cont",
+    "alias": "Alias",
     "amount": "Suma",
     "summary": "Rezumat",
     "insufficientCashback": "Cashback insuficient",
