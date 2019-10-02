@@ -456,12 +456,21 @@ class ProgramsSearch extends SearchDelegate<String> {
         final loading = buildConnectionLoading(
           context: context,
           snapshot: snapshot,
+          handleError: false,
         );
         if (loading != null) {
           return loading;
         }
 
-        final List<Program> programs = List.of(snapshot.data);
+        List<Program> programs;
+        if (snapshot.hasError) {
+          programs = appState.programs
+              .where((p) =>
+                  _exactMatch ? p.name == query : p.name.startsWith(query))
+              .toList();
+        } else {
+          programs = List.of(snapshot.data);
+        }
         return ShopsWidget(
           programs: programs,
           appState: appState,
@@ -485,40 +494,28 @@ class ProgramsSearch extends SearchDelegate<String> {
         final loading = buildConnectionLoading(
           context: context,
           snapshot: snapshot,
+          handleError: false,
         );
         if (loading != null) {
           return loading;
         }
 
-        List<Widget> suggestions = List<Widget>.from(
-          snapshot.data.map(
-            (Suggestion hit) => InkWell(
-              onTap: () {
-                query = hit.name;
-                _exactMatch = true;
-                showResults(context);
-              },
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                child: RichText(
-                  text: TextSpan(
-                    text: hit.query,
-                    style: DefaultTextStyle.of(context).style,
-                    children: [
-                      TextSpan(
-                        text: hit.name.split(hit.query)[1],
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: DefaultTextStyle.of(context).style.color,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
+        List<Widget> suggestions;
+        if (snapshot.hasError) {
+          suggestions = appState.programs
+              .where((p) =>
+                  _exactMatch ? p.name == query : p.name.startsWith(query))
+              .map((p) => Suggestion(name: p.name, query: query))
+              .map((Suggestion hit) => _buildSuggestionWidget(hit, context))
+              .toList();
+        } else {
+          var map = snapshot.data.map(
+            (Suggestion hit) => _buildSuggestionWidget(hit, context),
+          );
+          suggestions = List<Widget>.from(
+            map,
+          );
+        }
 
         return ListView(
           children: suggestions,
@@ -528,4 +525,31 @@ class ProgramsSearch extends SearchDelegate<String> {
       },
     );
   }
+
+  Widget _buildSuggestionWidget(Suggestion hit, BuildContext context) =>
+      InkWell(
+        onTap: () {
+          query = hit.name;
+          _exactMatch = true;
+          showResults(context);
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+          child: RichText(
+            text: TextSpan(
+              text: hit.query,
+              style: DefaultTextStyle.of(context).style,
+              children: [
+                TextSpan(
+                  text: hit.name.split(hit.query)[1],
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: DefaultTextStyle.of(context).style.color,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
 }

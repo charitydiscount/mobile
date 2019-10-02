@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 
 Widget buildConnectionLoading({
-  BuildContext context,
-  AsyncSnapshot snapshot,
+  @required BuildContext context,
+  @required AsyncSnapshot snapshot,
   Widget waitingDisplay,
+  bool handleError = true,
 }) {
   if (snapshot.hasError) {
+    if (!handleError) {
+      return null;
+    }
     print(snapshot.error);
     return Row(
       children: <Widget>[
@@ -20,7 +24,8 @@ Widget buildConnectionLoading({
           child: Padding(
             padding: const EdgeInsets.all(6.0),
             child: Text(
-                "Aparent, conexiunea cu serviciile Charity Discount nu poate fi stabilita"),
+              "Aparent, conexiunea cu serviciile Charity Discount nu poate fi stabilita",
+            ),
           ),
         ),
       ],
