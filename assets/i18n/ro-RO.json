@@ -30,6 +30,34 @@
       "body": "Sute de magazine partenere"
     }
   },
+  "operation": {
+    "contributeTo": "Contribuie la {}",
+    "donationHint": "Suma cu care doresti sa contribui",
+    "donationApproved": {
+      "title": "Donatie aprobata",
+      "message": "Donatia a fost procesata cu success. Multumim!"
+    },
+    "donationPending": {
+      "title": "Multumim!",
+      "message": "Donatia este in curs de procesare"
+    },
+    "donationRejected": {
+      "title": "Donatie respinsa",
+      "message": "Tranzactia nu a putut fi procesata"
+    },
+    "cashoutApproved": {
+      "title": "Cashout aprobat",
+      "message": "Poate dura 2-3 zile lucratoare pana bancile proceseaza tranzactia"
+    },
+    "cashoutPending": {
+      "title": "Multumim!",
+      "message": "Tranzactia este in curs de procesare"
+    },
+    "cashoutRejected": {
+      "title": "Cashout respins",
+      "message": "Tranzactia nu a putut fi procesata"
+    }
+  },
   "account": {
     "save": "Salveaza cont",
     "name": "Nume beneficiar",
@@ -54,6 +82,14 @@
     "satisfied": "Multumit",
     "excellent": "Excelent",
     "descriptionTooLong": "Cel mult {} caractere",
-    "opinion": "Parerea ta"
+    "opinion": "Parerea ta",
+    "thankYou": "Multumim!",
+    "itIsImportant": "Parerea ta ii va ajuta pe alti utilizatori",
+    "loading": "Cautam recenziile magazinului",
+    "reviews": "Review-uri"
+  },
+  "promotion": {
+    "promotions": "Promotii",
+    "loading": "Cautam promotii active"
   }
 }

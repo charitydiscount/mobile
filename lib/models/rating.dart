@@ -16,14 +16,14 @@ class Review {
 
   factory Review.fromJson(Map json) => Review(
         reviewer: Reviewer.fromJson(json['reviewer']),
-        rating: int.tryParse(json['rating']) ?? 0,
+        rating: json['rating'] ?? 0,
         description: json['description'],
         createdAt: DateTime.parse(json['createdAt']),
       );
 
   Map<String, dynamic> toJson() => {
         'reviewer': reviewer.toJson(),
-        'rating': rating.toString(),
+        'rating': rating,
         'description': description,
         'createdAt': createdAt.toString(),
       };

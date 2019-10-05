@@ -30,6 +30,34 @@
       "body": "Hundreds of partner stores"
     }
   },
+  "operation": {
+    "contributeTo": "Contribute to {}",
+    "donationHint": "The amount you wish to donate",
+    "donationApproved": {
+      "title": "Donation accepted",
+      "message": "The donation has been processed successfully. Thank you!"
+    },
+    "donationPending": {
+      "title": "Thank you!",
+      "message": "The donation will be processed shortly"
+    },
+    "donationRejected": {
+      "title": "Donation rejected",
+      "message": "The transaction could not be processed"
+    },
+    "cashoutApproved": {
+      "title": "Cashout approved",
+      "message": "It usually takes 2-3 for the banks to process the transaction"
+    },
+    "cashoutPending": {
+      "title": "Thank you!",
+      "message": "The transaction will be processed shortly"
+    },
+    "cashoutRejected": {
+      "title": "Cashout rejected",
+      "message": "The transaction could not be processed"
+    }
+  },
   "account": {
     "save": "Save account",
     "name": "Beneficiary name",
@@ -54,6 +82,14 @@
     "satisfied": "Satisfied",
     "excellent": "Excellent",
     "descriptionTooLong": "At most {} characters",
-    "opinion": "Your opinion"
+    "opinion": "Your opinion",
+    "thankYou": "Thank you!",
+    "itIsImportant": "Your review is of great help for others",
+    "loading": "Looking for shop reviews",
+    "reviews": "Reviews"
+  },
+  "promotion": {
+    "promotions": "Promotions",
+    "loading": "Looking for active promotions"
   }
 }

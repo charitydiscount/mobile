@@ -115,6 +115,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
                     onTap: () {
                       setState(() {
                         _iban = account.fullIban;
+                        _accountNameController.text = account.name;
                         _pageController.nextPage(
                           duration: const Duration(milliseconds: 400),
                           curve: Curves.ease,
@@ -319,30 +320,25 @@ class _CashoutScreenState extends State<CashoutScreen> {
         )
       : Container();
 
-  Widget get _backButton => IconButton(
-        icon: const BackButtonIcon(),
-        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+  Widget get _closeButton => IconButton(
+        icon: Icon(Icons.close),
+        tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
         onPressed: () {
-          setState(() {
-            _pageController.previousPage(
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.ease,
-            );
-          });
+          Navigator.popUntil(context, ModalRoute.withName('/'));
         },
       );
 
   Widget get _leadingButton {
     if (_done) {
-      return CloseButton();
+      return _closeButton;
     }
     switch (_stackIndex) {
       case 0:
         return CloseButton();
       case 1:
-        return _backButton;
+        return BackButton();
       case 2:
-        return _backButton;
+        return BackButton();
       default:
         return BackButton();
     }

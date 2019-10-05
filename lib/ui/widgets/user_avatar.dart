@@ -16,7 +16,7 @@ class UserAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipOval(
-      child: photoUrl != null
+      child: photoUrl != null && photoUrl.isNotEmpty
           ? CachedNetworkImage(
               imageUrl: photoUrl,
               fit: BoxFit.scaleDown,
