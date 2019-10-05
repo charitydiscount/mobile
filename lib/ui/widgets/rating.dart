@@ -1,6 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/rating.dart';
+import 'package:charity_discount/ui/widgets/user_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
@@ -16,15 +16,7 @@ class RatingWidget extends StatelessWidget {
       child: SizedBox(
         height: 50,
         width: 50,
-        child: rating.reviewer.photoUrl != null
-            ? CachedNetworkImage(
-                imageUrl: rating.reviewer.photoUrl,
-                fit: BoxFit.scaleDown,
-              )
-            : Image.asset(
-                'assets/images/default.png',
-                fit: BoxFit.scaleDown,
-              ),
+        child: UserAvatar(photoUrl: rating.reviewer.photoUrl),
       ),
     );
     Widget userName = Text(

@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:charity_discount/ui/widgets/user_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
@@ -20,27 +20,17 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     var appState = AppModel.of(context);
 
-    final logoImage = appState.user.photoUrl != null
-        ? CachedNetworkImage(
-            imageUrl: appState.user.photoUrl,
-            fit: BoxFit.fill,
-            width: 120.0,
-            height: 120.0,
-          )
-        : Image.asset(
-            'assets/images/default.png',
-            fit: BoxFit.cover,
-            width: 120.0,
-            height: 120.0,
-          );
+    final logoImage = UserAvatar(
+      photoUrl: appState.user.photoUrl,
+      width: 120.0,
+      height: 120.0,
+    );
     final logo = Hero(
       tag: 'hero',
       child: CircleAvatar(
         backgroundColor: Colors.transparent,
         radius: 60.0,
-        child: ClipOval(
-          child: logoImage,
-        ),
+        child: logoImage,
       ),
     );
 

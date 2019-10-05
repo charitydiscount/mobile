@@ -11,7 +11,7 @@ class Wallet {
   factory Wallet.fromJson(Map<String, dynamic> json) {
     final cashbackJson = json['cashback'];
     final pointsJson = json['points'];
-    final transactionsJson = json['transactions'];
+    final transactionsJson = json['transactions'] ?? [];
 
     final cashback = {
       'approved':

@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/services/search.dart';
@@ -8,6 +7,7 @@ import 'package:charity_discount/ui/screens/settings.dart';
 import 'package:charity_discount/ui/screens/wallet.dart';
 import 'package:charity_discount/ui/screens/profile.dart';
 import 'package:charity_discount/ui/widgets/programs.dart';
+import 'package:charity_discount/ui/widgets/user_avatar.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -101,18 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildProfileButton({BuildContext context, User user}) {
-    final image = user.photoUrl != null
-        ? CachedNetworkImage(
-            imageUrl: user.photoUrl,
-            fit: BoxFit.scaleDown,
-          )
-        : Image.asset(
-            'assets/images/default.png',
-            fit: BoxFit.scaleDown,
-          );
-    final logoImage = ClipOval(
-      child: image,
-    );
+    final logoImage = UserAvatar(photoUrl: user.photoUrl);
     return InkWell(
       onTap: () {
         showModalBottomSheet(
@@ -124,7 +113,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile profileTile = ListTile(
               leading: CircleAvatar(
                 child: logoImage,
-                radius: 16,
+                radius: 12,
+                backgroundColor: Colors.transparent,
               ),
               title: Text(
                 '${user.firstName} ${user.lastName}',
