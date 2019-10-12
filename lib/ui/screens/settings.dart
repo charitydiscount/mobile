@@ -31,12 +31,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           supportedLanguages.map((lang) => _buildLanguageTile(lang)).toList(),
     );
     settingTiles.add(language);
-
     Widget notifications = ListTile(
       leading: Icon(Icons.notifications),
       title: Text('Notificari'),
       trailing: Switch.adaptive(
-        value: _state.settings.notifications,
+        value: _state.settings.notifications || false,
         onChanged: (bool newValue) {
           var newSettings = _state.settings;
           newSettings.notifications = newValue;

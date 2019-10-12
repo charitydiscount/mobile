@@ -65,11 +65,14 @@ class Main extends StatelessWidget {
   }
 }
 
-void main() => runApp(
-      EasyLocalization(
-        child: ScopedModel(
-          model: AppModel(),
-          child: Main(),
-        ),
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
+    EasyLocalization(
+      child: ScopedModel(
+        model: AppModel(),
+        child: Main(),
       ),
-    );
+    ),
+  );
+}

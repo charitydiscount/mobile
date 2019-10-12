@@ -94,13 +94,11 @@ class CaseWidget extends StatelessWidget {
                 child: Text(''),
               ),
             ),
-            ButtonTheme.bar(
-              child: ButtonBar(
-                children: <Widget>[
-                  websiteButton,
-                  donateButton,
-                ],
-              ),
+            ButtonBar(
+              children: <Widget>[
+                websiteButton,
+                donateButton,
+              ],
             ),
           ],
         ),

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -102,6 +103,31 @@ class AuthService {
         'email': googleUser.email,
         'firstName': userInfoJson['given_name'],
         'lastName': userInfoJson['family_name'],
+        'photoUrl': user.photoUrl,
+      });
+    }
+
+    return user;
+  }
+
+  Future<FirebaseUser> signInWithFacebook(
+    FacebookLoginResult result,
+  ) async {
+    final token = result.accessToken.token;
+    final graphResponse = await http.get(
+        'https://graph.facebook.com/me?fields=name,first_name,last_name,email&access_token=$token');
+
+    final credential = FacebookAuthProvider.getCredential(accessToken: token);
+    AuthResult authResult = await _auth.signInWithCredential(credential);
+    FirebaseUser user = authResult.user;
+
+    if (graphResponse.statusCode == 200) {
+      Map<String, dynamic> userInfoJson = json.decode(graphResponse.body);
+      await updateUserData(user.uid, {
+        'userId': user.uid,
+        'email': user.email,
+        'firstName': userInfoJson['first_name'],
+        'lastName': userInfoJson['last_name'],
         'photoUrl': user.photoUrl,
       });
     }

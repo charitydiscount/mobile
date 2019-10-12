@@ -16,7 +16,11 @@ import 'package:charity_discount/services/local.dart';
 class AppModel extends Model {
   bool _introCompleted = false;
   User _user;
-  Settings _settings = Settings(displayMode: DisplayMode.LIST, lang: 'en');
+  Settings _settings = Settings(
+    displayMode: DisplayMode.LIST,
+    lang: 'en',
+    notifications: false,
+  );
   StreamSubscription _profileListener;
   // StreamSubscription _settingsListener;
   List<Program> _programs;

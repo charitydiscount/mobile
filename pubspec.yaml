@@ -35,13 +35,14 @@ dependencies:
   scoped_model: ^1.0.1
   timeline_list: ^0.0.5
   cached_network_image: ^1.1.1
-  intl: ^0.15.8
+  intl: ^0.16.0
   firebase_remote_config: ^0.2.0
   cupertino_icons: ^0.1.2
   flutter_svg: ^0.14.1
   iban_form_field: ^0.1.7
   flutter_html: ^0.11.0
   flutter_rating_bar: ^3.0.0
+  flutter_facebook_login: ^3.0.0
 
 dev_dependencies:
   flutter_test:

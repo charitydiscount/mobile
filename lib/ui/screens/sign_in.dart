@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:charity_discount/util/validator.dart';
 import 'package:charity_discount/util/social_icons.dart';
@@ -146,7 +147,7 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
         MaterialButton(
           shape: CircleBorder(),
-          onPressed: () => {},
+          onPressed: () async => _facebookLogin(context),
           color: Color(0xff3b5998),
           height: 65,
           elevation: 0,
@@ -219,7 +220,7 @@ class _SignInScreenState extends State<SignInScreen> {
         _toggleLoadingVisible();
         await userController.signIn(
           Strategy.EmailAndPass,
-          {"email": email, "password": password},
+          credentials: {"email": email, "password": password},
         );
         AppModel.of(context).createListeners();
         _toggleLoadingVisible();
@@ -257,6 +258,44 @@ class _SignInScreenState extends State<SignInScreen> {
           duration: Duration(seconds: 5),
         )..show(context);
       }
+    }
+  }
+
+  void _facebookLogin(BuildContext context) async {
+    _toggleLoadingVisible();
+    final facebookLogin = FacebookLogin();
+    final result = await facebookLogin.logIn(['email']);
+
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        try {
+          await userController.signIn(Strategy.Facebook,
+              facebookResult: result);
+          _toggleLoadingVisible();
+          await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+        } catch (e) {
+          _toggleLoadingVisible();
+          if (!(e is Error)) {
+            String exception = getExceptionText(e);
+            Flushbar(
+              title: "Sign In Error",
+              message: exception,
+              duration: Duration(seconds: 5),
+            )..show(context);
+          }
+        }
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        _toggleLoadingVisible();
+        break;
+      case FacebookLoginStatus.error:
+        _toggleLoadingVisible();
+        Flushbar(
+          title: "Sign In Error",
+          message: result.errorMessage,
+          duration: Duration(seconds: 5),
+        )..show(context);
+        break;
     }
   }
 }

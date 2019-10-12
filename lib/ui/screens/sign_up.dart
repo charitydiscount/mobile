@@ -204,7 +204,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         await userController.signUp(email, password, firstName, lastName);
         await userController.signIn(
           Strategy.EmailAndPass,
-          {"email": email, "password": password},
+          credentials: {"email": email, "password": password},
         );
         _toggleLoadingVisible();
         await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);

@@ -105,14 +105,12 @@ class ShopFullTile extends StatelessWidget {
                   child: rating,
                 ),
               ),
-              ButtonTheme.bar(
-                child: ButtonBar(
-                  children: <Widget>[
-                    cashback,
-                    favoriteButton,
-                    linkButton,
-                  ],
-                ),
+              ButtonBar(
+                children: <Widget>[
+                  cashback,
+                  favoriteButton,
+                  linkButton,
+                ],
               ),
             ],
           ),
@@ -224,14 +222,12 @@ class ShopHalfTile extends StatelessWidget {
                   child: rating,
                 ),
               ),
-              ButtonTheme.bar(
-                child: ButtonBar(
-                  children: <Widget>[
-                    cashback,
-                    favoriteButton,
-                    linkButton,
-                  ],
-                ),
+              ButtonBar(
+                children: <Widget>[
+                  cashback,
+                  favoriteButton,
+                  linkButton,
+                ],
               ),
             ],
           ),

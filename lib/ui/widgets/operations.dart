@@ -140,41 +140,39 @@ class _DonateWidgetState extends State<DonateWidget> {
                 ),
               ),
             ),
-            ButtonTheme.bar(
-              child: ButtonBar(
-                children: [
-                  FlatButton(
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.favorite,
-                          color: Colors.red,
+            ButtonBar(
+              children: [
+                FlatButton(
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      ),
+                      Text(
+                        tr('send').toUpperCase(),
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor,
                         ),
-                        Text(
-                          tr('send').toUpperCase(),
-                          style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                    onPressed: () {
-                      if (widget.formKey.currentState.validate() &&
-                          _amountController.text.isNotEmpty) {
-                        var txRef = widget.charityService.createTransaction(
-                          AppModel.of(context).user.userId,
-                          TxType.DONATION,
-                          double.tryParse(_amountController.text),
-                          'RON',
-                          widget.charityCase.id,
-                        );
-
-                        Navigator.of(context).pop(txRef);
-                      }
-                    },
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                  onPressed: () {
+                    if (widget.formKey.currentState.validate() &&
+                        _amountController.text.isNotEmpty) {
+                      var txRef = widget.charityService.createTransaction(
+                        AppModel.of(context).user.userId,
+                        TxType.DONATION,
+                        double.tryParse(_amountController.text),
+                        'RON',
+                        widget.charityCase.id,
+                      );
+
+                      Navigator.of(context).pop(txRef);
+                    }
+                  },
+                ),
+              ],
             ),
           ],
         );
