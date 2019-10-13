@@ -21,10 +21,7 @@ class TransactionsScreen extends StatelessWidget {
           color: Theme.of(context).textTheme.body2.color,
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 8.0),
-        child: HistoryPointsWidget(transactions: transactions),
-      ),
+      body: HistoryPointsWidget(transactions: transactions),
     );
   }
 }

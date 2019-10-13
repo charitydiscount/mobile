@@ -1,4 +1,6 @@
 import 'package:charity_discount/models/wallet.dart';
+import 'package:easy_localization/easy_localization_delegate.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:timeline_list/timeline.dart';
@@ -13,39 +15,57 @@ class HistoryPointsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     List<TimelineModel> items = transactions.map((tx) {
       Icon txIcon;
-      Color iconBackground;
       switch (tx.type) {
         case TxType.BONUS:
           txIcon = Icon(Icons.add_circle_outline, color: Colors.white);
-          iconBackground = Colors.green;
           break;
         case TxType.CASHOUT:
           txIcon = Icon(Icons.file_upload, color: Colors.white);
-          iconBackground = Colors.blueGrey;
           break;
         case TxType.DONATION:
           txIcon = Icon(Icons.favorite_border, color: Colors.white);
-          iconBackground = Colors.red;
           break;
         default:
       }
       return TimelineModel(
-        TransactionDetails(tx: tx),
-        position: TimelineItemPosition.random,
-        iconBackground: iconBackground,
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: TransactionDetails(tx: tx),
+        ),
+        position: TimelineItemPosition.right,
+        iconBackground: _getTxColor(tx),
         icon: txIcon,
       );
     }).toList();
+
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
+      padding: const EdgeInsets.only(left: 8.0),
       child: Timeline(
         children: items,
-        position: TimelinePosition.Center,
+        position: TimelinePosition.Left,
         lineColor: Theme.of(context).textTheme.body2.color,
         shrinkWrap: true,
       ),
     );
   }
+}
+
+Color _getTxColor(Transaction transaction) {
+  switch (transaction.type) {
+    case TxType.BONUS:
+      return Colors.green;
+    case TxType.CASHOUT:
+      return Colors.blueGrey;
+    case TxType.DONATION:
+      return Colors.red;
+    default:
+      return Colors.grey;
+  }
+}
+
+String _getTxTypeName(Transaction transaction, BuildContext context) {
+  return AppLocalizations.of(context)
+      .tr(describeEnum(transaction.type).toLowerCase());
 }
 
 class TransactionDetails extends StatelessWidget {
@@ -56,12 +76,19 @@ class TransactionDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int decimalsToDisplay = tx.type == TxType.BONUS ? 4 : 2;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Card(
-        child: ListTile(
-          title: Text('${tx.amount.toStringAsFixed(decimalsToDisplay)} ${tx.currency}'),
-          subtitle: Text(DateFormat.yMd('ro_RO').add_jm().format(tx.date)),
+    return Card(
+      child: ListTile(
+        title: Text(
+            '${tx.amount.toStringAsFixed(decimalsToDisplay)} ${tx.currency}'),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(DateFormat.yMd('ro_RO').add_jm().format(tx.date)),
+          ],
+        ),
+        trailing: Text(
+          _getTxTypeName(tx, context),
+          style: TextStyle(color: _getTxColor(tx)),
         ),
       ),
     );

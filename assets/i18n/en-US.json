@@ -71,6 +71,7 @@
   },
   "next": "Next",
   "send": "Send",
+  "authorize": "Authorize",
   "review": {
     "add": "Add review",
     "edit": "Update review",
@@ -91,5 +92,8 @@
   "promotion": {
     "promotions": "Promotions",
     "loading": "Looking for active promotions"
-  }
+  },
+  "donation": "donation",
+  "cashout": "cashout",
+  "bonus": "bonus"
 }

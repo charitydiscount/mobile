@@ -9,6 +9,7 @@ import 'package:iban_form_field/iban_form_field.dart';
 import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/ui/widgets/operations.dart';
+import 'package:local_auth/local_auth.dart';
 
 class CashoutScreen extends StatefulWidget {
   final CharityService charityService;
@@ -264,24 +265,33 @@ class _CashoutScreenState extends State<CashoutScreen> {
                     padding: EdgeInsets.all(12),
                     color: Theme.of(context).primaryColor,
                     child: Text(
-                      AppLocalizations.of(context).tr('send').toUpperCase(),
+                      '${AppLocalizations.of(context).tr('authorize')} & ${AppLocalizations.of(context).tr('send')}'
+                          .toUpperCase(),
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () {
-                      widget.charityService
-                          .createTransaction(
-                            AppModel.of(context).user.userId,
-                            TxType.CASHOUT,
-                            double.tryParse(_amountController.text),
-                            'RON',
-                            AppModel.of(context).user.userId,
-                          )
+                      var localAuth = LocalAuthentication();
+                      return localAuth
+                          .authenticateWithBiometrics(
+                              localizedReason: 'Authorize the transaction')
                           .then(
-                              (txRef) => showTxResult(txRef, context).then((_) {
-                                    setState(() {
-                                      _done = true;
-                                    });
-                                  }));
+                            (didAuthenticate) => didAuthenticate
+                                ? widget.charityService
+                                    .createTransaction(
+                                      AppModel.of(context).user.userId,
+                                      TxType.CASHOUT,
+                                      double.tryParse(_amountController.text),
+                                      'RON',
+                                      AppModel.of(context).user.userId,
+                                    )
+                                    .then((txRef) =>
+                                        showTxResult(txRef, context).then((_) {
+                                          setState(() {
+                                            _done = true;
+                                          });
+                                        }))
+                                : print('Failed to auth'),
+                          );
                     },
                   ),
           ),

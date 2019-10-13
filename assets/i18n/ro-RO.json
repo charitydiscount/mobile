@@ -71,6 +71,7 @@
   },
   "next": "Urmatorul",
   "send": "Trimite",
+  "authorize": "Autorizeaza",
   "review": {
     "add": "Adauga review",
     "edit": "Actualizeaza review",
@@ -91,5 +92,8 @@
   "promotion": {
     "promotions": "Promotii",
     "loading": "Cautam promotii active"
-  }
+  },
+  "donation": "donatie",
+  "cashout": "cashout",
+  "bonus": "bonus"
 }
