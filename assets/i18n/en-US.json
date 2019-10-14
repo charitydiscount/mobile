@@ -95,5 +95,19 @@
   },
   "donation": "donation",
   "cashout": "cashout",
-  "bonus": "bonus"
+  "bonus": "bonus",
+  "authorizeFlow": {
+    "title": "Transaction Authorization",
+    "subtitle": "Enter the code sent to your email address",
+    "checkError": {
+      "title": "The codes do not match",
+      "subtitle": "Ensure that you correctly insert the code received via email"
+    },
+    "paste": "Paste",
+    "pasteError": {
+      "title": "Data cannot be pasted",
+      "message": "Retry to copy the code received via email"
+    },
+    "resend": "Resend Code"
+  }
 }

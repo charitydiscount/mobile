@@ -44,6 +44,14 @@ class CharityService {
   Future<List<News>> getNews() {
     throw Error();
   }
+
+  Future<void> sendOtpCode(String userId) {
+    throw Error();
+  }
+
+  Future<bool> checkOtpCode(String userId, int code) {
+    throw Error();
+  }
 }
 
 class FirebaseCharityService implements CharityService {
@@ -151,5 +159,18 @@ class FirebaseCharityService implements CharityService {
       ),
     ];
     return Future.value(mockedNews);
+  }
+
+  @override
+  Future<void> sendOtpCode(String userId) {
+    // TODO: implement sendOtpCode
+    return null;
+  }
+
+  @override
+  Future<bool> checkOtpCode(String userId, int code) {
+    // TODO: implement checkOtpCode
+    int mockCode = 1234;
+    return Future.value(mockCode == code);
   }
 }

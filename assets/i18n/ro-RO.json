@@ -95,5 +95,19 @@
   },
   "donation": "donatie",
   "cashout": "cashout",
-  "bonus": "bonus"
+  "bonus": "bonus",
+  "authorizeFlow": {
+    "title": "Autorizeaza tranzactia",
+    "subtitle": "Introdu codul primit pe adresa de email",
+    "checkError": {
+      "title": "Codul introdus nu se potriveste",
+      "subtitle": "Asigurati-va ca ati introdus corect codul primit prin email"
+    },
+    "paste": "Lipire",
+    "pasteError": {
+      "title": "Datele nu pot fi lipite",
+      "message": "Reincercati sa copiati codul primit prin email"
+    },
+    "resend": "Retrimite cod"
+  }
 }

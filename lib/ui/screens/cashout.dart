@@ -1,6 +1,7 @@
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/animated_pages.dart';
+import 'package:charity_discount/util/authorize.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -9,7 +10,6 @@ import 'package:iban_form_field/iban_form_field.dart';
 import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/ui/widgets/operations.dart';
-import 'package:local_auth/local_auth.dart';
 
 class CashoutScreen extends StatefulWidget {
   final CharityService charityService;
@@ -270,28 +270,28 @@ class _CashoutScreenState extends State<CashoutScreen> {
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () {
-                      var localAuth = LocalAuthentication();
-                      return localAuth
-                          .authenticateWithBiometrics(
-                              localizedReason: 'Authorize the transaction')
-                          .then(
-                            (didAuthenticate) => didAuthenticate
-                                ? widget.charityService
-                                    .createTransaction(
-                                      AppModel.of(context).user.userId,
-                                      TxType.CASHOUT,
-                                      double.tryParse(_amountController.text),
-                                      'RON',
-                                      AppModel.of(context).user.userId,
-                                    )
-                                    .then((txRef) =>
-                                        showTxResult(txRef, context).then((_) {
-                                          setState(() {
-                                            _done = true;
-                                          });
-                                        }))
-                                : print('Failed to auth'),
-                          );
+                      authorize(
+                        context: context,
+                        title: 'Authorize the transaction',
+                        charityService: widget.charityService,
+                      ).then(
+                        (didAuthenticate) => didAuthenticate == true
+                            ? widget.charityService
+                                .createTransaction(
+                                  AppModel.of(context).user.userId,
+                                  TxType.CASHOUT,
+                                  double.tryParse(_amountController.text),
+                                  'RON',
+                                  AppModel.of(context).user.userId,
+                                )
+                                .then((txRef) =>
+                                    showTxResult(txRef, context).then((_) {
+                                      setState(() {
+                                        _done = true;
+                                      });
+                                    }))
+                            : print('Failed to auth'),
+                      );
                     },
                   ),
           ),
