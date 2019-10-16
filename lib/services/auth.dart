@@ -16,10 +16,8 @@ class AuthService {
   Observable<FirebaseUser> _user;
   FirebaseUser currentUser;
   BehaviorSubject<Map<String, dynamic>> profile = BehaviorSubject();
-  BehaviorSubject<Map<String, dynamic>> settings = BehaviorSubject();
 
   StreamSubscription _usersListener;
-  StreamSubscription _settingsListener;
 
   AuthService() {
     _user = Observable(_auth.onAuthStateChanged);
@@ -27,6 +25,7 @@ class AuthService {
     _user.listen((FirebaseUser u) {
       currentUser = u;
 
+      print(currentUser);
       if (u != null) {
         if (_usersListener != null) {
           _usersListener.cancel();
@@ -39,22 +38,6 @@ class AuthService {
             .listen((data) => profile.add(data));
       } else {
         profile.add(null);
-      }
-    });
-
-    _user.listen((FirebaseUser u) {
-      if (u != null) {
-        if (_settingsListener != null) {
-          _settingsListener.cancel();
-        }
-        _settingsListener = _db
-            .collection('settings')
-            .document(u.uid)
-            .snapshots()
-            .map((snap) => snap.data)
-            .listen((data) => settings.add(data));
-      } else {
-        settings.add(null);
       }
     });
   }
@@ -75,9 +58,6 @@ class AuthService {
   Future<void> signOut() async {
     if (_usersListener != null) {
       await _usersListener.cancel();
-    }
-    if (_settingsListener != null) {
-      await _settingsListener.cancel();
     }
     await _auth.signOut();
   }

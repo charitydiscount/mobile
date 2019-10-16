@@ -268,8 +268,10 @@ class _SignInScreenState extends State<SignInScreen> {
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         try {
-          await userController.signIn(Strategy.Facebook,
-              facebookResult: result);
+          await userController.signIn(
+            Strategy.Facebook,
+            facebookResult: result,
+          );
           _toggleLoadingVisible();
           await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
         } catch (e) {

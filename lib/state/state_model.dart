@@ -22,7 +22,6 @@ class AppModel extends Model {
     notifications: false,
   );
   StreamSubscription _profileListener;
-  // StreamSubscription _settingsListener;
   List<Program> _programs;
   FavoriteShops _favoriteShops = FavoriteShops(programs: []);
   TwoPerformantMeta _affiliateMeta;
@@ -44,20 +43,12 @@ class AppModel extends Model {
   void createListeners() {
     _profileListener = authService.profile.listen(
       (profile) {
+        print(profile);
         if (profile == null) {
           return;
         }
         User currentUser = User.fromJson(profile);
         this.setUser(currentUser);
-        // _settingsListener = authService.settings.listen(
-        //   (settings) {
-        //     if (settings != null) {
-        //       this.setSettings(
-        //         Settings.fromJson(settings),
-        //       );
-        //     }
-        //   },
-        // );
         metaService.getTwoPerformantMeta().then((twoPMeta) {
           _affiliateMeta = twoPMeta;
         });
@@ -68,7 +59,6 @@ class AppModel extends Model {
 
   Future<void> closeListeners() async {
     await _profileListener.cancel();
-    // await _settingsListener.cancel();
   }
 
   static AppModel of(
