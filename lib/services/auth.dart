@@ -25,7 +25,6 @@ class AuthService {
     _user.listen((FirebaseUser u) {
       currentUser = u;
 
-      print(currentUser);
       if (u != null) {
         if (_usersListener != null) {
           _usersListener.cancel();

@@ -43,7 +43,6 @@ class AppModel extends Model {
   void createListeners() {
     _profileListener = authService.profile.listen(
       (profile) {
-        print(profile);
         if (profile == null) {
           return;
         }

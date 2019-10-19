@@ -98,6 +98,7 @@ class FirebaseCharityService implements CharityService {
       'currency': currency,
       'target': target,
       'createdAt': FieldValue.serverTimestamp(),
+      'status': 'PENDING',
     });
   }
 

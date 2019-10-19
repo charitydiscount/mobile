@@ -3,6 +3,7 @@ import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/animated_pages.dart';
 import 'package:charity_discount/util/authorize.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -290,6 +291,16 @@ class _CashoutScreenState extends State<CashoutScreen> {
                                         _done = true;
                                       });
                                     }))
+                                .catchError((error) => Flushbar(
+                                      title:
+                                          'Failed to create the transaction request',
+                                      message: error.toString(),
+                                      icon: Icon(
+                                        Icons.error_outline,
+                                        color: Colors.red,
+                                      ),
+                                      reverseAnimationCurve: Curves.linear,
+                                    )?.show(context))
                             : print('Failed to auth'),
                       );
                     },
