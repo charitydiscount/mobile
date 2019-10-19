@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/services.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -61,14 +62,20 @@ class AuthService {
     await _auth.signOut();
   }
 
-  Future<FirebaseUser> signInWithGoogle() async {
+  Future<FirebaseUser> signInWithGoogle(
+      {AuthCredential previousCredential}) async {
     GoogleSignInAccount googleUser = await _googleSignIn.signIn();
 
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
     AuthCredential credential = GoogleAuthProvider.getCredential(
         accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
-    AuthResult authResult = await _auth.signInWithCredential(credential);
+    AuthResult authResult;
+    try {
+      authResult = await _auth.signInWithCredential(credential);
+    } catch (e) {
+      print(e);
+    }
     FirebaseUser user = authResult.user;
 
     final googleApisUrl =
@@ -86,6 +93,10 @@ class AuthService {
       });
     }
 
+    if (previousCredential != null) {
+      user.linkWithCredential(previousCredential);
+    }
+
     return user;
   }
 
@@ -96,20 +107,44 @@ class AuthService {
     final graphResponse = await http.get(
         'https://graph.facebook.com/me?fields=name,first_name,last_name,email&access_token=$token');
 
+    if (graphResponse.statusCode != 200) {
+      throw PlatformException(code: 'GRAPH_CALL_FAILED');
+    }
+
+    Map<String, dynamic> userInfoJson = json.decode(graphResponse.body);
+
     final credential = FacebookAuthProvider.getCredential(accessToken: token);
-    AuthResult authResult = await _auth.signInWithCredential(credential);
+    AuthResult authResult;
+    try {
+      authResult = await _auth.signInWithCredential(credential);
+    } catch (e) {
+      switch (e.code) {
+        case 'ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL':
+          final signInMethods = await _auth.fetchSignInMethodsForEmail(
+              email: userInfoJson['email']);
+          if (signInMethods.contains(GoogleAuthProvider.providerId)) {
+            return signInWithGoogle(previousCredential: credential);
+          } else {
+            throw PlatformException(
+              code: 'ACCOUNT_EXISTS_CASE_NOT_HANDLED',
+              message:
+                  'Please try another sign in method until we get this one working :D',
+            );
+          }
+
+          break;
+        default:
+      }
+    }
     FirebaseUser user = authResult.user;
 
-    if (graphResponse.statusCode == 200) {
-      Map<String, dynamic> userInfoJson = json.decode(graphResponse.body);
-      await updateUserData(user.uid, {
-        'userId': user.uid,
-        'email': user.email,
-        'firstName': userInfoJson['first_name'],
-        'lastName': userInfoJson['last_name'],
-        'photoUrl': user.photoUrl,
-      });
-    }
+    await updateUserData(user.uid, {
+      'userId': user.uid,
+      'email': user.email,
+      'firstName': userInfoJson['first_name'],
+      'lastName': userInfoJson['last_name'],
+      'photoUrl': user.photoUrl,
+    });
 
     return user;
   }
