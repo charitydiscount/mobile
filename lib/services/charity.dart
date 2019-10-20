@@ -164,14 +164,23 @@ class FirebaseCharityService implements CharityService {
 
   @override
   Future<void> sendOtpCode(String userId) {
-    // TODO: implement sendOtpCode
-    return null;
+    return _db.collection('otp-requests').document(userId).setData({
+      'userId': userId,
+      'requestedAt': FieldValue.serverTimestamp(),
+    });
   }
 
   @override
-  Future<bool> checkOtpCode(String userId, int code) {
-    // TODO: implement checkOtpCode
-    int mockCode = 1234;
-    return Future.value(mockCode == code);
+  Future<bool> checkOtpCode(String userId, int code) async {
+    final otpRef = _db.collection('otps').document(userId);
+
+    final otp = await otpRef.get();
+    final codeMatches = otp.data['code'] == code;
+
+    if (codeMatches) {
+      otpRef.setData({'used': true}, merge: true);
+    }
+
+    return codeMatches;
   }
 }
