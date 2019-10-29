@@ -25,6 +25,9 @@ class HistoryPointsWidget extends StatelessWidget {
         case TxType.DONATION:
           txIcon = Icon(Icons.favorite_border, color: Colors.white);
           break;
+        case TxType.COMMISSION:
+          txIcon = Icon(Icons.monetization_on, color: Colors.white);
+          break;
         default:
       }
       return TimelineModel(
@@ -58,6 +61,8 @@ Color _getTxColor(Transaction transaction) {
       return Colors.blueGrey;
     case TxType.DONATION:
       return Colors.red;
+    case TxType.COMMISSION:
+      return Colors.cyan;
     default:
       return Colors.grey;
   }

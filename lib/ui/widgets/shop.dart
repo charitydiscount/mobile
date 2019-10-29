@@ -25,9 +25,9 @@ class ShopFullTile extends StatelessWidget {
       tag: 'shopLogo-${program.id}',
       child: CachedNetworkImage(
         imageUrl: program.logoPath,
-        width: 120,
-        height: 30,
-        fit: BoxFit.contain,
+        width: 100,
+        alignment: Alignment.center,
+        fit: BoxFit.fitHeight,
       ),
     );
     final linkButton = RaisedButton(
@@ -142,8 +142,7 @@ class ShopHalfTile extends StatelessWidget {
       tag: 'shopLogo-${program.id}',
       child: CachedNetworkImage(
         imageUrl: program.logoPath,
-        width: 80,
-        height: 20,
+        height: 30,
         fit: BoxFit.contain,
       ),
     );

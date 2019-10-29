@@ -1,113 +1,115 @@
 {
-  "password": "Parola",
-  "signIn": "Intra",
+  "password": "Parolă",
+  "signIn": "Intră",
   "charity": "Caritate",
   "shops": "Magazine",
   "profile": "Profil",
-  "accessShop": "Acceseaza magazin",
+  "accessShop": "Acceseazaă magazin",
   "contribute": "Contribuie",
   "firstName": "Prenume",
   "lastName": "Nume de familie",
   "name": "Nume",
   "wallet": "Portofel",
-  "transactionHistory": "Istoric Tranzactii",
-  "settings": "Setari",
-  "language": "Limba",
-  "recoverPassword": "Reseteaza parola",
+  "transactionHistory": "Istoric Tranzacții",
+  "settings": "Setări",
+  "language": "Limbă",
+  "recoverPassword": "Resetează parola",
   "resetPassEmailSentTitle": "E-mailul pentru resetarea parolei a fost trimis",
-  "resetPassEmailSentMessage": "Urmeaza instructiunile primite pe e-mail pentru a-ti reseta parola.",
+  "resetPassEmailSentMessage": "Urmează instrucțiunile primite pe e-mail pentru a-ți reseta parola.",
   "intro": {
     "getInvolved": {
-      "title": "Implica-te",
-      "body": "Ofera un viitor tarii tale!"
+      "title": "Implică-te",
+      "body": "Oferă un viitor țării tale!"
     },
     "saveMoney": {
-      "title": "Economiseste",
-      "body": "Tu cumperi, magazinele doneaza"
+      "title": "Economisește",
+      "body": "Tu cumperi, magazinele donează"
     },
     "findAnything": {
-      "title": "Gaseste orice",
+      "title": "Găsește orice",
       "body": "Sute de magazine partenere"
     }
   },
   "operation": {
     "contributeTo": "Contribuie la {}",
-    "donationHint": "Suma cu care doresti sa contribui",
+    "donationHint": "Suma cu care dorești să contribui",
     "donationApproved": {
-      "title": "Donatie aprobata",
-      "message": "Donatia a fost procesata cu success. Multumim!"
+      "title": "Donație aprobată",
+      "message": "Donația a fost procesată cu success. Mulțumim!"
     },
     "donationPending": {
-      "title": "Multumim!",
-      "message": "Donatia este in curs de procesare"
+      "title": "Mulțumim!",
+      "message": "Donația este în curs de procesare"
     },
     "donationRejected": {
-      "title": "Donatie respinsa",
-      "message": "Tranzactia nu a putut fi procesata"
+      "title": "Donație respinsă",
+      "message": "Tranzacția nu a putut fi procesată"
     },
     "cashoutApproved": {
       "title": "Cashout aprobat",
-      "message": "Poate dura 2-3 zile lucratoare pana bancile proceseaza tranzactia"
+      "message": "Poate dura 2-3 zile lucrătoare până băncile procesează tranzacția"
     },
     "cashoutPending": {
-      "title": "Multumim!",
-      "message": "Tranzactia este in curs de procesare"
+      "title": "Mulțumim!",
+      "message": "Tranzacția este în curs de procesare"
     },
     "cashoutRejected": {
       "title": "Cashout respins",
-      "message": "Tranzactia nu a putut fi procesata"
+      "message": "Tranzacția nu a putut fi procesată"
     }
   },
   "account": {
-    "save": "Salveaza cont",
+    "save": "Salvează cont",
     "name": "Nume beneficiar",
     "account": "Cont",
     "alias": "Alias",
     "amount": "Suma",
     "summary": "Rezumat",
     "insufficientCashback": "Cashback insuficient",
-    "amountHint": "Suma pe care doresti sa o retragi",
+    "amountHint": "Suma pe care dorești să o retragi",
     "availableCashback": "Cashback disponibil"
   },
-  "next": "Urmatorul",
+  "next": "Următorul",
   "send": "Trimite",
-  "authorize": "Autorizeaza",
+  "authorize": "Autorizează",
   "review": {
-    "add": "Adauga review",
-    "edit": "Actualizeaza review",
-    "publish": "Publica",
-    "addHeadline": "Spune-ne parerea ta despre {}",
+    "add": "Adaugă review",
+    "edit": "Actualizează review",
+    "publish": "Publică",
+    "addHeadline": "Spune-ne părerea ta despre {}",
     "notRecommended": "Nu recomand",
     "disappointing": "Dezamagitor",
     "decent": "Decent",
-    "satisfied": "Multumit",
+    "satisfied": "Mulțumit",
     "excellent": "Excelent",
     "descriptionTooLong": "Cel mult {} caractere",
-    "opinion": "Parerea ta",
-    "thankYou": "Multumim!",
-    "itIsImportant": "Parerea ta ii va ajuta pe alti utilizatori",
-    "loading": "Cautam recenziile magazinului",
+    "opinion": "Părerea ta",
+    "thankYou": "Mulțumim!",
+    "itIsImportant": "Părerea ta ii va ajuta pe alți utilizatori",
+    "loading": "Căutăm recenziile magazinului",
     "reviews": "Review-uri"
   },
   "promotion": {
-    "promotions": "Promotii",
-    "loading": "Cautam promotii active"
+    "promotions": "Promoții",
+    "loading": "Căutăm promoții active"
   },
-  "donation": "donatie",
+  "donation": "donație",
   "cashout": "cashout",
   "bonus": "bonus",
+  "commission": "comision",
   "authorizeFlow": {
-    "title": "Autorizeaza tranzactia",
+    "title": "Autorizează tranzacția",
     "subtitle": "Introdu codul primit pe adresa de email",
     "checkError": {
-      "title": "Codul introdus nu se potriveste",
-      "subtitle": "Asigurati-va ca ati introdus corect codul primit prin email"
+      "title": "Codul introdus nu se potrivește",
+      "subtitle": "Asigurați-vă că ați introdus corect codul primit prin email"
     },
     "paste": "Lipire",
     "pasteError": {
       "title": "Datele nu pot fi lipite",
-      "message": "Reincercati sa copiati codul primit prin email"
+      "message": "Reincercați să copiați codul primit prin email"
     },
     "resend": "Retrimite cod"
-  }
+  },
+  "soon": "În curând"
 }

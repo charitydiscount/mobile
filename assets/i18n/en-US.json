@@ -96,6 +96,7 @@
   "donation": "donation",
   "cashout": "cashout",
   "bonus": "bonus",
+  "commission": "commission",
   "authorizeFlow": {
     "title": "Transaction Authorization",
     "subtitle": "Enter the code sent to your email address",
@@ -109,5 +110,6 @@
       "message": "Retry to copy the code received via email"
     },
     "resend": "Resend Code"
-  }
+  },
+  "soon": "Soon"
 }

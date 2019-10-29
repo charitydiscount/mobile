@@ -21,9 +21,8 @@ class CaseWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final logo = CachedNetworkImage(
       imageUrl: charityCase.images[0].url,
-      width: 120,
-      height: 120,
-      fit: BoxFit.fill,
+      width: 100,
+      fit: BoxFit.fitWidth,
     );
     final websiteButton = charityCase.site != null
         ? Padding(

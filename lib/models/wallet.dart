@@ -44,7 +44,7 @@ class Wallet {
   }
 }
 
-enum TxType { DONATION, CASHOUT, BONUS }
+enum TxType { DONATION, CASHOUT, BONUS, COMMISSION }
 
 TxType txTypeFromString(String txTypeString) {
   String txTypeUpper = txTypeString.toUpperCase();

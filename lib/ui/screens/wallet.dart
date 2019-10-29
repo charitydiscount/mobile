@@ -38,25 +38,50 @@ class WalletScreen extends StatelessWidget {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: AboutPointsWidget(
-                points: snapshot.data.charityPoints,
-                headingLeading: Icon(
-                  Icons.favorite,
-                  color: Colors.red,
-                ),
-                heading: 'Charity Points',
-                subtitle: 'Puncte dobandite in schimbul donatiilor',
-                acceptedTitle: 'Puncte disponibile',
-                acceptedDescription:
-                    'Acestea pot fi folosite in magazinele partenere',
-                acceptedAction: IconButton(
-                  icon: Icon(
-                    Icons.shopping_cart,
-                    color: Theme.of(context).accentColor,
+              child: Stack(
+                children: <Widget>[
+                  AboutPointsWidget(
+                    points: snapshot.data.charityPoints,
+                    headingLeading: Icon(
+                      Icons.favorite,
+                      color: Colors.red,
+                    ),
+                    heading: 'Charity Points',
+                    subtitle: 'Puncte dobandite in schimbul donatiilor',
+                    acceptedTitle: 'Puncte disponibile',
+                    acceptedDescription:
+                        'Acestea pot fi folosite in magazinele partenere',
+                    acceptedAction: IconButton(
+                      icon: Icon(
+                        Icons.shopping_cart,
+                        color: Theme.of(context).accentColor,
+                      ),
+                      iconSize: 25,
+                      onPressed: () {},
+                    ),
                   ),
-                  iconSize: 25,
-                  onPressed: () {},
-                ),
+                  Positioned.fill(
+                    child: Card(
+                      color: Colors.transparent,
+                      child: Container(
+                        color: Colors.grey.withOpacity(0.65),
+                        child: Center(
+                          child: RotationTransition(
+                            turns: AlwaysStoppedAnimation(15 / 360),
+                            child: Text(
+                              'In curand',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             Padding(

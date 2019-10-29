@@ -32,8 +32,7 @@ class ShopDetails extends StatelessWidget {
       tag: 'shopLogo-${program.id}',
       child: CachedNetworkImage(
         imageUrl: program.logoPath,
-        width: 150,
-        height: 40,
+        height: 80,
         fit: BoxFit.contain,
       ),
     );
