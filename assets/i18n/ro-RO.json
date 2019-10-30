@@ -111,5 +111,9 @@
     },
     "resend": "Retrimite cod"
   },
-  "soon": "În curând"
+  "soon": "În curând",
+  "donate": "Doneaza",
+  "withdraw": "Withdraw",
+  "category": "Categorie",
+  "commissionDisclaimer": "din valoare comenzii fara TVA si transport"
 }

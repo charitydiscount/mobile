@@ -6,6 +6,7 @@ import 'package:charity_discount/ui/screens/transactions.dart';
 import 'package:charity_discount/ui/widgets/about_points.dart';
 import 'package:charity_discount/ui/widgets/charity.dart';
 import 'package:charity_discount/util/ui.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 enum CashbackAction { CANCEL, DONATE, CASHOUT }
@@ -196,7 +197,7 @@ class WalletScreen extends StatelessWidget {
                 color: Colors.red,
               ),
               Text(
-                'DONEAZA',
+                AppLocalizations.of(context).tr('donate'),
                 style: TextStyle(color: Theme.of(context).primaryColor),
               ),
             ],
@@ -213,7 +214,7 @@ class WalletScreen extends StatelessWidget {
                 color: Colors.green,
               ),
               Text(
-                'RETRAGE',
+                AppLocalizations.of(context).tr('withdraw'),
                 style: TextStyle(color: Colors.green),
               ),
             ],
@@ -229,7 +230,7 @@ class WalletScreen extends StatelessWidget {
   Widget _donateViewBuilder(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Doneaza'),
+        title: Text(AppLocalizations.of(context).tr('donate')),
       ),
       body: Column(
         children: <Widget>[

@@ -111,5 +111,9 @@
     },
     "resend": "Resend Code"
   },
-  "soon": "Soon"
+  "soon": "Soon",
+  "donate": "Doneaza",
+  "withdraw": "Withdraw",
+  "category": "Category",
+  "commissionDisclaimer": "of the purchase not including VAT and transport"
 }

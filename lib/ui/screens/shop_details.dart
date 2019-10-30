@@ -4,6 +4,7 @@ import 'package:charity_discount/models/rating.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/ui/screens/rate_shop.dart';
 import 'package:charity_discount/ui/widgets/rating.dart';
+import 'package:charity_discount/util/tools.dart';
 import 'package:charity_discount/util/ui.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flushbar/flushbar.dart';
@@ -36,11 +37,34 @@ class ShopDetails extends StatelessWidget {
         fit: BoxFit.contain,
       ),
     );
-    final category = Padding(
-      padding: EdgeInsets.all(12),
-      child: Chip(
-        label: Text(program.category),
-      ),
+    final category = Row(
+      children: <Widget>[
+        Text('${tr('category')}:'),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(program.category),
+        ),
+      ],
+    );
+
+    final commissionValue = program.leadCommissionAmount != null
+        ? '${program.leadCommissionAmount}lei'
+        : '${program.saleCommissionRate}%';
+    final commission = Row(
+      children: <Widget>[
+        Text('${capitalize(tr('commission'))}:'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Text(commissionValue),
+        ),
+        Expanded(
+          child: Text(
+            tr('commissionDisclaimer'),
+            softWrap: true,
+            style: Theme.of(context).textTheme.caption,
+          ),
+        ),
+      ],
     );
 
     final appState = AppModel.of(context);
@@ -208,7 +232,16 @@ class ShopDetails extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: logo,
           ),
-          category,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: <Widget>[
+                category,
+                Divider(),
+                commission,
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
             child: ratingBuilder,
