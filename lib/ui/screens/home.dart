@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.account_balance_wallet),
             title: Text(
-              AppLocalizations.of(context).tr('wallet'),
+              AppLocalizations.of(context).tr('wallet.name'),
             ),
           ),
         ],

@@ -13,7 +13,7 @@ class TransactionsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context).tr('transactionHistory'),
+          AppLocalizations.of(context).tr('wallet.history'),
           style: TextStyle(color: Theme.of(context).primaryColor),
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,

@@ -18,6 +18,8 @@ class WalletScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tr = AppLocalizations.of(context).tr;
+
     return StreamBuilder<Wallet>(
       stream:
           charityService.getPointsListener(AppModel.of(context).user.userId),
@@ -47,11 +49,10 @@ class WalletScreen extends StatelessWidget {
                       Icons.favorite,
                       color: Colors.red,
                     ),
-                    heading: 'Charity Points',
-                    subtitle: 'Puncte dobandite in schimbul donatiilor',
-                    acceptedTitle: 'Puncte disponibile',
-                    acceptedDescription:
-                        'Acestea pot fi folosite in magazinele partenere',
+                    heading: tr('wallet.points.title'),
+                    subtitle: tr('wallet.points.subtitle'),
+                    acceptedTitle: tr('wallet.points.available'),
+                    acceptedDescription: tr('wallet.points.description'),
                     acceptedAction: IconButton(
                       icon: Icon(
                         Icons.shopping_cart,
@@ -70,7 +71,7 @@ class WalletScreen extends StatelessWidget {
                           child: RotationTransition(
                             turns: AlwaysStoppedAnimation(15 / 360),
                             child: Text(
-                              'In curand',
+                              tr('soon'),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -93,10 +94,11 @@ class WalletScreen extends StatelessWidget {
                   Icons.monetization_on,
                   color: Colors.green,
                 ),
-                heading: 'Cashback',
-                subtitle: 'Banii primiti in urma cumparaturilor',
-                acceptedTitle: 'Cashback disponibil',
-                acceptedDescription: 'Bani care pot fi donati sau retrasi',
+                heading: tr('wallet.cashback.title'),
+                subtitle: tr('wallet.cashback.subtitle'),
+                acceptedTitle: tr('wallet.cashback.available.title'),
+                acceptedDescription:
+                    tr('wallet.cashback.available.description'),
                 acceptedAction: IconButton(
                   icon: Icon(
                     Icons.payment,
@@ -137,14 +139,13 @@ class WalletScreen extends StatelessWidget {
                     });
                   },
                 ),
-                pendingTitle: 'Cashback in asteptare',
-                pendingDescription:
-                    'Bani care urmeaza sa fie primiti pe baza cumparaturilor facute',
+                pendingTitle: tr('wallet.cashback.pending.title'),
+                pendingDescription: tr('wallet.cashback.pending.description'),
               ),
             ),
             FlatButton(
               child: Text(
-                'Istoric tranzactii',
+                tr('wallet.history'),
                 style: Theme.of(context).textTheme.button,
               ),
               onPressed: () {
@@ -166,12 +167,13 @@ class WalletScreen extends StatelessWidget {
   }
 
   Widget _dialogCashbackBuilder(BuildContext context) {
+    final tr = AppLocalizations.of(context).tr;
     return AlertDialog(
       title: Row(
         children: <Widget>[
           Expanded(
             child: Text(
-              'Ce doresti sa faci cu cashback-ul obtinut?',
+              tr('wallet.cashback.dialog.title'),
               softWrap: true,
             ),
           ),
@@ -185,9 +187,7 @@ class WalletScreen extends StatelessWidget {
         ],
       ),
       titlePadding: const EdgeInsets.fromLTRB(16.0, 16.0, 8.0, 2.0),
-      content: Text(
-        'Ai posibilitatea fie sa contribui la o lume mai buna, fie sa ii retragi (total sau partial).',
-      ),
+      content: Text(tr('wallet.cashback.dialog.description')),
       actions: <Widget>[
         FlatButton(
           child: Row(
@@ -197,7 +197,7 @@ class WalletScreen extends StatelessWidget {
                 color: Colors.red,
               ),
               Text(
-                AppLocalizations.of(context).tr('donate'),
+                tr('donate'),
                 style: TextStyle(color: Theme.of(context).primaryColor),
               ),
             ],
@@ -214,7 +214,7 @@ class WalletScreen extends StatelessWidget {
                 color: Colors.green,
               ),
               Text(
-                AppLocalizations.of(context).tr('withdraw'),
+                tr('withdraw'),
                 style: TextStyle(color: Colors.green),
               ),
             ],
