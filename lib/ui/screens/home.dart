@@ -102,6 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildProfileButton({BuildContext context, User user}) {
     final logoImage = UserAvatar(photoUrl: user.photoUrl);
+    final tr = AppLocalizations.of(context).tr;
     return InkWell(
       onTap: () {
         showModalBottomSheet(
@@ -135,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile news = ListTile(
               leading: Icon(Icons.update),
               title: Text(
-                'Noutati',
+                tr('news'),
                 style: titleStyle,
               ),
               onTap: () {
@@ -155,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile settings = ListTile(
               leading: Icon(Icons.settings),
               title: Text(
-                'Setari',
+                tr('settings'),
                 style: titleStyle,
               ),
               onTap: () {
@@ -173,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile terms = ListTile(
               leading: Icon(Icons.help_outline),
               title: Text(
-                'Termeni si conditii',
+                tr('terms'),
                 style: titleStyle,
               ),
               onTap: () => launchURL('https://charitydiscount.ro/tos'),
@@ -183,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile privacy = ListTile(
               leading: Icon(Icons.verified_user),
               title: Text(
-                'Confidentialitate',
+                tr('privacy'),
                 style: titleStyle,
               ),
               onTap: () => launchURL('https://charitydiscount.ro/privacy'),

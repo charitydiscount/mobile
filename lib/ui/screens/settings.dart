@@ -33,7 +33,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     settingTiles.add(language);
     Widget notifications = ListTile(
       leading: Icon(Icons.notifications),
-      title: Text('Notificari'),
+      title: Text(AppLocalizations.of(context).tr('notifications')),
       trailing: Switch.adaptive(
         value: _state.settings.notifications || false,
         onChanged: (bool newValue) {

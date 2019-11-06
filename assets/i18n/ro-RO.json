@@ -65,7 +65,8 @@
     "summary": "Rezumat",
     "insufficientCashback": "Cashback insuficient",
     "amountHint": "Suma pe care dorești să o retragi",
-    "availableCashback": "Cashback disponibil"
+    "availableCashback": "Cashback disponibil",
+    "savedAccounts": "Conturi salvate"
   },
   "next": "Următorul",
   "send": "Trimite",
@@ -139,5 +140,11 @@
         "description": "Ai posibilitatea fie sa contribui la o lume mai buna, fie sa ii retragi (total sau partial)."
       }
     }
-  }
+  },
+  "news": "Noutati",
+  "terms": "Termeni & Conditii",
+  "privacy": "Confidentialitate",
+  "notifications": "Notificari",
+  "forgotPassword": "Parola uitata?",
+  "createAccount": "Creeaza cont"
 }

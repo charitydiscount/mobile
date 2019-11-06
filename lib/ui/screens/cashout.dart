@@ -92,7 +92,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Saved Accounts',
+                AppLocalizations.of(context).tr('account.savedAccounts'),
                 textAlign: TextAlign.start,
               ),
             ],
@@ -273,7 +273,8 @@ class _CashoutScreenState extends State<CashoutScreen> {
                     onPressed: () {
                       authorize(
                         context: context,
-                        title: 'Authorize the transaction',
+                        title: AppLocalizations.of(context)
+                            .tr('authorizeFlow.title'),
                         charityService: widget.charityService,
                       ).then(
                         (didAuthenticate) => didAuthenticate == true

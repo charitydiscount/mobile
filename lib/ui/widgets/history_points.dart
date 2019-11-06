@@ -1,8 +1,8 @@
 import 'package:charity_discount/models/wallet.dart';
+import 'package:charity_discount/util/tools.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:timeline_list/timeline.dart';
 import 'package:timeline_list/timeline_model.dart';
 
@@ -88,7 +88,7 @@ class TransactionDetails extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(DateFormat.yMd('ro_RO').add_jm().format(tx.date)),
+            Text(formatDateTime(tx.date)),
           ],
         ),
         trailing: Text(

@@ -65,7 +65,8 @@
     "summary": "Summary",
     "insufficientCashback": "Insufficient cashback",
     "amountHint": "The amount you want to withdraw",
-    "availableCashback": "Available cashback"
+    "availableCashback": "Available cashback",
+    "savedAccounts": "Saved Accounts"
   },
   "next": "Next",
   "send": "Send",
@@ -139,5 +140,11 @@
         "description": "You can either contribute to a fair cause or you can withdraw them (completely or partially)"
       }
     }
-  }
+  },
+  "news": "News",
+  "terms": "Terms & Conditions",
+  "privacy": "Privacy",
+  "notifications": "Notifications",
+  "forgotPassword": "Forgot password?",
+  "createAccount": "Create an account"
 }

@@ -108,7 +108,7 @@ class _SignInScreenState extends State<SignInScreen> {
     final forgotLabel = FlatButton(
       padding: EdgeInsets.only(left: 200),
       child: Text(
-        'Forgot password?',
+        AppLocalizations.of(context).tr('forgotPassword'),
         style: TextStyle(color: Colors.black54),
       ),
       onPressed: () {
@@ -118,7 +118,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
     final signUpLabel = FlatButton(
       child: Text(
-        'Create an account',
+        AppLocalizations.of(context).tr('createAccount'),
         style: TextStyle(color: Colors.blue, fontSize: 16),
       ),
       onPressed: () {
@@ -130,7 +130,7 @@ class _SignInScreenState extends State<SignInScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         horizontalLine(),
-        Text("Social Login", style: TextStyle(fontSize: 16.0)),
+        Text('Social Login', style: TextStyle(fontSize: 16.0)),
         horizontalLine()
       ],
     );
