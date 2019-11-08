@@ -44,6 +44,7 @@ dependencies:
   flutter_rating_bar: ^3.0.0
   flutter_facebook_login: ^3.0.0
   local_auth: ^0.6.0+1
+  firebase_messaging: ^5.1.8
 
 dev_dependencies:
   flutter_test:

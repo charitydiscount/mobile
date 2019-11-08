@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "548055517349-o8tm9i53khsi40soh2427nc7hstelajv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.charity_discount",
+            "certificate_hash": "f84bb0d7899ba5784638f3ca07290a0ad3fd8fa0"
+          }
+        },
+        {
+          "client_id": "548055517349-djtal8aojn654ucfvop5ajp2fc8ho68h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.charity_discount",
+            "certificate_hash": "27d135163f9b3ee64b0972fdd4ef0ac1b7cc6376"
+          }
+        },
+        {
           "client_id": "548055517349-0fktje2g923jue3fnrk6dpm5im43bgt4.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -37,12 +53,20 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:548055517349:android:6e9b0787fa282ef9",
+        "mobilesdk_app_id": "1:548055517349:android:010a97f95968c3023e654c",
         "android_client_info": {
-          "package_name": "com.charitydiscount"
+          "package_name": "com.integral.charity_discount"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "548055517349-hl9ne41vt4j489g6poh8jgpbne6h26nt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.integral.charity_discount",
+            "certificate_hash": "f84bb0d7899ba5784638f3ca07290a0ad3fd8fa0"
+          }
+        },
         {
           "client_id": "548055517349-0fktje2g923jue3fnrk6dpm5im43bgt4.apps.googleusercontent.com",
           "client_type": 3

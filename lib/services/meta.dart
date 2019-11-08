@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:charity_discount/models/meta.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
@@ -26,6 +28,36 @@ class MetaService {
             .snapshots()
             .asyncMap((snap) => ProgramMeta.fromJson(snap.data)),
       );
+
+  Future<void> addFcmToken(String userId, String token) {
+    final tokenRef = _db
+        .collection('users')
+        .document(userId)
+        .collection('tokens')
+        .document(token);
+
+    return tokenRef.setData({
+      'token': token,
+      'createdAt': FieldValue.serverTimestamp(),
+      'platform': Platform.operatingSystem,
+    });
+  }
+
+  Future<void> setNotifications(
+    String userId,
+    String deviceToken,
+    bool notificationsEnabled,
+  ) {
+    final tokenRef = _db
+        .collection('users')
+        .document(userId)
+        .collection('tokens')
+        .document(deviceToken);
+
+    return tokenRef.setData({
+      'notifications': notificationsEnabled,
+    }, merge: true);
+  }
 }
 
 MetaService metaService = MetaService();

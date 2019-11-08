@@ -1,4 +1,5 @@
 import 'package:charity_discount/util/locale.dart';
+import 'package:charity_discount/util/message_handler.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class Main extends StatelessWidget {
           return Intro();
         }
         if (appModel.user != null && appModel.user.userId != null) {
-          return HomeScreen();
+          return MessageHandler(child: HomeScreen());
         }
 
         return SignInScreen();
@@ -38,7 +39,7 @@ class Main extends StatelessWidget {
     return EasyLocalizationProvider(
       data: data,
       child: MaterialApp(
-        title: 'Charity Discount',
+        title: 'CharityDiscount',
         theme: buildTheme(),
         darkTheme: buildTheme(dark: true),
         debugShowCheckedModeBanner: false,

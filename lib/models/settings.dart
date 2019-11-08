@@ -22,14 +22,14 @@ DisplayMode displayModeFromString(String displayModeString) {
 
 class Settings {
   String lang;
-  bool notifications = false;
+  bool notifications = true;
   DisplayMode displayMode = DisplayMode.LIST;
 
   Settings({this.lang, this.notifications, this.displayMode});
 
   factory Settings.fromJson(Map<String, dynamic> json) => Settings(
         lang: json['lang'] ?? 'en',
-        notifications: json['notifications'] ?? false,
+        notifications: json['notifications'] ?? true,
         displayMode: displayModeFromString(
           json['displayMode'] ?? DisplayMode.LIST.toString(),
         ),

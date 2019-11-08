@@ -29,6 +29,7 @@ class AppModel extends Model {
   Wallet wallet;
   ShopsService _shopsService;
   CharityService _charityService;
+  bool _isNewDevice = true;
 
   AppModel() {
     createListeners();
@@ -71,6 +72,7 @@ class AppModel extends Model {
     Settings settings = await localService.getSettingsLocal();
     bool isIntroCompleted = await localService.isIntroCompleted();
     List<Program> programs = await localService.getPrograms();
+    bool isKnownDevice = await localService.isDeviceKnown();
 
     if (user != null) {
       setUser(user);
@@ -83,6 +85,9 @@ class AppModel extends Model {
     }
     if (programs != null) {
       _programs = programs;
+    }
+    if (isKnownDevice != null) {
+      setKnownDevice();
     }
   }
 
@@ -160,5 +165,12 @@ class AppModel extends Model {
     user.savedAccounts
         .removeWhere((account) => account.iban == savedAccount.iban);
     _charityService.removeAccount(user.userId, savedAccount);
+  }
+
+  bool get isNewDevice => _isNewDevice;
+  void setKnownDevice() {
+    _isNewDevice = false;
+    localService.setKnownDevice();
+    notifyListeners();
   }
 }

@@ -19,6 +19,6 @@ List<SupportedLanguage> supportedLanguages = [
 
 SupportedLanguage getDefaultLanguage() {
   return supportedLanguages.firstWhere(
-      (l) => l.code == ui.window.locale.languageCode,
+      (l) => l.code == ui.window.locale?.languageCode,
       orElse: () => supportedLanguages.first);
 }
