@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Charity Discount'),
+        title: Text('CharityDiscount'),
         primary: true,
         automaticallyImplyLeading: false,
         actions: <Widget>[

@@ -1,6 +1,8 @@
 {
   "password": "Password",
   "signIn": "Sign in",
+  "signUp": "Sign Up",
+  "alreadyAccount": "I have an account already",
   "charity": "Charity",
   "shops": "Shops",
   "profile": "Profile",
@@ -113,7 +115,11 @@
   "soon": "Soon",
   "donate": "Doneaza",
   "withdraw": "Withdraw",
-  "category": "Category",
+  "category": {
+    "one": "Category",
+    "other": "Categories"
+  },
+  "all": "All",
   "commissionDisclaimer": "of the purchase not including VAT and transport",
   "wallet": {
     "name": "Wallet",
@@ -146,5 +152,6 @@
   "privacy": "Privacy",
   "notifications": "Notifications",
   "forgotPassword": "Forgot password?",
-  "createAccount": "Create an account"
+  "createAccount": "Create an account",
+  "connectionError": "Ahh, the connection with CharityDiscount services cannot be established right now"
 }

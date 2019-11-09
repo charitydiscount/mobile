@@ -12,6 +12,7 @@ import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/widgets/shop.dart';
 import 'package:charity_discount/util/ui.dart';
 import 'package:charity_discount/util/url.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class ProgramsList extends StatefulWidget {
@@ -165,7 +166,9 @@ class _ProgramsListState extends State<ProgramsList>
     return Expanded(
       child: FlatButton(
         child: Text(
-          _category == null ? 'Categorii' : _category,
+          _category == null
+              ? AppLocalizations.of(context).plural('category', 2)
+              : _category,
           style: TextStyle(color: Colors.white),
         ),
         onPressed: () {
@@ -203,7 +206,7 @@ class _ProgramsListState extends State<ProgramsList>
 
   Widget _categoriesDialogBuilder(BuildContext context) {
     List<Widget> categories = [
-      _buildCategoryButton(context, 'Toate'),
+      _buildCategoryButton(context, AppLocalizations.of(context).tr('all')),
     ];
     categories.addAll(
       _appState.programsMeta.categories

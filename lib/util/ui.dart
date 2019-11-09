@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 Widget buildConnectionLoading({
@@ -24,7 +25,7 @@ Widget buildConnectionLoading({
           child: Padding(
             padding: const EdgeInsets.all(6.0),
             child: Text(
-              "Aparent, conexiunea cu serviciile Charity Discount nu poate fi stabilita",
+              AppLocalizations.of(context).tr('connectionError'),
             ),
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
@@ -25,6 +26,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget build(BuildContext context) {
+    final tr = AppLocalizations.of(context).tr;
     final logo = Hero(
       tag: 'hero',
       child: CircleAvatar(
@@ -54,7 +56,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: Colors.grey,
           ), // icon is 48px widget.
         ), // icon is 48px widget.
-        hintText: 'First Name',
+        hintText: tr('firstName'),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
@@ -73,7 +75,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: Colors.grey,
           ), // icon is 48px widget.
         ), // icon is 48px widget.
-        hintText: 'Last Name',
+        hintText: tr('lastName'),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
@@ -111,7 +113,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: Colors.grey,
           ), // icon is 48px widget.
         ), // icon is 48px widget.
-        hintText: 'Password',
+        hintText: tr('password'),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
@@ -133,13 +135,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         },
         padding: EdgeInsets.all(12),
         color: Theme.of(context).primaryColor,
-        child: Text('SIGN UP', style: TextStyle(color: Colors.white)),
+        child: Text(tr('createAccount'), style: TextStyle(color: Colors.white)),
       ),
     );
 
     final signInLabel = FlatButton(
       child: Text(
-        'Have an Account? Sign In.',
+        tr('alreadyAccount'),
         style: TextStyle(color: Colors.black54),
       ),
       onPressed: () {

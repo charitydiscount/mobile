@@ -38,14 +38,15 @@ class _MessageHandlerState extends State<MessageHandler> {
       state.setKnownDevice();
     }
 
-    fcm.getToken().then((token) => print(token));
     if (state.settings.notifications) {
       fcm.configure(
         onMessage: (Map<String, dynamic> message) async {
-          Flushbar(
-            title: message['notification']['title'],
-            message: message['notification']['body'],
-          ).show(context);
+          if (mounted) {
+            Flushbar(
+              title: message['notification']['title'],
+              message: message['notification']['body'],
+            )?.show(context);
+          }
         },
       );
     }
