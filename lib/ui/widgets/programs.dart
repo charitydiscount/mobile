@@ -466,7 +466,7 @@ class ProgramsSearch extends SearchDelegate<String> {
         }
 
         List<Program> programs;
-        if (snapshot.hasError) {
+        if (snapshot.hasError || _exactMatch) {
           programs = appState.programs
               .where((p) =>
                   _exactMatch ? p.name == query : p.name.startsWith(query))

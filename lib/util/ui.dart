@@ -1,3 +1,4 @@
+import 'package:charity_discount/models/program.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -59,4 +60,47 @@ Widget buildConnectionLoading({
   }
 
   return null;
+}
+
+String getProgramCommission(Program program) {
+  String commission = '';
+  if (program.leadCommissionAmount != null) {
+    switch (getCommissionTypeEnum(program.defaultLeadCommissionType)) {
+      case CommissionType.fixed:
+        commission = _buildCommissionForDisplay(
+            commission, '${program.leadCommissionAmount}RON');
+        break;
+      case CommissionType.variable:
+        commission = _buildCommissionForDisplay(
+            commission, '~${program.leadCommissionAmount}RON');
+        break;
+      default:
+    }
+  }
+
+  if (program.saleCommissionRate != null) {
+    switch (getCommissionTypeEnum(program.defaultSaleCommissionType)) {
+      case CommissionType.fixed:
+        commission = _buildCommissionForDisplay(
+            commission, '${program.saleCommissionRate}RON');
+        break;
+      case CommissionType.variable:
+        commission = _buildCommissionForDisplay(
+            commission, '~${program.saleCommissionRate}%');
+        break;
+      case CommissionType.percent:
+        commission = _buildCommissionForDisplay(
+            commission, '${program.saleCommissionRate}%');
+        break;
+    }
+  }
+
+  return commission;
+}
+
+String _buildCommissionForDisplay(
+    String currentCommission, String toBeAddedCommission) {
+  return currentCommission.isEmpty
+      ? toBeAddedCommission
+      : '$currentCommission + $toBeAddedCommission';
 }

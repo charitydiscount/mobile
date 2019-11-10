@@ -39,7 +39,7 @@ class ShopDetails extends StatelessWidget {
     );
     final category = Row(
       children: <Widget>[
-        Text('${tr('category')}:'),
+        Text('${AppLocalizations.of(context).plural('category', 1)}:'),
         Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: Text(program.category),
@@ -47,23 +47,23 @@ class ShopDetails extends StatelessWidget {
       ],
     );
 
-    final commissionValue = program.leadCommissionAmount != null
-        ? '${program.leadCommissionAmount}lei'
-        : '${program.saleCommissionRate}%';
     final commission = Row(
       children: <Widget>[
         Text('${capitalize(tr('commission'))}:'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text(commissionValue),
+          child: Text(getProgramCommission(program)),
         ),
-        Expanded(
-          child: Text(
-            tr('commissionDisclaimer'),
-            softWrap: true,
-            style: Theme.of(context).textTheme.caption,
-          ),
-        ),
+        program.defaultSaleCommissionType == 'percent' ||
+                program.defaultSaleCommissionType == 'variable'
+            ? Expanded(
+                child: Text(
+                  tr('commissionDisclaimer'),
+                  softWrap: true,
+                  style: Theme.of(context).textTheme.caption,
+                ),
+              )
+            : Container(),
       ],
     );
 

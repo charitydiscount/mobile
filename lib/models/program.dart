@@ -115,6 +115,15 @@ class Program {
       };
 }
 
+enum CommissionType {
+  percent,
+  variable,
+  fixed,
+}
+
+CommissionType getCommissionTypeEnum(String type) => CommissionType.values
+    .firstWhere((e) => e.toString() == 'CommissionType.' + type.toLowerCase());
+
 class OverallRating {
   int count;
   double overall;
