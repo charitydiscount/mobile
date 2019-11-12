@@ -6,6 +6,7 @@ import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/shops.dart';
+import 'package:charity_discount/util/remote_config.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/user.dart';
@@ -30,10 +31,14 @@ class AppModel extends Model {
   ShopsService _shopsService;
   CharityService _charityService;
   bool _isNewDevice = true;
+  double minimumWithdrawalAmount;
 
   AppModel() {
     createListeners();
     initFromLocal();
+    remoteConfig
+        .getWithdrawalThreshold()
+        .then((threshold) => minimumWithdrawalAmount = threshold);
   }
 
   void setServices(ShopsService shopService, CharityService charityService) {

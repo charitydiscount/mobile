@@ -29,6 +29,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
   int _stackIndex = 0;
   Iban _iban;
   double _amount = 0.0;
+  bool _validAmount = false;
   List<String> _titles;
   bool _saveIban = false;
   PageController _pageController;
@@ -159,20 +160,26 @@ class _CashoutScreenState extends State<CashoutScreen> {
                 fontSize: Theme.of(context).textTheme.display1.fontSize),
             validator: (String value) {
               if (value.isEmpty) {
+                _validAmount = false;
                 return null;
               }
 
               double amount = double.tryParse(value);
               if (amount == null) {
+                _validAmount = false;
                 return 'Doar numere';
               }
 
-              if (amount > _state.wallet.cashback.acceptedAmount) {
+              if (amount > _state.wallet.cashback.acceptedAmount ||
+                  _state.wallet.cashback.acceptedAmount <
+                      _state.minimumWithdrawalAmount) {
+                _validAmount = false;
                 return AppLocalizations.of(context)
                     .tr('account.insufficientCashback');
               }
 
               _amount = amount;
+              _validAmount = true;
               return null;
             },
             decoration: InputDecoration(
@@ -366,6 +373,9 @@ class _CashoutScreenState extends State<CashoutScreen> {
     }
   }
 
+  bool get _isAmountValid =>
+      _stackIndex != 1 || (_stackIndex == 1 && _validAmount);
+
   @override
   Widget build(BuildContext context) {
     List<Widget> actions = [];
@@ -377,7 +387,8 @@ class _CashoutScreenState extends State<CashoutScreen> {
           onPressed: _iban == null ||
                   _accountNameController.text.length < 5 ||
                   !_iban.isValid ||
-                  _stackIndex == 2
+                  _stackIndex == 2 ||
+                  !_isAmountValid
               ? null
               : () {
                   setState(() {

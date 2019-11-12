@@ -32,9 +32,9 @@ class WalletScreen extends StatelessWidget {
           return loading;
         }
 
-        AppModel.of(context).wallet = snapshot.data;
-
-        snapshot.data.transactions.sort((t1, t2) => t2.date.compareTo(t1.date));
+        AppModel state = AppModel.of(context);
+        state.wallet = snapshot.data;
+        state.wallet.transactions.sort((t1, t2) => t2.date.compareTo(t1.date));
 
         return ListView(
           primary: true,
@@ -44,7 +44,7 @@ class WalletScreen extends StatelessWidget {
               child: Stack(
                 children: <Widget>[
                   AboutPointsWidget(
-                    points: snapshot.data.charityPoints,
+                    points: state.wallet.charityPoints,
                     headingLeading: Icon(
                       Icons.favorite,
                       color: Colors.red,
@@ -89,7 +89,7 @@ class WalletScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: AboutPointsWidget(
-                points: snapshot.data.cashback,
+                points: state.wallet.cashback,
                 headingLeading: Icon(
                   Icons.monetization_on,
                   color: Colors.green,
@@ -153,7 +153,7 @@ class WalletScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (BuildContext context) => TransactionsScreen(
-                      transactions: snapshot.data.transactions,
+                      transactions: state.wallet.transactions,
                     ),
                     settings: RouteSettings(name: 'Transactions'),
                   ),
@@ -168,6 +168,8 @@ class WalletScreen extends StatelessWidget {
 
   Widget _dialogCashbackBuilder(BuildContext context) {
     final tr = AppLocalizations.of(context).tr;
+    final wallet = AppModel.of(context).wallet;
+    final minAmount = AppModel.of(context).minimumWithdrawalAmount;
     return AlertDialog(
       title: Row(
         children: <Widget>[
@@ -187,7 +189,20 @@ class WalletScreen extends StatelessWidget {
         ],
       ),
       titlePadding: const EdgeInsets.fromLTRB(16.0, 16.0, 8.0, 2.0),
-      content: Text(tr('wallet.cashback.dialog.description')),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(tr('wallet.cashback.dialog.description')),
+          Divider(),
+          Text(
+            tr(
+              'wallet.cashback.dialog.minimumAmount',
+              args: ['${minAmount}RON'],
+            ),
+            style: Theme.of(context).textTheme.caption,
+          ),
+        ],
+      ),
       actions: <Widget>[
         FlatButton(
           child: Row(
@@ -206,23 +221,26 @@ class WalletScreen extends StatelessWidget {
             Navigator.of(context).pop(CashbackAction.DONATE);
           },
         ),
-        FlatButton(
-          child: Row(
-            children: <Widget>[
-              Icon(
-                Icons.monetization_on,
-                color: Colors.green,
-              ),
-              Text(
-                tr('withdraw'),
-                style: TextStyle(color: Colors.green),
-              ),
-            ],
-          ),
-          onPressed: () {
-            Navigator.of(context).pop(CashbackAction.CASHOUT);
-          },
-        )
+        wallet.cashback.acceptedAmount >= minAmount
+            ? FlatButton(
+                child: Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.monetization_on,
+                      color: Colors.green,
+                    ),
+                    Text(
+                      tr('withdraw'),
+                      style: TextStyle(color: Colors.green),
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop(CashbackAction.CASHOUT);
+                },
+                disabledTextColor: Colors.black,
+              )
+            : Container()
       ],
     );
   }

@@ -143,7 +143,8 @@
       },
       "dialog": {
         "title": "What do you wish to do with your cashback?",
-        "description": "You can either contribute to a fair cause or you can withdraw them (completely or partially)"
+        "description": "You can either contribute to a fair cause or you can withdraw them (completely or partially)",
+        "minimumAmount": "The minimum withdrawal amount is {}."
       }
     }
   },

@@ -89,7 +89,7 @@ class FirebaseShopsService implements ShopsService {
   @override
   Future<List<models.Program>> getAllPrograms() async {
     QuerySnapshot snapshot =
-        await _db.collection('shops').orderBy('createdAt').getDocuments();
+        await _db.collection('shops').orderBy('order').getDocuments();
 
     List<models.Program> programs = [];
     snapshot.documents.forEach((doc) {
@@ -97,8 +97,6 @@ class FirebaseShopsService implements ShopsService {
         models.fromFirestoreBatch(doc),
       );
     });
-    programs.sort((p1, p2) =>
-        p1.name.trim().toLowerCase().compareTo(p2.name.trim().toLowerCase()));
 
     return programs;
   }
