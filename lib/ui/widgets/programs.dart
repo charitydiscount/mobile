@@ -35,6 +35,7 @@ class _ProgramsListState extends State<ProgramsList>
   String _category;
   Completer<Null> _loadingCompleter = Completer<Null>();
   AsyncMemoizer _asyncMemoizer = AsyncMemoizer();
+  _SortStrategy _sortStrategy = _SortStrategy.relevance;
 
   @override
   void initState() {
@@ -45,18 +46,14 @@ class _ProgramsListState extends State<ProgramsList>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    Widget categoriesButton = _buildCategoriesButton(context);
-    Widget favoritesButton = _buildFavoritesButton(context);
-    Widget searchButton = _buildSearchButton(context);
-    Widget layoutButton = _buildLayoutButton(context);
-
     Widget toolbar = Container(
       child: Row(
         children: <Widget>[
-          categoriesButton,
-          favoritesButton,
-          searchButton,
-          layoutButton,
+          _buildCategoriesButton(context),
+          _buildSortButton(context),
+          _buildFavoritesButton(context),
+          _buildSearchButton(context),
+          _buildLayoutButton(context),
         ],
       ),
       color: Theme.of(context).accentColor,
@@ -97,6 +94,7 @@ class _ProgramsListState extends State<ProgramsList>
                   onlyFavorites: _onlyFavorites,
                   searchService: widget.searchService,
                   shopsService: widget.shopsService,
+                  sortStrategy: _sortStrategy,
                 ),
               );
             },
@@ -106,59 +104,53 @@ class _ProgramsListState extends State<ProgramsList>
     );
   }
 
-  Expanded _buildSearchButton(BuildContext context) {
-    return Expanded(
-      child: IconButton(
-        icon: Icon(Icons.search),
-        color: Colors.white,
-        onPressed: () {
-          showSearch(
-            context: context,
-            delegate: ProgramsSearch(
-              appState: _appState,
-              searchService: widget.searchService,
-              shopsService: widget.shopsService,
-            ),
-          );
-        },
-      ),
+  Widget _buildSearchButton(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.search),
+      color: Colors.white,
+      onPressed: () {
+        showSearch(
+          context: context,
+          delegate: ProgramsSearch(
+            appState: _appState,
+            searchService: widget.searchService,
+            shopsService: widget.shopsService,
+          ),
+        );
+      },
     );
   }
 
-  Expanded _buildFavoritesButton(BuildContext context) {
-    return Expanded(
-      child: IconButton(
-        icon: _onlyFavorites
-            ? const Icon(Icons.favorite)
-            : const Icon(Icons.favorite_border),
-        color: Colors.white,
-        onPressed: () {
-          setState(() {
-            _onlyFavorites = !_onlyFavorites;
-          });
-          _scrollToTop(context);
-        },
-      ),
+  Widget _buildFavoritesButton(BuildContext context) {
+    return IconButton(
+      icon: _onlyFavorites
+          ? const Icon(Icons.favorite)
+          : const Icon(Icons.favorite_border),
+      color: Colors.white,
+      onPressed: () {
+        setState(() {
+          _onlyFavorites = !_onlyFavorites;
+        });
+        _scrollToTop(context);
+      },
     );
   }
 
-  Expanded _buildLayoutButton(BuildContext context) {
-    return Expanded(
-      child: IconButton(
-        icon: _displayAsGrid
-            ? const Icon(Icons.view_headline)
-            : const Icon(Icons.view_module),
-        color: Colors.white,
-        onPressed: () {
-          setState(() {
-            var newSettings = _appState.settings;
-            newSettings.displayMode =
-                _displayAsGrid ? DisplayMode.LIST : DisplayMode.GRID;
-            _appState.setSettings(newSettings, storeLocal: true);
-          });
-          _scrollToTop(context);
-        },
-      ),
+  Widget _buildLayoutButton(BuildContext context) {
+    return IconButton(
+      icon: _displayAsGrid
+          ? const Icon(Icons.view_headline)
+          : const Icon(Icons.view_module),
+      color: Colors.white,
+      onPressed: () {
+        setState(() {
+          var newSettings = _appState.settings;
+          newSettings.displayMode =
+              _displayAsGrid ? DisplayMode.LIST : DisplayMode.GRID;
+          _appState.setSettings(newSettings, storeLocal: true);
+        });
+        _scrollToTop(context);
+      },
     );
   }
 
@@ -189,6 +181,43 @@ class _ProgramsListState extends State<ProgramsList>
           });
         },
       ),
+    );
+  }
+
+  Widget _buildSortButton(BuildContext context) {
+    final tr = AppLocalizations.of(context).tr;
+    return PopupMenuButton<_SortStrategy>(
+      icon: const Icon(
+        Icons.sort,
+        color: Colors.white,
+      ),
+      onSelected: (_SortStrategy sortStrategy) {
+        setState(() {
+          _sortStrategy = sortStrategy;
+        });
+      },
+      itemBuilder: (context) => <PopupMenuEntry<_SortStrategy>>[
+        PopupMenuItem<_SortStrategy>(
+          value: _SortStrategy.relevance,
+          child: Text(tr('sort.relevance')),
+        ),
+        PopupMenuItem<_SortStrategy>(
+          value: _SortStrategy.aToZ,
+          child: Text(tr('sort.aToZ')),
+        ),
+        PopupMenuItem<_SortStrategy>(
+          value: _SortStrategy.zToA,
+          child: Text(tr('sort.zToA')),
+        ),
+        PopupMenuItem<_SortStrategy>(
+          value: _SortStrategy.commissionAscending,
+          child: Text(tr('sort.commissionAsc')),
+        ),
+        PopupMenuItem<_SortStrategy>(
+          value: _SortStrategy.commissionDescending,
+          child: Text(tr('sort.commissionDesc')),
+        ),
+      ],
     );
   }
 
@@ -234,6 +263,14 @@ class _ProgramsListState extends State<ProgramsList>
   bool get _displayAsGrid => _appState.settings.displayMode == DisplayMode.GRID;
 }
 
+enum _SortStrategy {
+  aToZ,
+  zToA,
+  commissionAscending,
+  commissionDescending,
+  relevance
+}
+
 class ShopsWidget extends StatefulWidget {
   final List<Program> programs;
   final AppModel appState;
@@ -241,6 +278,7 @@ class ShopsWidget extends StatefulWidget {
   final String category;
   final ShopsService shopsService;
   final SearchServiceBase searchService;
+  final _SortStrategy sortStrategy;
 
   const ShopsWidget({
     Key key,
@@ -250,6 +288,7 @@ class ShopsWidget extends StatefulWidget {
     this.category,
     @required this.shopsService,
     @required this.searchService,
+    this.sortStrategy = _SortStrategy.relevance,
   }) : super(key: key);
 
   @override
@@ -273,7 +312,7 @@ class _ShopsWidgetState extends State<ShopsWidget>
           stream: metaService.programsMetaStream,
           builder: (context, snapshot) {
             return _buildShopList(
-              widget.programs,
+              List.of(widget.programs),
               widget.appState,
               favorites: favoritePrograms,
               onlyFavorites: widget.onlyFavorites,
@@ -284,6 +323,29 @@ class _ShopsWidgetState extends State<ShopsWidget>
         );
       },
     );
+  }
+
+  int Function(Program p1, Program p2) get _getSortingFunction {
+    switch (widget.sortStrategy) {
+      case _SortStrategy.aToZ:
+        return (p1, p2) =>
+            p1.name.toLowerCase().compareTo(p2.name.toLowerCase());
+      case _SortStrategy.zToA:
+        return (p1, p2) =>
+            p2.name.toLowerCase().compareTo(p1.name.toLowerCase());
+      case _SortStrategy.commissionAscending:
+        return (p1, p2) =>
+            p1.defaultSaleCommissionRate
+                ?.compareTo(p2.defaultSaleCommissionRate ?? 0) ??
+            1;
+      case _SortStrategy.commissionDescending:
+        return (p1, p2) =>
+            p2.defaultSaleCommissionRate
+                ?.compareTo(p1.defaultSaleCommissionRate ?? 0) ??
+            1;
+      default:
+        return (p1, p2) => 0;
+    }
   }
 
   Widget _buildShopList(
@@ -312,6 +374,10 @@ class _ShopsWidgetState extends State<ShopsWidget>
 
     if (category != null) {
       programs.removeWhere((p) => p.category != category);
+    }
+
+    if (widget.sortStrategy != _SortStrategy.relevance) {
+      programs.sort(_getSortingFunction);
     }
 
     bool displayAsGrid = appState.settings.displayMode == DisplayMode.GRID;

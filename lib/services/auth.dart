@@ -94,7 +94,7 @@ class AuthService {
     }
 
     if (previousCredential != null) {
-      user.linkWithCredential(previousCredential);
+      user.linkWithCredential(previousCredential).catchError(() {});
     }
 
     return user;

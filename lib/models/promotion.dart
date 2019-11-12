@@ -27,12 +27,12 @@ class Promotion {
   });
 
   factory Promotion.fromJson(Map<String, dynamic> json) => Promotion(
-        id: json["id"],
-        name: json["name"],
-        programId: json["programId"],
-        campaignLogo: json["campaignLogo"],
-        promotionStart: DateTime.parse(json["promotionStart"]),
-        promotionEnd: DateTime.parse(json["promotionEnd"]),
-        landingPageLink: json["landingPageLink"],
+        id: json['id'],
+        name: json['name'],
+        programId: json['programId'],
+        campaignLogo: json['campaignLogo'],
+        promotionStart: DateTime.parse(json['promotionStart']),
+        promotionEnd: DateTime.parse(json['promotionEnd']),
+        landingPageLink: json['landingPageLink'],
       );
 }

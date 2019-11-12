@@ -2,6 +2,7 @@ import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/screens/cashout.dart';
+import 'package:charity_discount/ui/screens/commissions.dart';
 import 'package:charity_discount/ui/screens/transactions.dart';
 import 'package:charity_discount/ui/widgets/about_points.dart';
 import 'package:charity_discount/ui/widgets/charity.dart';
@@ -41,55 +42,9 @@ class WalletScreen extends StatelessWidget {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Stack(
-                children: <Widget>[
-                  AboutPointsWidget(
-                    points: state.wallet.charityPoints,
-                    headingLeading: Icon(
-                      Icons.favorite,
-                      color: Colors.red,
-                    ),
-                    heading: tr('wallet.points.title'),
-                    subtitle: tr('wallet.points.subtitle'),
-                    acceptedTitle: tr('wallet.points.available'),
-                    acceptedDescription: tr('wallet.points.description'),
-                    acceptedAction: IconButton(
-                      icon: Icon(
-                        Icons.shopping_cart,
-                        color: Theme.of(context).accentColor,
-                      ),
-                      iconSize: 25,
-                      onPressed: () {},
-                    ),
-                  ),
-                  Positioned.fill(
-                    child: Card(
-                      color: Colors.transparent,
-                      child: Container(
-                        color: Colors.grey.withOpacity(0.65),
-                        child: Center(
-                          child: RotationTransition(
-                            turns: AlwaysStoppedAnimation(15 / 360),
-                            child: Text(
-                              tr('soon'),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 24,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
               child: AboutPointsWidget(
                 points: state.wallet.cashback,
+                currency: 'RON',
                 headingLeading: Icon(
                   Icons.monetization_on,
                   color: Colors.green,
@@ -142,6 +97,71 @@ class WalletScreen extends StatelessWidget {
                 pendingTitle: tr('wallet.cashback.pending.title'),
                 pendingDescription: tr('wallet.cashback.pending.description'),
               ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Stack(
+                children: <Widget>[
+                  AboutPointsWidget(
+                    points: state.wallet.charityPoints,
+                    currency: 'Charity Points',
+                    headingLeading: Icon(
+                      Icons.favorite,
+                      color: Colors.red,
+                    ),
+                    heading: tr('wallet.points.title'),
+                    subtitle: tr('wallet.points.subtitle'),
+                    acceptedTitle: tr('wallet.points.available'),
+                    acceptedDescription: tr('wallet.points.description'),
+                    acceptedAction: IconButton(
+                      icon: Icon(
+                        Icons.shopping_cart,
+                        color: Theme.of(context).accentColor,
+                      ),
+                      iconSize: 25,
+                      onPressed: () {},
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: Card(
+                      color: Colors.transparent,
+                      child: Container(
+                        color: Colors.grey.withOpacity(0.65),
+                        child: Center(
+                          child: RotationTransition(
+                            turns: AlwaysStoppedAnimation(15 / 360),
+                            child: Text(
+                              tr('soon'),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            FlatButton(
+              child: Text(
+                tr('wallet.commissions'),
+                style: Theme.of(context).textTheme.button,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => CommissionsScreen(
+                      charityService: charityService,
+                    ),
+                    settings: RouteSettings(name: 'Commissions'),
+                  ),
+                );
+              },
             ),
             FlatButton(
               child: Text(
@@ -221,26 +241,31 @@ class WalletScreen extends StatelessWidget {
             Navigator.of(context).pop(CashbackAction.DONATE);
           },
         ),
-        wallet.cashback.acceptedAmount >= minAmount
-            ? FlatButton(
-                child: Row(
-                  children: <Widget>[
-                    Icon(
-                      Icons.monetization_on,
-                      color: Colors.green,
-                    ),
-                    Text(
-                      tr('withdraw'),
-                      style: TextStyle(color: Colors.green),
-                    ),
-                  ],
-                ),
-                onPressed: () {
+        FlatButton(
+          child: Row(
+            children: <Widget>[
+              Icon(
+                Icons.monetization_on,
+                color: wallet.cashback.acceptedAmount >= minAmount
+                    ? Colors.green
+                    : Colors.grey,
+              ),
+              Text(
+                tr('withdraw'),
+                style: TextStyle(
+                    color: wallet.cashback.acceptedAmount >= minAmount
+                        ? Colors.green
+                        : Colors.grey),
+              ),
+            ],
+          ),
+          onPressed: wallet.cashback.acceptedAmount >= minAmount
+              ? () {
                   Navigator.of(context).pop(CashbackAction.CASHOUT);
-                },
-                disabledTextColor: Colors.black,
-              )
-            : Container()
+                }
+              : null,
+          disabledTextColor: Colors.black,
+        ),
       ],
     );
   }

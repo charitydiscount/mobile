@@ -13,7 +13,7 @@ class SupportedLanguage {
 }
 
 List<SupportedLanguage> supportedLanguages = [
-  SupportedLanguage('Romana', 'ro', 'RO', 'assets/icons/ro.svg'),
+  SupportedLanguage('Română', 'ro', 'RO', 'assets/icons/ro.svg'),
   SupportedLanguage('English', 'en', 'US', 'assets/icons/us.svg'),
 ];
 

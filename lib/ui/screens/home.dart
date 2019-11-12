@@ -2,7 +2,6 @@ import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/state/state_model.dart';
-import 'package:charity_discount/ui/screens/news.dart';
 import 'package:charity_discount/ui/screens/settings.dart';
 import 'package:charity_discount/ui/screens/wallet.dart';
 import 'package:charity_discount/ui/screens/profile.dart';
@@ -48,8 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
       );
 
       _widgets.addAll([
-        charityList,
         programsList,
+        charityList,
         walletScreen,
       ]);
     }
@@ -66,15 +65,15 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            title: Text(
-              AppLocalizations.of(context).tr('charity'),
-            ),
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.add_shopping_cart),
             title: Text(
               AppLocalizations.of(context).tr('shops'),
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            title: Text(
+              AppLocalizations.of(context).tr('charity'),
             ),
           ),
           BottomNavigationBarItem(
@@ -133,26 +132,6 @@ class _HomeScreenState extends State<HomeScreen> {
             );
             menuTiles.add(profileTile);
 
-            ListTile news = ListTile(
-              leading: Icon(Icons.update),
-              title: Text(
-                tr('news'),
-                style: titleStyle,
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => NewsScreen(
-                      charityService: getFirebaseCharityService(),
-                    ),
-                    settings: RouteSettings(name: 'News'),
-                  ),
-                );
-              },
-            );
-            menuTiles.add(news);
-
             ListTile settings = ListTile(
               leading: Icon(Icons.settings),
               title: Text(
@@ -190,6 +169,10 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () => launchURL('https://charitydiscount.ro/privacy'),
             );
             menuTiles.add(privacy);
+
+            menuTiles.add(ListTile(
+              title: Image.asset('assets/icons/icon.png', height: 80),
+            ));
 
             return Container(
               alignment: Alignment.center,

@@ -64,20 +64,6 @@ Widget buildConnectionLoading({
 
 String getProgramCommission(Program program) {
   String commission = '';
-  if (program.leadCommissionAmount != null) {
-    switch (getCommissionTypeEnum(program.defaultLeadCommissionType)) {
-      case CommissionType.fixed:
-        commission = _buildCommissionForDisplay(
-            commission, '${program.leadCommissionAmount}RON');
-        break;
-      case CommissionType.variable:
-        commission = _buildCommissionForDisplay(
-            commission, '~${program.leadCommissionAmount}RON');
-        break;
-      default:
-    }
-  }
-
   if (program.saleCommissionRate != null) {
     switch (getCommissionTypeEnum(program.defaultSaleCommissionType)) {
       case CommissionType.fixed:
@@ -92,6 +78,21 @@ String getProgramCommission(Program program) {
         commission = _buildCommissionForDisplay(
             commission, '${program.saleCommissionRate}%');
         break;
+    }
+  }
+
+  if (program.leadCommissionAmount != null &&
+      program.saleCommissionRate == null) {
+    switch (getCommissionTypeEnum(program.defaultLeadCommissionType)) {
+      case CommissionType.fixed:
+        commission = _buildCommissionForDisplay(
+            commission, '${program.leadCommissionAmount}RON');
+        break;
+      case CommissionType.variable:
+        commission = _buildCommissionForDisplay(
+            commission, '~${program.leadCommissionAmount}RON');
+        break;
+      default:
     }
   }
 

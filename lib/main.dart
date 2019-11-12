@@ -27,7 +27,17 @@ class Main extends StatelessWidget {
           return Intro();
         }
         if (appModel.user != null && appModel.user.userId != null) {
-          return MessageHandler(child: HomeScreen());
+          return MessageHandler(
+            child: StreamBuilder<bool>(
+              stream: AppModel.of(context).loading,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Scaffold(body: Container());
+                }
+                return HomeScreen();
+              },
+            ),
+          );
         }
 
         return SignInScreen();

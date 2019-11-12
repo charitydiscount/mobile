@@ -7,6 +7,7 @@ import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/util/remote_config.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/user.dart';
@@ -18,9 +19,9 @@ class AppModel extends Model {
   bool _introCompleted = false;
   User _user;
   Settings _settings = Settings(
-    displayMode: DisplayMode.LIST,
+    displayMode: DisplayMode.GRID,
     lang: 'en',
-    notifications: false,
+    notifications: true,
   );
   StreamSubscription _profileListener;
   List<Program> _programs;
@@ -32,6 +33,7 @@ class AppModel extends Model {
   CharityService _charityService;
   bool _isNewDevice = true;
   double minimumWithdrawalAmount;
+  BehaviorSubject<bool> loading = BehaviorSubject();
 
   AppModel() {
     createListeners();
@@ -54,16 +56,21 @@ class AppModel extends Model {
         }
         User currentUser = User.fromJson(profile);
         this.setUser(currentUser);
-        metaService.getTwoPerformantMeta().then((twoPMeta) {
-          _affiliateMeta = twoPMeta;
-        });
-        updateProgramsMeta();
+        List<Future> futuresForLoading = [
+          metaService.getTwoPerformantMeta().then((twoPMeta) {
+            _affiliateMeta = twoPMeta;
+            return true;
+          }),
+          updateProgramsMeta(),
+        ];
+        Future.wait(futuresForLoading).then((loaded) => loading.add(false));
       },
     );
   }
 
   Future<void> closeListeners() async {
     await _profileListener.cancel();
+    loading.close();
   }
 
   static AppModel of(
@@ -121,10 +128,11 @@ class AppModel extends Model {
   TwoPerformantMeta get affiliateMeta => _affiliateMeta;
   ProgramMeta get programsMeta => _programsMeta;
 
-  void updateProgramsMeta() {
-    metaService.getProgramsMeta().then((programsMeta) {
+  Future<bool> updateProgramsMeta() {
+    return metaService.getProgramsMeta().then((programsMeta) {
       _programsMeta = programsMeta;
       notifyListeners();
+      return true;
     });
   }
 

@@ -1,4 +1,4 @@
-package com.integral.charity_discount;
+package com.clover.charity_discount;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterFragmentActivity;

@@ -66,6 +66,6 @@ class _MessageHandlerState extends State<MessageHandler> {
   @override
   void dispose() {
     super.dispose();
-    _iosSubscription.cancel();
+    _iosSubscription?.cancel();
   }
 }

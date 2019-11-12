@@ -11,6 +11,7 @@ class AboutPointsWidget extends StatelessWidget {
   final Widget acceptedAction;
   final String pendingTitle;
   final String pendingDescription;
+  final String currency;
 
   const AboutPointsWidget({
     Key key,
@@ -23,6 +24,7 @@ class AboutPointsWidget extends StatelessWidget {
     this.acceptedAction,
     this.pendingTitle,
     this.pendingDescription,
+    this.currency,
   }) : super(key: key);
 
   @override
@@ -45,10 +47,18 @@ class AboutPointsWidget extends StatelessWidget {
       leading: Container(
         width: 80,
         alignment: Alignment.center,
-        child: Text(
-          points.acceptedAmount.toStringAsFixed(2),
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 30, color: Colors.green),
+        child: Column(
+          children: <Widget>[
+            Text(
+              points.acceptedAmount.toStringAsFixed(2),
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 30, color: Colors.green),
+            ),
+            Text(
+              currency,
+              style: Theme.of(context).textTheme.caption,
+            ),
+          ],
         ),
       ),
       title: Text(acceptedTitle),
@@ -70,10 +80,21 @@ class AboutPointsWidget extends StatelessWidget {
         leading: Container(
           width: 80,
           alignment: Alignment.center,
-          child: Text(
-            points.pendingAmount.toString(),
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 30, color: Colors.yellow),
+          child: Column(
+            children: <Widget>[
+              Text(
+                points.pendingAmount.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 30,
+                  color: Colors.yellowAccent.shade700,
+                ),
+              ),
+              Text(
+                currency,
+                style: Theme.of(context).textTheme.caption,
+              ),
+            ],
           ),
         ),
         title: Text(pendingTitle),

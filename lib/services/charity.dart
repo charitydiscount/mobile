@@ -1,3 +1,4 @@
+import 'package:charity_discount/models/commission.dart';
 import 'package:charity_discount/models/news.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:charity_discount/models/wallet.dart';
@@ -50,6 +51,10 @@ class CharityService {
   }
 
   Future<bool> checkOtpCode(String userId, int code) {
+    throw Error();
+  }
+
+  Future<List<Commission>> getUserCommissions(String userId) async {
     throw Error();
   }
 }
@@ -182,5 +187,21 @@ class FirebaseCharityService implements CharityService {
     }
 
     return codeMatches;
+  }
+
+  @override
+  Future<List<Commission>> getUserCommissions(String userId) async {
+    final commissionRef = _db.collection('commissions').document(userId);
+    final snapshot = await commissionRef.get();
+    if (!snapshot.exists) {
+      return null;
+    }
+
+    List commissions = snapshot.data['transactions'];
+    return List<Commission>.from(
+      commissions
+          .map((commissionJson) => Commission.fromJson(commissionJson))
+          .toList(),
+    );
   }
 }

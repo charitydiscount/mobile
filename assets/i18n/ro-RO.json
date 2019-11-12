@@ -97,7 +97,7 @@
   "donation": "donație",
   "cashout": "cashout",
   "bonus": "bonus",
-  "commission": "comision",
+  "commission": "cashback",
   "authorizeFlow": {
     "title": "Autorizează tranzacția",
     "subtitle": "Introdu codul primit pe adresa de email",
@@ -146,7 +146,8 @@
         "description": "Ai posibilitatea fie să contribui la o lume mai bună, fie să ii retragi (total sau parțial).",
         "minimumAmount": "Suma minimă pentru retragere este {}."
       }
-    }
+    },
+    "commissions": "Comisioane"
   },
   "news": "Noutăți",
   "terms": "Termeni & Condiții",
@@ -154,5 +155,12 @@
   "notifications": "Notificări",
   "forgotPassword": "Parola uitată?",
   "createAccount": "Creeaza cont",
-  "connectionError": "Aparent, conexiunea cu serviciile CharityDiscount nu poate fi stabilită"
+  "connectionError": "Aparent, conexiunea cu serviciile CharityDiscount nu poate fi stabilită",
+  "sort": {
+    "relevance": "Relevanță",
+    "aToZ": "Nume A-Z",
+    "zToA": "Nume Z-A",
+    "commissionAsc": "Cashback crescător",
+    "commissionDesc": "Cashback descrescător"
+  }
 }
