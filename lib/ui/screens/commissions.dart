@@ -146,6 +146,12 @@ class CommissionDetails extends StatelessWidget {
               _getcommissionStatusName(commission, context),
               style: TextStyle(color: _getcommissionColor(commission)),
             ),
+            commission.reason != null
+                ? Text(
+                    commission.reason,
+                    style: Theme.of(context).textTheme.caption,
+                  )
+                : Container(),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(

@@ -197,7 +197,12 @@ class FirebaseCharityService implements CharityService {
       return null;
     }
 
-    List commissions = snapshot.data['transactions'];
+    List commissions = [];
+    snapshot.data.forEach((key, value) {
+      if (key != 'userId') {
+        commissions.add(value);
+      }
+    });
     return List<Commission>.from(
       commissions
           .map((commissionJson) => Commission.fromJson(commissionJson))

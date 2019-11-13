@@ -6,6 +6,7 @@ class Commission {
   final DateTime createdAt;
   final int shopId;
   final String status;
+  final String reason;
 
   Commission({
     this.amount,
@@ -13,6 +14,7 @@ class Commission {
     this.createdAt,
     this.shopId,
     this.status,
+    this.reason,
   });
 
   factory Commission.fromJson(dynamic json) => Commission(
@@ -21,6 +23,7 @@ class Commission {
         createdAt: (json['createdAt'] as Timestamp).toDate(),
         shopId: json['shopId'],
         status: json['status'],
+        reason: json['reason'] ?? null,
       );
 }
 
