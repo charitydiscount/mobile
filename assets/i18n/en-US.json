@@ -76,7 +76,7 @@
   "review": {
     "add": "Add review",
     "edit": "Update review",
-    "publish": "Publica",
+    "publish": "Publish",
     "addHeadline": "Tell us what you think about {}",
     "notRecommended": "Not recommended",
     "disappointing": "Disappointing",
@@ -113,7 +113,7 @@
     "resend": "Resend Code"
   },
   "soon": "Soon",
-  "donate": "Doneaza",
+  "donate": "Donate",
   "withdraw": "Withdraw",
   "category": {
     "one": "Category",

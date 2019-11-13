@@ -1,3 +1,4 @@
+import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
@@ -58,7 +59,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ), // icon is 48px widget.
         hintText: tr('firstName'),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
       ),
     );
 
@@ -77,7 +78,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ), // icon is 48px widget.
         hintText: tr('lastName'),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
       ),
     );
 
@@ -96,7 +97,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ), // icon is 48px widget.
         hintText: 'Email',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
       ),
     );
 
@@ -115,8 +116,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ), // icon is 48px widget.
         hintText: tr('password'),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
       ),
+    );
+
+    final termsButton = FlatButton(
+      child: Row(
+        children: <Widget>[Text(tr('terms')), Icon(Icons.launch)],
+      ),
+      onPressed: () => launchURL('https://charitydiscount.ro/tos'),
+    );
+
+    final privacyButton = FlatButton(
+      child: Row(
+        children: <Widget>[Text(tr('privacy')), Icon(Icons.launch)],
+      ),
+      onPressed: () => launchURL('https://charitydiscount.ro/privacy'),
     );
 
     final signUpButton = Padding(
@@ -163,14 +178,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     logo,
-                    SizedBox(height: 48.0),
+                    SizedBox(height: 24.0),
                     firstName,
-                    SizedBox(height: 24.0),
+                    SizedBox(height: 16.0),
                     lastName,
-                    SizedBox(height: 24.0),
+                    SizedBox(height: 16.0),
                     email,
-                    SizedBox(height: 24.0),
+                    SizedBox(height: 16.0),
                     password,
+                    SizedBox(height: 16.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        termsButton,
+                        privacyButton,
+                      ],
+                    ),
                     SizedBox(height: 12.0),
                     signUpButton,
                     signInLabel

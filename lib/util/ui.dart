@@ -56,7 +56,7 @@ Widget buildConnectionLoading({
   }
 
   if (!snapshot.hasData) {
-    return Text('No data available');
+    return Container();
   }
 
   return null;

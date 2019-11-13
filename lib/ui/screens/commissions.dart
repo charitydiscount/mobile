@@ -35,7 +35,6 @@ class CommissionsScreen extends StatelessWidget {
           final loading = buildConnectionLoading(
             context: context,
             snapshot: programsSnapshot,
-            handleError: false,
           );
           if (loading != null) {
             return loading;
