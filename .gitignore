@@ -8,6 +8,10 @@
 .buildlog/
 .history
 .svn/
+google-services.json
+**/google-services.json
+GoogleService-Info.plist
+**/GoogleService-Info.plist
 
 # IntelliJ related
 *.iml
@@ -34,7 +38,7 @@
 **/android/gradlew
 **/android/gradlew.bat
 **/android/local.properties
-**/android/key.properties
+**/android/key.*
 **/android/**/GeneratedPluginRegistrant.java
 
 # iOS/XCode related

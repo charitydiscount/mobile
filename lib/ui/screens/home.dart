@@ -1,13 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/state/state_model.dart';
-import 'package:charity_discount/ui/screens/news.dart';
 import 'package:charity_discount/ui/screens/settings.dart';
 import 'package:charity_discount/ui/screens/wallet.dart';
 import 'package:charity_discount/ui/screens/profile.dart';
 import 'package:charity_discount/ui/widgets/programs.dart';
+import 'package:charity_discount/ui/widgets/user_avatar.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -48,15 +47,15 @@ class _HomeScreenState extends State<HomeScreen> {
       );
 
       _widgets.addAll([
-        charityList,
         programsList,
+        charityList,
         walletScreen,
       ]);
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Charity Discount'),
+        title: Text('CharityDiscount'),
         primary: true,
         automaticallyImplyLeading: false,
         actions: <Widget>[
@@ -66,21 +65,21 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            title: Text(
-              AppLocalizations.of(context).tr('charity'),
-            ),
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.add_shopping_cart),
             title: Text(
               AppLocalizations.of(context).tr('shops'),
             ),
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            title: Text(
+              AppLocalizations.of(context).tr('charity'),
+            ),
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.account_balance_wallet),
             title: Text(
-              AppLocalizations.of(context).tr('wallet'),
+              AppLocalizations.of(context).tr('wallet.name'),
             ),
           ),
         ],
@@ -101,18 +100,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildProfileButton({BuildContext context, User user}) {
-    final image = user.photoUrl != null
-        ? CachedNetworkImage(
-            imageUrl: user.photoUrl,
-            fit: BoxFit.scaleDown,
-          )
-        : Image.asset(
-            'assets/images/default.png',
-            fit: BoxFit.scaleDown,
-          );
-    final logoImage = ClipOval(
-      child: image,
-    );
+    final logoImage = UserAvatar(photoUrl: user.photoUrl);
+    final tr = AppLocalizations.of(context).tr;
     return InkWell(
       onTap: () {
         showModalBottomSheet(
@@ -124,7 +113,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile profileTile = ListTile(
               leading: CircleAvatar(
                 child: logoImage,
-                radius: 16,
+                radius: 12,
+                backgroundColor: Colors.transparent,
               ),
               title: Text(
                 '${user.firstName} ${user.lastName}',
@@ -142,30 +132,10 @@ class _HomeScreenState extends State<HomeScreen> {
             );
             menuTiles.add(profileTile);
 
-            ListTile news = ListTile(
-              leading: Icon(Icons.update),
-              title: Text(
-                'Noutati',
-                style: titleStyle,
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => NewsScreen(
-                      charityService: getFirebaseCharityService(),
-                    ),
-                    settings: RouteSettings(name: 'News'),
-                  ),
-                );
-              },
-            );
-            menuTiles.add(news);
-
             ListTile settings = ListTile(
               leading: Icon(Icons.settings),
               title: Text(
-                'Setari',
+                tr('settings'),
                 style: titleStyle,
               ),
               onTap: () {
@@ -183,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile terms = ListTile(
               leading: Icon(Icons.help_outline),
               title: Text(
-                'Termeni si conditii',
+                tr('terms'),
                 style: titleStyle,
               ),
               onTap: () => launchURL('https://charitydiscount.ro/tos'),
@@ -193,12 +163,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile privacy = ListTile(
               leading: Icon(Icons.verified_user),
               title: Text(
-                'Confidentialitate',
+                tr('privacy'),
                 style: titleStyle,
               ),
               onTap: () => launchURL('https://charitydiscount.ro/privacy'),
             );
             menuTiles.add(privacy);
+
+            menuTiles.add(ListTile(
+              title: Image.asset('assets/icons/icon.png', height: 80),
+            ));
 
             return Container(
               alignment: Alignment.center,

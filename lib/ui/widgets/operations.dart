@@ -3,6 +3,7 @@ import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/widgets/loading.dart';
 import 'package:charity_discount/util/ui.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/services/charity.dart';
@@ -31,7 +32,10 @@ class _DonateDialogState extends State<DonateDialog> {
   Widget build(BuildContext context) {
     return OperationDialog(
       title: Text(
-        'Contribuie la ${widget.charityCase.title}',
+        AppLocalizations.of(context).tr(
+          'operation.contributeTo',
+          args: [widget.charityCase.title],
+        ),
       ),
       body: DonateWidget(
         charityCase: widget.charityCase,
@@ -72,6 +76,7 @@ class _DonateWidgetState extends State<DonateWidget> {
 
   @override
   Widget build(BuildContext context) {
+    var tr = AppLocalizations.of(context).tr;
     return StreamBuilder<Wallet>(
       stream: _pointsListener,
       builder: (context, snapshot) {
@@ -91,7 +96,7 @@ class _DonateWidgetState extends State<DonateWidget> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
-                'Cashback disponibil: ${balance.toStringAsFixed(2)} RON',
+                '${tr('account.availableCashback')} ${balance.toStringAsFixed(2)} RON',
                 textAlign: TextAlign.left,
               ),
             ),
@@ -114,7 +119,7 @@ class _DonateWidgetState extends State<DonateWidget> {
                     }
 
                     if (double.parse(value) > balance) {
-                      return 'Cashback insuficient';
+                      return tr('account.insufficientCashback');
                     }
 
                     return null;
@@ -124,7 +129,7 @@ class _DonateWidgetState extends State<DonateWidget> {
                       borderSide: BorderSide(color: Colors.grey),
                     ),
                     labelStyle: TextStyle(color: Colors.grey),
-                    labelText: "Suma cu care doresti sa contribui",
+                    labelText: tr('operation.donationHint'),
                   ),
                   keyboardType: TextInputType.number,
                   inputFormatters: [
@@ -135,41 +140,39 @@ class _DonateWidgetState extends State<DonateWidget> {
                 ),
               ),
             ),
-            ButtonTheme.bar(
-              child: ButtonBar(
-                children: [
-                  FlatButton(
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.favorite,
-                          color: Colors.red,
+            ButtonBar(
+              children: [
+                FlatButton(
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      ),
+                      Text(
+                        tr('send').toUpperCase(),
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor,
                         ),
-                        Text(
-                          'TRIMITE',
-                          style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                    onPressed: () {
-                      if (widget.formKey.currentState.validate() &&
-                          _amountController.text.isNotEmpty) {
-                        var txRef = widget.charityService.createTransaction(
-                          AppModel.of(context).user.userId,
-                          TxType.DONATION,
-                          double.tryParse(_amountController.text),
-                          'RON',
-                          widget.charityCase.id,
-                        );
-
-                        Navigator.of(context).pop(txRef);
-                      }
-                    },
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                  onPressed: () {
+                    if (widget.formKey.currentState.validate() &&
+                        _amountController.text.isNotEmpty) {
+                      var txRef = widget.charityService.createTransaction(
+                        AppModel.of(context).user.userId,
+                        TxType.DONATION,
+                        double.tryParse(_amountController.text),
+                        'RON',
+                        widget.charityCase.id,
+                      );
+
+                      Navigator.of(context).pop(txRef);
+                    }
+                  },
+                ),
+              ],
             ),
           ],
         );
@@ -227,41 +230,42 @@ Future<Widget> _waitForTx(DocumentReference txRef, BuildContext context) async {
   IconData notificationIcon;
   Color notifIconColor;
 
+  var tr = AppLocalizations.of(context).tr;
+
   TxType txType = txTypeFromString(tx.data['type']);
   switch (txType) {
     case TxType.DONATION:
       if (status == 'ACCEPTED') {
-        title = 'Donatie aprobata';
-        message = 'Donatia a fost procesata cu success. Multumim!';
+        title = tr('operation.donationApproved.title');
+        message = tr('operation.donationApproved.message');
         notificationIcon = Icons.check;
         notifIconColor = Colors.greenAccent;
       } else if (status == 'PENDING') {
-        title = 'Multumim!';
-        message = 'Donatia este in curs de procesare';
+        title = tr('operation.donationPending.title');
+        message = tr('operation.donationPending.message');
         notificationIcon = Icons.info;
         notifIconColor = Colors.blueAccent;
       } else {
-        title = 'Donation respinsa';
-        message = 'Tranzactia nu a putut fi procesata';
+        title = tr('operation.donationRejected.title');
+        message = tr('operation.donationRejected.message');
         notificationIcon = Icons.mood_bad;
         notifIconColor = Colors.redAccent;
       }
       break;
     case TxType.CASHOUT:
       if (status == 'ACCEPTED') {
-        title = 'Cashout aprobat';
-        message =
-            'Poate dura 2-3 zile lucratoare pana bancile proceseaza tranzactia';
+        title = tr('operation.cashoutApproved.title');
+        message = tr('operation.cashoutApproved.message');
         notificationIcon = Icons.check;
         notifIconColor = Colors.greenAccent;
       } else if (status == 'PENDING') {
-        title = 'Multumim!';
-        message = 'Tranzactia este in curs de procesare';
+        title = tr('operation.cashoutPending.title');
+        message = tr('operation.cashoutPending.message');
         notificationIcon = Icons.info;
         notifIconColor = Colors.blueAccent;
       } else {
-        title = 'Cashout respins';
-        message = 'Tranzactia nu a putut fi procesata';
+        title = tr('operation.cashoutRejected.title');
+        message = tr('operation.cashoutRejected.message');
         notificationIcon = Icons.mood_bad;
         notifIconColor = Colors.redAccent;
       }
@@ -276,6 +280,7 @@ Future<Widget> _waitForTx(DocumentReference txRef, BuildContext context) async {
       notificationIcon,
       color: notifIconColor,
     ),
+    reverseAnimationCurve: Curves.linear,
   );
 }
 

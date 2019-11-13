@@ -1,11 +1,17 @@
+import 'package:charity_discount/models/program.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 Widget buildConnectionLoading({
-  BuildContext context,
-  AsyncSnapshot snapshot,
+  @required BuildContext context,
+  @required AsyncSnapshot snapshot,
   Widget waitingDisplay,
+  bool handleError = true,
 }) {
   if (snapshot.hasError) {
+    if (!handleError) {
+      return null;
+    }
     print(snapshot.error);
     return Row(
       children: <Widget>[
@@ -20,7 +26,8 @@ Widget buildConnectionLoading({
           child: Padding(
             padding: const EdgeInsets.all(6.0),
             child: Text(
-                "Aparent, conexiunea cu serviciile Charity Discount nu poate fi stabilita"),
+              AppLocalizations.of(context).tr('connectionError'),
+            ),
           ),
         ),
       ],
@@ -49,8 +56,52 @@ Widget buildConnectionLoading({
   }
 
   if (!snapshot.hasData) {
-    return Text('No data available');
+    return Container();
   }
 
   return null;
+}
+
+String getProgramCommission(Program program) {
+  String commission = '';
+  if (program.saleCommissionRate != null) {
+    switch (getCommissionTypeEnum(program.defaultSaleCommissionType)) {
+      case CommissionType.fixed:
+        commission = _buildCommissionForDisplay(
+            commission, '${program.saleCommissionRate}RON');
+        break;
+      case CommissionType.variable:
+        commission = _buildCommissionForDisplay(
+            commission, '~${program.saleCommissionRate}%');
+        break;
+      case CommissionType.percent:
+        commission = _buildCommissionForDisplay(
+            commission, '${program.saleCommissionRate}%');
+        break;
+    }
+  }
+
+  if (program.leadCommissionAmount != null &&
+      program.saleCommissionRate == null) {
+    switch (getCommissionTypeEnum(program.defaultLeadCommissionType)) {
+      case CommissionType.fixed:
+        commission = _buildCommissionForDisplay(
+            commission, '${program.leadCommissionAmount}RON');
+        break;
+      case CommissionType.variable:
+        commission = _buildCommissionForDisplay(
+            commission, '~${program.leadCommissionAmount}RON');
+        break;
+      default:
+    }
+  }
+
+  return commission;
+}
+
+String _buildCommissionForDisplay(
+    String currentCommission, String toBeAddedCommission) {
+  return currentCommission.isEmpty
+      ? toBeAddedCommission
+      : '$currentCommission + $toBeAddedCommission';
 }

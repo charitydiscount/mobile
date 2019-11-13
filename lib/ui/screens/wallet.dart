@@ -2,10 +2,12 @@ import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/screens/cashout.dart';
+import 'package:charity_discount/ui/screens/commissions.dart';
 import 'package:charity_discount/ui/screens/transactions.dart';
 import 'package:charity_discount/ui/widgets/about_points.dart';
 import 'package:charity_discount/ui/widgets/charity.dart';
 import 'package:charity_discount/util/ui.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 enum CashbackAction { CANCEL, DONATE, CASHOUT }
@@ -17,6 +19,8 @@ class WalletScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tr = AppLocalizations.of(context).tr;
+
     return StreamBuilder<Wallet>(
       stream:
           charityService.getPointsListener(AppModel.of(context).user.userId),
@@ -29,9 +33,9 @@ class WalletScreen extends StatelessWidget {
           return loading;
         }
 
-        AppModel.of(context).wallet = snapshot.data;
-
-        snapshot.data.transactions.sort((t1, t2) => t2.date.compareTo(t1.date));
+        AppModel state = AppModel.of(context);
+        state.wallet = snapshot.data;
+        state.wallet.transactions.sort((t1, t2) => t2.date.compareTo(t1.date));
 
         return ListView(
           primary: true,
@@ -39,38 +43,17 @@ class WalletScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: AboutPointsWidget(
-                points: snapshot.data.charityPoints,
-                headingLeading: Icon(
-                  Icons.favorite,
-                  color: Colors.red,
-                ),
-                heading: 'Charity Points',
-                subtitle: 'Puncte dobandite in schimbul donatiilor',
-                acceptedTitle: 'Puncte disponibile',
-                acceptedDescription:
-                    'Acestea pot fi folosite in magazinele partenere',
-                acceptedAction: IconButton(
-                  icon: Icon(
-                    Icons.shopping_cart,
-                    color: Theme.of(context).accentColor,
-                  ),
-                  iconSize: 25,
-                  onPressed: () {},
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: AboutPointsWidget(
-                points: snapshot.data.cashback,
+                points: state.wallet.cashback,
+                currency: 'RON',
                 headingLeading: Icon(
                   Icons.monetization_on,
                   color: Colors.green,
                 ),
-                heading: 'Cashback',
-                subtitle: 'Banii primiti in urma cumparaturilor',
-                acceptedTitle: 'Cashback disponibil',
-                acceptedDescription: 'Bani care pot fi donati sau retrasi',
+                heading: tr('wallet.cashback.title'),
+                subtitle: tr('wallet.cashback.subtitle'),
+                acceptedTitle: tr('wallet.cashback.available.title'),
+                acceptedDescription:
+                    tr('wallet.cashback.available.description'),
                 acceptedAction: IconButton(
                   icon: Icon(
                     Icons.payment,
@@ -111,14 +94,78 @@ class WalletScreen extends StatelessWidget {
                     });
                   },
                 ),
-                pendingTitle: 'Cashback in asteptare',
-                pendingDescription:
-                    'Bani care urmeaza sa fie primiti pe baza cumparaturilor facute',
+                pendingTitle: tr('wallet.cashback.pending.title'),
+                pendingDescription: tr('wallet.cashback.pending.description'),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Stack(
+                children: <Widget>[
+                  AboutPointsWidget(
+                    points: state.wallet.charityPoints,
+                    currency: 'Charity Points',
+                    headingLeading: Icon(
+                      Icons.favorite,
+                      color: Colors.red,
+                    ),
+                    heading: tr('wallet.points.title'),
+                    subtitle: tr('wallet.points.subtitle'),
+                    acceptedTitle: tr('wallet.points.available'),
+                    acceptedDescription: tr('wallet.points.description'),
+                    acceptedAction: IconButton(
+                      icon: Icon(
+                        Icons.shopping_cart,
+                        color: Theme.of(context).accentColor,
+                      ),
+                      iconSize: 25,
+                      onPressed: () {},
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: Card(
+                      color: Colors.transparent,
+                      child: Container(
+                        color: Colors.grey.withOpacity(0.65),
+                        child: Center(
+                          child: RotationTransition(
+                            turns: AlwaysStoppedAnimation(15 / 360),
+                            child: Text(
+                              tr('soon'),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             FlatButton(
               child: Text(
-                'Istoric tranzactii',
+                tr('wallet.commissions'),
+                style: Theme.of(context).textTheme.button,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => CommissionsScreen(
+                      charityService: charityService,
+                    ),
+                    settings: RouteSettings(name: 'Commissions'),
+                  ),
+                );
+              },
+            ),
+            FlatButton(
+              child: Text(
+                tr('wallet.history'),
                 style: Theme.of(context).textTheme.button,
               ),
               onPressed: () {
@@ -126,7 +173,7 @@ class WalletScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (BuildContext context) => TransactionsScreen(
-                      transactions: snapshot.data.transactions,
+                      transactions: state.wallet.transactions,
                     ),
                     settings: RouteSettings(name: 'Transactions'),
                   ),
@@ -140,12 +187,15 @@ class WalletScreen extends StatelessWidget {
   }
 
   Widget _dialogCashbackBuilder(BuildContext context) {
+    final tr = AppLocalizations.of(context).tr;
+    final wallet = AppModel.of(context).wallet;
+    final minAmount = AppModel.of(context).minimumWithdrawalAmount;
     return AlertDialog(
       title: Row(
         children: <Widget>[
           Expanded(
             child: Text(
-              'Ce doresti sa faci cu cashback-ul obtinut?',
+              tr('wallet.cashback.dialog.title'),
               softWrap: true,
             ),
           ),
@@ -159,8 +209,19 @@ class WalletScreen extends StatelessWidget {
         ],
       ),
       titlePadding: const EdgeInsets.fromLTRB(16.0, 16.0, 8.0, 2.0),
-      content: Text(
-        'Ai posibilitatea fie sa contribui la o lume mai buna, fie sa ii retragi (total sau partial).',
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(tr('wallet.cashback.dialog.description')),
+          Divider(),
+          Text(
+            tr(
+              'wallet.cashback.dialog.minimumAmount',
+              args: ['${minAmount}RON'],
+            ),
+            style: Theme.of(context).textTheme.caption,
+          ),
+        ],
       ),
       actions: <Widget>[
         FlatButton(
@@ -171,7 +232,7 @@ class WalletScreen extends StatelessWidget {
                 color: Colors.red,
               ),
               Text(
-                'DONEAZA',
+                tr('donate'),
                 style: TextStyle(color: Theme.of(context).primaryColor),
               ),
             ],
@@ -185,18 +246,26 @@ class WalletScreen extends StatelessWidget {
             children: <Widget>[
               Icon(
                 Icons.monetization_on,
-                color: Colors.green,
+                color: wallet.cashback.acceptedAmount >= minAmount
+                    ? Colors.green
+                    : Colors.grey,
               ),
               Text(
-                'RETRAGE',
-                style: TextStyle(color: Colors.green),
+                tr('withdraw'),
+                style: TextStyle(
+                    color: wallet.cashback.acceptedAmount >= minAmount
+                        ? Colors.green
+                        : Colors.grey),
               ),
             ],
           ),
-          onPressed: () {
-            Navigator.of(context).pop(CashbackAction.CASHOUT);
-          },
-        )
+          onPressed: wallet.cashback.acceptedAmount >= minAmount
+              ? () {
+                  Navigator.of(context).pop(CashbackAction.CASHOUT);
+                }
+              : null,
+          disabledTextColor: Colors.black,
+        ),
       ],
     );
   }
@@ -204,7 +273,7 @@ class WalletScreen extends StatelessWidget {
   Widget _donateViewBuilder(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Doneaza'),
+        title: Text(AppLocalizations.of(context).tr('donate')),
       ),
       body: Column(
         children: <Widget>[

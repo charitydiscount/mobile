@@ -1,3 +1,4 @@
+import 'package:charity_discount/models/commission.dart';
 import 'package:charity_discount/models/news.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:charity_discount/models/wallet.dart';
@@ -42,6 +43,18 @@ class CharityService {
   }
 
   Future<List<News>> getNews() {
+    throw Error();
+  }
+
+  Future<void> sendOtpCode(String userId) {
+    throw Error();
+  }
+
+  Future<bool> checkOtpCode(String userId, int code) {
+    throw Error();
+  }
+
+  Future<List<Commission>> getUserCommissions(String userId) async {
     throw Error();
   }
 }
@@ -90,6 +103,7 @@ class FirebaseCharityService implements CharityService {
       'currency': currency,
       'target': target,
       'createdAt': FieldValue.serverTimestamp(),
+      'status': 'PENDING',
     });
   }
 
@@ -151,5 +165,43 @@ class FirebaseCharityService implements CharityService {
       ),
     ];
     return Future.value(mockedNews);
+  }
+
+  @override
+  Future<void> sendOtpCode(String userId) {
+    return _db.collection('otp-requests').document(userId).setData({
+      'userId': userId,
+      'requestedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  @override
+  Future<bool> checkOtpCode(String userId, int code) async {
+    final otpRef = _db.collection('otps').document(userId);
+
+    final otp = await otpRef.get();
+    final codeMatches = otp.data['code'] == code;
+
+    if (codeMatches) {
+      otpRef.setData({'used': true}, merge: true);
+    }
+
+    return codeMatches;
+  }
+
+  @override
+  Future<List<Commission>> getUserCommissions(String userId) async {
+    final commissionRef = _db.collection('commissions').document(userId);
+    final snapshot = await commissionRef.get();
+    if (!snapshot.exists) {
+      return null;
+    }
+
+    List commissions = snapshot.data['transactions'];
+    return List<Commission>.from(
+      commissions
+          .map((commissionJson) => Commission.fromJson(commissionJson))
+          .toList(),
+    );
   }
 }

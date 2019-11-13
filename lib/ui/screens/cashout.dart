@@ -1,7 +1,9 @@
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/animated_pages.dart';
+import 'package:charity_discount/util/authorize.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -27,6 +29,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
   int _stackIndex = 0;
   Iban _iban;
   double _amount = 0.0;
+  bool _validAmount = false;
   List<String> _titles;
   bool _saveIban = false;
   PageController _pageController;
@@ -90,7 +93,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Saved Accounts',
+                AppLocalizations.of(context).tr('account.savedAccounts'),
                 textAlign: TextAlign.start,
               ),
             ],
@@ -115,6 +118,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
                     onTap: () {
                       setState(() {
                         _iban = account.fullIban;
+                        _accountNameController.text = account.name;
                         _pageController.nextPage(
                           duration: const Duration(milliseconds: 400),
                           curve: Curves.ease,
@@ -156,20 +160,26 @@ class _CashoutScreenState extends State<CashoutScreen> {
                 fontSize: Theme.of(context).textTheme.display1.fontSize),
             validator: (String value) {
               if (value.isEmpty) {
+                _validAmount = false;
                 return null;
               }
 
               double amount = double.tryParse(value);
               if (amount == null) {
+                _validAmount = false;
                 return 'Doar numere';
               }
 
-              if (amount > _state.wallet.cashback.acceptedAmount) {
+              if (amount > _state.wallet.cashback.acceptedAmount ||
+                  _state.wallet.cashback.acceptedAmount <
+                      _state.minimumWithdrawalAmount) {
+                _validAmount = false;
                 return AppLocalizations.of(context)
                     .tr('account.insufficientCashback');
               }
 
               _amount = amount;
+              _validAmount = true;
               return null;
             },
             decoration: InputDecoration(
@@ -263,24 +273,44 @@ class _CashoutScreenState extends State<CashoutScreen> {
                     padding: EdgeInsets.all(12),
                     color: Theme.of(context).primaryColor,
                     child: Text(
-                      AppLocalizations.of(context).tr('send').toUpperCase(),
+                      '${AppLocalizations.of(context).tr('authorize')} & ${AppLocalizations.of(context).tr('send')}'
+                          .toUpperCase(),
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () {
-                      widget.charityService
-                          .createTransaction(
-                            AppModel.of(context).user.userId,
-                            TxType.CASHOUT,
-                            double.tryParse(_amountController.text),
-                            'RON',
-                            AppModel.of(context).user.userId,
-                          )
-                          .then(
-                              (txRef) => showTxResult(txRef, context).then((_) {
-                                    setState(() {
-                                      _done = true;
-                                    });
-                                  }));
+                      authorize(
+                        context: context,
+                        title: AppLocalizations.of(context)
+                            .tr('authorizeFlow.title'),
+                        charityService: widget.charityService,
+                      ).then(
+                        (didAuthenticate) => didAuthenticate == true
+                            ? widget.charityService
+                                .createTransaction(
+                                  AppModel.of(context).user.userId,
+                                  TxType.CASHOUT,
+                                  double.tryParse(_amountController.text),
+                                  'RON',
+                                  AppModel.of(context).user.userId,
+                                )
+                                .then((txRef) =>
+                                    showTxResult(txRef, context).then((_) {
+                                      setState(() {
+                                        _done = true;
+                                      });
+                                    }))
+                                .catchError((error) => Flushbar(
+                                      title:
+                                          'Failed to create the transaction request',
+                                      message: error.toString(),
+                                      icon: Icon(
+                                        Icons.error_outline,
+                                        color: Colors.red,
+                                      ),
+                                      reverseAnimationCurve: Curves.linear,
+                                    )?.show(context))
+                            : print('Failed to auth'),
+                      );
                     },
                   ),
           ),
@@ -319,34 +349,32 @@ class _CashoutScreenState extends State<CashoutScreen> {
         )
       : Container();
 
-  Widget get _backButton => IconButton(
-        icon: const BackButtonIcon(),
-        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+  Widget get _closeButton => IconButton(
+        icon: Icon(Icons.close),
+        tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
         onPressed: () {
-          setState(() {
-            _pageController.previousPage(
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.ease,
-            );
-          });
+          Navigator.popUntil(context, ModalRoute.withName('/'));
         },
       );
 
   Widget get _leadingButton {
     if (_done) {
-      return CloseButton();
+      return _closeButton;
     }
     switch (_stackIndex) {
       case 0:
         return CloseButton();
       case 1:
-        return _backButton;
+        return BackButton();
       case 2:
-        return _backButton;
+        return BackButton();
       default:
         return BackButton();
     }
   }
+
+  bool get _isAmountValid =>
+      _stackIndex != 1 || (_stackIndex == 1 && _validAmount);
 
   @override
   Widget build(BuildContext context) {
@@ -359,7 +387,8 @@ class _CashoutScreenState extends State<CashoutScreen> {
           onPressed: _iban == null ||
                   _accountNameController.text.length < 5 ||
                   !_iban.isValid ||
-                  _stackIndex == 2
+                  _stackIndex == 2 ||
+                  !_isAmountValid
               ? null
               : () {
                   setState(() {

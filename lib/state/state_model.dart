@@ -6,6 +6,8 @@ import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/shops.dart';
+import 'package:charity_discount/util/remote_config.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/user.dart';
@@ -16,9 +18,12 @@ import 'package:charity_discount/services/local.dart';
 class AppModel extends Model {
   bool _introCompleted = false;
   User _user;
-  Settings _settings = Settings(displayMode: DisplayMode.LIST, lang: 'en');
+  Settings _settings = Settings(
+    displayMode: DisplayMode.GRID,
+    lang: 'en',
+    notifications: true,
+  );
   StreamSubscription _profileListener;
-  // StreamSubscription _settingsListener;
   List<Program> _programs;
   FavoriteShops _favoriteShops = FavoriteShops(programs: []);
   TwoPerformantMeta _affiliateMeta;
@@ -26,10 +31,16 @@ class AppModel extends Model {
   Wallet wallet;
   ShopsService _shopsService;
   CharityService _charityService;
+  bool _isNewDevice = true;
+  double minimumWithdrawalAmount;
+  BehaviorSubject<bool> loading = BehaviorSubject();
 
   AppModel() {
     createListeners();
     initFromLocal();
+    remoteConfig
+        .getWithdrawalThreshold()
+        .then((threshold) => minimumWithdrawalAmount = threshold);
   }
 
   void setServices(ShopsService shopService, CharityService charityService) {
@@ -45,26 +56,21 @@ class AppModel extends Model {
         }
         User currentUser = User.fromJson(profile);
         this.setUser(currentUser);
-        // _settingsListener = authService.settings.listen(
-        //   (settings) {
-        //     if (settings != null) {
-        //       this.setSettings(
-        //         Settings.fromJson(settings),
-        //       );
-        //     }
-        //   },
-        // );
-        metaService.getTwoPerformantMeta().then((twoPMeta) {
-          _affiliateMeta = twoPMeta;
-        });
-        updateProgramsMeta();
+        List<Future> futuresForLoading = [
+          metaService.getTwoPerformantMeta().then((twoPMeta) {
+            _affiliateMeta = twoPMeta;
+            return true;
+          }),
+          updateProgramsMeta(),
+        ];
+        Future.wait(futuresForLoading).then((loaded) => loading.add(false));
       },
     );
   }
 
   Future<void> closeListeners() async {
     await _profileListener.cancel();
-    // await _settingsListener.cancel();
+    loading.close();
   }
 
   static AppModel of(
@@ -78,6 +84,7 @@ class AppModel extends Model {
     Settings settings = await localService.getSettingsLocal();
     bool isIntroCompleted = await localService.isIntroCompleted();
     List<Program> programs = await localService.getPrograms();
+    bool isKnownDevice = await localService.isDeviceKnown();
 
     if (user != null) {
       setUser(user);
@@ -90,6 +97,9 @@ class AppModel extends Model {
     }
     if (programs != null) {
       _programs = programs;
+    }
+    if (isKnownDevice != null) {
+      setKnownDevice();
     }
   }
 
@@ -118,10 +128,11 @@ class AppModel extends Model {
   TwoPerformantMeta get affiliateMeta => _affiliateMeta;
   ProgramMeta get programsMeta => _programsMeta;
 
-  void updateProgramsMeta() {
-    metaService.getProgramsMeta().then((programsMeta) {
+  Future<bool> updateProgramsMeta() {
+    return metaService.getProgramsMeta().then((programsMeta) {
       _programsMeta = programsMeta;
       notifyListeners();
+      return true;
     });
   }
 
@@ -167,5 +178,12 @@ class AppModel extends Model {
     user.savedAccounts
         .removeWhere((account) => account.iban == savedAccount.iban);
     _charityService.removeAccount(user.userId, savedAccount);
+  }
+
+  bool get isNewDevice => _isNewDevice;
+  void setKnownDevice() {
+    _isNewDevice = false;
+    localService.setKnownDevice();
+    notifyListeners();
   }
 }

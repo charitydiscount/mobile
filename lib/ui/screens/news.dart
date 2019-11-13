@@ -1,10 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/news.dart';
 import 'package:charity_discount/services/charity.dart';
+import 'package:charity_discount/util/tools.dart';
 import 'package:charity_discount/util/ui.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:intl/intl.dart';
 
 class NewsScreen extends StatelessWidget {
   final CharityService charityService;
@@ -14,7 +15,7 @@ class NewsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Noutati')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).tr('news'))),
       body: FutureBuilder(
         future: charityService.getNews(),
         builder: (context, snapshot) {
@@ -108,7 +109,7 @@ class NewsWidget extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8.0, right: 16.0),
                   child: Text(
-                    DateFormat.yMd('ro_RO').format(news.createdAt),
+                    formatDate(news.createdAt),
                     style: Theme.of(context).textTheme.caption,
                   ),
                 ),

@@ -4,7 +4,9 @@ import 'package:charity_discount/models/rating.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/ui/screens/rate_shop.dart';
 import 'package:charity_discount/ui/widgets/rating.dart';
+import 'package:charity_discount/util/tools.dart';
 import 'package:charity_discount/util/ui.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/program.dart' as models;
@@ -25,20 +27,44 @@ class ShopDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var tr = AppLocalizations.of(context).tr;
+
     final logo = Hero(
       tag: 'shopLogo-${program.id}',
       child: CachedNetworkImage(
         imageUrl: program.logoPath,
-        width: 150,
-        height: 40,
+        height: 80,
         fit: BoxFit.contain,
       ),
     );
-    final category = Padding(
-      padding: EdgeInsets.all(12),
-      child: Chip(
-        label: Text(program.category),
-      ),
+    final category = Row(
+      children: <Widget>[
+        Text('${AppLocalizations.of(context).plural('category', 1)}:'),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(program.category),
+        ),
+      ],
+    );
+
+    final commission = Row(
+      children: <Widget>[
+        Text('${capitalize(tr('commission'))}:'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Text(getProgramCommission(program)),
+        ),
+        program.defaultSaleCommissionType == 'percent' ||
+                program.defaultSaleCommissionType == 'variable'
+            ? Expanded(
+                child: Text(
+                  tr('commissionDisclaimer'),
+                  softWrap: true,
+                  style: Theme.of(context).textTheme.caption,
+                ),
+              )
+            : Container(),
+      ],
     );
 
     final appState = AppModel.of(context);
@@ -52,7 +78,7 @@ class ShopDetails extends StatelessWidget {
         final loading = buildConnectionLoading(
           context: context,
           snapshot: snapshot,
-          waitingDisplay: Text('Cautam recenziile magazinului'),
+          waitingDisplay: Text(tr('review.loading')),
         );
         if (loading != null) {
           return loading;
@@ -60,7 +86,7 @@ class ShopDetails extends StatelessWidget {
         final titleColor =
             snapshot.data.isEmpty ? Colors.grey.shade500 : Colors.grey.shade800;
         final reviewsTitle = Text(
-          'Review-uri',
+          tr('review.reviews'),
           textAlign: TextAlign.start,
           style: TextStyle(
             fontSize: sectionTitleSize,
@@ -102,8 +128,9 @@ class ShopDetails extends StatelessWidget {
                         Icons.check,
                         color: Colors.green,
                       ),
-                      title: 'Multumim!',
-                      message: 'Parerea ta ii va ajuta pe alti utilizatori',
+                      title: tr('review.thankYou'),
+                      message: tr('review.itIsImportant'),
+                      reverseAnimationCurve: Curves.linear,
                     ).show(context);
                   }
                 });
@@ -163,7 +190,7 @@ class ShopDetails extends StatelessWidget {
         final loading = buildConnectionLoading(
           context: context,
           snapshot: snapshot,
-          waitingDisplay: Text('Cautam promotii active'),
+          waitingDisplay: Text(tr('promotion.loading')),
         );
         if (loading != null) {
           return loading;
@@ -171,7 +198,7 @@ class ShopDetails extends StatelessWidget {
         final titleColor =
             snapshot.data.isEmpty ? Colors.grey.shade500 : Colors.grey.shade800;
         final promotionsTitle = Text(
-          'Promotii',
+          tr('promotion.promotions'),
           style: TextStyle(
             fontSize: sectionTitleSize,
             color: titleColor,
@@ -205,7 +232,16 @@ class ShopDetails extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: logo,
           ),
-          category,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: <Widget>[
+                category,
+                Divider(),
+                commission,
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
             child: ratingBuilder,

@@ -1,59 +1,166 @@
 {
-  "password": "Parola",
-  "signIn": "Intra",
+  "password": "Parolă",
+  "signIn": "Intră",
+  "signUp": "Sign Up",
+  "alreadyAccount": "Am cont deja",
   "charity": "Caritate",
   "shops": "Magazine",
   "profile": "Profil",
-  "accessShop": "Acceseaza magazin",
+  "accessShop": "Accesează magazin",
   "contribute": "Contribuie",
   "firstName": "Prenume",
   "lastName": "Nume de familie",
   "name": "Nume",
-  "wallet": "Portofel",
-  "transactionHistory": "Istoric Tranzactii",
-  "settings": "Setari",
-  "language": "Limba",
-  "recoverPassword": "Reseteaza parola",
+  "settings": "Setări",
+  "language": "Limbă",
+  "recoverPassword": "Resetează parola",
   "resetPassEmailSentTitle": "E-mailul pentru resetarea parolei a fost trimis",
-  "resetPassEmailSentMessage": "Urmeaza instructiunile primite pe e-mail pentru a-ti reseta parola.",
+  "resetPassEmailSentMessage": "Urmează instrucțiunile primite pe e-mail pentru a-ți reseta parola.",
   "intro": {
     "getInvolved": {
-      "title": "Implica-te",
-      "body": "Ofera un viitor tarii tale!"
+      "title": "Implică-te",
+      "body": "Oferă un viitor țării tale!"
     },
     "saveMoney": {
-      "title": "Economiseste",
-      "body": "Tu cumperi, magazinele doneaza"
+      "title": "Economisește",
+      "body": "Tu cumperi, magazinele donează"
     },
     "findAnything": {
-      "title": "Gaseste orice",
+      "title": "Găsește orice",
       "body": "Sute de magazine partenere"
     }
   },
+  "operation": {
+    "contributeTo": "Contribuie la {}",
+    "donationHint": "Suma cu care dorești să contribui",
+    "donationApproved": {
+      "title": "Donație aprobată",
+      "message": "Donația a fost procesată cu success. Mulțumim!"
+    },
+    "donationPending": {
+      "title": "Mulțumim!",
+      "message": "Donația este în curs de procesare"
+    },
+    "donationRejected": {
+      "title": "Donație respinsă",
+      "message": "Tranzacția nu a putut fi procesată"
+    },
+    "cashoutApproved": {
+      "title": "Cashout aprobat",
+      "message": "Poate dura 2-3 zile lucrătoare până băncile procesează tranzacția"
+    },
+    "cashoutPending": {
+      "title": "Mulțumim!",
+      "message": "Tranzacția este în curs de procesare"
+    },
+    "cashoutRejected": {
+      "title": "Cashout respins",
+      "message": "Tranzacția nu a putut fi procesată"
+    }
+  },
   "account": {
-    "save": "Salveaza cont",
+    "save": "Salvează cont",
     "name": "Nume beneficiar",
     "account": "Cont",
     "alias": "Alias",
     "amount": "Suma",
     "summary": "Rezumat",
     "insufficientCashback": "Cashback insuficient",
-    "amountHint": "Suma pe care doresti sa o retragi",
-    "availableCashback": "Cashback disponibil"
+    "amountHint": "Suma pe care dorești să o retragi",
+    "availableCashback": "Cashback disponibil",
+    "savedAccounts": "Conturi salvate"
   },
-  "next": "Urmatorul",
+  "next": "Următorul",
   "send": "Trimite",
+  "authorize": "Autorizează",
   "review": {
-    "add": "Adauga review",
-    "edit": "Actualizeaza review",
-    "publish": "Publica",
-    "addHeadline": "Spune-ne parerea ta despre {}",
+    "add": "Adaugă review",
+    "edit": "Actualizează review",
+    "publish": "Publică",
+    "addHeadline": "Spune-ne părerea ta despre {}",
     "notRecommended": "Nu recomand",
     "disappointing": "Dezamagitor",
     "decent": "Decent",
-    "satisfied": "Multumit",
+    "satisfied": "Mulțumit",
     "excellent": "Excelent",
     "descriptionTooLong": "Cel mult {} caractere",
-    "opinion": "Parerea ta"
+    "opinion": "Părerea ta",
+    "thankYou": "Mulțumim!",
+    "itIsImportant": "Părerea ta ii va ajuta pe alți utilizatori",
+    "loading": "Căutăm recenziile magazinului",
+    "reviews": "Review-uri"
+  },
+  "promotion": {
+    "promotions": "Promoții",
+    "loading": "Căutăm promoții active"
+  },
+  "donation": "donație",
+  "cashout": "cashout",
+  "bonus": "bonus",
+  "commission": "cashback",
+  "authorizeFlow": {
+    "title": "Autorizează tranzacția",
+    "subtitle": "Introdu codul primit pe adresa de email",
+    "checkError": {
+      "title": "Codul introdus nu se potrivește",
+      "subtitle": "Asigurați-vă că ați introdus corect codul primit prin email"
+    },
+    "paste": "Lipire",
+    "pasteError": {
+      "title": "Datele nu pot fi lipite",
+      "message": "Reincercați să copiați codul primit prin email"
+    },
+    "resend": "Retrimite cod"
+  },
+  "soon": "În curând",
+  "donate": "Donează",
+  "withdraw": "Retrage",
+  "category": {
+    "one": "Categorie",
+    "other": "Categorii"
+  },
+  "all": "Toate",
+  "commissionDisclaimer": "din valoare comenzii fără TVA și transport",
+  "wallet": {
+    "name": "Portofel",
+    "history": "Istoric Tranzacții",
+    "points": {
+      "title": "Charity Points",
+      "subtitle": "Puncte dobândite în schimbul donațiilor",
+      "available": "Puncte disponibile",
+      "description": "Acestea pot fi folosite în magazinele partenere"
+    },
+    "cashback": {
+      "title": "Cashback",
+      "subtitle": "Banii primiți in urma cumpărăturilor",
+      "available": {
+        "title": "Cashback disponibil",
+        "description": "Bani care pot fi donați sau retrași"
+      },
+      "pending": {
+        "title": "Cashback în așteptare",
+        "description": "Bani care urmează să fie primiți pe baza cumpărăturilor făcute"
+      },
+      "dialog": {
+        "title": "Ce dorești să faci cu cashback-ul obținut?",
+        "description": "Ai posibilitatea fie să contribui la o lume mai bună, fie să ii retragi (total sau parțial).",
+        "minimumAmount": "Suma minimă pentru retragere este {}."
+      }
+    },
+    "commissions": "Comisioane"
+  },
+  "news": "Noutăți",
+  "terms": "Termeni & Condiții",
+  "privacy": "Confidențialitate",
+  "notifications": "Notificări",
+  "forgotPassword": "Parola uitată?",
+  "createAccount": "Creeaza cont",
+  "connectionError": "Aparent, conexiunea cu serviciile CharityDiscount nu poate fi stabilită",
+  "sort": {
+    "relevance": "Relevanță",
+    "aToZ": "Nume A-Z",
+    "zToA": "Nume Z-A",
+    "commissionAsc": "Cashback crescător",
+    "commissionDesc": "Cashback descrescător"
   }
 }

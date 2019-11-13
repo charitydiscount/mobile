@@ -1,3 +1,5 @@
+import 'package:charity_discount/util/url.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
@@ -25,6 +27,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget build(BuildContext context) {
+    final tr = AppLocalizations.of(context).tr;
     final logo = Hero(
       tag: 'hero',
       child: CircleAvatar(
@@ -54,9 +57,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: Colors.grey,
           ), // icon is 48px widget.
         ), // icon is 48px widget.
-        hintText: 'First Name',
+        hintText: tr('firstName'),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
       ),
     );
 
@@ -73,9 +76,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: Colors.grey,
           ), // icon is 48px widget.
         ), // icon is 48px widget.
-        hintText: 'Last Name',
+        hintText: tr('lastName'),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
       ),
     );
 
@@ -94,7 +97,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ), // icon is 48px widget.
         hintText: 'Email',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
       ),
     );
 
@@ -111,10 +114,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
             color: Colors.grey,
           ), // icon is 48px widget.
         ), // icon is 48px widget.
-        hintText: 'Password',
+        hintText: tr('password'),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
       ),
+    );
+
+    final termsButton = FlatButton(
+      child: Row(
+        children: <Widget>[Text(tr('terms')), Icon(Icons.launch)],
+      ),
+      onPressed: () => launchURL('https://charitydiscount.ro/tos'),
+    );
+
+    final privacyButton = FlatButton(
+      child: Row(
+        children: <Widget>[Text(tr('privacy')), Icon(Icons.launch)],
+      ),
+      onPressed: () => launchURL('https://charitydiscount.ro/privacy'),
     );
 
     final signUpButton = Padding(
@@ -133,13 +150,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         },
         padding: EdgeInsets.all(12),
         color: Theme.of(context).primaryColor,
-        child: Text('SIGN UP', style: TextStyle(color: Colors.white)),
+        child: Text(tr('createAccount'), style: TextStyle(color: Colors.white)),
       ),
     );
 
     final signInLabel = FlatButton(
       child: Text(
-        'Have an Account? Sign In.',
+        tr('alreadyAccount'),
         style: TextStyle(color: Colors.black54),
       ),
       onPressed: () {
@@ -148,7 +165,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: LoadingScreen(
         child: Form(
           key: _formKey,
@@ -162,14 +178,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     logo,
-                    SizedBox(height: 48.0),
+                    SizedBox(height: 24.0),
                     firstName,
-                    SizedBox(height: 24.0),
+                    SizedBox(height: 16.0),
                     lastName,
-                    SizedBox(height: 24.0),
+                    SizedBox(height: 16.0),
                     email,
-                    SizedBox(height: 24.0),
+                    SizedBox(height: 16.0),
                     password,
+                    SizedBox(height: 16.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        termsButton,
+                        privacyButton,
+                      ],
+                    ),
                     SizedBox(height: 12.0),
                     signUpButton,
                     signInLabel
@@ -204,7 +228,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         await userController.signUp(email, password, firstName, lastName);
         await userController.signIn(
           Strategy.EmailAndPass,
-          {"email": email, "password": password},
+          credentials: {"email": email, "password": password},
         );
         _toggleLoadingVisible();
         await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);

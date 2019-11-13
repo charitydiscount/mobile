@@ -2,12 +2,16 @@ import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/services/local.dart';
 import 'package:charity_discount/models/user.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 enum Strategy { EmailAndPass, Google, Facebook }
 
 class UserController {
-  Future<void> signIn(Strategy provider,
-      [Map<String, dynamic> credentials]) async {
+  Future<void> signIn(
+    Strategy provider, {
+    Map<String, dynamic> credentials,
+    FacebookLoginResult facebookResult,
+  }) async {
     authService.profile.listen((profile) {
       if (profile != null) {
         User currentUser = User.fromJson(profile);
@@ -23,13 +27,17 @@ class UserController {
       case Strategy.Google:
         await authService.signInWithGoogle();
         break;
+      case Strategy.Facebook:
+        await authService.signInWithFacebook(facebookResult);
+        break;
       default:
         return; //throw("Unknown authentication strategy");
     }
   }
 
   Future<void> signOut() async {
-    await getFirebaseShopsService(authService.currentUser.uid).closeFavoritesSink();
+    await getFirebaseShopsService(authService.currentUser.uid)
+        .closeFavoritesSink();
     await authService.signOut();
     await localService.clear();
   }
