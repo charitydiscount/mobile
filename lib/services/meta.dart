@@ -6,6 +6,7 @@ import 'package:rxdart/rxdart.dart';
 
 class MetaService {
   final _db = Firestore.instance;
+  Observable<ProgramMeta> _programsMetaListener;
 
   Future<TwoPerformantMeta> getTwoPerformantMeta() async {
     var twoPMeta = await _db.collection('meta').document('2performant').get();
@@ -21,13 +22,18 @@ class MetaService {
     return ProgramMeta.fromJson(programsMeta.data);
   }
 
-  Observable<ProgramMeta> get programsMetaStream => Observable(
+  Observable<ProgramMeta> get programsMetaStream {
+    if (_programsMetaListener == null) {
+      _programsMetaListener = Observable(
         _db
             .collection('meta')
             .document('programs')
             .snapshots()
             .asyncMap((snap) => ProgramMeta.fromJson(snap.data)),
       );
+    }
+    return _programsMetaListener;
+  }
 
   Future<void> addFcmToken(String userId, String token) {
     final tokenRef = _db

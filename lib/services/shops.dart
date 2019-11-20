@@ -38,6 +38,7 @@ class FirebaseShopsService implements ShopsService {
   BehaviorSubject<FavoriteShops> _favoritePrograms =
       BehaviorSubject<FavoriteShops>();
 
+  @override
   BehaviorSubject<FavoriteShops> get favoritePrograms => _favoritePrograms;
 
   FirebaseShopsService(this.userId) {

@@ -48,6 +48,16 @@ class _MessageHandlerState extends State<MessageHandler> {
             )?.show(context);
           }
         },
+        onLaunch: (message) {
+          Navigator.popUntil(
+              context, (Route<dynamic> route) => route is PageRoute);
+          return Navigator.pushNamed(context, '/');
+        },
+        onResume: (message) {
+          Navigator.popUntil(
+              context, (Route<dynamic> route) => route is PageRoute);
+          return Navigator.pushNamed(context, '/');
+        },
       );
     }
   }

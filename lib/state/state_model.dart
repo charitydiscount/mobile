@@ -33,7 +33,7 @@ class AppModel extends Model {
   CharityService _charityService;
   bool _isNewDevice = true;
   double minimumWithdrawalAmount;
-  BehaviorSubject<bool> loading = BehaviorSubject();
+  BehaviorSubject<bool> loading;
 
   AppModel() {
     createListeners();
@@ -49,6 +49,7 @@ class AppModel extends Model {
   }
 
   void createListeners() {
+    loading = BehaviorSubject();
     _profileListener = authService.profile.listen(
       (profile) {
         if (profile == null) {
@@ -69,6 +70,7 @@ class AppModel extends Model {
   }
 
   Future<void> closeListeners() async {
+    clearFavoriteShops();
     await _profileListener.cancel();
     loading.close();
   }
