@@ -1,3 +1,4 @@
+import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/ui/widgets/user_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -87,7 +88,9 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> _signOut(BuildContext context) async {
+    await AppModel.of(context).closeListeners();
     await userController.signOut();
+    clearInstances();
     await Navigator.pushNamedAndRemoveUntil(context, '/signin', (r) => false);
   }
 }
