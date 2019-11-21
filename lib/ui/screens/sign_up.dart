@@ -1,3 +1,4 @@
+import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -208,7 +209,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Future<void> _toggleLoadingVisible() async {
+  void _toggleLoadingVisible() {
     setState(() {
       _loadingVisible = !_loadingVisible;
     });
@@ -224,20 +225,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (_formKey.currentState.validate()) {
       try {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
-        await _toggleLoadingVisible();
-        await userController.signUp(email, password, firstName, lastName);
-        await userController.signIn(
-          Strategy.EmailAndPass,
-          credentials: {"email": email, "password": password},
-        );
         _toggleLoadingVisible();
-        await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+        await userController.signUp(email, password, firstName, lastName);
+        _toggleLoadingVisible();
+        AppModel.of(context).createListeners();
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false),
+        );
       } catch (e) {
         _toggleLoadingVisible();
-        print("Sign Up Error: $e");
         String exception = getExceptionText(e);
         Flushbar(
-          title: "Sign Up Error",
+          title: 'Sign Up Error',
           message: exception,
           duration: Duration(seconds: 5),
         )..show(context);

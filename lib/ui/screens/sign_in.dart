@@ -244,7 +244,7 @@ class _SignInScreenState extends State<SignInScreen> {
         _toggleLoadingVisible();
         await userController.signIn(
           Strategy.EmailAndPass,
-          credentials: {"email": email, "password": password},
+          credentials: {'email': email, 'password': password},
         );
         AppModel.of(context).createListeners();
         _toggleLoadingVisible();
@@ -254,7 +254,7 @@ class _SignInScreenState extends State<SignInScreen> {
           String exception = getExceptionText(e);
           _toggleLoadingVisible();
           Flushbar(
-            title: "Sign In Error",
+            title: 'Sign In Error',
             message: exception,
             duration: Duration(seconds: 5),
           )..show(context);
@@ -277,7 +277,7 @@ class _SignInScreenState extends State<SignInScreen> {
       if (!(e is Error)) {
         String exception = getExceptionText(e);
         Flushbar(
-          title: "Sign In Error",
+          title: 'Sign In Error',
           message: exception,
           duration: Duration(seconds: 5),
         )..show(context);
@@ -304,7 +304,7 @@ class _SignInScreenState extends State<SignInScreen> {
           if (!(e is Error)) {
             String exception = getExceptionText(e);
             Flushbar(
-              title: "Sign In Error",
+              title: 'Sign In Error',
               message: exception,
               duration: Duration(seconds: 5),
             )..show(context);
@@ -317,7 +317,7 @@ class _SignInScreenState extends State<SignInScreen> {
       case FacebookLoginStatus.error:
         _toggleLoadingVisible();
         Flushbar(
-          title: "Sign In Error",
+          title: 'Sign In Error',
           message: result.errorMessage,
           duration: Duration(seconds: 5),
         )..show(context);

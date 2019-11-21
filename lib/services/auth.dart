@@ -27,9 +27,6 @@ class AuthService {
       currentUser = u;
 
       if (u != null) {
-        if (_usersListener != null) {
-          _usersListener.cancel();
-        }
         _usersListener = _db
             .collection('users')
             .document(u.uid)

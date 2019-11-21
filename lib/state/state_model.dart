@@ -55,8 +55,7 @@ class AppModel extends Model {
         if (profile == null) {
           return;
         }
-        User currentUser = User.fromJson(profile);
-        this.setUser(currentUser);
+        setUser(User.fromJson(profile));
         List<Future> futuresForLoading = [
           metaService.getTwoPerformantMeta().then((twoPMeta) {
             _affiliateMeta = twoPMeta;
@@ -115,6 +114,7 @@ class AppModel extends Model {
   User get user => _user;
   void setUser(User user) {
     _user = user;
+    localService.storeUserLocal(user);
     notifyListeners();
   }
 

@@ -5,6 +5,9 @@ import 'package:charity_discount/models/settings.dart';
 
 class LocalService {
   Future<String> storeUserLocal(User user) async {
+    if (user == null) {
+      return '';
+    }
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String storeUser = userToJson(user);
     await prefs.setString('user', storeUser);
