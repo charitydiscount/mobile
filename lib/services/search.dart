@@ -104,23 +104,14 @@ class SearchService implements SearchServiceBase {
   }
 
   @override
-  Future<List<Product>> getFeaturedProducts({String userId}) {
-    return Future.value(
-      List.generate(
-        10,
-        (index) => Product(
-          title: 'Arta subtila a nepasarii | Mark Manson',
-          brand: 'Lifestyle Publishing',
-          category: 'Carte',
-          id: '2328214',
-          imageUrl: 'https://carturesti.ro/img-prod/2328214-0.jpeg',
-          price: 31.2,
-          oldPrice: 38.5,
-          programId: 1677,
-          programName: 'carturesti.ro',
-          url: 'https://carturesti.ro/carte/arta-subtila-a-nepasarii-2328214',
-        ),
-      ),
-    );
+  Future<List<Product>> getFeaturedProducts({String userId}) async {
+    Map<String, dynamic> data = await _search('products/featured', '', false);
+    if (!data.containsKey('hits')) {
+      return [];
+    }
+    List hits = data['hits'];
+    List<Product> products = productsFromElastic(hits);
+
+    return products;
   }
 }

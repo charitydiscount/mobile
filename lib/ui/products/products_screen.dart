@@ -67,7 +67,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 icon: Icon(Icons.close),
                 color: Colors.grey,
                 onPressed: () {
-                  _editingController.clear();
+                  WidgetsBinding.instance.addPostFrameCallback(
+                    (_) => _editingController.clear(),
+                  );
                 },
               ),
             ),
