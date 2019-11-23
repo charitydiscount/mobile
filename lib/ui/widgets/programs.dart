@@ -399,26 +399,28 @@ class _ShopsWidgetState extends State<ShopsWidget>
             .map((p) => _prepareProgram(appState, p, overallRatings))
             .toList();
 
-        return Row(
-          children: programsToDisplay
-              .map(
-                (p) => Expanded(
-                  child: displayAsGrid
-                      ? ShopHalfTile(
-                          key: Key(p.uniqueCode),
-                          program: p,
-                          userId: appState.user.userId,
-                          shopsService: widget.shopsService,
-                        )
-                      : ShopFullTile(
-                          key: Key(p.uniqueCode),
-                          program: p,
-                          userId: appState.user.userId,
-                          shopsService: widget.shopsService,
-                        ),
-                ),
-              )
-              .toList(),
+        return IntrinsicHeight(
+          child: Row(
+            children: programsToDisplay
+                .map(
+                  (p) => Expanded(
+                    child: displayAsGrid
+                        ? ShopHalfTile(
+                            key: Key(p.uniqueCode),
+                            program: p,
+                            userId: appState.user.userId,
+                            shopsService: widget.shopsService,
+                          )
+                        : ShopFullTile(
+                            key: Key(p.uniqueCode),
+                            program: p,
+                            userId: appState.user.userId,
+                            shopsService: widget.shopsService,
+                          ),
+                  ),
+                )
+                .toList(),
+          ),
         );
       },
     );

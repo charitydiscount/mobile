@@ -179,53 +179,56 @@ class ShopHalfTile extends StatelessWidget {
             },
           );
 
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            maintainState: true,
-            builder: (BuildContext context) => ShopDetails(
-              program: program,
-              shopsService: shopsService,
-            ),
-            settings: RouteSettings(name: 'ShopDetails'),
-          ),
-        );
-      },
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: logo,
+    return SizedBox(
+      width: MediaQuery.of(context).size.width / 2,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              maintainState: true,
+              builder: (BuildContext context) => ShopDetails(
+                program: program,
+                shopsService: shopsService,
               ),
-              Center(
-                child: Text(
-                  program.name,
-                  style: TextStyle(
-                    fontSize: 16.0,
+              settings: RouteSettings(name: 'ShopDetails'),
+            ),
+          );
+        },
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: logo,
+                ),
+                Center(
+                  child: Text(
+                    program.name,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Center(
-                  child: rating,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Center(
+                    child: rating,
+                  ),
                 ),
-              ),
-              Center(child: cashback),
-              ButtonBar(
-                children: <Widget>[
-                  favoriteButton,
-                  linkButton,
-                ],
-              ),
-            ],
+                Center(child: cashback),
+                ButtonBar(
+                  children: <Widget>[
+                    favoriteButton,
+                    linkButton,
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
