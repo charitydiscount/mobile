@@ -162,5 +162,9 @@
     "zToA": "Nume Z-A",
     "commissionAsc": "Cashback crescător",
     "commissionDesc": "Cashback descrescător"
+  },
+  "product": {
+    "title": "Produse",
+    "searchPlaceholder": "Produsul dorit"
   }
 }

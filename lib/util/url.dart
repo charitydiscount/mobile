@@ -9,7 +9,11 @@ Future<void> launchURL(String url) async {
 }
 
 String convertAffiliateUrl(
-    String url, String affiliateCode, String uniqueId, String userId) {
+  String url,
+  String affiliateCode,
+  String uniqueId,
+  String userId,
+) {
   final baseUrl =
       'https://event.2performant.com/events/click?ad_type=quicklink';
   final affCode = 'aff_code=$affiliateCode';

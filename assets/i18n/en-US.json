@@ -162,5 +162,9 @@
     "zToA": "Name Z-A",
     "commissionAsc": "Cashback ascending",
     "commissionDesc": "Cashback descending"
+  },
+  "product": {
+    "title": "Products",
+    "searchPlaceholder": "Give it a try"
   }
 }

@@ -2,6 +2,7 @@ import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/ui/products/products_screen.dart';
 import 'package:charity_discount/ui/screens/settings.dart';
 import 'package:charity_discount/ui/screens/wallet.dart';
 import 'package:charity_discount/ui/screens/profile.dart';
@@ -21,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _loadingVisible = false;
   int _selectedNavIndex = 0;
   List<Widget> _widgets = [];
+  SearchService _searchService = SearchService();
 
   @override
   void initState() {
@@ -33,13 +35,16 @@ class _HomeScreenState extends State<HomeScreen> {
       final CharityWidget charityList = CharityWidget(
         charityService: getFirebaseCharityService(),
       );
+
       final ProgramsList programsList = ProgramsList(
-        searchService: SearchService(),
+        searchService: _searchService,
         shopsService: getFirebaseShopsService(appState.user.userId),
       );
       final WalletScreen walletScreen = WalletScreen(
         charityService: getFirebaseCharityService(),
       );
+      final ProductsScreen productsScreen =
+          ProductsScreen(searchService: _searchService);
 
       appState.setServices(
         getFirebaseShopsService(appState.user.userId),
@@ -48,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       _widgets.addAll([
         programsList,
+        productsScreen,
         charityList,
         walletScreen,
       ]);
@@ -63,11 +69,18 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.add_shopping_cart),
             title: Text(
               AppLocalizations.of(context).tr('shops'),
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.category),
+            title: Text(
+              AppLocalizations.of(context).tr('product.title'),
             ),
           ),
           BottomNavigationBarItem(
