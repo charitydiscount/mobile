@@ -28,19 +28,20 @@ class Product {
   });
 
   factory Product.fromJson(Map json) => Product(
-        id: json['id'].toString(),
+        id: json['product_id'] != null
+            ? json['product_id'].toString()
+            : json['id'].toString(),
         title: json['title'],
         price: double.tryParse(json['price'].toString()),
-        programId: json['programId'],
-        programName: json['programName'],
+        programId: json['campaign_id'] ?? json['programId'],
+        programName: json['campaign_name'] ?? json['programName'],
         brand: json['brand'],
         category: json['category'],
-        imageUrl: json['imageUrl'] != null &&
-                json['imageUrl'].toString().contains(',')
-            ? json['imageUrl'].toString().split(',')[0]
-            : json['imageUrl'],
+        imageUrl: json['image_urls'] != null
+            ? _getImageUrl(json, 'image_urls')
+            : _getImageUrl(json, 'imageUrl'),
         url: json['url'],
-        oldPrice: double.tryParse(json['oldPrice'].toString()),
+        oldPrice: double.tryParse(json['old_price'].toString()),
       );
 
   Product copyWith({
@@ -72,6 +73,11 @@ class Product {
         programLogo: programLogo ?? this.programLogo,
       );
 }
+
+String _getImageUrl(dynamic json, String key) =>
+    json[key] != null && json[key].toString().contains(',')
+        ? json[key].toString().split(',')[0]
+        : json[key];
 
 List<Product> productsFromElastic(List json) => List<Product>.from(
       json

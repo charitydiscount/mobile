@@ -73,7 +73,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 },
               ),
             ),
-            keyboardType: TextInputType.number,
           ),
         ),
         IconButton(
@@ -148,9 +147,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
           return ListView.builder(
             shrinkWrap: true,
             primary: true,
-            itemCount: productsWidget.length ~/ 2,
-            itemBuilder: (context, index) => Row(
-              children: productsWidget.skip(index * 2).take(2).toList(),
+            itemCount:
+                productsWidget.length > 1 ? productsWidget.length ~/ 2 : 1,
+            itemBuilder: (context, index) => IntrinsicHeight(
+              child: Row(
+                children: productsWidget.skip(index * 2).take(2).toList(),
+              ),
             ),
           );
         },

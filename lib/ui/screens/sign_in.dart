@@ -242,11 +242,11 @@ class _SignInScreenState extends State<SignInScreen> {
       try {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         _toggleLoadingVisible();
+        AppModel.of(context).createListeners();
         await userController.signIn(
           Strategy.EmailAndPass,
           credentials: {'email': email, 'password': password},
         );
-        AppModel.of(context).createListeners();
         _toggleLoadingVisible();
         await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
       } catch (e) {
@@ -268,8 +268,8 @@ class _SignInScreenState extends State<SignInScreen> {
   void _googleLogin(BuildContext context) async {
     _toggleLoadingVisible();
     try {
-      await userController.signIn(Strategy.Google);
       AppModel.of(context).createListeners();
+      await userController.signIn(Strategy.Google);
       _toggleLoadingVisible();
       await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
     } catch (e) {
@@ -293,12 +293,16 @@ class _SignInScreenState extends State<SignInScreen> {
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         try {
+          AppModel.of(context).createListeners();
           await userController.signIn(
             Strategy.Facebook,
             facebookResult: result,
           );
           _toggleLoadingVisible();
-          await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) =>
+                Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false),
+          );
         } catch (e) {
           _toggleLoadingVisible();
           if (!(e is Error)) {
