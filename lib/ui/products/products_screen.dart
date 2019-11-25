@@ -101,8 +101,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
     );
   }
 
-  List<Product> _prepareProducts(Iterable<Product> products) =>
-      products.map((product) {
+  List<Product> _prepareProducts(Iterable<Product> products) => products
+      .map((product) {
         final program = _state.programs.firstWhere(
               (program) => program.id == product.programId,
               orElse: () => null,
@@ -112,7 +112,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   program.uniqueCode.compareTo(product.programName) == 0,
               orElse: () => null,
             );
-
+        if (program == null) {
+          return null;
+        }
         return product.copyWith(
           programLogo: program.logoPath,
           affiliateUrl: convertAffiliateUrl(
@@ -122,7 +124,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
             _state.user.userId,
           ),
         );
-      }).toList();
+      })
+      .where((product) => product != null)
+      .toList();
 
   Widget get _featuredProducts => FutureBuilder<List<Product>>(
         future: _featuredMemoizer
