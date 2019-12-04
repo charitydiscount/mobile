@@ -162,7 +162,7 @@ class ShopDetails extends StatelessWidget {
           reviewSection.add(
             Container(
               width: MediaQuery.of(context).size.width,
-              height: 320,
+              height: 300,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: reviewsWidgets,

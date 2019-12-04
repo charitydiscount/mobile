@@ -1,4 +1,5 @@
 import 'package:charity_discount/models/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Review {
@@ -18,7 +19,9 @@ class Review {
         reviewer: Reviewer.fromJson(json['reviewer']),
         rating: json['rating'] ?? 0,
         description: json['description'],
-        createdAt: DateTime.parse(json['createdAt']),
+        createdAt: json['createdAt'] is Timestamp
+            ? json['createdAt'].toDate()
+            : DateTime.parse(json['createdAt']),
       );
 
   Map<String, dynamic> toJson() => {

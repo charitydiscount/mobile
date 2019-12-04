@@ -122,7 +122,12 @@ class FirebaseShopsService implements ShopsService {
     await _db.collection('reviews').document(program.uniqueCode).updateData(
       {
         'shopUniqueCode': program.uniqueCode,
-        'reviews.${review.reviewer.userId}': review.toJson(),
+        'reviews.${review.reviewer.userId}': {
+          'reviewer': review.reviewer.toJson(),
+          'rating': review.rating,
+          'description': review.description,
+          'createdAt': FieldValue.serverTimestamp(),
+        },
       },
     ).catchError((e) => _handleFirstReview(e, program, review));
   }
