@@ -307,7 +307,7 @@ class _ShopsWidgetState extends State<ShopsWidget>
         FavoriteShops favoriteShops = snapshot.data;
         widget.appState.setFavoriteShops(favoriteShops);
 
-        final favoritePrograms = List.of(favoriteShops.programs).toList();
+        final favoritePrograms = favoriteShops.programs;
         return StreamBuilder<ProgramMeta>(
           stream: metaService.programsMetaStream,
           builder: (context, snapshot) {
@@ -352,16 +352,12 @@ class _ShopsWidgetState extends State<ShopsWidget>
     List<Program> programs,
     AppModel appState, {
     bool onlyFavorites = false,
-    List<Program> favorites = const [],
+    Map<String, Program> favorites,
     String category,
     Map<String, OverallRating> overallRatings,
   }) {
     programs.forEach((p) {
-      if (favorites.firstWhere(
-            (f) => f.uniqueCode == p.uniqueCode,
-            orElse: () => null,
-          ) !=
-          null) {
+      if (favorites.containsKey(p.uniqueCode)) {
         p.favorited = true;
       } else {
         p.favorited = false;

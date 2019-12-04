@@ -48,7 +48,7 @@ class FirebaseShopsService implements ShopsService {
       if (snap.exists) {
         _favoritePrograms.add(FavoriteShops.fromJson(snap.data));
       } else {
-        _favoritePrograms.add(FavoriteShops(userId: userId, programs: []));
+        _favoritePrograms.add(FavoriteShops(userId: userId, programs: {}));
       }
     });
   }
@@ -60,11 +60,11 @@ class FirebaseShopsService implements ShopsService {
 
     if (favorite) {
       return ref.updateData({
-        'programs': FieldValue.arrayUnion([program.toJson()])
+        'programs.${program.uniqueCode}': program.toJson(),
       }).catchError((e) => _handleFavDocNotExistent(e, userId, program));
     } else {
       return ref.updateData({
-        'programs': FieldValue.arrayRemove([program.toJson()])
+        'programs.${program.uniqueCode}': FieldValue.delete(),
       }).catchError((e) => print(e));
     }
   }
@@ -83,7 +83,9 @@ class FirebaseShopsService implements ShopsService {
     DocumentReference ref = _db.collection('favoriteShops').document(userId);
     ref.setData({
       'userId': userId,
-      'programs': [program.toJson()]
+      'programs': {
+        '${program.uniqueCode}': program.toJson(),
+      }
     }, merge: true);
   }
 

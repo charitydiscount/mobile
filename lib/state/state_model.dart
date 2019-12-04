@@ -25,7 +25,7 @@ class AppModel extends Model {
   );
   StreamSubscription _profileListener;
   List<Program> _programs;
-  FavoriteShops _favoriteShops = FavoriteShops(programs: []);
+  FavoriteShops _favoriteShops = FavoriteShops(programs: {});
   TwoPerformantMeta _affiliateMeta;
   ProgramMeta _programsMeta;
   Wallet wallet;
@@ -149,7 +149,7 @@ class AppModel extends Model {
   }
 
   void clearFavoriteShops() {
-    _favoriteShops = FavoriteShops(programs: []);
+    _favoriteShops = FavoriteShops(programs: {});
   }
 
   Future<List<Program>> get programsFuture async {
