@@ -270,6 +270,7 @@ class ProductCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             product.oldPrice != null &&
+                                    product.price != null &&
                                     product.oldPrice > product.price
                                 ? Text(
                                     '${product.oldPrice.toString()}RON',

@@ -16,6 +16,7 @@ abstract class SearchServiceBase {
     String query, {
     String category,
     int programId,
+    int from,
   });
 
   Future<List<Product>> getFeaturedProducts({String userId});
@@ -24,7 +25,12 @@ abstract class SearchServiceBase {
 class SearchService implements SearchServiceBase {
   String _baseUrl;
 
-  dynamic _search(String entity, String query, bool exact) async {
+  dynamic _search(
+    String entity,
+    String query,
+    bool exact, {
+    int from,
+  }) async {
     String trimmedQuery = query.trim();
     if (_baseUrl == null) {
       await _setBaseUrl();
@@ -34,6 +40,10 @@ class SearchService implements SearchServiceBase {
 
     if (exact == true) {
       url = '$url&exact=true';
+    }
+
+    if (from != null) {
+      url = '$url&page=$from';
     }
 
     IdTokenResult authToken = await authService.currentUser.getIdToken();
@@ -92,11 +102,14 @@ class SearchService implements SearchServiceBase {
     String query, {
     String category,
     int programId,
+    int from = 0,
   }) async {
-    Map<String, dynamic> data = await _search('products', query, false);
+    Map<String, dynamic> data =
+        await _search('products', query, false, from: from);
     if (!data.containsKey('hits')) {
       return [];
     }
+    print(data.keys);
     List hits = data['hits'];
     List<Product> products = productsFromElastic(hits);
 
