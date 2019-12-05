@@ -14,8 +14,9 @@ import 'package:charity_discount/ui/widgets/promotion.dart';
 import 'package:charity_discount/services/affiliate.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:async/async.dart';
 
-class ShopDetails extends StatelessWidget {
+class ShopDetails extends StatefulWidget {
   final models.Program program;
   final ShopsService shopsService;
 
@@ -26,13 +27,20 @@ class ShopDetails extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _ShopDetailsState createState() => _ShopDetailsState();
+}
+
+class _ShopDetailsState extends State<ShopDetails> {
+  AsyncMemoizer _promotionsMemoizer = AsyncMemoizer();
+
+  @override
   Widget build(BuildContext context) {
     var tr = AppLocalizations.of(context).tr;
 
     final logo = Hero(
-      tag: 'shopLogo-${program.id}',
+      tag: 'shopLogo-${widget.program.id}',
       child: CachedNetworkImage(
-        imageUrl: program.logoPath,
+        imageUrl: widget.program.logoPath,
         height: 80,
         fit: BoxFit.contain,
       ),
@@ -42,7 +50,7 @@ class ShopDetails extends StatelessWidget {
         Text('${AppLocalizations.of(context).plural('category', 1)}:'),
         Padding(
           padding: const EdgeInsets.only(left: 8.0),
-          child: Text(program.category),
+          child: Text(widget.program.category),
         ),
       ],
     );
@@ -52,10 +60,10 @@ class ShopDetails extends StatelessWidget {
         Text('${capitalize(tr('commission'))}:'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text(getProgramCommission(program)),
+          child: Text(getProgramCommission(widget.program)),
         ),
-        program.defaultSaleCommissionType == 'percent' ||
-                program.defaultSaleCommissionType == 'variable'
+        widget.program.defaultSaleCommissionType == 'percent' ||
+                widget.program.defaultSaleCommissionType == 'variable'
             ? Expanded(
                 child: Text(
                   tr('commissionDisclaimer'),
@@ -73,7 +81,7 @@ class ShopDetails extends StatelessWidget {
         Theme.of(context).textTheme.headline.fontSize * 0.7;
 
     Widget ratingBuilder = FutureBuilder<List<Review>>(
-      future: shopsService.getProgramRating(program.uniqueCode),
+      future: widget.shopsService.getProgramRating(widget.program.uniqueCode),
       builder: (context, snapshot) {
         final loading = buildConnectionLoading(
           context: context,
@@ -94,7 +102,7 @@ class ShopDetails extends StatelessWidget {
           ),
         );
         Widget overallRating = ProgramRating(
-          rating: program.rating,
+          rating: widget.program.rating,
           iconSize: 25,
         );
 
@@ -115,8 +123,8 @@ class ShopDetails extends StatelessWidget {
                   MaterialPageRoute(
                     maintainState: true,
                     builder: (BuildContext context) => RateScreen(
-                      program: program,
-                      shopsService: shopsService,
+                      program: widget.program,
+                      shopsService: widget.shopsService,
                       existingReview: thisUserReview,
                     ),
                     settings: RouteSettings(name: 'ProvideRating'),
@@ -179,13 +187,13 @@ class ShopDetails extends StatelessWidget {
       },
     );
 
-    Widget promotionsBuilder = FutureBuilder<List<Promotion>>(
-      future: affiliateService.getPromotions(
-        affiliateUniqueCode: appState.affiliateMeta.uniqueCode,
-        programId: program.id,
-        programUniqueCode: program.uniqueCode,
-        userId: appState.user.userId,
-      ),
+    Widget promotionsBuilder = FutureBuilder(
+      future: _promotionsMemoizer.runOnce(() => affiliateService.getPromotions(
+            affiliateUniqueCode: appState.affiliateMeta.uniqueCode,
+            programId: widget.program.id,
+            programUniqueCode: widget.program.uniqueCode,
+            userId: appState.user.userId,
+          )),
       builder: (context, snapshot) {
         final loading = buildConnectionLoading(
           context: context,
@@ -195,8 +203,9 @@ class ShopDetails extends StatelessWidget {
         if (loading != null) {
           return loading;
         }
+        var promotions = snapshot.data as List<Promotion>;
         final titleColor =
-            snapshot.data.isEmpty ? Colors.grey.shade500 : Colors.grey.shade800;
+            promotions.isEmpty ? Colors.grey.shade500 : Colors.grey.shade800;
         final promotionsTitle = Text(
           tr('promotion.promotions'),
           style: TextStyle(
@@ -206,7 +215,7 @@ class ShopDetails extends StatelessWidget {
         );
         List<Widget> promotionsWidgets = [promotionsTitle];
         promotionsWidgets.addAll(
-          snapshot.data.map((p) => PromotionWidget(promotion: p)).toList(),
+          promotions.map((p) => PromotionWidget(promotion: p)).toList(),
         );
         return Column(
           mainAxisSize: MainAxisSize.min,
@@ -218,11 +227,11 @@ class ShopDetails extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(program.name),
+        title: Text(widget.program.name),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          launchURL(program.affilitateUrl);
+          launchURL(widget.program.affilitateUrl);
         },
         child: const Icon(Icons.add_shopping_cart),
       ),

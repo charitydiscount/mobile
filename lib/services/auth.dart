@@ -170,6 +170,9 @@ class AuthService {
       email: email,
       password: password,
     );
+    UserUpdateInfo userInfo = UserUpdateInfo();
+    userInfo.displayName = '$firstName $lastName';
+    await authResult.user.updateProfile(userInfo);
     await updateUserData(authResult.user.uid, {
       'userId': authResult.user.uid,
       'email': email,
