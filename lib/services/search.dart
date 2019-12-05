@@ -12,7 +12,7 @@ abstract class SearchServiceBase {
 
   Future<List<Suggestion>> getSuggestions(String query);
 
-  Future<List<Product>> searchProducts(
+  Future<ProductSearchResult> searchProducts(
     String query, {
     String category,
     int programId,
@@ -98,7 +98,7 @@ class SearchService implements SearchServiceBase {
   }
 
   @override
-  Future<List<Product>> searchProducts(
+  Future<ProductSearchResult> searchProducts(
     String query, {
     String category,
     int programId,
@@ -107,13 +107,11 @@ class SearchService implements SearchServiceBase {
     Map<String, dynamic> data =
         await _search('products', query, false, from: from);
     if (!data.containsKey('hits')) {
-      return [];
+      return ProductSearchResult([], 0);
     }
-    print(data.keys);
     List hits = data['hits'];
-    List<Product> products = productsFromElastic(hits);
-
-    return products;
+    return ProductSearchResult(
+        productsFromElastic(hits), data['total']['value'] ?? 0);
   }
 
   @override
