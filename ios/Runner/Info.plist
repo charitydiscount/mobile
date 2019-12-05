@@ -55,7 +55,14 @@
 		<key>FacebookAppID</key>
 		<string>2421121284842131</string>
 		<key>FacebookDisplayName</key>
-		<string>CharityDiscount - Test</string>
+		<string>CharityDiscount</string>
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>fbapi</string>
+			<string>fb-messenger-share-api</string>
+			<string>fbauth2</string>
+			<string>fbshareextension</string>
+		</array>
 		<key>NSFaceIDUsageDescription</key>
 		<string>Why is my app authenticating using face id?</string>
 	</dict>
