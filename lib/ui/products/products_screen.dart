@@ -25,7 +25,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   TextEditingController _editingController = TextEditingController();
   AppModel _state;
   AsyncMemoizer<List<Product>> _featuredMemoizer = AsyncMemoizer();
-  AsyncMemoizer<List<Product>> _searchMemoizer = AsyncMemoizer();
+  AsyncMemoizer<ProductSearchResult> _searchMemoizer = AsyncMemoizer();
 
   @override
   void initState() {
@@ -162,11 +162,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
         },
       );
 
-  Widget get _foundProducts => FutureBuilder<List<Product>>(
+  Widget get _foundProducts => FutureBuilder<ProductSearchResult>(
         future: _searchMemoizer
             .runOnce(() => widget.searchService.searchProducts(_query)),
-        initialData: [],
-        builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
+        initialData: ProductSearchResult([], 0),
+        builder: (BuildContext context,
+            AsyncSnapshot<ProductSearchResult> snapshot) {
           final loadingWidget = buildConnectionLoading(
             snapshot: snapshot,
             context: context,
@@ -175,7 +176,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
             return loadingWidget;
           }
 
-          List products = _prepareProducts(snapshot.data);
+          List products = _prepareProducts(snapshot.data.products);
           final productsWidget = products.map(
             (product) => ProductCard(product: product),
           );
@@ -270,6 +271,7 @@ class ProductCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             product.oldPrice != null &&
+                                    product.price != null &&
                                     product.oldPrice > product.price
                                 ? Text(
                                     '${product.oldPrice.toString()}RON',

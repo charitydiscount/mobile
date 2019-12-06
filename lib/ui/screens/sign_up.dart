@@ -226,7 +226,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
       try {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         _toggleLoadingVisible();
-        await userController.signUp(email, password, firstName, lastName);
+        await userController.signUp(
+          email.trim(),
+          password.trim(),
+          firstName.trim(),
+          lastName.trim(),
+        );
         _toggleLoadingVisible();
         AppModel.of(context).createListeners();
         WidgetsBinding.instance.addPostFrameCallback(

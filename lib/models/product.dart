@@ -1,3 +1,10 @@
+class ProductSearchResult {
+  final List<Product> products;
+  final int totalFound;
+
+  ProductSearchResult(this.products, this.totalFound);
+}
+
 class Product {
   final String id;
   final String title;
