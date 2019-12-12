@@ -161,7 +161,9 @@
     "aToZ": "Nume A-Z",
     "zToA": "Nume Z-A",
     "commissionAsc": "Cashback crescător",
-    "commissionDesc": "Cashback descrescător"
+    "commissionDesc": "Cashback descrescător",
+    "priceAsc": "Preț crescător",
+    "priceDesc": "Preț descrescător"
   },
   "product": {
     "title": "Produse",

@@ -161,7 +161,9 @@
     "aToZ": "Name A-Z",
     "zToA": "Name Z-A",
     "commissionAsc": "Cashback ascending",
-    "commissionDesc": "Cashback descending"
+    "commissionDesc": "Cashback descending",
+    "priceAsc": "Price ascending",
+    "priceDesc": "Price descending"
   },
   "product": {
     "title": "Products",

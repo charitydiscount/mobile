@@ -25,27 +25,56 @@ class _ProductsScreenState extends State<ProductsScreen> {
   TextEditingController _editingController = TextEditingController();
   AppModel _state;
   AsyncMemoizer<List<Product>> _featuredMemoizer = AsyncMemoizer();
-  AsyncMemoizer<ProductSearchResult> _searchMemoizer = AsyncMemoizer();
+  int _totalProducts = 1;
+  int _perPage = 50;
+  ScrollController _productsScrollController;
+  List<Product> _products = [];
+  bool _searchInitiated = false;
+  _SortStrategy _sortStrategy = _SortStrategy.relevance;
 
   @override
   void initState() {
     super.initState();
     _state = AppModel.of(context);
+    _productsScrollController = ScrollController();
+    _productsScrollController.addListener(() {
+      if (_searchInitiated == false && _products.length < _totalProducts) {
+        if (_productsScrollController.position.pixels >
+            0.9 * _productsScrollController.position.maxScrollExtent) {
+          _searchInitiated = true;
+          _searchProducts(_products.length);
+        }
+      }
+    });
+  }
+
+  void _searchProducts(int from) {
+    widget.searchService.searchProducts(_query, from: from).then(
+          (searchResult) => setState(() {
+            if (_products.length <= _perPage) {
+              _totalProducts = searchResult.totalFound;
+            }
+            _products.addAll(_prepareProducts(searchResult.products));
+            _searchInitiated = false;
+          }),
+        );
   }
 
   void _search() {
     if (_query.compareTo(_editingController.text) != 0) {
       SystemChannels.textInput.invokeMethod('TextInput.hide');
       setState(() {
-        _searchMemoizer = AsyncMemoizer();
         _query = _editingController.text ?? '';
+        _products = [];
+        _totalProducts = 1;
+        _searchProducts(0);
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget programs = _query.isEmpty ? _featuredProducts : _foundProducts;
+    Widget programs = _query.isEmpty ? _featuredProducts : _productsList;
 
     Widget searchInput = Row(
       children: <Widget>[
@@ -53,10 +82,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
           child: TextFormField(
             controller: _editingController,
             onEditingComplete: _search,
+            textInputAction: TextInputAction.search,
+            cursorColor: Theme.of(context).primaryColor,
             decoration: InputDecoration(
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
-              ),
               labelStyle: TextStyle(
                 fontSize: Theme.of(context).textTheme.subtitle.fontSize,
               ),
@@ -77,9 +105,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
         ),
         IconButton(
           icon: Icon(Icons.search),
-          color: Colors.red,
+          color: Theme.of(context).primaryColor,
           onPressed: _search,
         ),
+        _buildSortButton(context),
       ],
     );
 
@@ -100,6 +129,37 @@ class _ProductsScreenState extends State<ProductsScreen> {
       body: programs,
     );
   }
+
+  Widget _buildSortButton(BuildContext context) {
+    final tr = AppLocalizations.of(context).tr;
+    return PopupMenuButton<_SortStrategy>(
+      icon: Icon(
+        Icons.sort,
+        color: Theme.of(context).primaryColor,
+      ),
+      onSelected: (_SortStrategy sortStrategy) {
+        setState(() {
+          _sortStrategy = sortStrategy;
+        });
+      },
+      itemBuilder: (context) => <PopupMenuEntry<_SortStrategy>>[
+        _buildMenuItem(_SortStrategy.relevance, tr('sort.relevance')),
+        _buildMenuItem(_SortStrategy.priceAscending, tr('sort.priceAsc')),
+        _buildMenuItem(_SortStrategy.priceDescending, tr('sort.priceDesc')),
+      ],
+    );
+  }
+
+  PopupMenuItem<_SortStrategy> _buildMenuItem(
+          _SortStrategy value, String text) =>
+      PopupMenuItem<_SortStrategy>(
+        value: value,
+        child: Text(text),
+        textStyle: TextStyle(
+            color: _sortStrategy == value
+                ? Theme.of(context).primaryColor
+                : Theme.of(context).textTheme.body1.color),
+      );
 
   List<Product> _prepareProducts(Iterable<Product> products) => products
       .map((product) {
@@ -162,44 +222,39 @@ class _ProductsScreenState extends State<ProductsScreen> {
         },
       );
 
-  Widget get _foundProducts => FutureBuilder<ProductSearchResult>(
-        future: _searchMemoizer
-            .runOnce(() => widget.searchService.searchProducts(_query)),
-        initialData: ProductSearchResult([], 0),
-        builder: (BuildContext context,
-            AsyncSnapshot<ProductSearchResult> snapshot) {
-          final loadingWidget = buildConnectionLoading(
-            snapshot: snapshot,
-            context: context,
-          );
-          if (loadingWidget != null) {
-            return loadingWidget;
-          }
-
-          List products = _prepareProducts(snapshot.data.products);
-          final productsWidget = products.map(
-            (product) => ProductCard(product: product),
-          );
-
-          return ListView.builder(
-            shrinkWrap: true,
-            primary: true,
-            itemCount:
-                productsWidget.length > 1 ? productsWidget.length ~/ 2 : 1,
-            itemBuilder: (context, index) => IntrinsicHeight(
-              child: Row(
-                children: productsWidget.skip(index * 2).take(2).toList(),
+  Widget get _productsList => ListView.builder(
+        shrinkWrap: true,
+        primary: false,
+        controller: _productsScrollController,
+        itemCount: _products.length > 1 ? _products.length ~/ 2 : 1,
+        itemBuilder: (context, index) => _products.length - 1 >= index
+            ? IntrinsicHeight(
+                child: Row(
+                  children: <Widget>[
+                    _getProductCard(index),
+                    _getProductCard(index + 1),
+                  ],
+                ),
+              )
+            : Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(
+                    Theme.of(context).accentColor,
+                  ),
+                ),
               ),
-            ),
-          );
-        },
       );
+
+  Widget _getProductCard(index) => _products.length - 1 >= index
+      ? ProductCard(product: _products[index])
+      : Container();
 
   @override
   void dispose() {
     super.dispose();
     _scrollController.dispose();
     _editingController.dispose();
+    _productsScrollController.dispose();
   }
 }
 
@@ -276,7 +331,6 @@ class ProductCard extends StatelessWidget {
                                 ? Text(
                                     '${product.oldPrice.toString()}RON',
                                     style: TextStyle(
-                                      // fontWeight: FontWeight.bold,
                                       fontSize: 10,
                                       decoration: TextDecoration.lineThrough,
                                     ),
@@ -308,3 +362,5 @@ class ProductCard extends StatelessWidget {
     );
   }
 }
+
+enum _SortStrategy { priceAscending, priceDescending, relevance }
