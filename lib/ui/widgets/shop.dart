@@ -181,21 +181,21 @@ class ShopHalfTile extends StatelessWidget {
 
     return SizedBox(
       width: MediaQuery.of(context).size.width / 2,
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              maintainState: true,
-              builder: (BuildContext context) => ShopDetails(
-                program: program,
-                shopsService: shopsService,
+      child: Card(
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                maintainState: true,
+                builder: (BuildContext context) => ShopDetails(
+                  program: program,
+                  shopsService: shopsService,
+                ),
+                settings: RouteSettings(name: 'ShopDetails'),
               ),
-              settings: RouteSettings(name: 'ShopDetails'),
-            ),
-          );
-        },
-        child: Card(
+            );
+          },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

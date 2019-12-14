@@ -17,10 +17,15 @@ abstract class SearchServiceBase {
     String category,
     int programId,
     int from,
+    SortStrategy sort,
+    double minPrice,
+    double maxPrice,
   });
 
   Future<List<Product>> getFeaturedProducts({String userId});
 }
+
+enum SortStrategy { priceAsc, priceDesc, relevance }
 
 class SearchService implements SearchServiceBase {
   String _baseUrl;
@@ -30,6 +35,9 @@ class SearchService implements SearchServiceBase {
     String query,
     bool exact, {
     int from,
+    SortStrategy sort,
+    double minPrice,
+    double maxPrice,
   }) async {
     String trimmedQuery = query.trim();
     if (_baseUrl == null) {
@@ -44,6 +52,22 @@ class SearchService implements SearchServiceBase {
 
     if (from != null) {
       url = '$url&page=$from';
+    }
+
+    if (sort == SortStrategy.priceAsc) {
+      url = '$url&sort=asc';
+    }
+
+    if (sort == SortStrategy.priceDesc) {
+      url = '$url&sort=desc';
+    }
+
+    if (minPrice != null) {
+      url = '$url&min=$minPrice';
+    }
+
+    if (maxPrice != null) {
+      url = '$url&max=$maxPrice';
     }
 
     IdTokenResult authToken = await authService.currentUser.getIdToken();
@@ -103,9 +127,19 @@ class SearchService implements SearchServiceBase {
     String category,
     int programId,
     int from = 0,
+    SortStrategy sort,
+    double minPrice,
+    double maxPrice,
   }) async {
-    Map<String, dynamic> data =
-        await _search('products', query, false, from: from);
+    Map<String, dynamic> data = await _search(
+      'products',
+      query,
+      false,
+      from: from,
+      sort: sort,
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+    );
     if (!data.containsKey('hits')) {
       return ProductSearchResult([], 0);
     }

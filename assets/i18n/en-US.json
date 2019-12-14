@@ -167,6 +167,16 @@
   },
   "product": {
     "title": "Products",
-    "searchPlaceholder": "Give it a try"
+    "searchPlaceholder": "Give it a try",
+    "price": {
+      "title": "Price",
+      "min": "Min price",
+      "max": "Max price"
+    }
+  },
+  "filter": {
+    "title": "Filters",
+    "minGreaterThanMax": "The min price cannot be greater than the max",
+    "maxLesserThanMin": "The max price cannot be lesser than the min"
   }
 }

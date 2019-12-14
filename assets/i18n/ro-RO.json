@@ -167,6 +167,16 @@
   },
   "product": {
     "title": "Produse",
-    "searchPlaceholder": "Produsul dorit"
+    "searchPlaceholder": "Caută orice",
+    "price": {
+      "title": "Preț",
+      "min": "Preț minim",
+      "max": "Preț maxim"
+    }
+  },
+  "filter": {
+    "title": "Filtre",
+    "minGreaterThanMax": "Prețul minim nu poate fi mai mare decât cel maxim",
+    "maxLesserThanMin": "Prețul maxim nu poate fi mai mic decât cel minim"
   }
 }
