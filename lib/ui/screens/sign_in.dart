@@ -161,14 +161,26 @@ class _SignInScreenState extends State<SignInScreen> {
 
     final termsButton = FlatButton(
       child: Row(
-        children: <Widget>[Text(tr('terms')), Icon(Icons.launch)],
+        children: <Widget>[
+          Text(
+            tr('terms'),
+            style: TextStyle(fontSize: 12),
+          ),
+          Icon(Icons.launch)
+        ],
       ),
       onPressed: () => launchURL('https://charitydiscount.ro/tos'),
     );
 
     final privacyButton = FlatButton(
       child: Row(
-        children: <Widget>[Text(tr('privacy')), Icon(Icons.launch)],
+        children: <Widget>[
+          Text(
+            tr('privacy'),
+            style: TextStyle(fontSize: 12),
+          ),
+          Icon(Icons.launch)
+        ],
       ),
       onPressed: () => launchURL('https://charitydiscount.ro/privacy'),
     );

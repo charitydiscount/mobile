@@ -76,7 +76,8 @@ class CommissionsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<TimelineModel> items = commissions.map((commission) {
-      final program = programs.firstWhere((p) => p.id == commission.shopId);
+      final program = programs.firstWhere((p) => p.id == commission.shopId,
+          orElse: () => null);
       return TimelineModel(
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -161,12 +162,14 @@ class CommissionDetails extends StatelessWidget {
             ),
           ],
         ),
-        trailing: CachedNetworkImage(
-          imageUrl: program?.logoPath,
-          width: 100,
-          alignment: Alignment.center,
-          fit: BoxFit.fitHeight,
-        ),
+        trailing: program?.logoPath != null
+            ? CachedNetworkImage(
+                imageUrl: program?.logoPath,
+                width: 100,
+                alignment: Alignment.center,
+                fit: BoxFit.fitHeight,
+              )
+            : Container(width: 0),
       ),
     );
   }
