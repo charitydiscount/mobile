@@ -5,6 +5,9 @@ import 'package:charity_discount/models/settings.dart';
 
 class LocalService {
   Future<String> storeUserLocal(User user) async {
+    if (user == null) {
+      return '';
+    }
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String storeUser = userToJson(user);
     await prefs.setString('user', storeUser);
@@ -71,6 +74,21 @@ class LocalService {
     }
 
     return fromJsonStringList(jsonPrograms);
+  }
+
+  Future<void> setKnownDevice() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('knownDevice', true);
+  }
+
+  Future<bool> isDeviceKnown() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (prefs.getBool('knownDevice') == null) {
+      return null;
+    }
+
+    return prefs.getBool('knownDevice');
   }
 }
 

@@ -115,6 +115,15 @@ class Program {
       };
 }
 
+enum CommissionType {
+  percent,
+  variable,
+  fixed,
+}
+
+CommissionType getCommissionTypeEnum(String type) => CommissionType.values
+    .firstWhere((e) => e.toString() == 'CommissionType.' + type.toLowerCase());
+
 class OverallRating {
   int count;
   double overall;
@@ -123,6 +132,8 @@ class OverallRating {
 
   factory OverallRating.fromJson(Map json) => OverallRating(
         count: json['count'] ?? 0,
-        overall: json['overall'] ?? null,
+        overall: json['rating'] != null
+            ? double.tryParse(json['rating'].toString()) ?? null
+            : null,
       );
 }

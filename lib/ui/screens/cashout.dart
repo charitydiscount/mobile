@@ -1,7 +1,9 @@
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/animated_pages.dart';
+import 'package:charity_discount/util/authorize.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -23,9 +25,11 @@ class _CashoutScreenState extends State<CashoutScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _accountNameController = TextEditingController();
+  final TextEditingController _accountAliasController = TextEditingController();
   int _stackIndex = 0;
   Iban _iban;
   double _amount = 0.0;
+  bool _validAmount = false;
   List<String> _titles;
   bool _saveIban = false;
   PageController _pageController;
@@ -40,91 +44,97 @@ class _CashoutScreenState extends State<CashoutScreen> {
   }
 
   Widget _buildAccountWidget() {
-    return Container(
+    return ListView(
       key: ValueKey<int>(0),
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Form(
-            key: _formKey,
-            autovalidate: true,
-            child: IbanFormField(
-              onSaved: (iban) {
-                SchedulerBinding.instance.addPostFrameCallback((_) {
-                  setState(() {
-                    _iban = Iban(iban.countryCode);
-                    _iban.checkDigits = iban.checkDigits;
-                    _iban.basicBankAccountNumber = iban.basicBankAccountNumber;
-                  });
+      children: <Widget>[
+        Form(
+          key: _formKey,
+          autovalidate: true,
+          child: IbanFormField(
+            onSaved: (iban) {
+              SchedulerBinding.instance.addPostFrameCallback((_) {
+                setState(() {
+                  _iban = Iban(iban.countryCode);
+                  _iban.checkDigits = iban.checkDigits;
+                  _iban.basicBankAccountNumber = iban.basicBankAccountNumber;
                 });
-              },
-              validator: (iban) {
-                if (iban.isValid) {
-                  if (_iban == null ||
-                      iban.electronicFormat != _iban.electronicFormat) {
-                    _formKey.currentState.save();
-                  }
+              });
+            },
+            validator: (iban) {
+              if (iban.isValid) {
+                if (_iban == null ||
+                    iban.electronicFormat != _iban.electronicFormat) {
+                  _formKey.currentState.save();
                 }
-                return null;
-              },
-              initialValue: _iban != null ? _iban : Iban('RO'),
-            ),
+              }
+              return null;
+            },
+            initialValue: _iban != null ? _iban : Iban('RO'),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 0),
-            child: CheckboxListTile(
-              title: Text(AppLocalizations.of(context).tr('account.save')),
-              dense: true,
-              activeColor: Theme.of(context).primaryColor,
-              value: _saveIban,
-              onChanged: (newValue) => setState(() {
-                _saveIban = newValue;
-              }),
-            ),
+        ),
+        _accountNameForm,
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 0),
+          child: CheckboxListTile(
+            title: Text(AppLocalizations.of(context).tr('account.save')),
+            dense: true,
+            activeColor: Theme.of(context).primaryColor,
+            value: _saveIban,
+            onChanged: (newValue) => setState(() {
+              _saveIban = newValue;
+            }),
           ),
-          _accountNameForm,
-          Padding(
-            padding: const EdgeInsets.only(top: 30.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Saved Accounts',
-                  textAlign: TextAlign.start,
-                ),
-              ],
-            ),
+        ),
+        _accountAliasForm,
+        Padding(
+          padding: const EdgeInsets.only(top: 30.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                AppLocalizations.of(context).tr('account.savedAccounts'),
+                textAlign: TextAlign.start,
+              ),
+            ],
           ),
-          ListView(
-            shrinkWrap: true,
-            children: _state.user.savedAccounts
-                .map(
-                  (account) => Card(
-                    child: ListTile(
-                      title: Text(account.fullIban.toPrintFormat),
-                      subtitle: Text(account.name),
-                      onTap: () {
-                        setState(() {
-                          _iban = account.fullIban;
-                          _pageController.nextPage(
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.ease,
-                          );
-                        });
-                      },
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () => _deleteSavedAccount(account),
-                      ),
+        ),
+        ListView(
+          shrinkWrap: true,
+          primary: false,
+          children: _state.user.savedAccounts
+              .map(
+                (account) => Card(
+                  child: ListTile(
+                    title: Text(account.alias),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(account.fullIban.toPrintFormat),
+                        Text(account.name),
+                      ],
+                    ),
+                    isThreeLine: true,
+                    onTap: () {
+                      setState(() {
+                        _iban = account.fullIban;
+                        _accountNameController.text = account.name;
+                        _pageController.nextPage(
+                          duration: const Duration(milliseconds: 400),
+                          curve: Curves.ease,
+                        );
+                      });
+                    },
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () => _deleteSavedAccount(account),
                     ),
                   ),
-                )
-                .toList(),
-          ),
-        ],
-      ),
+                ),
+              )
+              .toList(),
+        ),
+      ],
     );
   }
 
@@ -150,20 +160,26 @@ class _CashoutScreenState extends State<CashoutScreen> {
                 fontSize: Theme.of(context).textTheme.display1.fontSize),
             validator: (String value) {
               if (value.isEmpty) {
+                _validAmount = false;
                 return null;
               }
 
               double amount = double.tryParse(value);
               if (amount == null) {
+                _validAmount = false;
                 return 'Doar numere';
               }
 
-              if (amount > _state.wallet.cashback.acceptedAmount) {
+              if (amount > _state.wallet.cashback.acceptedAmount ||
+                  _state.wallet.cashback.acceptedAmount <
+                      _state.minimumWithdrawalAmount) {
+                _validAmount = false;
                 return AppLocalizations.of(context)
                     .tr('account.insufficientCashback');
               }
 
               _amount = amount;
+              _validAmount = true;
               return null;
             },
             decoration: InputDecoration(
@@ -171,8 +187,9 @@ class _CashoutScreenState extends State<CashoutScreen> {
                 borderSide: BorderSide(color: Colors.grey),
               ),
               labelStyle: TextStyle(
-                  color: Colors.grey,
-                  fontSize: Theme.of(context).textTheme.subtitle.fontSize),
+                color: Colors.grey,
+                fontSize: Theme.of(context).textTheme.subtitle.fontSize,
+              ),
               labelText: AppLocalizations.of(context).tr('account.amountHint'),
             ),
             keyboardType: TextInputType.number,
@@ -222,6 +239,17 @@ class _CashoutScreenState extends State<CashoutScreen> {
                 ListTile(
                   leading: Padding(
                     padding: const EdgeInsets.all(8.0),
+                    child: Icon(Icons.account_circle),
+                  ),
+                  title: Text(_accountNameController.text),
+                  subtitle:
+                      Text(AppLocalizations.of(context).tr('account.name')),
+                  trailing:
+                      _done ? Icon(Icons.check, color: Colors.green) : null,
+                ),
+                ListTile(
+                  leading: Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Icon(Icons.monetization_on),
                   ),
                   title: Text(_amount.toStringAsFixed(2)),
@@ -245,24 +273,44 @@ class _CashoutScreenState extends State<CashoutScreen> {
                     padding: EdgeInsets.all(12),
                     color: Theme.of(context).primaryColor,
                     child: Text(
-                      AppLocalizations.of(context).tr('send').toUpperCase(),
+                      '${AppLocalizations.of(context).tr('authorize')} & ${AppLocalizations.of(context).tr('send')}'
+                          .toUpperCase(),
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () {
-                      widget.charityService
-                          .createTransaction(
-                            AppModel.of(context).user.userId,
-                            TxType.CASHOUT,
-                            double.tryParse(_amountController.text),
-                            'RON',
-                            AppModel.of(context).user.userId,
-                          )
-                          .then(
-                              (txRef) => showTxResult(txRef, context).then((_) {
-                                    setState(() {
-                                      _done = true;
-                                    });
-                                  }));
+                      authorize(
+                        context: context,
+                        title: AppLocalizations.of(context)
+                            .tr('authorizeFlow.title'),
+                        charityService: widget.charityService,
+                      ).then(
+                        (didAuthenticate) => didAuthenticate == true
+                            ? widget.charityService
+                                .createTransaction(
+                                  AppModel.of(context).user.userId,
+                                  TxType.CASHOUT,
+                                  double.tryParse(_amountController.text),
+                                  'RON',
+                                  AppModel.of(context).user.userId,
+                                )
+                                .then((txRef) =>
+                                    showTxResult(txRef, context).then((_) {
+                                      setState(() {
+                                        _done = true;
+                                      });
+                                    }))
+                                .catchError((error) => Flushbar(
+                                      title:
+                                          'Failed to create the transaction request',
+                                      message: error.toString(),
+                                      icon: Icon(
+                                        Icons.error_outline,
+                                        color: Colors.red,
+                                      ),
+                                      reverseAnimationCurve: Curves.linear,
+                                    )?.show(context))
+                            : print('Failed to auth'),
+                      );
                     },
                   ),
           ),
@@ -271,49 +319,62 @@ class _CashoutScreenState extends State<CashoutScreen> {
     );
   }
 
-  Widget get _accountNameForm => _saveIban
+  Widget get _accountNameForm => Container(
+        padding: EdgeInsets.symmetric(horizontal: 0, vertical: 16),
+        child: TextFormField(
+          controller: _accountNameController,
+          textCapitalization: TextCapitalization.words,
+          autovalidate: true,
+          onChanged: (value) {
+            setState(() {});
+          },
+          decoration: InputDecoration(
+            labelStyle: TextStyle(color: Colors.grey),
+            labelText: AppLocalizations.of(context).tr('account.name'),
+          ),
+        ),
+      );
+
+  Widget get _accountAliasForm => _saveIban
       ? Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
           child: TextField(
-            controller: _accountNameController,
+            controller: _accountAliasController,
             decoration: InputDecoration(
-                // border: InputBorder.none,
-                labelStyle: TextStyle(color: Colors.grey),
-                labelText: AppLocalizations.of(context).tr('account.name'),
-                hasFloatingPlaceholder: false,
-                isDense: true),
+              labelStyle: TextStyle(color: Colors.grey),
+              labelText: AppLocalizations.of(context).tr('account.alias'),
+              hasFloatingPlaceholder: false,
+              isDense: true,
+            ),
           ),
         )
       : Container();
 
-  Widget get _backButton => IconButton(
-        icon: const BackButtonIcon(),
-        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+  Widget get _closeButton => IconButton(
+        icon: Icon(Icons.close),
+        tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
         onPressed: () {
-          setState(() {
-            _pageController.previousPage(
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.ease,
-            );
-          });
+          Navigator.popUntil(context, ModalRoute.withName('/'));
         },
       );
 
   Widget get _leadingButton {
     if (_done) {
-      return CloseButton();
+      return _closeButton;
     }
     switch (_stackIndex) {
       case 0:
         return CloseButton();
       case 1:
-        return _backButton;
+        return BackButton();
       case 2:
-        return _backButton;
+        return BackButton();
       default:
         return BackButton();
     }
   }
+
+  bool get _isAmountValid =>
+      _stackIndex != 1 || (_stackIndex == 1 && _validAmount);
 
   @override
   Widget build(BuildContext context) {
@@ -323,7 +384,11 @@ class _CashoutScreenState extends State<CashoutScreen> {
         FlatButton(
           child: Text(AppLocalizations.of(context).tr('next')),
           textColor: Colors.white,
-          onPressed: _iban == null || !_iban.isValid || _stackIndex == 2
+          onPressed: _iban == null ||
+                  _accountNameController.text.length < 5 ||
+                  !_iban.isValid ||
+                  _stackIndex == 2 ||
+                  !_isAmountValid
               ? null
               : () {
                   setState(() {
@@ -334,8 +399,10 @@ class _CashoutScreenState extends State<CashoutScreen> {
                             null) {
                       _state.addSavedAccount(
                         SavedAccount(
-                            iban: _iban.electronicFormat,
-                            name: _accountNameController.text),
+                          iban: _iban.electronicFormat,
+                          name: _accountNameController.text,
+                          alias: _accountAliasController.text,
+                        ),
                       );
                     }
                     _pageController.nextPage(

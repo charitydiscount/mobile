@@ -19,11 +19,12 @@ class CaseWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logo = CachedNetworkImage(
-      imageUrl: charityCase.images[0].url,
-      width: 120,
-      height: 120,
-      fit: BoxFit.fill,
+    final logo = Hero(
+      tag: 'case-${charityCase.id}',
+      child: CachedNetworkImage(
+        imageUrl: charityCase.images[0].url,
+        fit: BoxFit.fitWidth,
+      ),
     );
     final websiteButton = charityCase.site != null
         ? Padding(
@@ -77,12 +78,10 @@ class CaseWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            ListTile(
-              leading: Hero(
-                tag: 'case-${charityCase.id}',
-                child: logo,
-              ),
-              title: Center(
+            logo,
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Center(
                 child: Text(
                   charityCase.title,
                   style: TextStyle(
@@ -90,17 +89,12 @@ class CaseWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              subtitle: Center(
-                child: Text(''),
-              ),
             ),
-            ButtonTheme.bar(
-              child: ButtonBar(
-                children: <Widget>[
-                  websiteButton,
-                  donateButton,
-                ],
-              ),
+            ButtonBar(
+              children: <Widget>[
+                websiteButton,
+                donateButton,
+              ],
             ),
           ],
         ),

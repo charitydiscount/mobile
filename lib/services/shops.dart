@@ -38,6 +38,7 @@ class FirebaseShopsService implements ShopsService {
   BehaviorSubject<FavoriteShops> _favoritePrograms =
       BehaviorSubject<FavoriteShops>();
 
+  @override
   BehaviorSubject<FavoriteShops> get favoritePrograms => _favoritePrograms;
 
   FirebaseShopsService(this.userId) {
@@ -47,7 +48,7 @@ class FirebaseShopsService implements ShopsService {
       if (snap.exists) {
         _favoritePrograms.add(FavoriteShops.fromJson(snap.data));
       } else {
-        _favoritePrograms.add(FavoriteShops(userId: userId, programs: []));
+        _favoritePrograms.add(FavoriteShops(userId: userId, programs: {}));
       }
     });
   }
@@ -59,11 +60,11 @@ class FirebaseShopsService implements ShopsService {
 
     if (favorite) {
       return ref.updateData({
-        'programs': FieldValue.arrayUnion([program.toJson()])
+        'programs.${program.uniqueCode}': program.toJson(),
       }).catchError((e) => _handleFavDocNotExistent(e, userId, program));
     } else {
       return ref.updateData({
-        'programs': FieldValue.arrayRemove([program.toJson()])
+        'programs.${program.uniqueCode}': FieldValue.delete(),
       }).catchError((e) => print(e));
     }
   }
@@ -82,14 +83,16 @@ class FirebaseShopsService implements ShopsService {
     DocumentReference ref = _db.collection('favoriteShops').document(userId);
     ref.setData({
       'userId': userId,
-      'programs': [program.toJson()]
+      'programs': {
+        '${program.uniqueCode}': program.toJson(),
+      }
     }, merge: true);
   }
 
   @override
   Future<List<models.Program>> getAllPrograms() async {
     QuerySnapshot snapshot =
-        await _db.collection('shops').orderBy('createdAt').getDocuments();
+        await _db.collection('shops').orderBy('order').getDocuments();
 
     List<models.Program> programs = [];
     snapshot.documents.forEach((doc) {
@@ -97,8 +100,6 @@ class FirebaseShopsService implements ShopsService {
         models.fromFirestoreBatch(doc),
       );
     });
-    programs.sort((p1, p2) =>
-        p1.name.trim().toLowerCase().compareTo(p2.name.trim().toLowerCase()));
 
     return programs;
   }
@@ -123,7 +124,12 @@ class FirebaseShopsService implements ShopsService {
     await _db.collection('reviews').document(program.uniqueCode).updateData(
       {
         'shopUniqueCode': program.uniqueCode,
-        'reviews.${review.reviewer.userId}': review.toJson(),
+        'reviews.${review.reviewer.userId}': {
+          'reviewer': review.reviewer.toJson(),
+          'rating': review.rating,
+          'description': review.description,
+          'createdAt': FieldValue.serverTimestamp(),
+        },
       },
     ).catchError((e) => _handleFirstReview(e, program, review));
   }

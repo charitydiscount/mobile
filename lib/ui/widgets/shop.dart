@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/ui/widgets/rating.dart';
+import 'package:charity_discount/util/ui.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/program.dart' as models;
@@ -25,9 +26,9 @@ class ShopFullTile extends StatelessWidget {
       tag: 'shopLogo-${program.id}',
       child: CachedNetworkImage(
         imageUrl: program.logoPath,
-        width: 120,
-        height: 30,
-        fit: BoxFit.contain,
+        width: 100,
+        alignment: Alignment.center,
+        fit: BoxFit.fitHeight,
       ),
     );
     final linkButton = RaisedButton(
@@ -46,9 +47,7 @@ class ShopFullTile extends StatelessWidget {
     );
 
     Widget cashback = Text(
-      program.leadCommissionAmount != null
-          ? '${program.leadCommissionAmount} RON'
-          : '${program.saleCommissionRate}%',
+      getProgramCommission(program),
       style: Theme.of(context).textTheme.caption,
     );
 
@@ -105,14 +104,12 @@ class ShopFullTile extends StatelessWidget {
                   child: rating,
                 ),
               ),
-              ButtonTheme.bar(
-                child: ButtonBar(
-                  children: <Widget>[
-                    cashback,
-                    favoriteButton,
-                    linkButton,
-                  ],
-                ),
+              ButtonBar(
+                children: <Widget>[
+                  cashback,
+                  favoriteButton,
+                  linkButton,
+                ],
               ),
             ],
           ),
@@ -144,8 +141,7 @@ class ShopHalfTile extends StatelessWidget {
       tag: 'shopLogo-${program.id}',
       child: CachedNetworkImage(
         imageUrl: program.logoPath,
-        width: 80,
-        height: 20,
+        height: 30,
         fit: BoxFit.contain,
       ),
     );
@@ -159,10 +155,8 @@ class ShopHalfTile extends StatelessWidget {
     );
 
     Widget cashback = Text(
-      program.leadCommissionAmount != null
-          ? '${program.leadCommissionAmount}lei'
-          : '${program.saleCommissionRate}%',
-      style: Theme.of(context).textTheme.caption,
+      getProgramCommission(program),
+      style: Theme.of(context).textTheme.subtitle,
     );
 
     Widget rating = ProgramRating(rating: program.rating, iconSize: 20);
@@ -185,55 +179,56 @@ class ShopHalfTile extends StatelessWidget {
             },
           );
 
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            maintainState: true,
-            builder: (BuildContext context) => ShopDetails(
-              program: program,
-              shopsService: shopsService,
-            ),
-            settings: RouteSettings(name: 'ShopDetails'),
-          ),
-        );
-      },
+    return SizedBox(
+      width: MediaQuery.of(context).size.width / 2,
       child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: logo,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                maintainState: true,
+                builder: (BuildContext context) => ShopDetails(
+                  program: program,
+                  shopsService: shopsService,
+                ),
+                settings: RouteSettings(name: 'ShopDetails'),
               ),
-              Center(
-                child: Text(
-                  program.name,
-                  style: TextStyle(
-                    fontSize: 16.0,
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: logo,
+                ),
+                Center(
+                  child: Text(
+                    program.name,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Center(
-                  child: rating,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Center(
+                    child: rating,
+                  ),
                 ),
-              ),
-              ButtonTheme.bar(
-                child: ButtonBar(
+                Center(child: cashback),
+                ButtonBar(
                   children: <Widget>[
-                    cashback,
                     favoriteButton,
                     linkButton,
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

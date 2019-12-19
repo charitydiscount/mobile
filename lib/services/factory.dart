@@ -18,3 +18,8 @@ FirebaseCharityService getFirebaseCharityService() {
 
   return _charityService;
 }
+
+void clearInstances() {
+  _shopsService = null;
+  _charityService = null;
+}

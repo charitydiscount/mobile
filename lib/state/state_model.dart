@@ -6,6 +6,8 @@ import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/shops.dart';
+import 'package:charity_discount/util/remote_config.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/user.dart';
@@ -16,20 +18,29 @@ import 'package:charity_discount/services/local.dart';
 class AppModel extends Model {
   bool _introCompleted = false;
   User _user;
-  Settings _settings;
+  Settings _settings = Settings(
+    displayMode: DisplayMode.GRID,
+    lang: 'en',
+    notifications: true,
+  );
   StreamSubscription _profileListener;
-  StreamSubscription _settingsListener;
   List<Program> _programs;
-  FavoriteShops _favoriteShops = FavoriteShops(programs: []);
+  FavoriteShops _favoriteShops = FavoriteShops(programs: {});
   TwoPerformantMeta _affiliateMeta;
   ProgramMeta _programsMeta;
   Wallet wallet;
   ShopsService _shopsService;
   CharityService _charityService;
+  bool _isNewDevice = true;
+  double minimumWithdrawalAmount;
+  BehaviorSubject<bool> loading;
 
   AppModel() {
     createListeners();
     initFromLocal();
+    remoteConfig
+        .getWithdrawalThreshold()
+        .then((threshold) => minimumWithdrawalAmount = threshold);
   }
 
   void setServices(ShopsService shopService, CharityService charityService) {
@@ -38,35 +49,29 @@ class AppModel extends Model {
   }
 
   void createListeners() {
+    loading = BehaviorSubject();
     _profileListener = authService.profile.listen(
       (profile) {
         if (profile == null) {
           return;
         }
-        User currentUser = User.fromJson(profile);
-        this.setUser(currentUser);
-        _settingsListener = authService.settings.listen(
-          (settings) {
-            if (settings != null) {
-              this.setSettings(
-                Settings.fromJson(settings),
-              );
-            }
-          },
-        );
-        metaService.getTwoPerformantMeta().then((twoPMeta) {
-          _affiliateMeta = twoPMeta;
-        });
-        metaService.getProgramsMeta().then((programsMeta) {
-          _programsMeta = programsMeta;
-        });
+        setUser(User.fromJson(profile));
+        List<Future> futuresForLoading = [
+          metaService.getTwoPerformantMeta().then((twoPMeta) {
+            _affiliateMeta = twoPMeta;
+            return true;
+          }),
+          updateProgramsMeta(),
+        ];
+        Future.wait(futuresForLoading).then((loaded) => loading.add(false));
       },
     );
   }
 
   Future<void> closeListeners() async {
+    clearFavoriteShops();
     await _profileListener.cancel();
-    await _settingsListener.cancel();
+    loading.close();
   }
 
   static AppModel of(
@@ -80,6 +85,7 @@ class AppModel extends Model {
     Settings settings = await localService.getSettingsLocal();
     bool isIntroCompleted = await localService.isIntroCompleted();
     List<Program> programs = await localService.getPrograms();
+    bool isKnownDevice = await localService.isDeviceKnown();
 
     if (user != null) {
       setUser(user);
@@ -93,6 +99,9 @@ class AppModel extends Model {
     if (programs != null) {
       _programs = programs;
     }
+    if (isKnownDevice != null) {
+      setKnownDevice();
+    }
   }
 
   bool get introCompleted => _introCompleted;
@@ -105,17 +114,29 @@ class AppModel extends Model {
   User get user => _user;
   void setUser(User user) {
     _user = user;
+    localService.storeUserLocal(user);
     notifyListeners();
   }
 
   Settings get settings => _settings;
-  void setSettings(Settings settings) {
+  void setSettings(Settings settings, {bool storeLocal = false}) {
     _settings = settings;
+    if (storeLocal) {
+      localService.storeSettingsLocal(_settings);
+    }
     notifyListeners();
   }
 
   TwoPerformantMeta get affiliateMeta => _affiliateMeta;
   ProgramMeta get programsMeta => _programsMeta;
+
+  Future<bool> updateProgramsMeta() {
+    return metaService.getProgramsMeta().then((programsMeta) {
+      _programsMeta = programsMeta;
+      notifyListeners();
+      return true;
+    });
+  }
 
   List<Program> get programs => _programs;
   void addPrograms(List<Program> programs) {
@@ -128,7 +149,7 @@ class AppModel extends Model {
   }
 
   void clearFavoriteShops() {
-    _favoriteShops = FavoriteShops(programs: []);
+    _favoriteShops = FavoriteShops(programs: {});
   }
 
   Future<List<Program>> get programsFuture async {
@@ -159,5 +180,12 @@ class AppModel extends Model {
     user.savedAccounts
         .removeWhere((account) => account.iban == savedAccount.iban);
     _charityService.removeAccount(user.userId, savedAccount);
+  }
+
+  bool get isNewDevice => _isNewDevice;
+  void setKnownDevice() {
+    _isNewDevice = false;
+    localService.setKnownDevice();
+    notifyListeners();
   }
 }

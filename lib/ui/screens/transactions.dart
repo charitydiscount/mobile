@@ -13,7 +13,7 @@ class TransactionsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context).tr('transactionHistory'),
+          AppLocalizations.of(context).tr('wallet.history'),
           style: TextStyle(color: Theme.of(context).primaryColor),
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -21,10 +21,7 @@ class TransactionsScreen extends StatelessWidget {
           color: Theme.of(context).textTheme.body2.color,
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 8.0),
-        child: HistoryPointsWidget(transactions: transactions),
-      ),
+      body: HistoryPointsWidget(transactions: transactions),
     );
   }
 }

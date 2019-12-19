@@ -145,7 +145,6 @@ class _RateScreenState extends State<RateScreen> {
                       reviewer: Reviewer.fromUser(state.user),
                       rating: _rating,
                       description: _descriptionController.text,
-                      createdAt: DateTime.now().toUtc(),
                     );
                     widget.shopsService
                         .saveReview(widget.program, review)

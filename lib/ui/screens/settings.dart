@@ -1,5 +1,7 @@
+import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/locale.dart';
+import 'package:charity_discount/util/message_handler.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';
 import 'package:easy_localization/easy_localization_provider.dart';
 import 'package:flutter/material.dart';
@@ -31,18 +33,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
           supportedLanguages.map((lang) => _buildLanguageTile(lang)).toList(),
     );
     settingTiles.add(language);
-
     Widget notifications = ListTile(
       leading: Icon(Icons.notifications),
-      title: Text('Notificari'),
+      title: Text(AppLocalizations.of(context).tr('notifications')),
       trailing: Switch.adaptive(
-        value: _state.settings.notifications,
+        value: _state.settings.notifications || false,
         onChanged: (bool newValue) {
           var newSettings = _state.settings;
           newSettings.notifications = newValue;
           setState(() {
-            _state.setSettings(newSettings);
+            _state.setSettings(newSettings, storeLocal: true);
           });
+          fcm.getToken().then((token) => metaService.setNotifications(
+                _state.user.userId,
+                token,
+                newValue,
+              ));
         },
       ),
     );
