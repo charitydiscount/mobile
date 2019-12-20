@@ -79,37 +79,40 @@ class _SignInScreenState extends State<SignInScreen> {
     return Scaffold(
       body: LoadingScreen(
         child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.95,
-            ),
-            child: Form(
-              key: _formKey,
-              autovalidate: _autoValidate,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Expanded(child: logo),
-                  Expanded(
-                    flex: 2,
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                        child: _buildLoginForm(),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.95,
+                maxWidth: 600,
+              ),
+              child: Form(
+                key: _formKey,
+                autovalidate: _autoValidate,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Expanded(child: logo),
+                    Expanded(
+                      flex: 2,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                          child: _buildLoginForm(),
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(child: _buildSocialFragmet()),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      termsButton,
-                      privacyButton,
-                    ],
-                  ),
-                ],
+                    Expanded(child: _buildSocialFragmet()),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        termsButton,
+                        privacyButton,
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -244,8 +247,10 @@ class _SignInScreenState extends State<SignInScreen> {
           Strategy.EmailAndPass,
           credentials: {'email': email, 'password': password},
         );
-        _toggleLoadingVisible();
-        await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _toggleLoadingVisible();
+          Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+        });
       } catch (e) {
         if (!(e is Error)) {
           String exception = getExceptionText(e);
@@ -267,8 +272,10 @@ class _SignInScreenState extends State<SignInScreen> {
     try {
       AppModel.of(context).createListeners();
       await userController.signIn(Strategy.Google);
-      _toggleLoadingVisible();
-      await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _toggleLoadingVisible();
+        Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+      });
     } catch (e) {
       _toggleLoadingVisible();
       if (!(e is Error)) {
@@ -295,11 +302,10 @@ class _SignInScreenState extends State<SignInScreen> {
             Strategy.Facebook,
             facebookResult: result,
           );
-          _toggleLoadingVisible();
-          WidgetsBinding.instance.addPostFrameCallback(
-            (_) =>
-                Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false),
-          );
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _toggleLoadingVisible();
+            Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+          });
         } catch (e) {
           _toggleLoadingVisible();
           if (!(e is Error)) {

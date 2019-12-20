@@ -186,31 +186,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Center(
               child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    logo,
-                    SizedBox(height: 24.0),
-                    firstName,
-                    SizedBox(height: 16.0),
-                    lastName,
-                    SizedBox(height: 16.0),
-                    email,
-                    SizedBox(height: 16.0),
-                    password,
-                    SizedBox(height: 16.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        termsButton,
-                        privacyButton,
-                      ],
-                    ),
-                    SizedBox(height: 12.0),
-                    signUpButton,
-                    signInLabel
-                  ],
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.95,
+                    maxWidth: 600,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      logo,
+                      SizedBox(height: 24.0),
+                      firstName,
+                      SizedBox(height: 16.0),
+                      lastName,
+                      SizedBox(height: 16.0),
+                      email,
+                      SizedBox(height: 16.0),
+                      password,
+                      SizedBox(height: 16.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          termsButton,
+                          privacyButton,
+                        ],
+                      ),
+                      SizedBox(height: 12.0),
+                      signUpButton,
+                      signInLabel
+                    ],
+                  ),
                 ),
               ),
             ),
