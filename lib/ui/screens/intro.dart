@@ -71,7 +71,7 @@ class _IntroState extends State<Intro> with TickerProviderStateMixin {
                               padding: EdgeInsets.all(12),
                               child: Image.asset(
                                 page.imageUrl,
-                                fit: BoxFit.fill,
+                                fit: BoxFit.contain,
                                 height:
                                     MediaQuery.of(context).size.height * 0.6,
                               ),

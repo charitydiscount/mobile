@@ -105,3 +105,24 @@ String _buildCommissionForDisplay(
       ? toBeAddedCommission
       : '$currentCommission + $toBeAddedCommission';
 }
+
+SliverGridDelegate getGridDelegate(BuildContext context,
+    {double aspectRatioFactor = 1.0}) {
+  final width = MediaQuery.of(context).size.width;
+  int perRow;
+  double aspectRatio;
+  if (width < 600.0) {
+    perRow = 2;
+    aspectRatio = 0.9;
+  } else if (width < 1024.0) {
+    perRow = 3;
+    aspectRatio = MediaQuery.of(context).size.aspectRatio > 1.5 ? 1.0 : 1.3;
+  } else {
+    perRow = 4;
+    aspectRatio = 1.4;
+  }
+  return SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: perRow,
+    childAspectRatio: aspectRatio * aspectRatioFactor,
+  );
+}

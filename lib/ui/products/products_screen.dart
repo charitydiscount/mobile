@@ -267,45 +267,38 @@ class _ProductsScreenState extends State<ProductsScreen> {
             (product) => ProductCard(product: product),
           );
 
-          return ListView.builder(
+          return GridView.builder(
             shrinkWrap: true,
             primary: true,
-            itemCount:
-                productsWidget.length > 1 ? productsWidget.length ~/ 2 : 1,
-            itemBuilder: (context, index) => IntrinsicHeight(
-              child: Row(
-                children: productsWidget.skip(index * 2).take(2).toList(),
-              ),
-            ),
+            gridDelegate: getGridDelegate(context),
+            itemCount: productsWidget.length,
+            itemBuilder: (context, index) => productsWidget.elementAt(index),
           );
         },
       );
 
-  Widget get _productsList => ListView.builder(
-        shrinkWrap: true,
-        primary: false,
-        controller: _productsScrollController,
-        itemCount: _products.length > 1 ? _products.length ~/ 2 : 1,
-        itemBuilder: (context, index) => _products.length - 1 >= index
-            ? IntrinsicHeight(
-                child: Row(
-                  children: <Widget>[
-                    _getProductCard(index),
-                    _getProductCard(index + 1),
-                  ],
-                ),
-              )
-            : Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation(
-                      Theme.of(context).accentColor,
-                    ),
+  Widget get _productsList {
+    return GridView.builder(
+      shrinkWrap: true,
+      primary: false,
+      controller: _productsScrollController,
+      addAutomaticKeepAlives: true,
+      gridDelegate: getGridDelegate(context),
+      itemCount: _products.length,
+      itemBuilder: (context, index) => _products.length - 1 >= index
+          ? _getProductCard(index)
+          : Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(
+                    Theme.of(context).accentColor,
                   ),
                 ),
               ),
-      );
+            ),
+    );
+  }
 
   Widget _getProductCard(index) => _products.length - 1 >= index
       ? ProductCard(product: _products[index])
