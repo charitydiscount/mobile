@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:charity_discount/util/url.dart';
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
@@ -46,8 +47,85 @@ class _SignInScreenState extends State<SignInScreen> {
 
     final logo = Hero(
       tag: 'hero',
-      child: Image.asset('assets/icons/icon.png', scale: 3, height: 120),
+      child: Image.asset('assets/icons/icon.png', scale: 4, height: 50),
     );
+
+    final termsButton = FlatButton(
+      child: Row(
+        children: <Widget>[
+          Text(
+            tr('terms'),
+            style: TextStyle(fontSize: 12),
+          ),
+          Icon(Icons.launch)
+        ],
+      ),
+      onPressed: () => launchURL('https://charitydiscount.ro/tos'),
+    );
+
+    final privacyButton = FlatButton(
+      child: Row(
+        children: <Widget>[
+          Text(
+            tr('privacy'),
+            style: TextStyle(fontSize: 12),
+          ),
+          Icon(Icons.launch)
+        ],
+      ),
+      onPressed: () => launchURL('https://charitydiscount.ro/privacy'),
+    );
+
+    return Scaffold(
+      body: LoadingScreen(
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.95,
+            ),
+            child: Form(
+              key: _formKey,
+              autovalidate: _autoValidate,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Expanded(child: logo),
+                  Expanded(
+                    flex: 2,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                        child: _buildLoginForm(),
+                      ),
+                    ),
+                  ),
+                  Expanded(child: _buildSocialFragmet()),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      termsButton,
+                      privacyButton,
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        inAsyncCall: _loadingVisible,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Widget _buildLoginForm() {
+    final tr = AppLocalizations.of(context).tr;
 
     final email = TextFormField(
       keyboardType: TextInputType.emailAddress,
@@ -93,17 +171,20 @@ class _SignInScreenState extends State<SignInScreen> {
 
     final loginButton = Padding(
       padding: EdgeInsets.symmetric(vertical: 12.0),
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        onPressed: () async => _emailLogin(
-            email: _email.text, password: _password.text, context: context),
-        padding: EdgeInsets.all(12),
-        color: Theme.of(context).primaryColor,
-        child: Text(
-          tr('signIn').toUpperCase(),
-          style: TextStyle(color: Colors.white),
+      child: Container(
+        width: double.infinity,
+        child: RaisedButton(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          onPressed: () async => _emailLogin(
+              email: _email.text, password: _password.text, context: context),
+          padding: EdgeInsets.all(12),
+          color: Theme.of(context).primaryColor,
+          child: Text(
+            tr('signIn').toUpperCase(),
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ),
     );
@@ -112,14 +193,14 @@ class _SignInScreenState extends State<SignInScreen> {
       padding: EdgeInsets.only(left: 200),
       child: Text(
         tr('forgotPassword'),
-        style: TextStyle(color: Colors.black54),
+        style: TextStyle(color: Theme.of(context).hintColor),
       ),
       onPressed: () {
         Navigator.pushNamed(context, '/forgot-password');
       },
     );
 
-    final signUpLabel = FlatButton(
+    final signUpButton = FlatButton(
       child: Text(
         tr('createAccount'),
         style: TextStyle(color: Colors.blue, fontSize: 16),
@@ -129,112 +210,16 @@ class _SignInScreenState extends State<SignInScreen> {
       },
     );
 
-    final socialDivider = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        horizontalLine,
-        Text('Social Login', style: TextStyle(fontSize: 16.0)),
-        horizontalLine,
+        email,
+        password,
+        loginButton,
+        forgotLabel,
+        signUpButton,
       ],
     );
-    final socialMethods = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        MaterialButton(
-          shape: CircleBorder(),
-          onPressed: () async => _googleLogin(context),
-          color: Color(0xffdd4b39),
-          height: 65,
-          elevation: 0,
-          child: Icon(SocialIcons.google, color: Colors.white),
-        ),
-        MaterialButton(
-          shape: CircleBorder(),
-          onPressed: () async => _facebookLogin(context),
-          color: Color(0xff3b5998),
-          height: 65,
-          elevation: 0,
-          child: Icon(SocialIcons.facebook, color: Colors.white),
-        )
-      ],
-    );
-
-    final termsButton = FlatButton(
-      child: Row(
-        children: <Widget>[
-          Text(
-            tr('terms'),
-            style: TextStyle(fontSize: 12),
-          ),
-          Icon(Icons.launch)
-        ],
-      ),
-      onPressed: () => launchURL('https://charitydiscount.ro/tos'),
-    );
-
-    final privacyButton = FlatButton(
-      child: Row(
-        children: <Widget>[
-          Text(
-            tr('privacy'),
-            style: TextStyle(fontSize: 12),
-          ),
-          Icon(Icons.launch)
-        ],
-      ),
-      onPressed: () => launchURL('https://charitydiscount.ro/privacy'),
-    );
-
-    return Scaffold(
-      body: LoadingScreen(
-        child: Form(
-          key: _formKey,
-          autovalidate: _autoValidate,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    logo,
-                    SizedBox(height: 12.0),
-                    email,
-                    SizedBox(height: 12.0),
-                    password,
-                    SizedBox(height: 12.0),
-                    loginButton,
-                    forgotLabel,
-                    SizedBox(height: 12.0),
-                    socialDivider,
-                    SizedBox(height: 12.0),
-                    socialMethods,
-                    SizedBox(height: 12.0),
-                    signUpLabel,
-                    SizedBox(height: 12.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        termsButton,
-                        privacyButton,
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        inAsyncCall: _loadingVisible,
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   void _toggleLoadingVisible() {
@@ -339,5 +324,54 @@ class _SignInScreenState extends State<SignInScreen> {
         )..show(context);
         break;
     }
+  }
+
+  Widget _buildSocialFragmet() {
+    if (Platform.isIOS) {
+      return Container(
+        width: 0,
+        height: 0,
+      );
+    }
+
+    final socialDivider = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        horizontalLine,
+        Text('Social Login', style: TextStyle(fontSize: 16.0)),
+        horizontalLine,
+      ],
+    );
+    final socialMethods = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        MaterialButton(
+          shape: CircleBorder(),
+          onPressed: () async => _googleLogin(context),
+          color: Color(0xffdd4b39),
+          height: 65,
+          elevation: 0,
+          child: Icon(SocialIcons.google, color: Colors.white),
+        ),
+        MaterialButton(
+          shape: CircleBorder(),
+          onPressed: () async => _facebookLogin(context),
+          color: Color(0xff3b5998),
+          height: 65,
+          elevation: 0,
+          child: Icon(SocialIcons.facebook, color: Colors.white),
+        )
+      ],
+    );
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        socialDivider,
+        socialMethods,
+      ],
+    );
   }
 }

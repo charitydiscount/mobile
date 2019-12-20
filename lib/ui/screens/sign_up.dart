@@ -170,7 +170,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final signInLabel = FlatButton(
       child: Text(
         tr('alreadyAccount'),
-        style: TextStyle(color: Colors.black54),
+        style: TextStyle(color: Theme.of(context).hintColor),
       ),
       onPressed: () {
         Navigator.pushNamed(context, '/signin');
