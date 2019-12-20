@@ -29,125 +29,140 @@ class _IntroState extends State<Intro> with TickerProviderStateMixin {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-            colors: [Color(0xFF485563), Color(0xFF29323C)],
-            tileMode: TileMode.clamp,
-            begin: Alignment.topCenter,
-            stops: [0.0, 1.0],
-            end: Alignment.bottomCenter),
+          colors: [Color(0xFF485563), Color(0xFF29323C)],
+          tileMode: TileMode.clamp,
+          begin: Alignment.topCenter,
+          stops: [0.0, 1.0],
+          end: Alignment.bottomCenter,
+        ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            AnimatedPages(
-              itemCount: pageList.length,
-              onPageChanged: (index) {
-                setState(() {
-                  currentPage = index;
-                  if (currentPage == pageList.length - 1) {
-                    lastPage = true;
-                    animationController.forward();
-                  } else {
-                    lastPage = false;
-                    animationController.reset();
-                  }
-                });
-              },
-              itemBuilder: (context, index, pageController) {
-                return AnimatedBuilder(
-                  animation: pageController,
-                  builder: (context, child) {
-                    var page = pageList[index];
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Image.asset(
-                            page.imageUrl,
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 12.0),
-                          height: 90.0,
-                          child: Stack(
-                            children: <Widget>[
-                              Opacity(
-                                opacity: .10,
-                                child: GradientText(
-                                  AppLocalizations.of(context).tr(page.title),
-                                  gradient: LinearGradient(
-                                      colors: page.titleGradient),
-                                  style: TextStyle(
-                                      fontSize: 80.0, letterSpacing: 1.0),
-                                ),
+        body: Center(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              AnimatedPages(
+                itemCount: pageList.length,
+                onPageChanged: (index) {
+                  setState(() {
+                    currentPage = index;
+                    if (currentPage == pageList.length - 1) {
+                      lastPage = true;
+                      animationController.forward();
+                    } else {
+                      lastPage = false;
+                      animationController.reset();
+                    }
+                  });
+                },
+                itemBuilder: (context, index, pageController) {
+                  return AnimatedBuilder(
+                    animation: pageController,
+                    builder: (context, child) {
+                      var page = pageList[index];
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.all(12),
+                              child: Image.asset(
+                                page.imageUrl,
+                                fit: BoxFit.fill,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.6,
                               ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 30.0, left: 22.0),
-                                child: GradientText(
-                                  AppLocalizations.of(context).tr(page.title),
-                                  gradient: LinearGradient(
-                                      colors: page.titleGradient),
-                                  style: TextStyle(
-                                    fontSize: 50.0,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 34.0, top: 8.0),
-                          child: Text(
-                            AppLocalizations.of(context).tr(page.body),
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              color: Color(0xFF9B9B9B),
                             ),
-                          ),
-                        )
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-            Positioned(
-              left: 30.0,
-              bottom: 35.0,
-              child: Container(
-                width: 160.0,
-                child: PageIndicator(
-                  currentPage,
-                  pageList.length,
+                            Container(
+                              margin: EdgeInsets.only(left: 12.0),
+                              height: 90.0,
+                              child: Stack(
+                                children: <Widget>[
+                                  Opacity(
+                                    opacity: .10,
+                                    child: GradientText(
+                                      AppLocalizations.of(context)
+                                          .tr(page.title),
+                                      gradient: LinearGradient(
+                                        colors: page.titleGradient,
+                                      ),
+                                      style: TextStyle(
+                                        fontSize: 80.0,
+                                        letterSpacing: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.only(top: 30.0, left: 22.0),
+                                    child: GradientText(
+                                      AppLocalizations.of(context)
+                                          .tr(page.title),
+                                      gradient: LinearGradient(
+                                        colors: page.titleGradient,
+                                      ),
+                                      style: TextStyle(
+                                        fontSize: 50.0,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 34.0, top: 8.0),
+                              child: Text(
+                                AppLocalizations.of(context).tr(page.body),
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  color: Color(0xFF9B9B9B),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+              Positioned(
+                left: 30.0,
+                bottom: 35.0,
+                child: Container(
+                  width: 160.0,
+                  child: PageIndicator(
+                    currentPage,
+                    pageList.length,
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              right: 30.0,
-              bottom: 30.0,
-              child: ScaleTransition(
-                scale: _scaleAnimation,
-                child: lastPage
-                    ? FloatingActionButton(
-                        backgroundColor: Colors.white,
-                        child: Icon(
-                          Icons.arrow_forward,
-                          color: Colors.black,
-                        ),
-                        onPressed: () {
-                          AppModel.of(context, rebuildOnChange: true)
-                              .finishIntro();
-                        },
-                      )
-                    : Container(),
+              Positioned(
+                right: 30.0,
+                bottom: 30.0,
+                child: ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: lastPage
+                      ? FloatingActionButton(
+                          backgroundColor: Colors.white,
+                          child: Icon(
+                            Icons.arrow_forward,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {
+                            AppModel.of(context, rebuildOnChange: true)
+                                .finishIntro();
+                          },
+                        )
+                      : Container(),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
