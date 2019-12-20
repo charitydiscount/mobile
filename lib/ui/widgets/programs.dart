@@ -3,7 +3,6 @@ import 'package:async/async.dart';
 import 'package:charity_discount/models/favorite_shops.dart';
 import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/models/program.dart';
-import 'package:charity_discount/models/settings.dart';
 import 'package:charity_discount/models/suggestion.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/search.dart';
@@ -53,7 +52,6 @@ class _ProgramsListState extends State<ProgramsList>
           _buildSortButton(context),
           _buildFavoritesButton(context),
           _buildSearchButton(context),
-          _buildLayoutButton(context),
         ],
       ),
       color: Theme.of(context).accentColor,
@@ -130,24 +128,6 @@ class _ProgramsListState extends State<ProgramsList>
       onPressed: () {
         setState(() {
           _onlyFavorites = !_onlyFavorites;
-        });
-        _scrollToTop(context);
-      },
-    );
-  }
-
-  Widget _buildLayoutButton(BuildContext context) {
-    return IconButton(
-      icon: _displayAsGrid
-          ? const Icon(Icons.view_headline)
-          : const Icon(Icons.view_module),
-      color: Colors.white,
-      onPressed: () {
-        setState(() {
-          var newSettings = _appState.settings;
-          newSettings.displayMode =
-              _displayAsGrid ? DisplayMode.LIST : DisplayMode.GRID;
-          _appState.setSettings(newSettings, storeLocal: true);
         });
         _scrollToTop(context);
       },
@@ -259,8 +239,6 @@ class _ProgramsListState extends State<ProgramsList>
 
   @override
   bool get wantKeepAlive => true;
-
-  bool get _displayAsGrid => _appState.settings.displayMode == DisplayMode.GRID;
 }
 
 enum _SortStrategy {
@@ -376,47 +354,24 @@ class _ShopsWidgetState extends State<ShopsWidget>
       programs.sort(_getSortingFunction);
     }
 
-    bool displayAsGrid = appState.settings.displayMode == DisplayMode.GRID;
-
-    int itemCount =
-        displayAsGrid ? (programs.length / 2).ceil() : programs.length;
-
-    return ListView.builder(
-      key: Key('ProgramsListView${widget.key.toString()}'),
+    return GridView.builder(
+      key: Key('ProgramsGridView${widget.key.toString()}'),
       addAutomaticKeepAlives: true,
       shrinkWrap: true,
       primary: true,
-      itemCount: itemCount,
+      gridDelegate: getGridDelegate(context, aspectRatioFactor: 1.1),
+      itemCount: programs.length,
       itemBuilder: (context, index) {
-        int rangeStart = displayAsGrid ? index * 2 : index;
-        List<Program> programsToDisplay = programs
-            .skip(rangeStart)
-            .take(displayAsGrid ? 2 : 1)
-            .map((p) => _prepareProgram(appState, p, overallRatings))
-            .toList();
-
-        return IntrinsicHeight(
-          child: Row(
-            children: programsToDisplay
-                .map(
-                  (p) => Expanded(
-                    child: displayAsGrid
-                        ? ShopHalfTile(
-                            key: Key(p.uniqueCode),
-                            program: p,
-                            userId: appState.user.userId,
-                            shopsService: widget.shopsService,
-                          )
-                        : ShopFullTile(
-                            key: Key(p.uniqueCode),
-                            program: p,
-                            userId: appState.user.userId,
-                            shopsService: widget.shopsService,
-                          ),
-                  ),
-                )
-                .toList(),
-          ),
+        Program programForDisplay = _prepareProgram(
+          appState,
+          programs.elementAt(index),
+          overallRatings,
+        );
+        return ShopHalfTile(
+          key: Key(programForDisplay.uniqueCode),
+          program: programForDisplay,
+          userId: appState.user.userId,
+          shopsService: widget.shopsService,
         );
       },
     );

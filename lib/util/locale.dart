@@ -1,5 +1,5 @@
+import 'package:devicelocale/devicelocale.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
 
 class SupportedLanguage {
   final String name;
@@ -17,8 +17,11 @@ List<SupportedLanguage> supportedLanguages = [
   SupportedLanguage('English', 'en', 'US', 'assets/icons/us.svg'),
 ];
 
-SupportedLanguage getDefaultLanguage() {
+Future<SupportedLanguage> getDefaultLanguage() async {
+  String deviceLocale = await Devicelocale.currentLocale;
+  List<String> localeTokens = deviceLocale.split(RegExp(r'[_\-]+'));
   return supportedLanguages.firstWhere(
-      (l) => l.code == ui.window.locale?.languageCode,
-      orElse: () => supportedLanguages.first);
+    (l) => l.code == localeTokens[0],
+    orElse: () => supportedLanguages.first,
+  );
 }

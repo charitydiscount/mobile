@@ -1,5 +1,6 @@
 import 'package:charity_discount/util/locale.dart';
 import 'package:charity_discount/util/message_handler.dart';
+import 'package:charity_discount/util/ui.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,33 @@ class Main extends StatelessWidget {
   Widget build(BuildContext context) {
     var data = EasyLocalizationProvider.of(context).data;
 
+    if (data.savedLocale != null) {
+      return _buildMain(
+        context: context,
+        locale: data.savedLocale,
+      );
+    } else {
+      return FutureBuilder(
+        future: getDefaultLanguage(),
+        builder: (context, snapshot) {
+          var loading = buildConnectionLoading(
+            context: context,
+            snapshot: snapshot,
+          );
+          if (loading != null) {
+            return loading;
+          }
+
+          return _buildMain(
+            context: context,
+            locale: snapshot.data.locale,
+          );
+        },
+      );
+    }
+  }
+
+  Widget _buildMain({BuildContext context, Locale locale}) {
     Widget defaultWidget = ScopedModelDescendant<AppModel>(
       builder: (context, child, appModel) {
         if (appModel.introCompleted == false) {
@@ -44,10 +72,8 @@ class Main extends StatelessWidget {
       },
     );
 
-    var defaultLocale = data.savedLocale ?? getDefaultLanguage().locale;
-
     return EasyLocalizationProvider(
-      data: data,
+      data: EasyLocalizationProvider.of(context).data,
       child: MaterialApp(
         title: 'CharityDiscount',
         theme: buildTheme(),
@@ -57,12 +83,12 @@ class Main extends StatelessWidget {
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           EasylocaLizationDelegate(
-            locale: defaultLocale,
+            locale: locale,
             path: 'assets/i18n',
           ),
         ],
         supportedLocales: supportedLanguages.map((l) => l.locale).toList(),
-        locale: defaultLocale,
+        locale: locale,
         routes: {
           '/': (context) => SafeArea(child: defaultWidget),
           '/signin': (context) => SafeArea(child: SignInScreen()),

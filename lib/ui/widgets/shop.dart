@@ -181,6 +181,7 @@ class ShopHalfTile extends StatelessWidget {
 
     return SizedBox(
       width: MediaQuery.of(context).size.width / 2,
+      height: double.infinity,
       child: Card(
         child: InkWell(
           onTap: () {
@@ -206,11 +207,13 @@ class ShopHalfTile extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: logo,
                 ),
-                Center(
-                  child: Text(
-                    program.name,
-                    style: TextStyle(
-                      fontSize: 16.0,
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      program.name,
+                      style: TextStyle(
+                        fontSize: 16.0,
+                      ),
                     ),
                   ),
                 ),

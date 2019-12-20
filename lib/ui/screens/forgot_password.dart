@@ -78,7 +78,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final signInLabel = FlatButton(
       child: Text(
         'Sign In',
-        style: TextStyle(color: Colors.black54),
+        style: TextStyle(color: Theme.of(context).hintColor),
       ),
       onPressed: () {
         Navigator.pushNamed(context, '/signin');
@@ -94,17 +94,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Center(
               child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    logo,
-                    SizedBox(height: 48.0),
-                    email,
-                    SizedBox(height: 12.0),
-                    forgotPasswordButton,
-                    signInLabel
-                  ],
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.95,
+                    maxWidth: 600,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      logo,
+                      SizedBox(height: 48.0),
+                      email,
+                      SizedBox(height: 12.0),
+                      forgotPasswordButton,
+                      signInLabel
+                    ],
+                  ),
                 ),
               ),
             ),

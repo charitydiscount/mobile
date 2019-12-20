@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:charity_discount/util/url.dart';
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
@@ -46,8 +47,88 @@ class _SignInScreenState extends State<SignInScreen> {
 
     final logo = Hero(
       tag: 'hero',
-      child: Image.asset('assets/icons/icon.png', scale: 3, height: 120),
+      child: Image.asset('assets/icons/icon.png', scale: 4, height: 50),
     );
+
+    final termsButton = FlatButton(
+      child: Row(
+        children: <Widget>[
+          Text(
+            tr('terms'),
+            style: TextStyle(fontSize: 12),
+          ),
+          Icon(Icons.launch)
+        ],
+      ),
+      onPressed: () => launchURL('https://charitydiscount.ro/tos'),
+    );
+
+    final privacyButton = FlatButton(
+      child: Row(
+        children: <Widget>[
+          Text(
+            tr('privacy'),
+            style: TextStyle(fontSize: 12),
+          ),
+          Icon(Icons.launch)
+        ],
+      ),
+      onPressed: () => launchURL('https://charitydiscount.ro/privacy'),
+    );
+
+    return Scaffold(
+      body: LoadingScreen(
+        child: SingleChildScrollView(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.95,
+                maxWidth: 600,
+              ),
+              child: Form(
+                key: _formKey,
+                autovalidate: _autoValidate,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Expanded(child: logo),
+                    Expanded(
+                      flex: 2,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                          child: _buildLoginForm(),
+                        ),
+                      ),
+                    ),
+                    Expanded(child: _buildSocialFragmet()),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        termsButton,
+                        privacyButton,
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        inAsyncCall: _loadingVisible,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Widget _buildLoginForm() {
+    final tr = AppLocalizations.of(context).tr;
 
     final email = TextFormField(
       keyboardType: TextInputType.emailAddress,
@@ -93,17 +174,20 @@ class _SignInScreenState extends State<SignInScreen> {
 
     final loginButton = Padding(
       padding: EdgeInsets.symmetric(vertical: 12.0),
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        onPressed: () async => _emailLogin(
-            email: _email.text, password: _password.text, context: context),
-        padding: EdgeInsets.all(12),
-        color: Theme.of(context).primaryColor,
-        child: Text(
-          tr('signIn').toUpperCase(),
-          style: TextStyle(color: Colors.white),
+      child: Container(
+        width: double.infinity,
+        child: RaisedButton(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          onPressed: () async => _emailLogin(
+              email: _email.text, password: _password.text, context: context),
+          padding: EdgeInsets.all(12),
+          color: Theme.of(context).primaryColor,
+          child: Text(
+            tr('signIn').toUpperCase(),
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ),
     );
@@ -112,14 +196,14 @@ class _SignInScreenState extends State<SignInScreen> {
       padding: EdgeInsets.only(left: 200),
       child: Text(
         tr('forgotPassword'),
-        style: TextStyle(color: Colors.black54),
+        style: TextStyle(color: Theme.of(context).hintColor),
       ),
       onPressed: () {
         Navigator.pushNamed(context, '/forgot-password');
       },
     );
 
-    final signUpLabel = FlatButton(
+    final signUpButton = FlatButton(
       child: Text(
         tr('createAccount'),
         style: TextStyle(color: Colors.blue, fontSize: 16),
@@ -128,6 +212,133 @@ class _SignInScreenState extends State<SignInScreen> {
         Navigator.pushNamed(context, '/signup');
       },
     );
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        email,
+        password,
+        loginButton,
+        forgotLabel,
+        signUpButton,
+      ],
+    );
+  }
+
+  void _toggleLoadingVisible() {
+    if (mounted) {
+      setState(() {
+        _loadingVisible = !_loadingVisible;
+      });
+    }
+  }
+
+  void _emailLogin({
+    String email,
+    String password,
+    BuildContext context,
+  }) async {
+    if (_formKey.currentState.validate()) {
+      try {
+        SystemChannels.textInput.invokeMethod('TextInput.hide');
+        _toggleLoadingVisible();
+        AppModel.of(context).createListeners();
+        await userController.signIn(
+          Strategy.EmailAndPass,
+          credentials: {'email': email, 'password': password},
+        );
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _toggleLoadingVisible();
+          Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+        });
+      } catch (e) {
+        if (!(e is Error)) {
+          String exception = getExceptionText(e);
+          _toggleLoadingVisible();
+          Flushbar(
+            title: 'Sign In Error',
+            message: exception,
+            duration: Duration(seconds: 5),
+          )..show(context);
+        }
+      }
+    } else {
+      setState(() => _autoValidate = true);
+    }
+  }
+
+  void _googleLogin(BuildContext context) async {
+    _toggleLoadingVisible();
+    try {
+      AppModel.of(context).createListeners();
+      await userController.signIn(Strategy.Google);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _toggleLoadingVisible();
+        Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+      });
+    } catch (e) {
+      _toggleLoadingVisible();
+      if (!(e is Error)) {
+        String exception = getExceptionText(e);
+        Flushbar(
+          title: 'Sign In Error',
+          message: exception,
+          duration: Duration(seconds: 5),
+        )..show(context);
+      }
+    }
+  }
+
+  void _facebookLogin(BuildContext context) async {
+    _toggleLoadingVisible();
+    final facebookLogin = FacebookLogin();
+    final result = await facebookLogin.logIn(['email']);
+
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        try {
+          AppModel.of(context).createListeners();
+          await userController.signIn(
+            Strategy.Facebook,
+            facebookResult: result,
+          );
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _toggleLoadingVisible();
+            Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+          });
+        } catch (e) {
+          _toggleLoadingVisible();
+          if (!(e is Error)) {
+            String exception = getExceptionText(e);
+            Flushbar(
+              title: 'Sign In Error',
+              message: exception,
+              duration: Duration(seconds: 5),
+            )..show(context);
+          }
+        }
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        _toggleLoadingVisible();
+        break;
+      case FacebookLoginStatus.error:
+        _toggleLoadingVisible();
+        Flushbar(
+          title: 'Sign In Error',
+          message: result.errorMessage,
+          duration: Duration(seconds: 5),
+        )..show(context);
+        break;
+    }
+  }
+
+  Widget _buildSocialFragmet() {
+    if (Platform.isIOS) {
+      return Container(
+        width: 0,
+        height: 0,
+      );
+    }
 
     final socialDivider = Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -159,185 +370,14 @@ class _SignInScreenState extends State<SignInScreen> {
       ],
     );
 
-    final termsButton = FlatButton(
-      child: Row(
-        children: <Widget>[
-          Text(
-            tr('terms'),
-            style: TextStyle(fontSize: 12),
-          ),
-          Icon(Icons.launch)
-        ],
-      ),
-      onPressed: () => launchURL('https://charitydiscount.ro/tos'),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        socialDivider,
+        socialMethods,
+      ],
     );
-
-    final privacyButton = FlatButton(
-      child: Row(
-        children: <Widget>[
-          Text(
-            tr('privacy'),
-            style: TextStyle(fontSize: 12),
-          ),
-          Icon(Icons.launch)
-        ],
-      ),
-      onPressed: () => launchURL('https://charitydiscount.ro/privacy'),
-    );
-
-    return Scaffold(
-      body: LoadingScreen(
-        child: Form(
-          key: _formKey,
-          autovalidate: _autoValidate,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    logo,
-                    SizedBox(height: 12.0),
-                    email,
-                    SizedBox(height: 12.0),
-                    password,
-                    SizedBox(height: 12.0),
-                    loginButton,
-                    forgotLabel,
-                    SizedBox(height: 12.0),
-                    socialDivider,
-                    SizedBox(height: 12.0),
-                    socialMethods,
-                    SizedBox(height: 12.0),
-                    signUpLabel,
-                    SizedBox(height: 12.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        termsButton,
-                        privacyButton,
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        inAsyncCall: _loadingVisible,
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  void _toggleLoadingVisible() {
-    if (mounted) {
-      setState(() {
-        _loadingVisible = !_loadingVisible;
-      });
-    }
-  }
-
-  void _emailLogin({
-    String email,
-    String password,
-    BuildContext context,
-  }) async {
-    if (_formKey.currentState.validate()) {
-      try {
-        SystemChannels.textInput.invokeMethod('TextInput.hide');
-        _toggleLoadingVisible();
-        AppModel.of(context).createListeners();
-        await userController.signIn(
-          Strategy.EmailAndPass,
-          credentials: {'email': email, 'password': password},
-        );
-        _toggleLoadingVisible();
-        await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
-      } catch (e) {
-        if (!(e is Error)) {
-          String exception = getExceptionText(e);
-          _toggleLoadingVisible();
-          Flushbar(
-            title: 'Sign In Error',
-            message: exception,
-            duration: Duration(seconds: 5),
-          )..show(context);
-        }
-      }
-    } else {
-      setState(() => _autoValidate = true);
-    }
-  }
-
-  void _googleLogin(BuildContext context) async {
-    _toggleLoadingVisible();
-    try {
-      AppModel.of(context).createListeners();
-      await userController.signIn(Strategy.Google);
-      _toggleLoadingVisible();
-      await Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
-    } catch (e) {
-      _toggleLoadingVisible();
-      if (!(e is Error)) {
-        String exception = getExceptionText(e);
-        Flushbar(
-          title: 'Sign In Error',
-          message: exception,
-          duration: Duration(seconds: 5),
-        )..show(context);
-      }
-    }
-  }
-
-  void _facebookLogin(BuildContext context) async {
-    _toggleLoadingVisible();
-    final facebookLogin = FacebookLogin();
-    final result = await facebookLogin.logIn(['email']);
-
-    switch (result.status) {
-      case FacebookLoginStatus.loggedIn:
-        try {
-          AppModel.of(context).createListeners();
-          await userController.signIn(
-            Strategy.Facebook,
-            facebookResult: result,
-          );
-          _toggleLoadingVisible();
-          WidgetsBinding.instance.addPostFrameCallback(
-            (_) =>
-                Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false),
-          );
-        } catch (e) {
-          _toggleLoadingVisible();
-          if (!(e is Error)) {
-            String exception = getExceptionText(e);
-            Flushbar(
-              title: 'Sign In Error',
-              message: exception,
-              duration: Duration(seconds: 5),
-            )..show(context);
-          }
-        }
-        break;
-      case FacebookLoginStatus.cancelledByUser:
-        _toggleLoadingVisible();
-        break;
-      case FacebookLoginStatus.error:
-        _toggleLoadingVisible();
-        Flushbar(
-          title: 'Sign In Error',
-          message: result.errorMessage,
-          duration: Duration(seconds: 5),
-        )..show(context);
-        break;
-    }
   }
 }

@@ -193,29 +193,36 @@ class OperationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SimpleDialog(
-      title: Row(
-        children: <Widget>[
-          Expanded(child: title),
-          Flexible(
-            flex: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                CloseButton(),
-              ],
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: MediaQuery.of(context).size.width > 700
+            ? (MediaQuery.of(context).size.width - 600) / 2.0
+            : 8.0,
+      ),
+      child: SimpleDialog(
+        title: Row(
+          children: <Widget>[
+            Expanded(child: title),
+            Flexible(
+              flex: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  CloseButton(),
+                ],
+              ),
             ),
+          ],
+        ),
+        titlePadding: const EdgeInsets.fromLTRB(16.0, 10.0, 8.0, 2.0),
+        contentPadding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 2.0),
+        children: <Widget>[
+          Container(
+            child: body,
+            width: MediaQuery.of(context).size.width,
           ),
         ],
       ),
-      titlePadding: const EdgeInsets.fromLTRB(16.0, 10.0, 8.0, 2.0),
-      contentPadding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 2.0),
-      children: <Widget>[
-        Container(
-          child: body,
-          width: MediaQuery.of(context).size.width,
-        ),
-      ],
     );
   }
 }
