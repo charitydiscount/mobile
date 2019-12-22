@@ -8,7 +8,7 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:charity_discount/util/validator.dart';
 import 'package:charity_discount/util/social_icons.dart';
-import 'package:charity_discount/ui/widgets/loading.dart';
+import 'package:charity_discount/ui/app/loading.dart';
 import 'package:charity_discount/controllers/user_controller.dart';
 import 'package:charity_discount/util/firebase_errors.dart';
 import 'package:charity_discount/state/state_model.dart';

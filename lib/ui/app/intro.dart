@@ -2,7 +2,7 @@ import 'package:charity_discount/util/animated_pages.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_text/gradient_text.dart';
-import 'package:charity_discount/ui/widgets/page_indicator.dart';
+import 'package:charity_discount/ui/app/page_indicator.dart';
 import 'package:charity_discount/state/state_model.dart';
 
 class Intro extends StatefulWidget {

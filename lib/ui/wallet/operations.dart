@@ -1,7 +1,7 @@
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/state/state_model.dart';
-import 'package:charity_discount/ui/widgets/loading.dart';
-import 'package:charity_discount/util/ui.dart';
+import 'package:charity_discount/ui/app/loading.dart';
+import 'package:charity_discount/ui/app/util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flushbar/flushbar.dart';

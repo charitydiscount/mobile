@@ -1,5 +1,5 @@
 import 'package:charity_discount/models/wallet.dart';
-import 'package:charity_discount/ui/widgets/history_points.dart';
+import 'package:charity_discount/ui/wallet/history_points.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 

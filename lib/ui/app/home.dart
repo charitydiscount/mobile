@@ -3,16 +3,16 @@ import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/products/products_screen.dart';
-import 'package:charity_discount/ui/screens/settings.dart';
-import 'package:charity_discount/ui/screens/wallet.dart';
-import 'package:charity_discount/ui/screens/profile.dart';
-import 'package:charity_discount/ui/widgets/programs.dart';
-import 'package:charity_discount/ui/widgets/user_avatar.dart';
+import 'package:charity_discount/ui/app/settings.dart';
+import 'package:charity_discount/ui/wallet/wallet.dart';
+import 'package:charity_discount/ui/user/profile.dart';
+import 'package:charity_discount/ui/programs/programs.dart';
+import 'package:charity_discount/ui/user/user_avatar.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:charity_discount/ui/widgets/loading.dart';
-import 'package:charity_discount/ui/widgets/charity.dart';
+import 'package:charity_discount/ui/app/loading.dart';
+import 'package:charity_discount/ui/charity/charity.dart';
 
 class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();

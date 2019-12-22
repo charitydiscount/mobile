@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:charity_discount/util/validator.dart';
 import 'package:charity_discount/controllers/user_controller.dart';
 import 'package:charity_discount/util/firebase_errors.dart';
-import 'package:charity_discount/ui/widgets/loading.dart';
+import 'package:charity_discount/ui/app/loading.dart';
 
 class SignUpScreen extends StatefulWidget {
   _SignUpScreenState createState() => _SignUpScreenState();

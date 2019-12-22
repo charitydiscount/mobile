@@ -1,8 +1,8 @@
-import 'package:charity_discount/util/ui.dart';
+import 'package:charity_discount/ui/app/util.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/charity.dart';
-import 'package:charity_discount/ui/widgets/loading.dart';
-import 'package:charity_discount/ui/widgets/case.dart';
+import 'package:charity_discount/ui/app/loading.dart';
+import 'package:charity_discount/ui/charity/case.dart';
 import 'package:charity_discount/services/charity.dart';
 
 class CharityWidget extends StatefulWidget {
