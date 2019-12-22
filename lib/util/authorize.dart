@@ -1,5 +1,5 @@
 import 'package:charity_discount/services/charity.dart';
-import 'package:charity_discount/ui/screens/pass_code.dart';
+import 'package:charity_discount/ui/wallet/pass_code.dart';
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 

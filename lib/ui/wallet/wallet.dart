@@ -1,12 +1,12 @@
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/state_model.dart';
-import 'package:charity_discount/ui/screens/cashout.dart';
-import 'package:charity_discount/ui/screens/commissions.dart';
-import 'package:charity_discount/ui/screens/transactions.dart';
-import 'package:charity_discount/ui/widgets/about_points.dart';
-import 'package:charity_discount/ui/widgets/charity.dart';
-import 'package:charity_discount/util/ui.dart';
+import 'package:charity_discount/ui/wallet/cashout.dart';
+import 'package:charity_discount/ui/wallet/commissions.dart';
+import 'package:charity_discount/ui/wallet/transactions.dart';
+import 'package:charity_discount/ui/wallet/about_points.dart';
+import 'package:charity_discount/ui/charity/charity.dart';
+import 'package:charity_discount/ui/app/util.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 

@@ -1,10 +1,26 @@
-import 'package:charity_discount/services/factory.dart';
-import 'package:charity_discount/ui/widgets/user_avatar.dart';
-import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:charity_discount/ui/widgets/loading.dart';
 import 'package:charity_discount/controllers/user_controller.dart';
+import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/ui/user/user_avatar.dart';
+import 'package:charity_discount/ui/app/loading.dart';
+import 'package:easy_localization/easy_localization_delegate.dart';
+import 'package:flutter/material.dart';
+
+class ProfileScreen extends StatelessWidget {
+  ProfileScreen({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          AppLocalizations.of(context).tr('profile'),
+        ),
+      ),
+      body: Profile(),
+    );
+  }
+}
 
 class Profile extends StatefulWidget {
   _ProfileState createState() => _ProfileState();
@@ -26,13 +42,10 @@ class _ProfileState extends State<Profile> {
       width: 120.0,
       height: 120.0,
     );
-    final logo = Hero(
-      tag: 'hero',
-      child: CircleAvatar(
-        backgroundColor: Colors.transparent,
-        radius: 60.0,
-        child: logoImage,
-      ),
+    final logo = CircleAvatar(
+      backgroundColor: Colors.transparent,
+      radius: 60.0,
+      child: logoImage,
     );
 
     final signOutButton = Padding(

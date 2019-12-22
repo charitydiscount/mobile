@@ -1,6 +1,6 @@
 import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/rating.dart';
-import 'package:charity_discount/ui/widgets/user_avatar.dart';
+import 'package:charity_discount/ui/user/user_avatar.dart';
 import 'package:charity_discount/util/tools.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';

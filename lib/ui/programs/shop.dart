@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/services/shops.dart';
-import 'package:charity_discount/ui/widgets/rating.dart';
-import 'package:charity_discount/util/ui.dart';
+import 'package:charity_discount/ui/programs/rating.dart';
+import 'package:charity_discount/ui/programs/shop_details.dart';
+import 'package:charity_discount/ui/app/util.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/program.dart' as models;
-import 'package:charity_discount/ui/screens/shop_details.dart';
 import 'package:charity_discount/util/url.dart';
 
 class ShopFullTile extends StatelessWidget {

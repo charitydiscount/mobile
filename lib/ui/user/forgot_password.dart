@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
 import 'package:charity_discount/util/validator.dart';
-import 'package:charity_discount/ui/widgets/loading.dart';
+import 'package:charity_discount/ui/app/loading.dart';
 import 'package:charity_discount/controllers/user_controller.dart';
 import 'package:charity_discount/util/firebase_errors.dart';
 

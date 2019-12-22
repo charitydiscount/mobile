@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/product.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/state/state_model.dart';
-import 'package:charity_discount/util/ui.dart';
+import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +32,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   int _totalProducts = 1;
   int _perPage = 50;
   List<Product> _products = [];
-  bool _searchInitiated = false;
+  bool _searchInProgress = false;
   SortStrategy _sortStrategy = SortStrategy.relevance;
   double _minPrice;
   double _maxPrice;
@@ -43,10 +43,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
     _state = AppModel.of(context);
     _productsScrollController = ScrollController();
     _productsScrollController.addListener(() {
-      if (_searchInitiated == false && _products.length < _totalProducts) {
+      if (_searchInProgress == false && _products.length < _totalProducts) {
         if (_productsScrollController.position.pixels >
             0.9 * _productsScrollController.position.maxScrollExtent) {
-          _searchInitiated = true;
+          setState(() {
+            _searchInProgress = true;
+          });
           _searchProducts(_products.length);
         }
       }
@@ -68,7 +70,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
               _totalProducts = searchResult.totalFound;
             }
             _products.addAll(_prepareProducts(searchResult.products));
-            _searchInitiated = false;
+            _searchInProgress = false;
           }),
         );
   }
@@ -80,15 +82,14 @@ class _ProductsScreenState extends State<ProductsScreen> {
       setState(() {
         _query = _editingController.text ?? '';
         _initializeResult();
-        _searchProducts(0);
+        _searchInProgress = true;
       });
+      _searchProducts(0);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget products = _query.isEmpty ? _featuredProducts : _productsList;
-
     Widget searchInput = Row(
       children: <Widget>[
         Expanded(
@@ -135,7 +136,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
           ),
         ];
       },
-      body: products,
+      body: _query.isEmpty ? _featuredProducts : _productsList,
     );
   }
 
@@ -278,14 +279,26 @@ class _ProductsScreenState extends State<ProductsScreen> {
       );
 
   Widget get _productsList {
+    if (_products.isEmpty && _searchInProgress) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation(
+              Theme.of(context).accentColor,
+            ),
+          ),
+        ),
+      );
+    }
     return GridView.builder(
       shrinkWrap: true,
       primary: false,
       controller: _productsScrollController,
       addAutomaticKeepAlives: true,
       gridDelegate: getGridDelegate(context),
-      itemCount: _products.length,
-      itemBuilder: (context, index) => _products.length - 1 >= index
+      itemCount: _products.length + (_searchInProgress ? 1 : 0),
+      itemBuilder: (context, index) => index < _products.length
           ? _getProductCard(index)
           : Padding(
               padding: const EdgeInsets.all(8.0),

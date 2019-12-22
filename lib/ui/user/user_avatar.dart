@@ -19,7 +19,7 @@ class UserAvatar extends StatelessWidget {
       child: photoUrl != null && photoUrl.isNotEmpty
           ? CachedNetworkImage(
               imageUrl: photoUrl,
-              fit: BoxFit.scaleDown,
+              fit: BoxFit.cover,
               width: width,
               height: height,
             )

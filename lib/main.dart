@@ -1,18 +1,18 @@
 import 'package:charity_discount/util/locale.dart';
 import 'package:charity_discount/util/message_handler.dart';
-import 'package:charity_discount/util/ui.dart';
+import 'package:charity_discount/ui/app/util.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:charity_discount/ui/theme.dart';
-import 'package:charity_discount/ui/screens/home.dart';
-import 'package:charity_discount/ui/screens/sign_in.dart';
-import 'package:charity_discount/ui/screens/sign_up.dart';
-import 'package:charity_discount/ui/screens/forgot_password.dart';
-import 'package:charity_discount/ui/screens/intro.dart';
+import 'package:charity_discount/ui/app/theme.dart';
+import 'package:charity_discount/ui/app/home.dart';
+import 'package:charity_discount/ui/user/sign_in.dart';
+import 'package:charity_discount/ui/user/sign_up.dart';
+import 'package:charity_discount/ui/user/forgot_password.dart';
+import 'package:charity_discount/ui/app/intro.dart';
 import 'package:charity_discount/state/state_model.dart';
 
 FirebaseAnalytics analytics = FirebaseAnalytics();

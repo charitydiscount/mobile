@@ -4,7 +4,7 @@ import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/tools.dart';
-import 'package:charity_discount/util/ui.dart';
+import 'package:charity_discount/ui/app/util.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

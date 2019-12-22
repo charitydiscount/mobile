@@ -1,6 +1,6 @@
 import 'package:charity_discount/models/charity.dart';
 import 'package:charity_discount/services/charity.dart';
-import 'package:charity_discount/ui/widgets/operations.dart';
+import 'package:charity_discount/ui/wallet/operations.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
