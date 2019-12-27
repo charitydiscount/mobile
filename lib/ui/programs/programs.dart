@@ -359,7 +359,7 @@ class _ShopsWidgetState extends State<ShopsWidget>
       addAutomaticKeepAlives: true,
       shrinkWrap: true,
       primary: true,
-      gridDelegate: getGridDelegate(context, aspectRatioFactor: 1.1),
+      gridDelegate: getGridDelegate(context),
       itemCount: programs.length,
       itemBuilder: (context, index) {
         Program programForDisplay = _prepareProgram(
@@ -410,9 +410,6 @@ class _ShopsWidgetState extends State<ShopsWidget>
 class ProgramsSearch extends SearchDelegate<String> {
   final AppModel appState;
   bool _exactMatch = false;
-  AsyncMemoizer _asyncMemoizer = AsyncMemoizer();
-  String _previousQuery;
-  bool _previousExact;
   final ShopsService shopsService;
   final SearchServiceBase searchService;
 
@@ -463,43 +460,15 @@ class ProgramsSearch extends SearchDelegate<String> {
       return Container();
     }
 
-    if (query != _previousQuery || _exactMatch != _previousExact) {
-      _asyncMemoizer = AsyncMemoizer();
-    }
+    List<Program> programs = appState.programs
+        .where((p) => _exactMatch ? p.name == query : p.name.startsWith(query))
+        .toList();
 
-    _previousQuery = query;
-    _previousExact = _exactMatch;
-
-    return FutureBuilder(
-      future: _asyncMemoizer.runOnce(
-        () => searchService.search(query, exact: _exactMatch),
-      ),
-      builder: (context, snapshot) {
-        final loading = buildConnectionLoading(
-          context: context,
-          snapshot: snapshot,
-          handleError: false,
-        );
-        if (loading != null) {
-          return loading;
-        }
-
-        List<Program> programs;
-        if (snapshot.hasError || _exactMatch) {
-          programs = appState.programs
-              .where((p) =>
-                  _exactMatch ? p.name == query : p.name.startsWith(query))
-              .toList();
-        } else {
-          programs = List.of(snapshot.data);
-        }
-        return ShopsWidget(
-          programs: programs,
-          appState: appState,
-          searchService: searchService,
-          shopsService: shopsService,
-        );
-      },
+    return ShopsWidget(
+      programs: programs,
+      appState: appState,
+      searchService: searchService,
+      shopsService: shopsService,
     );
   }
 
@@ -509,42 +478,17 @@ class ProgramsSearch extends SearchDelegate<String> {
       return Container();
     }
     _exactMatch = false;
-    return FutureBuilder(
-      initialData: [],
-      future: searchService.getSuggestions(query),
-      builder: (context, snapshot) {
-        final loading = buildConnectionLoading(
-          context: context,
-          snapshot: snapshot,
-          handleError: false,
-        );
-        if (loading != null) {
-          return loading;
-        }
 
-        List<Widget> suggestions;
-        if (snapshot.hasError) {
-          suggestions = appState.programs
-              .where((p) =>
-                  _exactMatch ? p.name == query : p.name.startsWith(query))
-              .map((p) => Suggestion(name: p.name, query: query))
-              .map((Suggestion hit) => _buildSuggestionWidget(hit, context))
-              .toList();
-        } else {
-          var map = snapshot.data.map(
-            (Suggestion hit) => _buildSuggestionWidget(hit, context),
-          );
-          suggestions = List<Widget>.from(
-            map,
-          );
-        }
+    List<Widget> suggestions = appState.programs
+        .where((p) => _exactMatch ? p.name == query : p.name.startsWith(query))
+        .map((p) => Suggestion(name: p.name, query: query))
+        .map((Suggestion hit) => _buildSuggestionWidget(hit, context))
+        .toList();
 
-        return ListView(
-          children: suggestions,
-          shrinkWrap: true,
-          primary: false,
-        );
-      },
+    return ListView(
+      children: suggestions,
+      shrinkWrap: true,
+      primary: false,
     );
   }
 
@@ -560,13 +504,13 @@ class ProgramsSearch extends SearchDelegate<String> {
           child: RichText(
             text: TextSpan(
               text: hit.query,
-              style: DefaultTextStyle.of(context).style,
+              style: Theme.of(context).textTheme.body1,
               children: [
                 TextSpan(
                   text: hit.name.split(hit.query)[1],
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: DefaultTextStyle.of(context).style.color,
+                    color: Theme.of(context).textTheme.body1.color,
                   ),
                 ),
               ],

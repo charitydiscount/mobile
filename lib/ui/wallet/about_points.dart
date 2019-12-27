@@ -45,14 +45,17 @@ class AboutPointsWidget extends StatelessWidget {
     );
     ListTile availablePoints = ListTile(
       leading: Container(
-        width: 80,
+        width: 85,
         alignment: Alignment.center,
         child: Column(
           children: <Widget>[
             Text(
               points.acceptedAmount.toStringAsFixed(2),
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 30, color: Colors.green),
+              style: TextStyle(
+                fontSize: 24,
+                color: Colors.green,
+              ),
             ),
             Text(
               currency,
@@ -78,7 +81,7 @@ class AboutPointsWidget extends StatelessWidget {
     } else {
       pendingPoints = ListTile(
         leading: Container(
-          width: 80,
+          width: 85,
           alignment: Alignment.center,
           child: Column(
             children: <Widget>[
@@ -86,7 +89,7 @@ class AboutPointsWidget extends StatelessWidget {
                 points.pendingAmount.toString(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 30,
+                  fontSize: 24,
                   color: Colors.yellowAccent.shade700,
                 ),
               ),
