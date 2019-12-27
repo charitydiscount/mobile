@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/ui/charity/case_details.dart';
 import 'package:charity_discount/ui/wallet/operations.dart';
@@ -41,16 +43,23 @@ class CaseWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       onPressed: () {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return DonateDialog(
-              charityCase: charityCase,
-              charityService: charityService,
-            );
-          },
-        ).then((txRef) => showTxResult(txRef, context));
+        if (Platform.isIOS) {
+          authService.currentUser.getIdToken(refresh: true).then((idToken) {
+            launchURL(
+                'https://charitydiscount.ro/wallet?token=${idToken.token}&case=${charityCase.id}');
+          });
+        } else {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return DonateDialog(
+                charityCase: charityCase,
+                charityService: charityService,
+              );
+            },
+          ).then((txRef) => showTxResult(txRef, context));
+        }
       },
       padding: EdgeInsets.all(12),
       color: Theme.of(context).primaryColor,
