@@ -15,14 +15,20 @@ import 'package:charity_discount/ui/app/loading.dart';
 import 'package:charity_discount/ui/charity/charity.dart';
 
 class HomeScreen extends StatefulWidget {
-  _HomeScreenState createState() => _HomeScreenState();
+  final int initialScreen;
+  _HomeScreenState createState() => _HomeScreenState(
+        selectedNavIndex: initialScreen,
+      );
+  HomeScreen({this.initialScreen = 0});
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _loadingVisible = false;
-  int _selectedNavIndex = 0;
+  int selectedNavIndex;
   List<Widget> _widgets = [];
   SearchService _searchService = SearchService();
+
+  _HomeScreenState({this.selectedNavIndex});
 
   @override
   void initState() {
@@ -96,11 +102,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ],
-        currentIndex: _selectedNavIndex,
+        currentIndex: selectedNavIndex,
         onTap: _onItemTapped,
       ),
       body: LoadingScreen(
-        child: _widgets.elementAt(_selectedNavIndex),
+        child: _widgets.elementAt(selectedNavIndex),
         inAsyncCall: _loadingVisible,
       ),
     );
@@ -108,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedNavIndex = index;
+      selectedNavIndex = index;
     });
   }
 
