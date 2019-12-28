@@ -43,7 +43,7 @@ class CaseWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       onPressed: () {
-        if (Platform.isAndroid) {
+        if (Platform.isIOS) {
           affiliateService.launchWebApp('wallet', 'case', charityCase.id);
         } else {
           showDialog(
