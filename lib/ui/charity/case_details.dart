@@ -1,10 +1,8 @@
 import 'dart:io';
-
 import 'package:charity_discount/models/charity.dart';
-import 'package:charity_discount/services/auth.dart';
+import 'package:charity_discount/services/affiliate.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/ui/wallet/operations.dart';
-import 'package:charity_discount/util/url.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -80,10 +78,7 @@ class CaseDetails extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (Platform.isIOS) {
-            authService.currentUser.getIdToken(refresh: true).then((idToken) {
-              launchURL(
-                  'https://charitydiscount.ro/wallet?token=${idToken.token}&case=${charity.id}');
-            });
+            affiliateService.launchWebApp('wallet', 'case', charity.id);
           } else {
             showDialog(
               context: context,

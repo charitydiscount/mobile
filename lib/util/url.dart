@@ -1,8 +1,8 @@
 import 'package:url_launcher/url_launcher.dart';
 
-Future<void> launchURL(String url) async {
+Future<void> launchURL(String url, {Map<String, String> headers}) async {
   if (await canLaunch(url)) {
-    await launch(url);
+    await launch(url, headers: headers);
   } else {
     throw 'Could not launch $url';
   }

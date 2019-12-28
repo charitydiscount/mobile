@@ -48,6 +48,19 @@ class AffiliateService {
     return promotions;
   }
 
+  Future<void> launchWebApp(
+      String route, String itemKey, String itemValue) async {
+    if (_baseUrl == null) {
+      await _setBaseUrl();
+    }
+
+    return authService.currentUser.getIdToken().then((idToken) {
+      return launchURL('$_baseUrl/auth/$route?$itemKey=$itemValue', headers: {
+        'Authorization': 'Bearer ${idToken.token}',
+      });
+    });
+  }
+
   Future<void> _setBaseUrl() async {
     _baseUrl = await remoteConfig.getAffiliateEndpoint();
   }

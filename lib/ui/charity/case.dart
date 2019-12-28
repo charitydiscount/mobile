@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:charity_discount/services/auth.dart';
+import 'package:charity_discount/services/affiliate.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/ui/charity/case_details.dart';
 import 'package:charity_discount/ui/wallet/operations.dart';
@@ -43,11 +43,8 @@ class CaseWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       onPressed: () {
-        if (Platform.isIOS) {
-          authService.currentUser.getIdToken(refresh: true).then((idToken) {
-            launchURL(
-                'https://charitydiscount.ro/wallet?token=${idToken.token}&case=${charityCase.id}');
-          });
+        if (Platform.isAndroid) {
+          affiliateService.launchWebApp('wallet', 'case', charityCase.id);
         } else {
           showDialog(
             context: context,
