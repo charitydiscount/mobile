@@ -45,9 +45,9 @@ class CommissionProgram {
   CommissionProgram({this.name, this.logo, this.status});
 
   factory CommissionProgram.fromJson(dynamic json) => CommissionProgram(
-        logo: json['logo'],
-        name: json['name'],
-        status: json['status'],
+        logo: json != null ? json['logo'] : null,
+        name: json != null ? json['name'] : null,
+        status: json != null ? json['status'] : null,
       );
 }
 

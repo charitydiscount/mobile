@@ -135,7 +135,7 @@ class CommissionDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logo = commission?.program?.logo ?? program.logoPath;
+    final logo = commission?.program?.logo ?? program?.logoPath;
     return Card(
       child: ListTile(
         isThreeLine: true,
