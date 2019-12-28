@@ -7,6 +7,7 @@ class Commission {
   final int shopId;
   final String status;
   final String reason;
+  final CommissionProgram program;
 
   Commission({
     this.amount,
@@ -15,6 +16,7 @@ class Commission {
     this.shopId,
     this.status,
     this.reason,
+    this.program,
   });
 
   factory Commission.fromJson(dynamic json) => Commission(
@@ -24,6 +26,7 @@ class Commission {
         shopId: json['shopId'],
         status: json['status'],
         reason: json['reason'] ?? null,
+        program: CommissionProgram.fromJson(json['program']),
       );
 }
 
@@ -32,6 +35,20 @@ enum CommissionStatus {
   accepted,
   paid,
   rejected,
+}
+
+class CommissionProgram {
+  final String name;
+  final String logo;
+  final String status;
+
+  CommissionProgram({this.name, this.logo, this.status});
+
+  factory CommissionProgram.fromJson(dynamic json) => CommissionProgram(
+        logo: json['logo'],
+        name: json['name'],
+        status: json['status'],
+      );
 }
 
 CommissionStatus parseCommissionStatus(String commissionStatus) =>
