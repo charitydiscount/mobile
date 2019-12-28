@@ -55,9 +55,11 @@ class AffiliateService {
     }
 
     return authService.currentUser.getIdToken().then((idToken) {
-      return launchURL('$_baseUrl/auth/$route?$itemKey=$itemValue', headers: {
-        'Authorization': 'Bearer ${idToken.token}',
-      });
+      return launchURL(
+          '$_baseUrl/auth/$route?itemKey=$itemKey&itemValue=$itemValue',
+          headers: {
+            'Authorization': 'Bearer ${idToken.token}',
+          });
     });
   }
 
