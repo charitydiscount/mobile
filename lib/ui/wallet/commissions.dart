@@ -135,6 +135,7 @@ class CommissionDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final logo = commission?.program?.logo ?? program?.logoPath;
     return Card(
       child: ListTile(
         isThreeLine: true,
@@ -162,9 +163,9 @@ class CommissionDetails extends StatelessWidget {
             ),
           ],
         ),
-        trailing: program?.logoPath != null
+        trailing: logo != null
             ? CachedNetworkImage(
-                imageUrl: program?.logoPath,
+                imageUrl: logo,
                 width: 100,
                 alignment: Alignment.center,
                 fit: BoxFit.fitHeight,
