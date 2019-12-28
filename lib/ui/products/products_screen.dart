@@ -271,7 +271,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
           return GridView.builder(
             shrinkWrap: true,
             primary: true,
-            gridDelegate: getGridDelegate(context),
+            gridDelegate: getGridDelegate(context, aspectRatioFactor: 0.95),
             itemCount: productsWidget.length,
             itemBuilder: (context, index) => productsWidget.elementAt(index),
           );
@@ -296,7 +296,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
       primary: false,
       controller: _productsScrollController,
       addAutomaticKeepAlives: true,
-      gridDelegate: getGridDelegate(context),
+      gridDelegate: getGridDelegate(context, aspectRatioFactor: 0.95),
       itemCount: _products.length + (_searchInProgress ? 1 : 0),
       itemBuilder: (context, index) => index < _products.length
           ? _getProductCard(index)
@@ -524,42 +524,46 @@ class ProductCard extends StatelessWidget {
                     maxLines: 3,
                   ),
                 ),
-                ButtonBar(
-                  children: <Widget>[
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            product.oldPrice != null &&
-                                    product.price != null &&
-                                    product.oldPrice > product.price
-                                ? Text(
-                                    '${product.oldPrice.toString()} Lei',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      decoration: TextDecoration.lineThrough,
-                                    ),
-                                  )
-                                : Container(),
-                            product.price != null
-                                ? Center(
-                                    child: Text(
-                                      '${product.price.toString()} Lei',
+                Expanded(
+                  child: ButtonBar(
+                    children: <Widget>[
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              product.oldPrice != null &&
+                                      product.price != null &&
+                                      product.oldPrice > product.price
+                                  ? Text(
+                                      '${product.oldPrice.toString()} Lei',
                                       style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
+                                        fontSize: 10,
+                                        decoration: TextDecoration.lineThrough,
                                       ),
-                                    ),
-                                  )
-                                : Container(),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
+                                    )
+                                  : Container(),
+                              product.price != null
+                                  ? Center(
+                                      child: Text(
+                                        '${product.price.toString()} Lei',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
