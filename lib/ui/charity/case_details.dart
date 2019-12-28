@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:charity_discount/models/charity.dart';
+import 'package:charity_discount/services/affiliate.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/ui/wallet/operations.dart';
 import 'package:flutter/material.dart';
@@ -75,16 +77,20 @@ class CaseDetails extends StatelessWidget {
       appBar: AppBar(title: Text(charity.title)),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext context) {
-              return DonateDialog(
-                charityCase: charity,
-                charityService: charityService,
-              );
-            },
-          ).then((txRef) => showTxResult(txRef, context));
+          if (Platform.isIOS) {
+            affiliateService.launchWebApp('wallet', 'case', charity.id);
+          } else {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext context) {
+                return DonateDialog(
+                  charityCase: charity,
+                  charityService: charityService,
+                );
+              },
+            ).then((txRef) => showTxResult(txRef, context));
+          }
         },
         child: const Icon(Icons.favorite),
       ),

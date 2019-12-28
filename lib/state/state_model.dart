@@ -35,6 +35,9 @@ class AppModel extends Model {
   double minimumWithdrawalAmount;
   BehaviorSubject<bool> loading;
 
+  final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey(debugLabel: 'Main Navigator');
+
   AppModel() {
     createListeners();
     initFromLocal();

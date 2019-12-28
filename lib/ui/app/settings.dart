@@ -1,7 +1,7 @@
 import 'package:charity_discount/services/meta.dart';
+import 'package:charity_discount/services/notifications.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/locale.dart';
-import 'package:charity_discount/util/message_handler.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';
 import 'package:easy_localization/easy_localization_provider.dart';
 import 'package:flutter/material.dart';
@@ -44,11 +44,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
           setState(() {
             _state.setSettings(newSettings, storeLocal: true);
           });
-          fcm.getToken().then((token) => metaService.setNotifications(
-                _state.user.userId,
-                token,
-                newValue,
-              ));
+          fcm.getToken().then(
+                (token) => metaService.setNotifications(
+                  _state.user.userId,
+                  token,
+                  newValue,
+                ),
+              );
         },
       ),
     );

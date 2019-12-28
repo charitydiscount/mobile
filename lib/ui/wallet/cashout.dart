@@ -172,7 +172,8 @@ class _CashoutScreenState extends State<CashoutScreen> {
 
               if (amount > _state.wallet.cashback.acceptedAmount ||
                   _state.wallet.cashback.acceptedAmount <
-                      _state.minimumWithdrawalAmount) {
+                      _state.minimumWithdrawalAmount ||
+                  amount < _state.minimumWithdrawalAmount) {
                 _validAmount = false;
                 return AppLocalizations.of(context)
                     .tr('account.insufficientCashback');
@@ -448,6 +449,10 @@ class _CashoutScreenState extends State<CashoutScreen> {
             if (index == 1 && _amountController.text.isEmpty) {
               _amountController.text =
                   _state.wallet.cashback.acceptedAmount.toStringAsFixed(2);
+              if (_state.wallet.cashback.acceptedAmount >=
+                  _state.minimumWithdrawalAmount) {
+                _validAmount = true;
+              }
             }
           });
         },
