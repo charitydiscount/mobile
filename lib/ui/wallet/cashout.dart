@@ -144,6 +144,14 @@ class _CashoutScreenState extends State<CashoutScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _accountAliasController.dispose();
+    _accountNameController.dispose();
+    _amountController.dispose();
+  }
+
   Widget _buildAmountWidget() {
     return Container(
       key: ValueKey<int>(1),
@@ -160,13 +168,23 @@ class _CashoutScreenState extends State<CashoutScreen> {
                 fontSize: Theme.of(context).textTheme.display1.fontSize),
             validator: (String value) {
               if (value.isEmpty) {
-                _validAmount = false;
+                if (_validAmount != false) {
+                  WidgetsBinding.instance
+                      .addPostFrameCallback((_) => setState(() {
+                            _validAmount = false;
+                          }));
+                }
                 return null;
               }
 
               double amount = double.tryParse(value);
               if (amount == null) {
-                _validAmount = false;
+                if (_validAmount != false) {
+                  WidgetsBinding.instance
+                      .addPostFrameCallback((_) => setState(() {
+                            _validAmount = false;
+                          }));
+                }
                 return 'Doar numere';
               }
 
@@ -174,13 +192,23 @@ class _CashoutScreenState extends State<CashoutScreen> {
                   _state.wallet.cashback.acceptedAmount <
                       _state.minimumWithdrawalAmount ||
                   amount < _state.minimumWithdrawalAmount) {
-                _validAmount = false;
+                if (_validAmount != false) {
+                  WidgetsBinding.instance
+                      .addPostFrameCallback((_) => setState(() {
+                            _validAmount = false;
+                          }));
+                }
                 return AppLocalizations.of(context)
                     .tr('account.insufficientCashback');
               }
 
               _amount = amount;
-              _validAmount = true;
+              if (_validAmount != true) {
+                WidgetsBinding.instance
+                    .addPostFrameCallback((_) => setState(() {
+                          _validAmount = true;
+                        }));
+              }
               return null;
             },
             decoration: InputDecoration(
