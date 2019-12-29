@@ -48,7 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _configureFcm(BuildContext context) {
     _showNotifications = AppModel.of(context).settings.notifications;
-    print('configuring fcm');
     if (_showNotifications) {
       fcm.configure(
         onMessage: (Map<String, dynamic> message) async {
