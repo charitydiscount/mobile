@@ -42,29 +42,24 @@ class _CharityState extends State<CharityWidget>
 
         final caseWidgets = snapshot.data.entries
             .map(
-              (entry) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: CaseWidget(
-                  key: Key(entry.key),
-                  charityCase: entry.value,
-                  charityService: widget.charityService,
-                ),
+              (entry) => CaseWidget(
+                key: Key(entry.key),
+                charityCase: entry.value,
+                charityService: widget.charityService,
               ),
             )
             .toList();
-        return SizedBox.expand(
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: ListView(
-                  key: Key('casesList'),
-                  children: caseWidgets,
-                  shrinkWrap: true,
-                  addAutomaticKeepAlives: true,
-                  primary: true,
-                ),
-              ),
-            ],
+        return GridView(
+          key: Key('casesList'),
+          children: caseWidgets,
+          shrinkWrap: true,
+          addAutomaticKeepAlives: true,
+          primary: true,
+          gridDelegate: getGridDelegate(
+            context,
+            rowDisplacement: -1,
+            aspectRatioFactor: 1.1,
+            maxPerRow: 2,
           ),
         );
       },

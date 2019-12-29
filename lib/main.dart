@@ -102,8 +102,8 @@ class _MainState extends State<Main> {
       data: EasyLocalizationProvider.of(context).data,
       child: MaterialApp(
         title: 'CharityDiscount',
-        theme: buildTheme(dark: _theme == ThemeOption.DARK),
-        darkTheme: buildTheme(dark: _theme != ThemeOption.LIGHT),
+        theme: buildTheme(dark: state.settings.theme == ThemeOption.DARK),
+        darkTheme: buildTheme(dark: state.settings.theme != ThemeOption.LIGHT),
         debugShowCheckedModeBanner: false,
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
