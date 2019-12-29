@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/services/local.dart';
+import 'package:charity_discount/services/meta.dart';
+import 'package:charity_discount/services/notifications.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
@@ -10,6 +13,7 @@ enum Strategy { EmailAndPass, Google, Facebook }
 
 class UserController {
   StreamSubscription authListener;
+  StreamSubscription _iosSubscription;
 
   Future<void> signIn(
     Strategy provider, {
@@ -30,12 +34,23 @@ class UserController {
       default:
         return;
     }
+    if (Platform.isIOS) {
+      _iosSubscription = fcm.onIosSettingsRegistered.listen((data) {
+        _registerFcmToken();
+      });
+      fcm.requestNotificationPermissions();
+    } else {
+      _registerFcmToken();
+    }
   }
 
   Future<void> signOut() async {
     if (authListener != null) {
       await authListener.cancel();
     }
+    var token = await fcm.getToken();
+    await metaService.removeFcmToken(authService.currentUser.uid, token);
+    _iosSubscription?.cancel();
     await getFirebaseShopsService(authService.currentUser.uid)
         .closeFavoritesSink();
     await authService.signOut();
@@ -48,6 +63,11 @@ class UserController {
 
   Future<FirebaseUser> signUp(email, password, firstName, lastName) async {
     return await authService.createUser(email, password, firstName, lastName);
+  }
+
+  void _registerFcmToken() async {
+    final token = await fcm.getToken();
+    metaService.addFcmToken(authService.currentUser.uid, token);
   }
 }
 

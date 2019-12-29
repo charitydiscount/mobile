@@ -1,12 +1,8 @@
-import 'dart:async';
-import 'dart:io';
-import 'package:charity_discount/services/meta.dart';
-import 'package:charity_discount/services/notifications.dart';
+import 'package:charity_discount/models/settings.dart';
 import 'package:charity_discount/util/locale.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -27,39 +23,20 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
-  StreamSubscription _iosSubscription;
+  ThemeOption _theme;
 
   @override
   void initState() {
     super.initState();
 
     final state = AppModel.of(context);
-    if (state.isNewDevice) {
-      if (Platform.isIOS) {
-        _iosSubscription = fcm.onIosSettingsRegistered.listen((data) {
-          _registerFcmToken();
+    state.addListener(() {
+      if (state.settings.theme != _theme) {
+        setState(() {
+          _theme = state.settings.theme;
         });
-        fcm.requestNotificationPermissions();
-      } else {
-        _registerFcmToken();
       }
-      state.setKnownDevice();
-    }
-
-    if (state.settings.notifications) {
-      fcm.configure(
-        onMessage: (Map<String, dynamic> message) async {
-          if (mounted) {
-            Flushbar(
-              title: message['notification']['title'],
-              message: message['notification']['body'],
-            )?.show(context);
-          }
-        },
-        onLaunch: _handleBackgroundNotification,
-        onResume: _handleBackgroundNotification,
-      );
-    }
+    });
   }
 
   @override
@@ -120,12 +97,13 @@ class _MainState extends State<Main> {
   }
 
   Widget _buildMain({BuildContext context, Locale locale}) {
+    var state = AppModel.of(context);
     return EasyLocalizationProvider(
       data: EasyLocalizationProvider.of(context).data,
       child: MaterialApp(
         title: 'CharityDiscount',
-        theme: buildTheme(),
-        darkTheme: buildTheme(dark: true),
+        theme: buildTheme(dark: state.settings.theme == ThemeOption.DARK),
+        darkTheme: buildTheme(dark: state.settings.theme != ThemeOption.LIGHT),
         debugShowCheckedModeBanner: false,
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
@@ -147,7 +125,7 @@ class _MainState extends State<Main> {
           '/wallet': (context) =>
               SafeArea(child: _buildDefaultWidget(initialScreen: 3)),
         },
-        navigatorKey: AppModel.of(context).navigatorKey,
+        navigatorKey: state.navigatorKey,
         onUnknownRoute: (settings) => MaterialPageRoute(
           builder: (context) => UndefinedView(
             name: settings.name,
@@ -156,31 +134,6 @@ class _MainState extends State<Main> {
         navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
       ),
     );
-  }
-
-  void _registerFcmToken() async {
-    final token = await fcm.getToken();
-    metaService.addFcmToken(AppModel.of(context).user.userId, token);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _iosSubscription?.cancel();
-  }
-
-  Future<dynamic> _handleBackgroundNotification(Map<String, dynamic> message) {
-    if (message['data']['type'] == 'COMMISSION') {
-      return AppModel.of(context)
-          .navigatorKey
-          .currentState
-          .pushReplacementNamed('/wallet');
-    } else {
-      return AppModel.of(context)
-          .navigatorKey
-          .currentState
-          .pushReplacementNamed('/');
-    }
   }
 }
 

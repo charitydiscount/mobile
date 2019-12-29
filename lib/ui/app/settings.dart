@@ -1,9 +1,11 @@
+import 'package:charity_discount/models/settings.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/notifications.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/locale.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';
 import 'package:easy_localization/easy_localization_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -54,8 +56,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
         },
       ),
     );
-
     settingTiles.add(notifications);
+
+    Widget theme = ExpansionTile(
+      leading: Icon(Icons.color_lens),
+      title: Text(AppLocalizations.of(context).tr('theme.name')),
+      children: ThemeOption.values
+          .map((themeOption) => _buildThemeRadioButton(themeOption))
+          .toList(),
+    );
+    settingTiles.add(theme);
 
     return Scaffold(
       appBar: AppBar(
@@ -105,4 +115,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
     );
   }
+
+  Widget _buildThemeRadioButton(ThemeOption value) => ListTile(
+        title: Text(
+          AppLocalizations.of(context)
+              .tr('theme.${describeEnum(value).toLowerCase()}'),
+        ),
+        leading: Radio(
+          value: value,
+          groupValue: _state.settings.theme,
+          onChanged: (ThemeOption newValue) {
+            var newSettings = _state.settings;
+            newSettings.theme = newValue;
+            setState(() {
+              _state.setSettings(newSettings, storeLocal: true);
+            });
+          },
+        ),
+      );
 }

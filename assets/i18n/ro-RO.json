@@ -178,5 +178,11 @@
     "title": "Filtre",
     "minGreaterThanMax": "Prețul minim nu poate fi mai mare decât cel maxim",
     "maxLesserThanMin": "Prețul maxim nu poate fi mai mic decât cel minim"
+  },
+  "theme": {
+    "name": "Temă",
+    "system": "Sistem",
+    "light": "Deschisă",
+    "dark": "Întunecată"
   }
 }

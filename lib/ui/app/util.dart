@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:charity_discount/models/program.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -106,8 +108,12 @@ String _buildCommissionForDisplay(
       : '$currentCommission + $toBeAddedCommission';
 }
 
-SliverGridDelegate getGridDelegate(BuildContext context,
-    {double aspectRatioFactor = 1.0}) {
+SliverGridDelegate getGridDelegate(
+  BuildContext context, {
+  double aspectRatioFactor = 1.0,
+  int rowDisplacement = 0,
+  int maxPerRow,
+}) {
   final width = MediaQuery.of(context).size.width;
   int perRow;
   double aspectRatio;
@@ -122,7 +128,9 @@ SliverGridDelegate getGridDelegate(BuildContext context,
     aspectRatio = 1.4;
   }
   return SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: perRow,
+    crossAxisCount: maxPerRow != null
+        ? min(maxPerRow, perRow + rowDisplacement)
+        : perRow + rowDisplacement,
     childAspectRatio: aspectRatio * aspectRatioFactor,
   );
 }

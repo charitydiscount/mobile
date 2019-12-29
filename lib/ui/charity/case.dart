@@ -25,7 +25,7 @@ class CaseWidget extends StatelessWidget {
       tag: 'case-${charityCase.id}',
       child: CachedNetworkImage(
         imageUrl: charityCase.images[0].url,
-        fit: BoxFit.fitWidth,
+        fit: BoxFit.cover,
       ),
     );
     final websiteButton = charityCase.site != null
@@ -84,7 +84,7 @@ class CaseWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            logo,
+            Expanded(child: logo),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Center(
@@ -97,6 +97,8 @@ class CaseWidget extends StatelessWidget {
               ),
             ),
             ButtonBar(
+              alignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 websiteButton,
                 donateButton,

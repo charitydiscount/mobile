@@ -1,5 +1,6 @@
 import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/services/factory.dart';
+import 'package:charity_discount/services/notifications.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/products/products_screen.dart';
@@ -9,6 +10,7 @@ import 'package:charity_discount/ui/user/profile.dart';
 import 'package:charity_discount/ui/programs/programs.dart';
 import 'package:charity_discount/ui/user/user_avatar.dart';
 import 'package:charity_discount/util/url.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:charity_discount/ui/app/loading.dart';
@@ -27,12 +29,60 @@ class _HomeScreenState extends State<HomeScreen> {
   int selectedNavIndex;
   List<Widget> _widgets = [];
   SearchService _searchService = SearchService();
+  bool _showNotifications = true;
 
   _HomeScreenState({this.selectedNavIndex});
 
   @override
   void initState() {
     super.initState();
+    _configureFcm(context);
+    var state = AppModel.of(context);
+    state.addListener(() {
+      if (_showNotifications != state.settings.notifications) {
+        _configureFcm(context);
+        _showNotifications = state.settings.notifications;
+      }
+    });
+  }
+
+  void _configureFcm(BuildContext context) {
+    _showNotifications = AppModel.of(context).settings.notifications;
+    if (_showNotifications) {
+      fcm.configure(
+        onMessage: (Map<String, dynamic> message) async {
+          if (mounted) {
+            Flushbar(
+              title: message['notification']['title'],
+              message: message['notification']['body'],
+            )?.show(context);
+          }
+        },
+        onLaunch: _handleBackgroundNotification,
+        onResume: _handleBackgroundNotification,
+      );
+    } else {
+      fcm.configure(
+        onMessage: (Map<String, dynamic> message) async {
+          if (mounted) {
+            Flushbar(
+              title: message['notification']['title'],
+              message: message['notification']['body'],
+            )?.show(context);
+          }
+        },
+      );
+    }
+  }
+
+  Future<dynamic> _handleBackgroundNotification(Map<String, dynamic> message) {
+    if (message['data']['type'] == 'COMMISSION') {
+      setState(() {
+        selectedNavIndex = 3;
+      });
+    }
+
+    return Future.value(true);
   }
 
   Widget build(BuildContext context) {
@@ -188,10 +238,6 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () => launchURL('https://charitydiscount.ro/privacy'),
             );
             menuTiles.add(privacy);
-
-            menuTiles.add(ListTile(
-              title: Image.asset('assets/icons/icon.png', height: 80),
-            ));
 
             return Container(
               alignment: Alignment.center,

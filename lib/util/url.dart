@@ -2,7 +2,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 Future<void> launchURL(String url, {Map<String, String> headers}) async {
   if (await canLaunch(url)) {
-    await launch(url, headers: headers);
+    await launch(url, headers: headers, forceSafariVC: false);
   } else {
     throw 'Could not launch $url';
   }

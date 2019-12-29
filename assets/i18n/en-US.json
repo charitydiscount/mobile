@@ -178,5 +178,11 @@
     "title": "Filters",
     "minGreaterThanMax": "The min price cannot be greater than the max",
     "maxLesserThanMin": "The max price cannot be lesser than the min"
+  },
+  "theme": {
+    "name": "Theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
   }
 }
