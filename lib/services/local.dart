@@ -75,21 +75,6 @@ class LocalService {
 
     return fromJsonStringList(jsonPrograms);
   }
-
-  Future<void> setKnownDevice() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('knownDevice', true);
-  }
-
-  Future<bool> isDeviceKnown() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    if (prefs.getBool('knownDevice') == null) {
-      return null;
-    }
-
-    return prefs.getBool('knownDevice');
-  }
 }
 
 final LocalService localService = LocalService();

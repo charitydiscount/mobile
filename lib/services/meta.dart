@@ -49,6 +49,15 @@ class MetaService {
     });
   }
 
+  Future<void> removeFcmToken(String userId, String token) {
+    return _db
+        .collection('users')
+        .document(userId)
+        .collection('tokens')
+        .document(token)
+        .delete();
+  }
+
   Future<void> setNotifications(
     String userId,
     String deviceToken,
