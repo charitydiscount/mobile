@@ -227,7 +227,8 @@ class OperationDialog extends StatelessWidget {
   }
 }
 
-Future<Widget> _waitForTx(DocumentReference txRef, BuildContext context) async {
+Future<TransactionResult> _waitForTx(
+    DocumentReference txRef, BuildContext context) async {
   DocumentSnapshot tx = await txRef.snapshots().skip(1).firstWhere((tx) {
     return tx.data.containsKey('status');
   });
@@ -280,20 +281,31 @@ Future<Widget> _waitForTx(DocumentReference txRef, BuildContext context) async {
     default:
   }
 
-  return Flushbar(
-    title: title,
-    message: message,
-    icon: Icon(
-      notificationIcon,
-      color: notifIconColor,
+  return TransactionResult(
+    status: status,
+    flushbar: Flushbar(
+      title: title,
+      message: message,
+      icon: Icon(
+        notificationIcon,
+        color: notifIconColor,
+      ),
+      reverseAnimationCurve: Curves.linear,
     ),
-    reverseAnimationCurve: Curves.linear,
   );
 }
 
-Future<void> showTxResult(DocumentReference txRef, BuildContext context) async {
+class TransactionResult {
+  final String status;
+  final Flushbar flushbar;
+
+  TransactionResult({this.status, this.flushbar});
+}
+
+Future<String> showTxResult(
+    DocumentReference txRef, BuildContext context) async {
   var actualContext = context;
-  var flushBar = await showDialog(
+  TransactionResult txResult = await showDialog(
     context: context,
     builder: (BuildContext context) {
       return FutureBuilder(
@@ -313,5 +325,6 @@ Future<void> showTxResult(DocumentReference txRef, BuildContext context) async {
       );
     },
   );
-  flushBar?.show(actualContext);
+  txResult.flushbar?.show(actualContext);
+  return txResult.status;
 }
