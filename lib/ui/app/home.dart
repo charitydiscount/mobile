@@ -186,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundColor: Colors.transparent,
               ),
               title: Text(
-                '${user.firstName} ${user.lastName}',
+                getUserName(user),
                 style: titleStyle,
               ),
               onTap: () {
@@ -261,5 +261,14 @@ class _HomeScreenState extends State<HomeScreen> {
         child: logoImage,
       ),
     );
+  }
+
+  String getUserName(User user) {
+    if (user.firstName != null && user.firstName.isNotEmpty ||
+        user.lastName != null && user.lastName.isNotEmpty) {
+      return '${user.firstName} ${user.lastName}';
+    }
+
+    return user.email;
   }
 }
