@@ -1,12 +1,11 @@
 import 'package:charity_discount/models/promotion.dart';
 import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/util/remote_config.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:charity_discount/util/url.dart';
 
 class AffiliateService {
+  final Firestore _db = Firestore.instance;
   String _baseUrl;
 
   Future<List<Promotion>> getPromotions({
@@ -15,37 +14,28 @@ class AffiliateService {
     String programUniqueCode,
     String userId,
   }) async {
-    if (_baseUrl == null) {
-      await _setBaseUrl();
-    }
-
-    final url = '$_baseUrl/programs/$programId/promotions';
-
-    IdTokenResult authToken = await authService.currentUser.getIdToken();
-    final response = await http.get(url, headers: {
-      'Authorization': 'Bearer ${authToken.token}',
-    });
-
-    if (response.statusCode != 200) {
-      throw Exception('Could not load shops (${response.statusCode})');
-    }
-
-    List responseBody = List<dynamic>.from(json.decode(response.body));
-    if (responseBody.isEmpty) {
+    final snap =
+        await _db.collection('promotions').document('$programId').get();
+    if (!snap.exists) {
       return [];
     }
-    List<Promotion> promotions = promotionsFromJsonArray(responseBody);
 
-    promotions.forEach((p) {
-      p.affilitateUrl = convertAffiliateUrl(
-        p.landingPageLink,
-        affiliateUniqueCode,
-        programUniqueCode,
-        userId,
-      );
-    });
-
-    return promotions;
+    return snap.data.entries
+        .map((snapEntry) {
+          final promotion =
+              Promotion.fromJson(Map<String, dynamic>.from(snapEntry.value));
+          promotion.affilitateUrl = convertAffiliateUrl(
+            promotion.landingPageLink,
+            affiliateUniqueCode,
+            programUniqueCode,
+            userId,
+          );
+          return promotion;
+        })
+        .where((promotion) =>
+            promotion.promotionStart.isBefore(DateTime.now()) &&
+            promotion.promotionEnd.isAfter(DateTime.now()))
+        .toList();
   }
 
   Future<void> launchWebApp(
