@@ -18,6 +18,11 @@ class RemoteConfigWrapper {
     return configValue.asString();
   }
 
+  Future<String> getPicturesBucket() async {
+    RemoteConfigValue configValue = await _getValue('pictures_bucket');
+    return configValue.asString();
+  }
+
   Future<String> getString(String key) async {
     RemoteConfigValue configValue = await _getValue(key);
     return configValue.asString();

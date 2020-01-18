@@ -153,8 +153,8 @@
   "terms": "Termeni & Condiții",
   "privacy": "Confidențialitate",
   "notifications": "Notificări",
-  "forgotPassword": "Parola uitată?",
-  "createAccount": "Creeaza cont",
+  "forgotPassword": "Parolă uitată?",
+  "createAccount": "Creează cont",
   "connectionError": "Aparent, conexiunea cu serviciile CharityDiscount nu poate fi stabilită",
   "sort": {
     "relevance": "Relevanță",
@@ -184,5 +184,7 @@
     "system": "Sistem",
     "light": "Deschisă",
     "dark": "Întunecată"
-  }
+  },
+  "gallery": "Galerie",
+  "camera": "Cameră"
 }

@@ -91,17 +91,21 @@ class FirebaseShopsService implements ShopsService {
 
   @override
   Future<List<models.Program>> getAllPrograms() async {
-    QuerySnapshot snapshot =
-        await _db.collection('shops').orderBy('order').getDocuments();
+    final snap = await _db.collection('programs').document('all').get();
+    if (!snap.exists) {
+      return [];
+    }
 
-    List<models.Program> programs = [];
-    snapshot.documents.forEach((doc) {
-      programs.addAll(
-        models.fromFirestoreBatch(doc),
-      );
-    });
-
-    return programs;
+    return snap.data.entries
+        .where((snapEntry) => snapEntry.key.compareTo('updatedAt') != 0)
+        .map((snapEntry) {
+          final program = models.Program.fromJson(
+            Map<String, dynamic>.from(snapEntry.value),
+          );
+          return program;
+        })
+        .where((program) => program.status == 'active')
+        .toList();
   }
 
   @override

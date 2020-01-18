@@ -35,6 +35,7 @@ class _ProgramsListState extends State<ProgramsList>
   Completer<Null> _loadingCompleter = Completer<Null>();
   AsyncMemoizer _asyncMemoizer = AsyncMemoizer();
   _SortStrategy _sortStrategy = _SortStrategy.relevance;
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -93,6 +94,7 @@ class _ProgramsListState extends State<ProgramsList>
                   searchService: widget.searchService,
                   shopsService: widget.shopsService,
                   sortStrategy: _sortStrategy,
+                  scrollController: _scrollController,
                 ),
               );
             },
@@ -229,9 +231,8 @@ class _ProgramsListState extends State<ProgramsList>
   }
 
   void _scrollToTop(BuildContext context) {
-    ScrollController controller = PrimaryScrollController.of(context);
-    controller.animateTo(
-      controller.position.minScrollExtent,
+    _scrollController.animateTo(
+      _scrollController.position.minScrollExtent,
       curve: Curves.easeOut,
       duration: const Duration(milliseconds: 300),
     );
@@ -257,6 +258,7 @@ class ShopsWidget extends StatefulWidget {
   final ShopsService shopsService;
   final SearchServiceBase searchService;
   final _SortStrategy sortStrategy;
+  final ScrollController scrollController;
 
   const ShopsWidget({
     Key key,
@@ -267,6 +269,7 @@ class ShopsWidget extends StatefulWidget {
     @required this.shopsService,
     @required this.searchService,
     this.sortStrategy = _SortStrategy.relevance,
+    this.scrollController,
   }) : super(key: key);
 
   @override
@@ -358,9 +361,9 @@ class _ShopsWidgetState extends State<ShopsWidget>
       key: Key('ProgramsGridView${widget.key.toString()}'),
       addAutomaticKeepAlives: true,
       shrinkWrap: true,
-      primary: true,
       gridDelegate: getGridDelegate(context),
       itemCount: programs.length,
+      controller: widget.scrollController,
       itemBuilder: (context, index) {
         Program programForDisplay = _prepareProgram(
           appState,

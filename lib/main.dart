@@ -84,7 +84,7 @@ class _MainState extends State<Main> {
                 snapshot: snapshot,
               );
               if (loading != null) {
-                return loading;
+                return Scaffold(body: loading);
               }
               return HomeScreen(initialScreen: initialScreen);
             },

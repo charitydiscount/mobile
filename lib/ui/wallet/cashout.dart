@@ -34,7 +34,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
   bool _saveIban = false;
   PageController _pageController;
   AppModel _state;
-  bool _done = false;
+  String _txResult = '';
 
   @override
   void initState() {
@@ -262,8 +262,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
                   ),
                   title: Text(_iban.toPrintFormat),
                   subtitle: Text('IBAN'),
-                  trailing:
-                      _done ? Icon(Icons.check, color: Colors.green) : null,
+                  trailing: getTrailingIcons(),
                 ),
                 ListTile(
                   leading: Padding(
@@ -273,8 +272,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
                   title: Text(_accountNameController.text),
                   subtitle:
                       Text(AppLocalizations.of(context).tr('account.name')),
-                  trailing:
-                      _done ? Icon(Icons.check, color: Colors.green) : null,
+                  trailing: getTrailingIcons(),
                 ),
                 ListTile(
                   leading: Padding(
@@ -284,8 +282,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
                   title: Text(_amount.toStringAsFixed(2)),
                   subtitle:
                       Text(AppLocalizations.of(context).tr('account.amount')),
-                  trailing:
-                      _done ? Icon(Icons.check, color: Colors.green) : null,
+                  trailing: getTrailingIcons(),
                 ),
               ],
             ),
@@ -322,10 +319,10 @@ class _CashoutScreenState extends State<CashoutScreen> {
                                   'RON',
                                   AppModel.of(context).user.userId,
                                 )
-                                .then((txRef) =>
-                                    showTxResult(txRef, context).then((_) {
+                                .then((txRef) => showTxResult(txRef, context)
+                                        .then((txStatus) {
                                       setState(() {
-                                        _done = true;
+                                        _txResult = txStatus;
                                       });
                                     }))
                                 .catchError((error) => Flushbar(
@@ -346,6 +343,22 @@ class _CashoutScreenState extends State<CashoutScreen> {
         ],
       ),
     );
+  }
+
+  bool get _done => _txResult.isNotEmpty;
+
+  Widget getTrailingIcons() {
+    if (!_done) {
+      return null;
+    }
+
+    if (_txResult == 'ACCEPTED') {
+      return Icon(Icons.check, color: Colors.green);
+    } else if (_txResult == 'PENDING') {
+      return Icon(Icons.check, color: Colors.yellow);
+    } else {
+      return Icon(Icons.close, color: Colors.red);
+    }
   }
 
   Widget get _accountNameForm => Container(

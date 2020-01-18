@@ -86,7 +86,7 @@ class AboutPointsWidget extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Text(
-                points.pendingAmount.toString(),
+                points.pendingAmount.toStringAsFixed(2),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 24,

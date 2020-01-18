@@ -13,7 +13,6 @@ import 'package:charity_discount/util/url.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:charity_discount/ui/app/loading.dart';
 import 'package:charity_discount/ui/charity/charity.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -25,7 +24,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _loadingVisible = false;
   int selectedNavIndex;
   List<Widget> _widgets = [];
   SearchService _searchService = SearchService();
@@ -155,9 +153,9 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: selectedNavIndex,
         onTap: _onItemTapped,
       ),
-      body: LoadingScreen(
-        child: _widgets.elementAt(selectedNavIndex),
-        inAsyncCall: _loadingVisible,
+      body: IndexedStack(
+        children: _widgets,
+        index: selectedNavIndex,
       ),
     );
   }
@@ -186,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundColor: Colors.transparent,
               ),
               title: Text(
-                '${user.firstName} ${user.lastName}',
+                getUserName(user),
                 style: titleStyle,
               ),
               onTap: () {
@@ -261,5 +259,14 @@ class _HomeScreenState extends State<HomeScreen> {
         child: logoImage,
       ),
     );
+  }
+
+  String getUserName(User user) {
+    if (user.firstName != null && user.firstName.isNotEmpty ||
+        user.lastName != null && user.lastName.isNotEmpty) {
+      return '${user.firstName} ${user.lastName}';
+    }
+
+    return user.email;
   }
 }
