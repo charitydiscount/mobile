@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:charity_discount/util/url.dart';
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
@@ -7,11 +9,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:charity_discount/util/validator.dart';
-import 'package:charity_discount/util/social_icons.dart';
 import 'package:charity_discount/ui/app/loading.dart';
 import 'package:charity_discount/controllers/user_controller.dart';
-import 'package:charity_discount/util/firebase_errors.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:flutter_signin_button/button_list.dart';
+import 'package:flutter_signin_button/button_view.dart';
 
 class SignInScreen extends StatefulWidget {
   _SignInScreenState createState() => _SignInScreenState();
@@ -47,7 +49,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
     final logo = Hero(
       tag: 'hero',
-      child: Image.asset('assets/icons/icon.png', scale: 4, height: 50),
+      child: Image.asset('assets/icons/icon.png', scale: 5, height: 50),
     );
 
     final termsButton = FlatButton(
@@ -89,7 +91,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 key: _formKey,
                 autovalidate: _autoValidate,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
@@ -103,7 +105,9 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                     ),
-                    Expanded(child: _buildSocialFragmet()),
+                    Expanded(
+                      child: _buildPlatformSpecificSocial(),
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
@@ -193,7 +197,6 @@ class _SignInScreenState extends State<SignInScreen> {
     );
 
     final forgotLabel = FlatButton(
-      padding: EdgeInsets.only(left: 200),
       child: Text(
         tr('forgotPassword'),
         style: TextStyle(color: Theme.of(context).hintColor),
@@ -215,12 +218,16 @@ class _SignInScreenState extends State<SignInScreen> {
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         email,
         password,
         loginButton,
-        forgotLabel,
-        signUpButton,
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [signUpButton, forgotLabel],
+        )
       ],
     );
   }
@@ -252,15 +259,7 @@ class _SignInScreenState extends State<SignInScreen> {
           Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
         });
       } catch (e) {
-        if (!(e is Error)) {
-          String exception = getExceptionText(e);
-          _toggleLoadingVisible();
-          Flushbar(
-            title: 'Sign In Error',
-            message: exception,
-            duration: Duration(seconds: 5),
-          )..show(context);
-        }
+        _handleAuthError(e);
       }
     } else {
       setState(() => _autoValidate = true);
@@ -277,15 +276,45 @@ class _SignInScreenState extends State<SignInScreen> {
         Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
       });
     } catch (e) {
-      _toggleLoadingVisible();
-      if (!(e is Error)) {
-        String exception = getExceptionText(e);
+      _handleAuthError(e);
+    }
+  }
+
+  void _appleSignIn(BuildContext context) async {
+    _toggleLoadingVisible();
+
+    final AuthorizationResult result = await AppleSignIn.performRequests([
+      AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
+    ]);
+
+    switch (result.status) {
+      case AuthorizationStatus.authorized:
+        try {
+          AppModel.of(context).createListeners();
+          await userController.signIn(
+            Strategy.Apple,
+            appleResult: result,
+          );
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _toggleLoadingVisible();
+            Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+          });
+        } catch (e) {
+          _handleAuthError(e);
+        }
+        break;
+      case AuthorizationStatus.error:
+        _toggleLoadingVisible();
         Flushbar(
           title: 'Sign In Error',
-          message: exception,
+          message: result.error.localizedDescription,
           duration: Duration(seconds: 5),
         )..show(context);
-      }
+        break;
+
+      case AuthorizationStatus.cancelled:
+        _toggleLoadingVisible();
+        break;
     }
   }
 
@@ -307,15 +336,7 @@ class _SignInScreenState extends State<SignInScreen> {
             Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
           });
         } catch (e) {
-          _toggleLoadingVisible();
-          if (!(e is Error)) {
-            String exception = getExceptionText(e);
-            Flushbar(
-              title: 'Sign In Error',
-              message: exception,
-              duration: Duration(seconds: 5),
-            )..show(context);
-          }
+          _handleAuthError(e);
         }
         break;
       case FacebookLoginStatus.cancelledByUser:
@@ -332,42 +353,62 @@ class _SignInScreenState extends State<SignInScreen> {
     }
   }
 
-  Widget _buildSocialFragmet() {
-    if (Platform.isIOS) {
-      return Container(
-        width: 0,
-        height: 0,
-      );
+  void _handleAuthError(Exception e) {
+    _toggleLoadingVisible();
+    if (e is PlatformException) {
+      Flushbar(
+        title: 'Sign In Error',
+        message: e.message,
+        duration: Duration(seconds: 5),
+      )..show(context);
+    }
+  }
+
+  Widget _buildPlatformSpecificSocial() {
+    if (Platform.isAndroid) {
+      return _buildSocialFragmet(includeApple: false);
     }
 
-    final socialDivider = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        horizontalLine,
-        Text('Social Login', style: TextStyle(fontSize: 16.0)),
-        horizontalLine,
-      ],
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    return FutureBuilder(
+      future: deviceInfo.iosInfo,
+      builder: (context, snapshop) {
+        if (snapshop.connectionState == ConnectionState.waiting ||
+            snapshop.hasError ||
+            !snapshop.data.systemVersion.contains('13')) {
+          return Container(
+            width: 0,
+            height: 0,
+          );
+        }
+
+        return _buildSocialFragmet();
+      },
     );
-    final socialMethods = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        MaterialButton(
-          shape: CircleBorder(),
-          onPressed: () async => _googleLogin(context),
-          color: Color(0xffdd4b39),
-          height: 65,
-          elevation: 0,
-          child: Icon(SocialIcons.google, color: Colors.white),
+  }
+
+  Widget _buildSocialFragmet({bool includeApple = true}) {
+    List<Widget> buttons = [
+      SignInButton(
+        Buttons.Google,
+        onPressed: () => _googleLogin(context),
+      ),
+      SignInButton(
+        Buttons.Facebook,
+        onPressed: () => _facebookLogin(context),
+      ),
+    ];
+    if (includeApple == true) {
+      buttons.add(
+        SignInButton(
+          Buttons.Apple,
+          onPressed: () => _appleSignIn(context),
         ),
-        MaterialButton(
-          shape: CircleBorder(),
-          onPressed: () async => _facebookLogin(context),
-          color: Color(0xff3b5998),
-          height: 65,
-          elevation: 0,
-          child: Icon(SocialIcons.facebook, color: Colors.white),
-        )
-      ],
+      );
+    }
+    final socialMethods = Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: buttons,
     );
 
     return Column(
@@ -375,7 +416,6 @@ class _SignInScreenState extends State<SignInScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
-        socialDivider,
         socialMethods,
       ],
     );

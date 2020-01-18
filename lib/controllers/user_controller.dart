@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/services/local.dart';
@@ -9,7 +10,7 @@ import 'package:charity_discount/services/notifications.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
-enum Strategy { EmailAndPass, Google, Facebook }
+enum Strategy { EmailAndPass, Google, Facebook, Apple }
 
 class UserController {
   StreamSubscription authListener;
@@ -19,6 +20,7 @@ class UserController {
     Strategy provider, {
     Map<String, dynamic> credentials,
     FacebookLoginResult facebookResult,
+    AuthorizationResult appleResult,
   }) async {
     switch (provider) {
       case Strategy.EmailAndPass:
@@ -30,6 +32,9 @@ class UserController {
         break;
       case Strategy.Facebook:
         await authService.signInWithFacebook(facebookResult);
+        break;
+      case Strategy.Apple:
+        await authService.signInWithApple(appleResult);
         break;
       default:
         return;
