@@ -157,6 +157,7 @@ class AppModel extends Model {
         _programs = localPrograms;
       } else {
         _programs = await _shopsService.getAllPrograms();
+        _programs.sort((p1, p2) => p1.order.compareTo(p2.order));
         localService.setPrograms(_programs);
       }
     }
@@ -166,6 +167,7 @@ class AppModel extends Model {
 
   Future<void> refreshPrograms() async {
     _programs = await _shopsService.getAllPrograms();
+    _programs.sort((p1, p2) => p1.order.compareTo(p2.order));
     await localService.setPrograms(_programs);
   }
 

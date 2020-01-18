@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 List<Program> fromFirestoreBatch(DocumentSnapshot doc) {
@@ -43,6 +42,7 @@ class Program {
   final String defaultLeadCommissionType;
   final String currency;
   final String source;
+  final int order;
   OverallRating rating;
 
   bool favorited;
@@ -66,6 +66,7 @@ class Program {
     this.favorited = false,
     this.source,
     this.rating,
+    this.order,
   });
 
   factory Program.fromJson(Map json) {
@@ -91,6 +92,7 @@ class Program {
       rating: json['rating'] != null
           ? OverallRating.fromJson(json['rating'])
           : OverallRating.fromJson({}),
+      order: json['order'],
     );
   }
 
@@ -112,6 +114,7 @@ class Program {
         'defaultLeadCommissionType': defaultLeadCommissionType,
         'currency': currency,
         'source': source,
+        'order': order,
       };
 }
 
