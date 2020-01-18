@@ -85,17 +85,12 @@ class AuthService {
       if (userInfoJson['given_name'] != null ||
           userInfoJson['family_name'] != null ||
           userInfoJson['picture'] != null) {
-        updateFirebaseUser(
-          firstName: userInfoJson['given_name'],
-          lastName: userInfoJson['family_name'],
-          photoUrl: userInfoJson['picture'],
-        );
-        await updateUserData(user.uid, {
+        await updateUser(user.uid, {
           'userId': user.uid,
           'email': googleUser.email,
           'firstName': userInfoJson['given_name'],
           'lastName': userInfoJson['family_name'],
-          'photoUrl': userInfoJson['picture'],
+          'photoUrl': user.photoUrl ?? userInfoJson['picture'],
         });
       }
     }
@@ -140,17 +135,12 @@ class AuthService {
     if (userInfoJson['first_name'] != null ||
         userInfoJson['last_name'] != null ||
         userInfoJson['picture'] != null) {
-      updateFirebaseUser(
-        firstName: userInfoJson['first_name'],
-        lastName: userInfoJson['last_name'],
-        photoUrl: userInfoJson['picture']['data']['url'],
-      );
-      await updateUserData(user.uid, {
+      updateUser(user.uid, {
         'userId': user.uid,
         'email': user.email,
         'firstName': userInfoJson['first_name'],
         'lastName': userInfoJson['last_name'],
-        'photoUrl': userInfoJson['picture']['data']['url'],
+        'photoUrl': user.photoUrl ?? userInfoJson['picture']['data']['url'],
       });
     }
 
@@ -186,11 +176,7 @@ class AuthService {
 
     if (appleIdCredential.fullName.givenName != null ||
         appleIdCredential.fullName.familyName != null) {
-      updateFirebaseUser(
-        firstName: appleIdCredential.fullName.givenName,
-        lastName: appleIdCredential.fullName.familyName,
-      );
-      await updateUserData(user.uid, {
+      await updateUser(user.uid, {
         'firstName': appleIdCredential.fullName.givenName,
         'lastName': appleIdCredential.fullName.familyName,
       });
@@ -211,6 +197,18 @@ class AuthService {
             'Please try another sign in method until we get this one working :D',
       );
     }
+  }
+
+  Future<void> updateUser(
+    String userId,
+    Map<String, dynamic> userData,
+  ) async {
+    await updateFirebaseUser(
+      firstName: userData['firstName'],
+      lastName: userData['lastName'],
+      photoUrl: userData['photoUrl'],
+    );
+    await updateUserData(userId, userData);
   }
 
   Future<void> updateFirebaseUser({
