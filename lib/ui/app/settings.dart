@@ -47,11 +47,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _state.setSettings(newSettings, storeLocal: true);
           });
           fcm.getToken().then(
-                (token) => metaService.setNotifications(
-                  _state.user.userId,
-                  token,
-                  newValue,
-                ),
+                (token) => metaService.setNotifications(token, newValue),
               );
         },
       ),

@@ -128,8 +128,7 @@ class _ProfileState extends State<Profile> {
     final email = appState?.user?.email ?? '';
 
     final nameLabel = Text('${AppLocalizations.of(context).tr('name')}:');
-    final name =
-        '${appState?.user?.firstName ?? ''} ${appState?.user?.lastName ?? ''}';
+    final name = appState.user.name ?? '';
 
     return LoadingScreen(
       child: Padding(
@@ -203,7 +202,7 @@ class _ProfileState extends State<Profile> {
         setState(() {
           userState.photoUrl = imageUrl;
         });
-        authService.updateUser(userState.userId, {'photoUrl': imageUrl});
+        authService.updateUser(photoUrl: imageUrl);
       });
     });
   }

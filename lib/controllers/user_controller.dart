@@ -39,6 +39,7 @@ class UserController {
       default:
         return;
     }
+    await authService.updateCurrentUser();
     if (Platform.isIOS) {
       _iosSubscription = fcm.onIosSettingsRegistered.listen((data) {
         _registerFcmToken();
@@ -54,7 +55,7 @@ class UserController {
       await authListener.cancel();
     }
     var token = await fcm.getToken();
-    await metaService.removeFcmToken(authService.currentUser.uid, token);
+    await metaService.removeFcmToken(token);
     _iosSubscription?.cancel();
     await getFirebaseShopsService(authService.currentUser.uid)
         .closeFavoritesSink();
@@ -72,7 +73,7 @@ class UserController {
 
   void _registerFcmToken() async {
     final token = await fcm.getToken();
-    metaService.addFcmToken(authService.currentUser.uid, token);
+    metaService.addFcmToken(token);
   }
 }
 

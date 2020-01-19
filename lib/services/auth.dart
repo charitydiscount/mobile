@@ -14,30 +14,20 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _db = Firestore.instance;
 
-  Observable<FirebaseUser> _user;
   FirebaseUser currentUser;
-  BehaviorSubject<Map<String, dynamic>> profile = BehaviorSubject();
-
-  StreamSubscription _usersListener;
+  BehaviorSubject<FirebaseUser> profile = BehaviorSubject();
 
   AuthService() {
-    _user = Observable(_auth.onAuthStateChanged);
-
-    _user.listen((FirebaseUser u) {
-      currentUser = u;
-
-      if (u != null) {
-        _usersListener = _db
-            .collection('users')
-            .document(u.uid)
-            .snapshots()
-            .map((snap) => snap.exists ? snap.data : {})
-            .listen((data) => profile.add(data));
-      } else {
-        profile.add(null);
-      }
-    });
+    _auth.onAuthStateChanged.listen((u) => _setUser(u));
   }
+
+  void _setUser(FirebaseUser u) {
+    currentUser = u;
+    profile.add(u);
+  }
+
+  Future<void> updateCurrentUser() =>
+      _auth.currentUser().then((user) => _setUser(user));
 
   Future<FirebaseUser> signInWithEmailAndPass(email, password) async {
     AuthResult authResult = await _auth.signInWithEmailAndPassword(
@@ -53,9 +43,6 @@ class AuthService {
   }
 
   Future<void> signOut() async {
-    if (_usersListener != null) {
-      await _usersListener.cancel();
-    }
     await _auth.signOut();
   }
 
@@ -85,13 +72,11 @@ class AuthService {
       if (userInfoJson['given_name'] != null ||
           userInfoJson['family_name'] != null ||
           userInfoJson['picture'] != null) {
-        await updateUser(user.uid, {
-          'userId': user.uid,
-          'email': googleUser.email,
-          'firstName': userInfoJson['given_name'],
-          'lastName': userInfoJson['family_name'],
-          'photoUrl': user.photoUrl ?? userInfoJson['picture'],
-        });
+        await updateUser(
+          firstName: userInfoJson['given_name'],
+          lastName: userInfoJson['family_name'],
+          photoUrl: user.photoUrl ?? userInfoJson['picture'],
+        );
       }
     }
 
@@ -135,13 +120,11 @@ class AuthService {
     if (userInfoJson['first_name'] != null ||
         userInfoJson['last_name'] != null ||
         userInfoJson['picture'] != null) {
-      updateUser(user.uid, {
-        'userId': user.uid,
-        'email': user.email,
-        'firstName': userInfoJson['first_name'],
-        'lastName': userInfoJson['last_name'],
-        'photoUrl': user.photoUrl ?? userInfoJson['picture']['data']['url'],
-      });
+      updateUser(
+        firstName: userInfoJson['first_name'],
+        lastName: userInfoJson['last_name'],
+        photoUrl: user.photoUrl ?? userInfoJson['picture']['data']['url'],
+      );
     }
 
     return user;
@@ -176,10 +159,10 @@ class AuthService {
 
     if (appleIdCredential.fullName.givenName != null ||
         appleIdCredential.fullName.familyName != null) {
-      await updateUser(user.uid, {
-        'firstName': appleIdCredential.fullName.givenName,
-        'lastName': appleIdCredential.fullName.familyName,
-      });
+      await updateUser(
+        firstName: appleIdCredential.fullName.givenName,
+        lastName: appleIdCredential.fullName.familyName,
+      );
     }
 
     return user;
@@ -199,40 +182,32 @@ class AuthService {
     }
   }
 
-  Future<void> updateUser(
-    String userId,
-    Map<String, dynamic> userData,
-  ) async {
-    await updateFirebaseUser(
-      firstName: userData['firstName'],
-      lastName: userData['lastName'],
-      photoUrl: userData['photoUrl'],
-    );
-    await updateUserData(userId, userData);
-  }
-
-  Future<void> updateFirebaseUser({
+  Future<void> updateUser({
     String firstName,
     String lastName,
     String photoUrl,
   }) async {
+    await updateFirebaseUser(
+      name:
+          firstName != null || lastName != null ? '$firstName $lastName' : null,
+      photoUrl: photoUrl,
+    );
+  }
+
+  Future<void> updateFirebaseUser({
+    String name,
+    String photoUrl,
+  }) async {
     return _auth.currentUser().then((user) async {
       UserUpdateInfo updateUser = UserUpdateInfo();
-      if (firstName != null || lastName != null) {
-        updateUser.displayName = '$firstName $lastName';
+      if (name != null && name.isNotEmpty) {
+        updateUser.displayName = name.trim();
       }
       if (photoUrl != null) {
         updateUser.photoUrl = photoUrl;
       }
       return user.updateProfile(updateUser);
     });
-  }
-
-  Future<void> updateUserData(
-      String userId, Map<String, dynamic> userData) async {
-    DocumentReference ref = _db.collection('users').document(userId);
-
-    return ref.setData(userData, merge: true);
   }
 
   Future<void> updateUserSettings(
@@ -252,15 +227,10 @@ class AuthService {
       email: email,
       password: password,
     );
+
     UserUpdateInfo userInfo = UserUpdateInfo();
     userInfo.displayName = '$firstName $lastName';
     await authResult.user.updateProfile(userInfo);
-    await updateUserData(authResult.user.uid, {
-      'userId': authResult.user.uid,
-      'email': email,
-      'firstName': firstName,
-      'lastName': lastName
-    });
 
     return authResult.user;
   }

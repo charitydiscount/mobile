@@ -3,8 +3,8 @@ import 'package:charity_discount/models/news.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/models/charity.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../models/user.dart';
@@ -28,17 +28,13 @@ class CharityService {
     throw Error();
   }
 
-  Future<void> saveAccount(
-    String userId,
-    SavedAccount savedAccount,
-  ) async {
+  Future<List<SavedAccount>> get userAccounts => throw Error();
+
+  Future<void> saveAccount(SavedAccount savedAccount) {
     throw Error();
   }
 
-  Future<void> removeAccount(
-    String userId,
-    SavedAccount savedAccount,
-  ) async {
+  Future<void> removeAccount(SavedAccount savedAccount) {
     throw Error();
   }
 
@@ -46,21 +42,22 @@ class CharityService {
     throw Error();
   }
 
-  Future<void> sendOtpCode(String userId) {
+  Future<void> sendOtpCode() {
     throw Error();
   }
 
-  Future<bool> checkOtpCode(String userId, int code) {
+  Future<bool> checkOtpCode(int code) {
     throw Error();
   }
 
-  Future<List<Commission>> getUserCommissions(String userId) async {
+  Future<List<Commission>> getUserCommissions() async {
     throw Error();
   }
 }
 
 class FirebaseCharityService implements CharityService {
   final Firestore _db = Firestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Future<Map<String, Charity>> getCases() async {
@@ -108,41 +105,35 @@ class FirebaseCharityService implements CharityService {
   }
 
   @override
-  Future<void> saveAccount(
-    String userId,
-    SavedAccount savedAccount,
-  ) async {
-    DocumentReference userRef = _db.collection('users').document(userId);
-    return userRef.updateData({
-      'accounts': FieldValue.arrayUnion([savedAccount.toJson()])
-    }).catchError((e) => _handleFirstAccount(e, userId, savedAccount));
-  }
-
-  Future<void> _handleFirstAccount(
-    dynamic e,
-    String userId,
-    SavedAccount savedAccount,
-  ) async {
-    if (!(e is PlatformException)) {
-      return null;
-    }
-
-    DocumentReference ref = _db.collection('users').document(userId);
-    return ref.setData(
-      {
-        'accounts': [savedAccount.toJson()]
-      },
-      merge: true,
-    );
-  }
+  Future<List<SavedAccount>> get userAccounts =>
+      _auth.currentUser().then((user) => _db
+          .collection('users')
+          .document(user.uid)
+          .collection('accounts')
+          .getDocuments()
+          .then(
+            (docs) => docs.documents
+                .map((accountSnap) => SavedAccount.fromJson(accountSnap))
+                .toList(),
+          ));
 
   @override
-  Future<void> removeAccount(String userId, SavedAccount savedAccount) {
-    DocumentReference userRef = _db.collection('users').document(userId);
-    return userRef.updateData({
-      'accounts': FieldValue.arrayRemove([savedAccount.toJson()])
-    }).catchError((e) {});
-  }
+  Future<void> saveAccount(SavedAccount savedAccount) =>
+      _auth.currentUser().then((user) => _db
+          .collection('users')
+          .document(user.uid)
+          .collection('accounts')
+          .document(savedAccount.iban)
+          .setData(savedAccount.toJson(), merge: true));
+
+  @override
+  Future<void> removeAccount(SavedAccount savedAccount) =>
+      _auth.currentUser().then((user) => _db
+          .collection('users')
+          .document(user.uid)
+          .collection('accounts')
+          .document(savedAccount.iban)
+          .delete());
 
   @override
   Future<List<News>> getNews() {
@@ -168,45 +159,49 @@ class FirebaseCharityService implements CharityService {
   }
 
   @override
-  Future<void> sendOtpCode(String userId) {
-    return _db.collection('otp-requests').document(userId).setData({
-      'userId': userId,
-      'requestedAt': FieldValue.serverTimestamp(),
-    });
-  }
+  Future<void> sendOtpCode() => _auth.currentUser().then(
+        (user) => _db.collection('otp-requests').document(user.uid).setData({
+          'userId': user.uid,
+          'requestedAt': FieldValue.serverTimestamp(),
+        }),
+      );
 
   @override
-  Future<bool> checkOtpCode(String userId, int code) async {
-    final otpRef = _db.collection('otps').document(userId);
+  Future<bool> checkOtpCode(int code) => _auth.currentUser().then(
+        (user) =>
+            _db.collection('otps').document(user.uid).get().then((otpSnap) {
+          final codeMatches = otpSnap.data['code'] == code;
 
-    final otp = await otpRef.get();
-    final codeMatches = otp.data['code'] == code;
+          if (codeMatches) {
+            otpSnap.reference.setData({'used': true}, merge: true);
+          }
 
-    if (codeMatches) {
-      otpRef.setData({'used': true}, merge: true);
-    }
-
-    return codeMatches;
-  }
+          return codeMatches;
+        }),
+      );
 
   @override
-  Future<List<Commission>> getUserCommissions(String userId) async {
-    final commissionRef = _db.collection('commissions').document(userId);
-    final snapshot = await commissionRef.get();
-    if (!snapshot.exists) {
-      return null;
-    }
+  Future<List<Commission>> getUserCommissions() => _auth.currentUser().then(
+        (user) => _db
+            .collection('commissions')
+            .document(user.uid)
+            .get()
+            .then((commissionsSnap) {
+          if (!commissionsSnap.exists) {
+            return null;
+          }
 
-    List commissions = [];
-    snapshot.data.forEach((key, value) {
-      if (key != 'userId') {
-        commissions.add(value);
-      }
-    });
-    return List<Commission>.from(
-      commissions
-          .map((commissionJson) => Commission.fromJson(commissionJson))
-          .toList(),
-    );
-  }
+          List commissions = [];
+          commissionsSnap.data.forEach((key, value) {
+            if (key != 'userId') {
+              commissions.add(value);
+            }
+          });
+          return List<Commission>.from(
+            commissions
+                .map((commissionJson) => Commission.fromJson(commissionJson))
+                .toList(),
+          );
+        }),
+      );
 }

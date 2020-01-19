@@ -1,11 +1,12 @@
 import 'dart:io';
-
 import 'package:charity_discount/models/meta.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MetaService {
   final _db = Firestore.instance;
+  final _auth = FirebaseAuth.instance;
   Observable<ProgramMeta> _programsMetaListener;
 
   Future<TwoPerformantMeta> getTwoPerformantMeta() async {
@@ -35,44 +36,42 @@ class MetaService {
     return _programsMetaListener;
   }
 
-  Future<void> addFcmToken(String userId, String token) {
-    final tokenRef = _db
-        .collection('users')
-        .document(userId)
-        .collection('tokens')
-        .document(token);
+  Future<void> addFcmToken(String token) => _auth.currentUser().then(
+        (user) => _db
+            .collection('users')
+            .document(user.uid)
+            .collection('tokens')
+            .document(token)
+            .setData({
+          'token': token,
+          'createdAt': FieldValue.serverTimestamp(),
+          'platform': Platform.operatingSystem,
+        }),
+      );
 
-    return tokenRef.setData({
-      'token': token,
-      'createdAt': FieldValue.serverTimestamp(),
-      'platform': Platform.operatingSystem,
-    });
-  }
-
-  Future<void> removeFcmToken(String userId, String token) {
-    return _db
-        .collection('users')
-        .document(userId)
-        .collection('tokens')
-        .document(token)
-        .delete();
-  }
+  Future<void> removeFcmToken(String token) => _auth.currentUser().then(
+        (user) => _db
+            .collection('users')
+            .document(user.uid)
+            .collection('tokens')
+            .document(token)
+            .delete(),
+      );
 
   Future<void> setNotifications(
-    String userId,
     String deviceToken,
     bool notificationsEnabled,
-  ) {
-    final tokenRef = _db
-        .collection('users')
-        .document(userId)
-        .collection('tokens')
-        .document(deviceToken);
-
-    return tokenRef.setData({
-      'notifications': notificationsEnabled,
-    }, merge: true);
-  }
+  ) =>
+      _auth.currentUser().then(
+            (user) => _db
+                .collection('users')
+                .document(user.uid)
+                .collection('tokens')
+                .document(deviceToken)
+                .setData({
+              'notifications': notificationsEnabled,
+            }, merge: true),
+          );
 }
 
 MetaService metaService = MetaService();

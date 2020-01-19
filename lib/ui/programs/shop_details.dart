@@ -164,7 +164,6 @@ class _ShopDetailsState extends State<ShopDetails> {
           affiliateUniqueCode: appState.affiliateMeta.uniqueCode,
           programId: widget.program.id,
           programUniqueCode: widget.program.uniqueCode,
-          userId: appState.user.userId,
         ),
       ),
       builder: (context, snapshot) {

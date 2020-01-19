@@ -1,12 +1,7 @@
 import 'dart:convert';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iban_form_field/iban_form_field.dart';
-
-User userFromJson(String str) {
-  final jsonData = json.decode(str);
-  return User.fromJson(jsonData);
-}
 
 String userToJson(User data) {
   final dyn = data.toJson();
@@ -15,45 +10,38 @@ String userToJson(User data) {
 
 class User {
   String userId;
-  String firstName;
-  String lastName;
+  String name;
   String email;
   String photoUrl;
-  List<SavedAccount> savedAccounts = [];
+  List<SavedAccount> savedAccounts;
 
   User({
     this.userId,
-    this.firstName,
-    this.lastName,
+    this.name,
     this.email,
     this.photoUrl,
-    this.savedAccounts,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
-        userId: json['userId'],
-        firstName: json['firstName'],
-        lastName: json['lastName'],
-        email: json['email'],
-        photoUrl: json['photoUrl'],
-        savedAccounts: List<SavedAccount>.from(
-          (json['accounts'] ?? [])
-              .map((accountJson) => SavedAccount.fromJson(accountJson))
-              .toList(),
-        ),
+  factory User.fromFirebaseAuth(FirebaseUser firebaseUser) => User(
+        email: firebaseUser.email,
+        name: firebaseUser.displayName,
+        userId: firebaseUser.uid,
+        photoUrl: firebaseUser.photoUrl,
+      );
+
+  factory User.fromJson(Map<String, dynamic> userJson) => User(
+        email: userJson['email'],
+        name: userJson['displayName'],
+        userId: userJson['uid'],
+        photoUrl: userJson['photoUrl'],
       );
 
   Map<String, dynamic> toJson() => {
         'userId': userId,
-        'firstName': firstName,
-        'lastName': lastName,
+        'name': name,
         'email': email,
-        'photoUrl': photoUrl
+        'photoUrl': photoUrl,
       };
-
-  factory User.fromDocument(DocumentSnapshot doc) {
-    return User.fromJson(doc.data);
-  }
 }
 
 class SavedAccount {

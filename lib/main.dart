@@ -91,7 +91,7 @@ class _MainState extends State<Main> {
           );
         }
 
-        return SignInScreen();
+        return Scaffold(body: buildLoading(context));
       },
     );
   }

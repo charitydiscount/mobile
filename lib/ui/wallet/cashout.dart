@@ -1,5 +1,6 @@
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/util/animated_pages.dart';
 import 'package:charity_discount/util/authorize.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';
@@ -11,6 +12,7 @@ import 'package:iban_form_field/iban_form_field.dart';
 import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/ui/wallet/operations.dart';
+import 'package:async/async.dart';
 
 class CashoutScreen extends StatefulWidget {
   final CharityService charityService;
@@ -35,6 +37,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
   PageController _pageController;
   AppModel _state;
   String _txResult = '';
+  AsyncMemoizer _asyncMemoizer = AsyncMemoizer();
 
   @override
   void initState() {
@@ -53,21 +56,20 @@ class _CashoutScreenState extends State<CashoutScreen> {
           autovalidate: true,
           child: IbanFormField(
             onSaved: (iban) {
-              SchedulerBinding.instance.addPostFrameCallback((_) {
-                setState(() {
-                  _iban = Iban(iban.countryCode);
-                  _iban.checkDigits = iban.checkDigits;
-                  _iban.basicBankAccountNumber = iban.basicBankAccountNumber;
+              if (iban != null &&
+                  iban.basicBankAccountNumber != null &&
+                  iban.basicBankAccountNumber.isNotEmpty) {
+                SchedulerBinding.instance.addPostFrameCallback((_) {
+                  setState(() {
+                    _iban = Iban(iban.countryCode);
+                    _iban.checkDigits = iban.checkDigits;
+                    _iban.basicBankAccountNumber = iban.basicBankAccountNumber;
+                  });
                 });
-              });
+              }
             },
             validator: (iban) {
-              if (iban.isValid) {
-                if (_iban == null ||
-                    iban.electronicFormat != _iban.electronicFormat) {
-                  _formKey.currentState.save();
-                }
-              }
+              _formKey.currentState.save();
               return null;
             },
             initialValue: _iban != null ? _iban : Iban('RO'),
@@ -99,41 +101,54 @@ class _CashoutScreenState extends State<CashoutScreen> {
             ],
           ),
         ),
-        ListView(
-          shrinkWrap: true,
-          primary: false,
-          children: _state.user.savedAccounts
-              .map(
-                (account) => Card(
-                  child: ListTile(
-                    title: Text(account.alias),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(account.fullIban.toPrintFormat),
-                        Text(account.name),
-                      ],
-                    ),
-                    isThreeLine: true,
-                    onTap: () {
-                      setState(() {
-                        _iban = account.fullIban;
-                        _accountNameController.text = account.name;
-                        _pageController.nextPage(
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.ease,
-                        );
-                      });
-                    },
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () => _deleteSavedAccount(account),
-                    ),
-                  ),
-                ),
-              )
-              .toList(),
-        ),
+        FutureBuilder(
+            future: _asyncMemoizer.runOnce(() => _state.savedAccounts),
+            builder: (context, snapshot) {
+              var loading = buildConnectionLoading(
+                context: context,
+                snapshot: snapshot,
+              );
+              if (loading != null) {
+                return loading;
+              }
+
+              List<SavedAccount> accounts = List.of(snapshot.data);
+              return ListView(
+                shrinkWrap: true,
+                primary: false,
+                children: accounts
+                    .map(
+                      (account) => Card(
+                        child: ListTile(
+                          title: Text(account.alias),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(account.fullIban.toPrintFormat),
+                              Text(account.name),
+                            ],
+                          ),
+                          isThreeLine: true,
+                          onTap: () {
+                            setState(() {
+                              _iban = account.fullIban;
+                              _accountNameController.text = account.name;
+                              _pageController.nextPage(
+                                duration: const Duration(milliseconds: 400),
+                                curve: Curves.ease,
+                              );
+                            });
+                          },
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () => _deleteSavedAccount(account),
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              );
+            }),
       ],
     );
   }
@@ -169,10 +184,11 @@ class _CashoutScreenState extends State<CashoutScreen> {
             validator: (String value) {
               if (value.isEmpty) {
                 if (_validAmount != false) {
-                  WidgetsBinding.instance
-                      .addPostFrameCallback((_) => setState(() {
-                            _validAmount = false;
-                          }));
+                  WidgetsBinding.instance.addPostFrameCallback(
+                    (_) => setState(() {
+                      _validAmount = false;
+                    }),
+                  );
                 }
                 return null;
               }
@@ -433,20 +449,16 @@ class _CashoutScreenState extends State<CashoutScreen> {
                   !_isAmountValid
               ? null
               : () {
+                  if (_saveIban) {
+                    _state.addSavedAccount(
+                      SavedAccount(
+                        iban: _iban.electronicFormat,
+                        name: _accountNameController.text,
+                        alias: _accountAliasController.text,
+                      ),
+                    );
+                  }
                   setState(() {
-                    if (_saveIban &&
-                        _state.user.savedAccounts.firstWhere(
-                                (saved) => saved.iban == _iban.electronicFormat,
-                                orElse: () => null) ==
-                            null) {
-                      _state.addSavedAccount(
-                        SavedAccount(
-                          iban: _iban.electronicFormat,
-                          name: _accountNameController.text,
-                          alias: _accountAliasController.text,
-                        ),
-                      );
-                    }
                     _pageController.nextPage(
                       duration: const Duration(milliseconds: 400),
                       curve: Curves.ease,
