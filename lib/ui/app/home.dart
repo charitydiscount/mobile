@@ -24,8 +24,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int selectedNavIndex;
-  List<Widget> _widgets = [];
+  int selectedNavIndex = 0;
+  List<Widget> _widgets = [Container(), Container(), Container(), Container()];
+  List<bool> _loadedWidgets = [false, false, false, false];
   SearchService _searchService = SearchService();
   bool _showNotifications = true;
 
@@ -42,6 +43,10 @@ class _HomeScreenState extends State<HomeScreen> {
         _showNotifications = state.settings.notifications;
       }
     });
+    state.setServices(
+      getFirebaseShopsService(state.user.userId),
+      getFirebaseCharityService(),
+    );
   }
 
   void _configureFcm(BuildContext context) {
@@ -85,32 +90,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget build(BuildContext context) {
     var appState = AppModel.of(context);
-    if (_widgets.isEmpty) {
-      final CharityWidget charityList = CharityWidget(
-        charityService: getFirebaseCharityService(),
-      );
 
-      final ProgramsList programsList = ProgramsList(
-        searchService: _searchService,
-        shopsService: getFirebaseShopsService(appState.user.userId),
-      );
-      final WalletScreen walletScreen = WalletScreen(
-        charityService: getFirebaseCharityService(),
-      );
-      final ProductsScreen productsScreen =
-          ProductsScreen(searchService: _searchService);
-
-      appState.setServices(
-        getFirebaseShopsService(appState.user.userId),
-        getFirebaseCharityService(),
-      );
-
-      _widgets.addAll([
-        programsList,
-        productsScreen,
-        charityList,
-        walletScreen,
-      ]);
+    if (_loadedWidgets[selectedNavIndex] == false) {
+      switch (selectedNavIndex) {
+        case 0:
+          _widgets[selectedNavIndex] = ProgramsList(
+            searchService: _searchService,
+            shopsService: getFirebaseShopsService(appState.user.userId),
+          );
+          break;
+        case 1:
+          _widgets[selectedNavIndex] =
+              ProductsScreen(searchService: _searchService);
+          break;
+        case 2:
+          _widgets[selectedNavIndex] = CharityWidget(
+            charityService: getFirebaseCharityService(),
+          );
+          break;
+        case 3:
+          _widgets[selectedNavIndex] = WalletScreen(
+            charityService: getFirebaseCharityService(),
+          );
+          break;
+        default:
+      }
+      _loadedWidgets[selectedNavIndex] = true;
     }
 
     return Scaffold(
@@ -261,12 +266,5 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  String getUserName(User user) {
-    if (user.firstName != null && user.firstName.isNotEmpty ||
-        user.lastName != null && user.lastName.isNotEmpty) {
-      return '${user.firstName} ${user.lastName}';
-    }
-
-    return user.email;
-  }
+  String getUserName(User user) => user.name ?? user.email;
 }

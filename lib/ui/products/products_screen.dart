@@ -253,10 +253,11 @@ class _ProductsScreenState extends State<ProductsScreen> {
       .toList();
 
   Widget get _featuredProducts => FutureBuilder<List<Product>>(
-        future: _featuredMemoizer
-            .runOnce(() => widget.searchService.getFeaturedProducts(
-                  userId: _state.user.userId,
-                )),
+        future: _featuredMemoizer.runOnce(
+          () => widget.searchService.getFeaturedProducts(
+            userId: _state.user.userId,
+          ),
+        ),
         initialData: [],
         builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
           final loadingWidget = buildConnectionLoading(

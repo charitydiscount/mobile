@@ -3,40 +3,51 @@ import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/util/remote_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:charity_discount/util/url.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AffiliateService {
   final Firestore _db = Firestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   String _baseUrl;
 
   Future<List<Promotion>> getPromotions({
     String affiliateUniqueCode,
     int programId,
     String programUniqueCode,
-    String userId,
-  }) async {
-    final snap =
-        await _db.collection('promotions').document('$programId').get();
-    if (!snap.exists) {
-      return [];
-    }
-
-    return snap.data.entries
-        .map((snapEntry) {
-          final promotion =
-              Promotion.fromJson(Map<String, dynamic>.from(snapEntry.value));
-          promotion.affilitateUrl = convertAffiliateUrl(
-            promotion.landingPageLink,
-            affiliateUniqueCode,
-            programUniqueCode,
-            userId,
+  }) =>
+      _auth.currentUser().then(
+            (user) => _db
+                .collection('promotions')
+                .document('$programId')
+                .get()
+                .then((snap) => snap.exists
+                    ? _promotionsFromSnapData(
+                        snap.data, affiliateUniqueCode, programUniqueCode, user)
+                    : []),
           );
-          return promotion;
-        })
-        .where((promotion) =>
-            promotion.promotionStart.isBefore(DateTime.now()) &&
-            promotion.promotionEnd.isAfter(DateTime.now()))
-        .toList();
-  }
+
+  List<Promotion> _promotionsFromSnapData(
+    Map<String, dynamic> snapData,
+    String affiliateUniqueCode,
+    String programUniqueCode,
+    FirebaseUser user,
+  ) =>
+      snapData.entries
+          .map((snapEntry) {
+            final promotion =
+                Promotion.fromJson(Map<String, dynamic>.from(snapEntry.value));
+            promotion.affilitateUrl = convertAffiliateUrl(
+              promotion.landingPageLink,
+              affiliateUniqueCode,
+              programUniqueCode,
+              user.uid,
+            );
+            return promotion;
+          })
+          .where((promotion) =>
+              promotion.promotionStart.isBefore(DateTime.now()) &&
+              promotion.promotionEnd.isAfter(DateTime.now()))
+          .toList();
 
   Future<void> launchWebApp(
       String route, String itemKey, String itemValue) async {

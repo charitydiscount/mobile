@@ -4,6 +4,27 @@ import 'package:charity_discount/models/program.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+Widget buildLoading(BuildContext context, {Widget waitingDisplay}) {
+  Widget waitingAdditionalWidget = waitingDisplay ?? Container();
+
+  return Padding(
+    padding: EdgeInsets.only(top: 16.0),
+    child: Center(
+      child: Column(
+        children: <Widget>[
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation(Theme.of(context).accentColor),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: waitingAdditionalWidget,
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 Widget buildConnectionLoading({
   @required BuildContext context,
   @required AsyncSnapshot snapshot,
@@ -37,24 +58,7 @@ Widget buildConnectionLoading({
   }
 
   if (snapshot.connectionState == ConnectionState.waiting) {
-    Widget waitingAdditionalWidget =
-        waitingDisplay != null ? waitingDisplay : Container();
-    return Padding(
-      padding: EdgeInsets.only(top: 16.0),
-      child: Center(
-        child: Column(
-          children: <Widget>[
-            CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation(Theme.of(context).accentColor),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: waitingAdditionalWidget,
-            ),
-          ],
-        ),
-      ),
-    );
+    return buildLoading(context, waitingDisplay: waitingDisplay);
   }
 
   if (!snapshot.hasData) {

@@ -57,7 +57,7 @@ class AppModel extends Model {
         if (profile == null) {
           return;
         }
-        setUser(User.fromJson(profile));
+        setUser(User.fromFirebaseAuth(profile));
         List<Future> futuresForLoading = [
           metaService.getTwoPerformantMeta().then((twoPMeta) {
             _affiliateMeta = twoPMeta;
@@ -88,7 +88,7 @@ class AppModel extends Model {
     bool isIntroCompleted = await localService.isIntroCompleted();
     List<Program> programs = await localService.getPrograms();
 
-    if (user != null) {
+    if (user != null && _user == null) {
       setUser(user);
     }
     if (settings != null) {
@@ -98,7 +98,7 @@ class AppModel extends Model {
       finishIntro();
     }
     if (programs != null) {
-      _programs = programs;
+      setPrograms(programs, storeLocal: false);
     }
   }
 
@@ -137,8 +137,13 @@ class AppModel extends Model {
   }
 
   List<Program> get programs => _programs;
-  void addPrograms(List<Program> programs) {
+  void setPrograms(List<Program> programs, {bool storeLocal = true}) {
+    _programs = [];
     _programs.addAll(programs);
+    _programs.sort((p1, p2) => p1.order.compareTo(p2.order));
+    if (storeLocal) {
+      localService.setPrograms(_programs);
+    }
   }
 
   FavoriteShops get favoriteShops => _favoriteShops;
@@ -155,10 +160,10 @@ class AppModel extends Model {
       var localPrograms = await localService.getPrograms();
       if (localPrograms != null) {
         _programs = localPrograms;
+        setPrograms(localPrograms, storeLocal: false);
       } else {
-        _programs = await _shopsService.getAllPrograms();
-        _programs.sort((p1, p2) => p1.order.compareTo(p2.order));
-        localService.setPrograms(_programs);
+        var programs = await _shopsService.getAllPrograms();
+        setPrograms(programs);
       }
     }
 
@@ -166,19 +171,36 @@ class AppModel extends Model {
   }
 
   Future<void> refreshPrograms() async {
-    _programs = await _shopsService.getAllPrograms();
-    _programs.sort((p1, p2) => p1.order.compareTo(p2.order));
-    await localService.setPrograms(_programs);
+    var programs = await _shopsService.getAllPrograms();
+    setPrograms(programs);
   }
 
-  void addSavedAccount(SavedAccount savedAccount) {
-    user.savedAccounts.add(savedAccount);
-    _charityService.saveAccount(user.userId, savedAccount);
+  Future<List<SavedAccount>> get savedAccounts => user.savedAccounts != null
+      ? Future.value(user.savedAccounts)
+      : _charityService.userAccounts.then((savedAccounts) {
+          user.savedAccounts = savedAccounts;
+          return savedAccounts;
+        });
+
+  Future<void> addSavedAccount(SavedAccount savedAccount) {
+    if (user.savedAccounts == null) {
+      user.savedAccounts = [savedAccount];
+    } else {
+      int accountIndex = user.savedAccounts.indexWhere(
+        (account) => account.iban.compareTo(savedAccount.iban) == 0,
+      );
+      if (accountIndex != -1) {
+        user.savedAccounts[accountIndex] = savedAccount;
+      } else {
+        user.savedAccounts.add(savedAccount);
+      }
+    }
+    return _charityService.saveAccount(savedAccount);
   }
 
   void deleteSavedAccount(SavedAccount savedAccount) {
     user.savedAccounts
         .removeWhere((account) => account.iban == savedAccount.iban);
-    _charityService.removeAccount(user.userId, savedAccount);
+    _charityService.removeAccount(savedAccount);
   }
 }

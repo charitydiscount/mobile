@@ -47,7 +47,7 @@ class Reviewer {
 
   factory Reviewer.fromUser(User user) => Reviewer(
         userId: user.userId,
-        name: '${user.firstName} ${user.lastName}',
+        name: user.name,
         photoUrl: user.photoUrl,
       );
 

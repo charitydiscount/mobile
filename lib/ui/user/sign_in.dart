@@ -254,10 +254,8 @@ class _SignInScreenState extends State<SignInScreen> {
           Strategy.EmailAndPass,
           credentials: {'email': email, 'password': password},
         );
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _toggleLoadingVisible();
-          Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
-        });
+        _toggleLoadingVisible();
+        Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
       } catch (e) {
         _handleAuthError(e);
       }
@@ -271,10 +269,8 @@ class _SignInScreenState extends State<SignInScreen> {
     try {
       AppModel.of(context).createListeners();
       await userController.signIn(Strategy.Google);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _toggleLoadingVisible();
-        Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
-      });
+      _toggleLoadingVisible();
+      Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
     } catch (e) {
       _handleAuthError(e);
     }
@@ -295,10 +291,8 @@ class _SignInScreenState extends State<SignInScreen> {
             Strategy.Apple,
             appleResult: result,
           );
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _toggleLoadingVisible();
-            Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
-          });
+          _toggleLoadingVisible();
+          Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
         } catch (e) {
           _handleAuthError(e);
         }
@@ -331,10 +325,8 @@ class _SignInScreenState extends State<SignInScreen> {
             Strategy.Facebook,
             facebookResult: result,
           );
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _toggleLoadingVisible();
-            Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
-          });
+          _toggleLoadingVisible();
+          Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
         } catch (e) {
           _handleAuthError(e);
         }

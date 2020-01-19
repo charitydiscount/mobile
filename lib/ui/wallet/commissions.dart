@@ -40,8 +40,7 @@ class CommissionsScreen extends StatelessWidget {
             return loading;
           }
           return FutureBuilder<List<Commission>>(
-            future: charityService
-                .getUserCommissions(AppModel.of(context).user.userId),
+            future: charityService.getUserCommissions(),
             builder: (context, snapshot) {
               final loading = buildConnectionLoading(
                 context: context,

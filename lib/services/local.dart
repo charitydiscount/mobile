@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:charity_discount/models/program.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:charity_discount/models/user.dart';
@@ -27,7 +29,7 @@ class LocalService {
       return null;
     }
 
-    return userFromJson(prefs.getString('user'));
+    return User.fromJson(json.decode(prefs.getString('user')));
   }
 
   Future<Settings> getSettingsLocal() async {

@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:charity_discount/services/charity.dart';
-import 'package:charity_discount/state/state_model.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
@@ -194,7 +192,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
         ),
       ),
       onTap: () {
-        widget.charityService.sendOtpCode(AppModel.of(context).user.userId);
+        widget.charityService.sendOtpCode();
         _startCountdown();
       },
     );
@@ -312,7 +310,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     totalTimeInSeconds = time;
-    widget.charityService.sendOtpCode(AppModel.of(context).user.userId);
+    widget.charityService.sendOtpCode();
     _controller =
         AnimationController(vsync: this, duration: Duration(seconds: time))
           ..addStatusListener((status) {
@@ -452,12 +450,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
   }
 
   void _checkOtp(int otp) {
-    widget.charityService
-        .checkOtpCode(
-      AppModel.of(context).user.userId,
-      otp,
-    )
-        .then((authorized) {
+    widget.charityService.checkOtpCode(otp).then((authorized) {
       if (authorized == true) {
         Navigator.pop(context, authorized);
       } else {
