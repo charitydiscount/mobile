@@ -380,9 +380,10 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   Widget _buildSocialFragmet({bool includeApple = true}) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
     List<Widget> buttons = [
       SignInButton(
-        Buttons.Google,
+        isDark ? Buttons.Google : Buttons.GoogleDark,
         onPressed: () => _googleLogin(context),
       ),
       SignInButton(
@@ -393,7 +394,7 @@ class _SignInScreenState extends State<SignInScreen> {
     if (includeApple == true) {
       buttons.add(
         SignInButton(
-          Buttons.Apple,
+          isDark ? Buttons.Apple : Buttons.AppleDark,
           onPressed: () => _appleSignIn(context),
         ),
       );

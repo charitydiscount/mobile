@@ -91,6 +91,11 @@ class _MainState extends State<Main> {
           );
         }
 
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => Navigator.pushNamedAndRemoveUntil(
+              context, '/signin', (r) => false),
+        );
+
         return Scaffold(body: buildLoading(context));
       },
     );
