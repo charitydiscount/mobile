@@ -156,7 +156,7 @@ class ShopHalfTile extends StatelessWidget {
 
     Widget cashback = Text(
       getProgramCommission(program),
-      style: Theme.of(context).textTheme.subtitle,
+      style: Theme.of(context).textTheme.subtitle2,
     );
 
     Widget rating = ProgramRating(rating: program.rating, iconSize: 20);

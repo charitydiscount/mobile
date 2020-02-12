@@ -113,7 +113,7 @@ class _MainState extends State<Main> {
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
-          EasylocaLizationDelegate(
+          EasyLocalizationDelegate(
             locale: locale,
             path: 'assets/i18n',
           ),

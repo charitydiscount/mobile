@@ -21,7 +21,7 @@ class RatingWidget extends StatelessWidget {
     );
     Widget userName = Text(
       rating.reviewer.name,
-      style: Theme.of(context).textTheme.title,
+      style: Theme.of(context).textTheme.headline6,
     );
     Widget reviewDate = Text(
       formatDate(rating.createdAt),

@@ -36,11 +36,11 @@ class AboutPointsWidget extends StatelessWidget {
       ),
       title: Text(
         heading,
-        style: Theme.of(context).textTheme.headline,
+        style: Theme.of(context).textTheme.headline5,
       ),
       subtitle: Text(
         subtitle,
-        style: Theme.of(context).textTheme.subtitle,
+        style: Theme.of(context).textTheme.subtitle2,
       ),
     );
     ListTile availablePoints = ListTile(

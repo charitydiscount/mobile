@@ -12,13 +12,13 @@ class AffiliateService {
 
   Future<List<Promotion>> getPromotions({
     String affiliateUniqueCode,
-    int programId,
+    String programId,
     String programUniqueCode,
   }) =>
       _auth.currentUser().then(
             (user) => _db
                 .collection('promotions')
-                .document('$programId')
+                .document(programId)
                 .get()
                 .then((snap) => snap.exists
                     ? _promotionsFromSnapData(

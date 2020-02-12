@@ -43,7 +43,7 @@ class _RateScreenState extends State<RateScreen> {
         'review.addHeadline',
         args: [widget.program.name],
       ),
-      style: Theme.of(context).textTheme.headline.copyWith(fontSize: 20),
+      style: Theme.of(context).textTheme.headline5.copyWith(fontSize: 20),
       textAlign: TextAlign.center,
     );
 
@@ -75,7 +75,7 @@ class _RateScreenState extends State<RateScreen> {
           children: <Widget>[
             Text(
               _ratingHeadline,
-              style: Theme.of(context).textTheme.subtitle,
+              style: Theme.of(context).textTheme.subtitle2,
             ),
             RatingBar(
               allowHalfRating: false,

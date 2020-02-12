@@ -4,7 +4,7 @@ class Commission {
   final double amount;
   final String currency;
   final DateTime createdAt;
-  final int shopId;
+  final String shopId;
   final String status;
   final String reason;
   final CommissionProgram program;
@@ -23,7 +23,7 @@ class Commission {
         amount: double.parse(json['amount'].toString()),
         currency: json['currency'] ?? 'RON',
         createdAt: (json['createdAt'] as Timestamp).toDate(),
-        shopId: json['shopId'],
+        shopId: json['shopId'].toString(),
         status: json['status'],
         reason: json['reason'] ?? null,
         program: CommissionProgram.fromJson(json['program']),

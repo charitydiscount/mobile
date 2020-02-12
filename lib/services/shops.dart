@@ -153,7 +153,12 @@ class FirebaseShopsService implements ShopsService {
       {
         'shopUniqueCode': program.uniqueCode,
         'reviews': {
-          review.reviewer.userId: review.toJson(),
+          review.reviewer.userId: {
+            'reviewer': review.reviewer.toJson(),
+            'rating': review.rating,
+            'description': review.description,
+            'createdAt': FieldValue.serverTimestamp(),
+          },
         }
       },
     );

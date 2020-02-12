@@ -46,7 +46,7 @@ class HistoryPointsWidget extends StatelessWidget {
       child: Timeline(
         children: items,
         position: TimelinePosition.Left,
-        lineColor: Theme.of(context).textTheme.body2.color,
+        lineColor: Theme.of(context).textTheme.bodyText1.color,
         shrinkWrap: true,
       ),
     );

@@ -49,7 +49,7 @@ class _ShopDetailsState extends State<ShopDetails> {
     final appState = AppModel.of(context);
 
     double sectionTitleSize =
-        Theme.of(context).textTheme.headline.fontSize * 0.7;
+        Theme.of(context).textTheme.headline5.fontSize * 0.7;
 
     Widget ratingBuilder = FutureBuilder<List<Review>>(
       future: widget.shopsService.getProgramRating(widget.program.uniqueCode),
@@ -242,7 +242,7 @@ class _ShopDetailsState extends State<ShopDetails> {
           padding: const EdgeInsets.only(left: 8.0),
           child: Text(
             widget.program.category,
-            style: Theme.of(context).textTheme.subhead,
+            style: Theme.of(context).textTheme.subtitle1,
           ),
         ),
       ],
@@ -278,7 +278,7 @@ class _ShopDetailsState extends State<ShopDetails> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
               getProgramCommission(widget.program),
-              style: Theme.of(context).textTheme.subhead,
+              style: Theme.of(context).textTheme.subtitle1,
             ),
           ),
         ],
