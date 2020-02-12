@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 ThemeData buildTheme({bool dark = false}) {
   TextTheme _buildTextTheme(TextTheme base) {
     return base.copyWith(
-      headline: base.headline.copyWith(
+      headline5: base.headline5.copyWith(
         color: dark ? Colors.grey.shade100 : Colors.grey.shade700,
       ),
-      title: base.title.copyWith(
+      headline6: base.headline6.copyWith(
         color: dark ? Colors.grey.shade100 : Colors.grey.shade700,
       ),
     );

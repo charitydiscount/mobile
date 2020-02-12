@@ -29,7 +29,7 @@ List<Program> fromJsonStringList(List<String> jsonList) {
 }
 
 class Program {
-  final int id;
+  final String id;
   final String uniqueCode;
   final String status;
   final String name;
@@ -71,7 +71,7 @@ class Program {
 
   factory Program.fromJson(Map json) {
     return Program(
-      id: json['id'],
+      id: json['id'].toString(),
       uniqueCode: json['uniqueCode'],
       status: json['status'] ?? 'active',
       name: json['name'] ?? '',
@@ -80,11 +80,11 @@ class Program {
       logoPath:
           json['logoPath'] ?? 'https://charitydiscount.ro/img/favicon.png',
       defaultSaleCommissionRate: json['defaultSaleCommissionRate'] != null
-          ? double.parse(json['defaultSaleCommissionRate'])
+          ? double.tryParse(json['defaultSaleCommissionRate']) ?? 0
           : null,
       defaultSaleCommissionType: json['defaultSaleCommissionType'],
       defaultLeadCommissionAmount: json['defaultLeadCommissionAmount'] != null
-          ? double.parse(json['defaultLeadCommissionAmount'])
+          ? double.tryParse(json['defaultLeadCommissionAmount']) ?? 0
           : null,
       defaultLeadCommissionType: json['defaultLeadCommissionType'],
       currency: json['currency'] ?? 'RON',
@@ -92,7 +92,7 @@ class Program {
       rating: json['rating'] != null
           ? OverallRating.fromJson(json['rating'])
           : OverallRating.fromJson({}),
-      order: json['order'],
+      order: parseOrder(json),
     );
   }
 
@@ -116,6 +116,26 @@ class Program {
         'source': source,
         'order': order,
       };
+}
+
+int parseOrder(dynamic json) {
+  if (json['mainOrder'] is int) {
+    return json['mainOrder'];
+  }
+
+  if (json['mainOrder'] != null) {
+    return int.tryParse(json['mainOrder']);
+  }
+
+  if (json['order'] is int) {
+    return json['order'];
+  }
+
+  if (json['order'] != null) {
+    return int.tryParse(json['order']);
+  }
+
+  return 10000;
 }
 
 enum CommissionType {

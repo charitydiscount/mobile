@@ -180,7 +180,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
             controller: _amountController,
             autovalidate: true,
             style: TextStyle(
-                fontSize: Theme.of(context).textTheme.display1.fontSize),
+                fontSize: Theme.of(context).textTheme.headline4.fontSize),
             validator: (String value) {
               if (value.isEmpty) {
                 if (_validAmount != false) {
@@ -233,7 +233,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
               ),
               labelStyle: TextStyle(
                 color: Colors.grey,
-                fontSize: Theme.of(context).textTheme.subtitle.fontSize,
+                fontSize: Theme.of(context).textTheme.subtitle2.fontSize,
               ),
               labelText: AppLocalizations.of(context).tr('account.amountHint'),
             ),
@@ -400,7 +400,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
             decoration: InputDecoration(
               labelStyle: TextStyle(color: Colors.grey),
               labelText: AppLocalizations.of(context).tr('account.alias'),
-              hasFloatingPlaceholder: false,
+              floatingLabelBehavior: FloatingLabelBehavior.never,
               isDense: true,
             ),
           ),

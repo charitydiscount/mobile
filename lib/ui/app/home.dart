@@ -179,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
         showModalBottomSheet(
           context: context,
           builder: (BuildContext context) {
-            TextStyle titleStyle = Theme.of(context).textTheme.title;
+            TextStyle titleStyle = Theme.of(context).textTheme.headline6;
 
             List<ListTile> menuTiles = [];
             ListTile profileTile = ListTile(

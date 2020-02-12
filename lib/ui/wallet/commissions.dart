@@ -26,7 +26,7 @@ class CommissionsScreen extends StatelessWidget {
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         iconTheme: IconThemeData(
-          color: Theme.of(context).textTheme.body2.color,
+          color: Theme.of(context).textTheme.bodyText1.color,
         ),
       ),
       body: FutureBuilder<List<Program>>(
@@ -96,7 +96,7 @@ class CommissionsWidget extends StatelessWidget {
       child: Timeline(
         children: items,
         position: TimelinePosition.Left,
-        lineColor: Theme.of(context).textTheme.body2.color,
+        lineColor: Theme.of(context).textTheme.bodyText1.color,
         shrinkWrap: true,
       ),
     );

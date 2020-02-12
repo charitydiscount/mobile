@@ -427,7 +427,7 @@ class ProgramsSearch extends SearchDelegate<String> {
     ThemeData appTheme = Theme.of(context);
     return appTheme.copyWith(
       textTheme: appTheme.textTheme.copyWith(
-        title: TextStyle(color: Colors.white),
+        headline6: TextStyle(color: Colors.white),
       ),
     );
   }
@@ -507,13 +507,13 @@ class ProgramsSearch extends SearchDelegate<String> {
           child: RichText(
             text: TextSpan(
               text: hit.query,
-              style: Theme.of(context).textTheme.body1,
+              style: Theme.of(context).textTheme.bodyText2,
               children: [
                 TextSpan(
                   text: hit.name.split(hit.query)[1],
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.body1.color,
+                    color: Theme.of(context).textTheme.bodyText2.color,
                   ),
                 ),
               ],

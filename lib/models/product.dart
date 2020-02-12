@@ -10,7 +10,7 @@ class Product {
   final String title;
   final double price;
   final double oldPrice;
-  final int programId;
+  final String programId;
   final String programName;
   final String brand;
   final String category;
@@ -40,7 +40,8 @@ class Product {
             : json['id'].toString(),
         title: json['title'],
         price: double.tryParse(json['price'].toString()),
-        programId: json['campaign_id'] ?? json['programId'],
+        programId:
+            json['campaign_id'].toString() ?? json['programId'].toString(),
         programName: json['campaign_name'] ?? json['programName'],
         brand: json['brand'],
         category: json['category'],

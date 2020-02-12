@@ -102,11 +102,11 @@ class _ProductsScreenState extends State<ProductsScreen> {
             decoration: InputDecoration(
               contentPadding: EdgeInsets.only(bottom: 12.0),
               labelStyle: TextStyle(
-                fontSize: Theme.of(context).textTheme.subtitle.fontSize,
+                fontSize: Theme.of(context).textTheme.subtitle2.fontSize,
               ),
               labelText:
                   AppLocalizations.of(context).tr('product.searchPlaceholder'),
-              hasFloatingPlaceholder: false,
+              floatingLabelBehavior: FloatingLabelBehavior.never,
               suffixIcon: IconButton(
                 icon: Icon(Icons.close),
                 color: Colors.grey,
@@ -221,7 +221,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
         textStyle: TextStyle(
           color: _sortStrategy == value
               ? Theme.of(context).primaryColor
-              : Theme.of(context).textTheme.body1.color,
+              : Theme.of(context).textTheme.bodyText2.color,
         ),
       );
 

@@ -18,7 +18,7 @@ class TransactionsScreen extends StatelessWidget {
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         iconTheme: IconThemeData(
-          color: Theme.of(context).textTheme.body2.color,
+          color: Theme.of(context).textTheme.bodyText1.color,
         ),
       ),
       body: HistoryPointsWidget(transactions: transactions),
