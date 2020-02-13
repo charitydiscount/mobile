@@ -137,19 +137,7 @@ class _ShopDetailsState extends State<ShopDetails> {
           ),
         ];
 
-        if (reviewsWidgets.isNotEmpty) {
-          reviewSection.add(
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 300,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: reviewsWidgets,
-                shrinkWrap: true,
-              ),
-            ),
-          );
-        }
+        reviewSection.addAll(reviewsWidgets);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
