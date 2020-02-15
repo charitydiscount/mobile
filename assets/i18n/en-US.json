@@ -147,7 +147,13 @@
         "minimumAmount": "The minimum withdrawal amount is {}."
       }
     },
-    "commissions": "Commissions"
+    "commissions": "Commissions",
+    "status": {
+      "pending": "Pending",
+      "accepted": "Pending",
+      "paid": "Paid",
+      "rejected": "Rejected"
+    }
   },
   "news": "News",
   "terms": "Terms & Conditions",

@@ -108,7 +108,7 @@ Color _getcommissionColor(Commission commission) {
     case CommissionStatus.pending:
       return Colors.yellowAccent.shade700;
     case CommissionStatus.accepted:
-      return Colors.blueGrey;
+      return Colors.yellowAccent.shade700;
     case CommissionStatus.paid:
       return Colors.green;
     case CommissionStatus.rejected:
@@ -119,7 +119,8 @@ Color _getcommissionColor(Commission commission) {
 }
 
 String _getcommissionStatusName(Commission commission, BuildContext context) {
-  return AppLocalizations.of(context).tr(commission.status.toLowerCase());
+  return AppLocalizations.of(context)
+      .tr('wallet.status.${commission.status.toLowerCase()}');
 }
 
 class CommissionDetails extends StatelessWidget {

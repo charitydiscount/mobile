@@ -84,7 +84,14 @@ class _MainState extends State<Main> {
                 snapshot: snapshot,
               );
               if (loading != null) {
-                return Scaffold(body: loading);
+                return Scaffold(
+                  body: Stack(
+                    children: <Widget>[
+                      Image.asset('assets/images/splashscreen.png'),
+                      loading,
+                    ],
+                  ),
+                );
               }
               return HomeScreen(initialScreen: initialScreen);
             },
@@ -96,7 +103,14 @@ class _MainState extends State<Main> {
               context, '/signin', (r) => false),
         );
 
-        return Scaffold(body: buildLoading(context));
+        return Scaffold(
+          body: Stack(
+            children: <Widget>[
+              Image.asset('assets/images/splashscreen.png'),
+              buildLoading(context),
+            ],
+          ),
+        );
       },
     );
   }
