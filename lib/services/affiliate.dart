@@ -38,7 +38,7 @@ class AffiliateService {
                 Promotion.fromJson(Map<String, dynamic>.from(snapEntry.value));
             if (promotion.affiliateUrl != null) {
               promotion.actualAffiliateUrl = interpolateUserCode(
-                promotion.landingPageLink,
+                promotion.affiliateUrl,
                 programUniqueCode,
                 user.uid,
               );
