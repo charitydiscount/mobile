@@ -18,7 +18,6 @@ class PromotionWidget extends StatelessWidget {
         children: <Widget>[
           ListTile(
             onTap: () {
-              print(promotion.actualAffiliateUrl);
               launchURL(promotion.actualAffiliateUrl);
             },
             leading: Padding(
