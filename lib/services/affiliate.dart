@@ -36,12 +36,21 @@ class AffiliateService {
           .map((snapEntry) {
             final promotion =
                 Promotion.fromJson(Map<String, dynamic>.from(snapEntry.value));
-            promotion.affilitateUrl = convertAffiliateUrl(
-              promotion.landingPageLink,
-              affiliateUniqueCode,
-              programUniqueCode,
-              user.uid,
-            );
+            if (promotion.affiliateUrl != null) {
+              promotion.actualAffiliateUrl = interpolateUserCode(
+                promotion.landingPageLink,
+                programUniqueCode,
+                user.uid,
+              );
+            } else {
+              // Fallback to previous strategy for old promotions
+              promotion.actualAffiliateUrl = convertAffiliateUrl(
+                promotion.landingPageLink,
+                affiliateUniqueCode,
+                programUniqueCode,
+                user.uid,
+              );
+            }
             return promotion;
           })
           .where((promotion) =>

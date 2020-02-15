@@ -36,7 +36,7 @@ class ShopFullTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       onPressed: () {
-        launchURL(program.affilitateUrl);
+        launchURL(program.actualAffiliateUrl);
       },
       padding: EdgeInsets.all(12),
       color: Theme.of(context).primaryColor,
@@ -150,7 +150,7 @@ class ShopHalfTile extends StatelessWidget {
       icon: const Icon(Icons.add_shopping_cart),
       color: Theme.of(context).primaryColor,
       onPressed: () {
-        launchURL(program.affilitateUrl);
+        launchURL(program.actualAffiliateUrl);
       },
     );
 

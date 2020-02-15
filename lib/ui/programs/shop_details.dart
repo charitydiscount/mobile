@@ -191,7 +191,7 @@ class _ShopDetailsState extends State<ShopDetails> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          launchURL(widget.program.affilitateUrl);
+          launchURL(widget.program.actualAffiliateUrl);
         },
         child: const Icon(Icons.add_shopping_cart),
       ),

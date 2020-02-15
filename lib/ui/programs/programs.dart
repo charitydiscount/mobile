@@ -394,11 +394,21 @@ class _ShopsWidgetState extends State<ShopsWidget>
         ? (program.defaultSaleCommissionRate * userPercentage)
             .toStringAsFixed(2)
         : null;
-    program.affilitateUrl = convertAffiliateUrl(
+    if (program.affiliateUrl.isNotEmpty) {
+      program.actualAffiliateUrl = interpolateUserCode(
+        program.affiliateUrl,
+        program.uniqueCode,
+        appState.user.userId,
+      );
+    } else {
+      // fallback to the previous strategy (probably old cache)
+      program.actualAffiliateUrl = convertAffiliateUrl(
         program.mainUrl,
         appState.affiliateMeta.uniqueCode,
         program.uniqueCode,
-        appState.user.userId);
+        appState.user.userId,
+      );
+    }
     if (overallRatings.containsKey(program.uniqueCode)) {
       program.rating = overallRatings[program.uniqueCode];
     }
