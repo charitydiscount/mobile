@@ -108,7 +108,7 @@
     "paste": "Lipire",
     "pasteError": {
       "title": "Datele nu pot fi lipite",
-      "message": "Reincercați să copiați codul primit prin email"
+      "message": "Reîncercați să copiați codul primit prin email"
     },
     "resend": "Retrimite cod"
   },
@@ -147,7 +147,13 @@
         "minimumAmount": "Suma minimă pentru retragere este {}."
       }
     },
-    "commissions": "Comisioane"
+    "commissions": "Comisioane",
+    "status": {
+      "pending": "În așteptare",
+      "accepted": "În așteptare",
+      "paid": "Plâtit",
+      "rejected": "Respins"
+    }
   },
   "news": "Noutăți",
   "terms": "Termeni & Condiții",
