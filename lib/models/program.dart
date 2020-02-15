@@ -35,6 +35,7 @@ class Program {
   final String name;
   final String category;
   final String mainUrl;
+  final String affiliateUrl;
   final String logoPath;
   final double defaultSaleCommissionRate;
   final String defaultSaleCommissionType;
@@ -46,9 +47,9 @@ class Program {
   OverallRating rating;
 
   bool favorited;
-  String affilitateUrl;
   String saleCommissionRate;
   String leadCommissionAmount;
+  String actualAffiliateUrl;
 
   Program({
     this.id,
@@ -57,6 +58,7 @@ class Program {
     this.name,
     this.category,
     this.mainUrl,
+    this.affiliateUrl,
     this.logoPath,
     this.defaultSaleCommissionRate,
     this.defaultSaleCommissionType,
@@ -77,6 +79,7 @@ class Program {
       name: json['name'] ?? '',
       category: json['category'] ?? '',
       mainUrl: json['mainUrl'] ?? '',
+      affiliateUrl: json['affiliateUrl'] ?? '',
       logoPath:
           json['logoPath'] ?? 'https://charitydiscount.ro/img/favicon.png',
       defaultSaleCommissionRate: json['defaultSaleCommissionRate'] != null

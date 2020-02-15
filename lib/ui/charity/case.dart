@@ -25,7 +25,7 @@ class CaseWidget extends StatelessWidget {
       tag: 'case-${charityCase.id}',
       child: CachedNetworkImage(
         imageUrl: charityCase.images[0].url,
-        fit: BoxFit.cover,
+        fit: BoxFit.fitWidth,
       ),
     );
     final websiteButton = charityCase.site != null
@@ -55,7 +55,11 @@ class CaseWidget extends StatelessWidget {
                 charityService: charityService,
               );
             },
-          ).then((txRef) => showTxResult(txRef, context));
+          ).then((txRef) {
+            if (txRef != null) {
+              showTxResult(txRef, context);
+            }
+          });
         }
       },
       padding: EdgeInsets.all(12),

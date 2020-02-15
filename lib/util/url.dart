@@ -23,3 +23,16 @@ String convertAffiliateUrl(
 
   return '$baseUrl&$affCode&$unique&$redirect&$tag';
 }
+
+const USER_LINK_PLACEHOLDER = '{userId}';
+const PROGRAM_LINK_PLACEHOLDER = '{programUniqueCode}';
+
+String interpolateUserCode(
+  String affiliateUrl,
+  String programUniqueCode,
+  String userId,
+) {
+  return affiliateUrl
+      .replaceAll(PROGRAM_LINK_PLACEHOLDER, programUniqueCode)
+      .replaceAll(USER_LINK_PLACEHOLDER, userId);
+}

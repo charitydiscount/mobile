@@ -303,7 +303,9 @@ class TransactionResult {
 }
 
 Future<String> showTxResult(
-    DocumentReference txRef, BuildContext context) async {
+  DocumentReference txRef,
+  BuildContext context,
+) async {
   var actualContext = context;
   TransactionResult txResult = await showDialog(
     context: context,

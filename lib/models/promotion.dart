@@ -12,8 +12,9 @@ class Promotion {
   final DateTime promotionStart;
   final DateTime promotionEnd;
   final String landingPageLink;
+  final String affiliateUrl;
 
-  String affilitateUrl;
+  String actualAffiliateUrl;
 
   Promotion({
     this.id,
@@ -23,7 +24,7 @@ class Promotion {
     this.promotionStart,
     this.promotionEnd,
     this.landingPageLink,
-    this.affilitateUrl,
+    this.affiliateUrl,
   });
 
   factory Promotion.fromJson(Map<String, dynamic> json) => Promotion(
@@ -34,5 +35,6 @@ class Promotion {
         promotionStart: DateTime.parse(json['promotionStart']),
         promotionEnd: DateTime.parse(json['promotionEnd']),
         landingPageLink: json['landingPageLink'],
+        affiliateUrl: json['affiliateUrl'],
       );
 }

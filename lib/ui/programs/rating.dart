@@ -42,30 +42,34 @@ class RatingWidget extends StatelessWidget {
       onRatingUpdate: (rating) {},
     );
 
-    return Card(
-      child: ListTile(
-        title: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Center(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                userAvatar,
-                Column(
-                  children: <Widget>[
-                    userName,
-                    reviewDate,
-                    stars,
-                  ],
-                ),
-              ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Card(
+        child: ListTile(
+          dense: true,
+          title: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12.0),
+            child: Center(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  userAvatar,
+                  Column(
+                    children: <Widget>[
+                      userName,
+                      reviewDate,
+                      stars,
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(rating.description),
+          subtitle: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(rating.description),
+          ),
         ),
       ),
     );
