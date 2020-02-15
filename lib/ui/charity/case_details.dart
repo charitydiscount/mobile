@@ -89,7 +89,11 @@ class CaseDetails extends StatelessWidget {
                   charityService: charityService,
                 );
               },
-            ).then((txRef) => showTxResult(txRef, context));
+            ).then((txRef) {
+              if (txRef != null) {
+                showTxResult(txRef, context);
+              }
+            });
           }
         },
         child: const Icon(Icons.favorite),
