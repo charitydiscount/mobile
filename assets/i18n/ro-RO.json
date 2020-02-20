@@ -117,7 +117,7 @@
   "withdraw": "Retrage",
   "category": {
     "one": "Categorie",
-    "other": "Categorii"
+    "two": "Categorii"
   },
   "all": "Toate",
   "commissionDisclaimer": "din valoarea comenzii fără TVA și transport",
