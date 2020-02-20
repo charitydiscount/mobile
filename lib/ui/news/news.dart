@@ -15,7 +15,7 @@ class NewsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context).tr('news'))),
+      appBar: AppBar(title: Text(tr('news'))),
       body: FutureBuilder(
         future: charityService.getNews(),
         builder: (context, snapshot) {

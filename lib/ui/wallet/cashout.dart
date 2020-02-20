@@ -3,7 +3,7 @@ import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/util/animated_pages.dart';
 import 'package:charity_discount/util/authorize.dart';
-import 'package:easy_localization/easy_localization_delegate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -79,7 +79,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
         Padding(
           padding: const EdgeInsets.only(top: 8.0, bottom: 0),
           child: CheckboxListTile(
-            title: Text(AppLocalizations.of(context).tr('account.save')),
+            title: Text(tr('account.save')),
             dense: true,
             activeColor: Theme.of(context).primaryColor,
             value: _saveIban,
@@ -95,7 +95,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(
-                AppLocalizations.of(context).tr('account.savedAccounts'),
+                tr('account.savedAccounts'),
                 textAlign: TextAlign.start,
               ),
             ],
@@ -214,8 +214,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
                             _validAmount = false;
                           }));
                 }
-                return AppLocalizations.of(context)
-                    .tr('account.insufficientCashback');
+                return tr('account.insufficientCashback');
               }
 
               _amount = amount;
@@ -235,7 +234,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
                 color: Colors.grey,
                 fontSize: Theme.of(context).textTheme.subtitle2.fontSize,
               ),
-              labelText: AppLocalizations.of(context).tr('account.amountHint'),
+              labelText: tr('account.amountHint'),
             ),
             keyboardType: TextInputType.number,
             inputFormatters: [
@@ -250,7 +249,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  '${AppLocalizations.of(context).tr('account.availableCashback')}: ${_state.wallet.cashback.acceptedAmount.toStringAsFixed(2)} RON',
+                  '${tr('account.availableCashback')}: ${_state.wallet.cashback.acceptedAmount.toStringAsFixed(2)} RON',
                 ),
               ],
             ),
@@ -286,8 +285,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
                     child: Icon(Icons.account_circle),
                   ),
                   title: Text(_accountNameController.text),
-                  subtitle:
-                      Text(AppLocalizations.of(context).tr('account.name')),
+                  subtitle: Text(tr('account.name')),
                   trailing: getTrailingIcons(),
                 ),
                 ListTile(
@@ -296,8 +294,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
                     child: Icon(Icons.monetization_on),
                   ),
                   title: Text(_amount.toStringAsFixed(2)),
-                  subtitle:
-                      Text(AppLocalizations.of(context).tr('account.amount')),
+                  subtitle: Text(tr('account.amount')),
                   trailing: getTrailingIcons(),
                 ),
               ],
@@ -315,15 +312,13 @@ class _CashoutScreenState extends State<CashoutScreen> {
                     padding: EdgeInsets.all(12),
                     color: Theme.of(context).primaryColor,
                     child: Text(
-                      '${AppLocalizations.of(context).tr('authorize')} & ${AppLocalizations.of(context).tr('send')}'
-                          .toUpperCase(),
+                      '${tr('authorize')} & ${tr('send')}'.toUpperCase(),
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () {
                       authorize(
                         context: context,
-                        title: AppLocalizations.of(context)
-                            .tr('authorizeFlow.title'),
+                        title: tr('authorizeFlow.title'),
                         charityService: widget.charityService,
                       ).then(
                         (didAuthenticate) => didAuthenticate == true
@@ -388,7 +383,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
           },
           decoration: InputDecoration(
             labelStyle: TextStyle(color: Colors.grey),
-            labelText: AppLocalizations.of(context).tr('account.name'),
+            labelText: tr('account.name'),
           ),
         ),
       );
@@ -399,7 +394,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
             controller: _accountAliasController,
             decoration: InputDecoration(
               labelStyle: TextStyle(color: Colors.grey),
-              labelText: AppLocalizations.of(context).tr('account.alias'),
+              labelText: tr('account.alias'),
               floatingLabelBehavior: FloatingLabelBehavior.never,
               isDense: true,
             ),
@@ -440,7 +435,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
     if (_stackIndex != 2) {
       actions.add(
         FlatButton(
-          child: Text(AppLocalizations.of(context).tr('next')),
+          child: Text(tr('next')),
           textColor: Colors.white,
           onPressed: _iban == null ||
                   _accountNameController.text.length < 5 ||
@@ -473,7 +468,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context).tr(_titles[_stackIndex])),
+        title: Text(tr(_titles[_stackIndex])),
         automaticallyImplyLeading: false,
         leading: _leadingButton,
         actions: actions,

@@ -45,8 +45,6 @@ class _SignInScreenState extends State<SignInScreen> {
     ScreenUtil.instance =
         ScreenUtil(width: 750, height: 1334, allowFontScaling: true);
 
-    final tr = AppLocalizations.of(context).tr;
-
     final logo = Hero(
       tag: 'hero',
       child: Image.asset('assets/icons/icon.png', scale: 5, height: 50),
@@ -132,8 +130,6 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   Widget _buildLoginForm() {
-    final tr = AppLocalizations.of(context).tr;
-
     final email = TextFormField(
       keyboardType: TextInputType.emailAddress,
       autofocus: false,

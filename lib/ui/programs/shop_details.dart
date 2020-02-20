@@ -35,8 +35,6 @@ class _ShopDetailsState extends State<ShopDetails> {
 
   @override
   Widget build(BuildContext context) {
-    var tr = AppLocalizations.of(context).tr;
-
     final logo = Hero(
       tag: 'shopLogo-${widget.program.id}',
       child: CachedNetworkImage(
@@ -223,7 +221,7 @@ class _ShopDetailsState extends State<ShopDetails> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Text(
-          '${AppLocalizations.of(context).plural('category', 1)}',
+          '${plural('category', 1)}',
           style: Theme.of(context).textTheme.caption,
         ),
         Padding(
@@ -240,7 +238,7 @@ class _ShopDetailsState extends State<ShopDetails> {
       showDuration: Duration(milliseconds: 2000),
       message: widget.program.defaultSaleCommissionType == 'percent' ||
               widget.program.defaultSaleCommissionType == 'variable'
-          ? AppLocalizations.of(context).tr('commissionDisclaimer')
+          ? tr('commissionDisclaimer')
           : '',
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -249,7 +247,7 @@ class _ShopDetailsState extends State<ShopDetails> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                '${capitalize(AppLocalizations.of(context).tr('commission'))} ',
+                '${capitalize(tr('commission'))} ',
                 style: Theme.of(context).textTheme.caption,
               ),
               widget.program.defaultSaleCommissionType == 'percent' ||

@@ -1,6 +1,6 @@
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/util/tools.dart';
-import 'package:easy_localization/easy_localization_delegate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:timeline_list/timeline.dart';
@@ -69,8 +69,7 @@ Color _getTxColor(Transaction transaction) {
 }
 
 String _getTxTypeName(Transaction transaction, BuildContext context) {
-  return AppLocalizations.of(context)
-      .tr(describeEnum(transaction.type).toLowerCase());
+  return tr(describeEnum(transaction.type).toLowerCase());
 }
 
 class TransactionDetails extends StatelessWidget {

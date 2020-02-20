@@ -19,8 +19,6 @@ class WalletScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tr = AppLocalizations.of(context).tr;
-
     return StreamBuilder<Wallet>(
       stream:
           charityService.getPointsListener(AppModel.of(context).user.userId),
@@ -187,7 +185,6 @@ class WalletScreen extends StatelessWidget {
   }
 
   Widget _dialogCashbackBuilder(BuildContext context) {
-    final tr = AppLocalizations.of(context).tr;
     final wallet = AppModel.of(context).wallet;
     final minAmount = AppModel.of(context).minimumWithdrawalAmount;
     return AlertDialog(
@@ -273,7 +270,7 @@ class WalletScreen extends StatelessWidget {
   Widget _donateViewBuilder(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context).tr('donate')),
+        title: Text(tr('donate')),
       ),
       body: Column(
         children: <Widget>[

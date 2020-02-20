@@ -140,9 +140,7 @@ class _ProgramsListState extends State<ProgramsList>
     return Expanded(
       child: FlatButton(
         child: Text(
-          _category == null
-              ? AppLocalizations.of(context).plural('category', 2)
-              : _category,
+          _category == null ? plural('category', 2) : _category,
           style: TextStyle(color: Colors.white),
         ),
         onPressed: () {
@@ -167,7 +165,6 @@ class _ProgramsListState extends State<ProgramsList>
   }
 
   Widget _buildSortButton(BuildContext context) {
-    final tr = AppLocalizations.of(context).tr;
     return PopupMenuButton<_SortStrategy>(
       icon: const Icon(
         Icons.sort,
@@ -217,7 +214,7 @@ class _ProgramsListState extends State<ProgramsList>
 
   Widget _categoriesDialogBuilder(BuildContext context) {
     List<Widget> categories = [
-      _buildCategoryButton(context, AppLocalizations.of(context).tr('all')),
+      _buildCategoryButton(context, tr('all')),
     ];
     categories.addAll(
       _appState.programsMeta.categories

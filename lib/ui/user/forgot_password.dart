@@ -69,7 +69,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         padding: EdgeInsets.all(12),
         color: Theme.of(context).primaryColor,
         child: Text(
-          AppLocalizations.of(context).tr('recoverPassword'),
+          tr('recoverPassword'),
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -135,8 +135,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         await userController.resetPassword(email);
         await _changeLoadingVisible();
         Flushbar(
-          title: AppLocalizations.of(context).tr('resetPassEmailSentTitle'),
-          message: AppLocalizations.of(context).tr('resetPassEmailSentMessage'),
+          title: tr('resetPassEmailSentTitle'),
+          message: tr('resetPassEmailSentMessage'),
           duration: Duration(seconds: 20),
         )..show(context);
       } catch (e) {

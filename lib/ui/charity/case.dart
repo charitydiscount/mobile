@@ -5,7 +5,7 @@ import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/ui/charity/case_details.dart';
 import 'package:charity_discount/ui/wallet/operations.dart';
 import 'package:charity_discount/util/url.dart';
-import 'package:easy_localization/easy_localization_delegate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/charity.dart';
 
@@ -65,7 +65,7 @@ class CaseWidget extends StatelessWidget {
       padding: EdgeInsets.all(12),
       color: Theme.of(context).primaryColor,
       child: Text(
-        AppLocalizations.of(context).tr('contribute'),
+        tr('contribute'),
         style: TextStyle(color: Colors.white),
       ),
     );

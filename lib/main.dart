@@ -43,10 +43,10 @@ class _MainState extends State<Main> {
   Widget build(BuildContext context) {
     var data = EasyLocalizationProvider.of(context).data;
 
-    if (data.savedLocale != null) {
+    if (data.locale != null) {
       return _buildMain(
         context: context,
-        locale: data.savedLocale,
+        locale: data.locale,
       );
     } else {
       return FutureBuilder(

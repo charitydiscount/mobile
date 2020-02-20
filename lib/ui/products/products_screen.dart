@@ -4,7 +4,7 @@ import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/ui/products/product.dart';
 import 'package:charity_discount/util/url.dart';
-import 'package:easy_localization/easy_localization_delegate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 import 'package:flutter/services.dart';
@@ -104,8 +104,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
               labelStyle: TextStyle(
                 fontSize: Theme.of(context).textTheme.subtitle2.fontSize,
               ),
-              labelText:
-                  AppLocalizations.of(context).tr('product.searchPlaceholder'),
+              labelText: tr('product.searchPlaceholder'),
               floatingLabelBehavior: FloatingLabelBehavior.never,
               suffixIcon: IconButton(
                 icon: Icon(Icons.close),
@@ -145,7 +144,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
   }
 
   Widget _buildSortButton(BuildContext context) {
-    final tr = AppLocalizations.of(context).tr;
     return PopupMenuButton<SortStrategy>(
       icon: Icon(
         Icons.sort,
@@ -338,7 +336,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
   }
 
   Widget _filterDialogBuilder(BuildContext context) {
-    final tr = AppLocalizations.of(context).tr;
     final minPrice = TextFormField(
       autofocus: false,
       keyboardType: TextInputType.number,
