@@ -178,7 +178,8 @@
       "title": "Price",
       "min": "Min price",
       "max": "Max price"
-    }
+    },
+    "soldBy": "Sold by"
   },
   "filter": {
     "title": "Filters",

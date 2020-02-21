@@ -14,7 +14,7 @@ class Product {
   final String programName;
   final String brand;
   final String category;
-  final String imageUrl;
+  final List<String> images;
   final String url;
   String affiliateUrl;
   String programLogo;
@@ -27,7 +27,7 @@ class Product {
     this.programName,
     this.brand,
     this.category,
-    this.imageUrl,
+    this.images,
     this.url,
     this.oldPrice,
     this.affiliateUrl,
@@ -45,9 +45,9 @@ class Product {
         programName: json['campaign_name'] ?? json['programName'],
         brand: json['brand'],
         category: json['category'],
-        imageUrl: json['image_urls'] != null
-            ? _getImageUrl(json, 'image_urls')
-            : _getImageUrl(json, 'imageUrl'),
+        images: json['image_urls'] != null
+            ? _getImages(json, 'image_urls')
+            : _getImages(json, 'imageUrl'),
         url: json['url'],
         oldPrice: double.tryParse(json['old_price'].toString()),
       );
@@ -61,7 +61,7 @@ class Product {
     String programName,
     String brand,
     String category,
-    String imageUrl,
+    String images,
     String url,
     String affiliateUrl,
     String programLogo,
@@ -74,7 +74,7 @@ class Product {
         programName: programName ?? this.programName,
         brand: brand ?? this.brand,
         category: category ?? this.category,
-        imageUrl: imageUrl ?? this.imageUrl,
+        images: images ?? this.images,
         url: url ?? this.url,
         oldPrice: oldPrice ?? this.oldPrice,
         affiliateUrl: affiliateUrl ?? this.affiliateUrl,
@@ -82,10 +82,10 @@ class Product {
       );
 }
 
-String _getImageUrl(dynamic json, String key) =>
+List<String> _getImages(dynamic json, String key) =>
     json[key] != null && json[key].toString().contains(',')
-        ? json[key].toString().split(',')[0]
-        : json[key];
+        ? json[key].toString().split(',').map((img) => img.trim()).toList()
+        : [json[key]];
 
 List<Product> productsFromElastic(List json) => List<Product>.from(
       json

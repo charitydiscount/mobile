@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/product.dart';
+import 'package:charity_discount/ui/products/product_details.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +19,7 @@ class ProductCard extends StatelessWidget {
     final logo = Hero(
       tag: 'productLogo-${product.id}',
       child: CachedNetworkImage(
-        imageUrl: product.imageUrl,
+        imageUrl: product.images.first,
         height: 80,
         fit: BoxFit.contain,
         errorWidget: (context, url, error) => Container(
@@ -44,7 +45,15 @@ class ProductCard extends StatelessWidget {
       child: Card(
         child: InkWell(
           onTap: () {
-            launchURL(product.affiliateUrl);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                maintainState: true,
+                builder: (BuildContext context) =>
+                    ProductDetails(product: product),
+                settings: RouteSettings(name: 'ProductDetails'),
+              ),
+            );
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -104,6 +113,16 @@ class ProductCard extends StatelessWidget {
                                     )
                                   : Container(),
                             ],
+                          ),
+                          Center(
+                            child: IconButton(
+                              padding: const EdgeInsets.only(top: 24),
+                              icon: const Icon(Icons.add_shopping_cart),
+                              color: Theme.of(context).primaryColor,
+                              onPressed: () {
+                                launchURL(product.affiliateUrl);
+                              },
+                            ),
                           ),
                         ],
                       ),
