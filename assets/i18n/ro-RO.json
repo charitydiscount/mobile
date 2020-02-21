@@ -117,7 +117,7 @@
   "withdraw": "Retrage",
   "category": {
     "one": "Categorie",
-    "other": "Categorii"
+    "two": "Categorii"
   },
   "all": "Toate",
   "commissionDisclaimer": "din valoarea comenzii fără TVA și transport",
@@ -151,7 +151,7 @@
     "status": {
       "pending": "În așteptare",
       "accepted": "În așteptare",
-      "paid": "Plâtit",
+      "paid": "Plătit",
       "rejected": "Respins"
     }
   },
@@ -178,7 +178,8 @@
       "title": "Preț",
       "min": "Preț minim",
       "max": "Preț maxim"
-    }
+    },
+    "soldBy": "Vândut de"
   },
   "filter": {
     "title": "Filtre",

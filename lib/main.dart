@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:charity_discount/models/settings.dart';
 import 'package:charity_discount/util/locale.dart';
 import 'package:charity_discount/ui/app/util.dart';
@@ -43,10 +44,10 @@ class _MainState extends State<Main> {
   Widget build(BuildContext context) {
     var data = EasyLocalizationProvider.of(context).data;
 
-    if (data.savedLocale != null) {
+    if (data.locale != null) {
       return _buildMain(
         context: context,
-        locale: data.savedLocale,
+        locale: data.locale,
       );
     } else {
       return FutureBuilder(
@@ -75,6 +76,7 @@ class _MainState extends State<Main> {
         if (appModel.introCompleted == false) {
           return Intro();
         }
+
         if (appModel.user != null && appModel.user.userId != null) {
           return StreamBuilder<bool>(
             stream: AppModel.of(context).loading,
@@ -87,7 +89,12 @@ class _MainState extends State<Main> {
                 return Scaffold(
                   body: Stack(
                     children: <Widget>[
-                      Image.asset('assets/images/splashscreen.png'),
+                      Image.asset(
+                        'assets/images/splashscreen.png',
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
+                        fit: BoxFit.cover,
+                      ),
                       loading,
                     ],
                   ),
@@ -106,7 +113,12 @@ class _MainState extends State<Main> {
         return Scaffold(
           body: Stack(
             children: <Widget>[
-              Image.asset('assets/images/splashscreen.png'),
+              Image.asset(
+                'assets/images/splashscreen.png',
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                fit: BoxFit.cover,
+              ),
               buildLoading(context),
             ],
           ),
@@ -158,6 +170,7 @@ class _MainState extends State<Main> {
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  HttpOverrides.global = CustomHttpOverrides();
   runApp(
     EasyLocalization(
       child: ScopedModel(
@@ -178,5 +191,14 @@ class UndefinedView extends StatelessWidget {
         child: Text('Route for $name is not defined'),
       ),
     );
+  }
+}
+
+class CustomHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }

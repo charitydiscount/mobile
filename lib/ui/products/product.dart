@@ -1,19 +1,25 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/product.dart';
+import 'package:charity_discount/ui/products/product_details.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:flutter/material.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
+  final bool showShopLogo;
 
-  ProductCard({Key key, @required this.product}) : super(key: key);
+  ProductCard({
+    Key key,
+    @required this.product,
+    this.showShopLogo = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final logo = Hero(
       tag: 'productLogo-${product.id}',
       child: CachedNetworkImage(
-        imageUrl: product.imageUrl,
+        imageUrl: product.images.first,
         height: 80,
         fit: BoxFit.contain,
         errorWidget: (context, url, error) => Container(
@@ -26,18 +32,28 @@ class ProductCard extends StatelessWidget {
       ),
     );
 
-    final shopLogo = CachedNetworkImage(
-      imageUrl: product.programLogo,
-      width: 40,
-      fit: BoxFit.contain,
-    );
+    final shopLogo = showShopLogo
+        ? CachedNetworkImage(
+            imageUrl: product.programLogo,
+            width: 40,
+            fit: BoxFit.contain,
+          )
+        : Container();
 
     return SizedBox(
       width: MediaQuery.of(context).size.width / 2,
       child: Card(
         child: InkWell(
           onTap: () {
-            launchURL(product.affiliateUrl);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                maintainState: true,
+                builder: (BuildContext context) =>
+                    ProductDetails(product: product),
+                settings: RouteSettings(name: 'ProductDetails'),
+              ),
+            );
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -97,6 +113,16 @@ class ProductCard extends StatelessWidget {
                                     )
                                   : Container(),
                             ],
+                          ),
+                          Center(
+                            child: IconButton(
+                              padding: const EdgeInsets.only(top: 24),
+                              icon: const Icon(Icons.add_shopping_cart),
+                              color: Theme.of(context).primaryColor,
+                              onPressed: () {
+                                launchURL(product.affiliateUrl);
+                              },
+                            ),
                           ),
                         ],
                       ),

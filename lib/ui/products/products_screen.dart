@@ -4,7 +4,7 @@ import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/ui/products/product.dart';
 import 'package:charity_discount/util/url.dart';
-import 'package:easy_localization/easy_localization_delegate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 import 'package:flutter/services.dart';
@@ -104,8 +104,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
               labelStyle: TextStyle(
                 fontSize: Theme.of(context).textTheme.subtitle2.fontSize,
               ),
-              labelText:
-                  AppLocalizations.of(context).tr('product.searchPlaceholder'),
+              labelText: tr('product.searchPlaceholder'),
               floatingLabelBehavior: FloatingLabelBehavior.never,
               suffixIcon: IconButton(
                 icon: Icon(Icons.close),
@@ -145,7 +144,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
   }
 
   Widget _buildSortButton(BuildContext context) {
-    final tr = AppLocalizations.of(context).tr;
     return PopupMenuButton<SortStrategy>(
       icon: Icon(
         Icons.sort,
@@ -225,32 +223,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
         ),
       );
 
-  List<Product> _prepareProducts(Iterable<Product> products) => products
-      .map((product) {
-        final program = _state.programs.firstWhere(
-              (program) => program.id == product.programId,
-              orElse: () => null,
-            ) ??
-            _state.programs.firstWhere(
-              (program) =>
-                  program.uniqueCode.compareTo(product.programName) == 0,
-              orElse: () => null,
-            );
-        if (program == null) {
-          return null;
-        }
-        return product.copyWith(
-          programLogo: program.logoPath,
-          affiliateUrl: convertAffiliateUrl(
-            product.url,
-            _state.affiliateMeta.uniqueCode,
-            program.uniqueCode,
-            _state.user.userId,
-          ),
-        );
-      })
-      .where((product) => product != null)
-      .toList();
+  List<Product> _prepareProducts(Iterable<Product> products) =>
+      prepareProducts(products, _state);
 
   Widget get _featuredProducts => FutureBuilder<List<Product>>(
         future: _featuredMemoizer.runOnce(
@@ -338,7 +312,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
   }
 
   Widget _filterDialogBuilder(BuildContext context) {
-    final tr = AppLocalizations.of(context).tr;
     final minPrice = TextFormField(
       autofocus: false,
       keyboardType: TextInputType.number,
@@ -469,3 +442,31 @@ class _ProductsScreenState extends State<ProductsScreen> {
     );
   }
 }
+
+List<Product> prepareProducts(Iterable<Product> products, AppModel state) =>
+    products
+        .map((product) {
+          final program = state.programs.firstWhere(
+                (program) => program.id == product.programId,
+                orElse: () => null,
+              ) ??
+              state.programs.firstWhere(
+                (program) =>
+                    program.uniqueCode.compareTo(product.programName) == 0,
+                orElse: () => null,
+              );
+          if (program == null) {
+            return null;
+          }
+          return product.copyWith(
+            programLogo: program.logoPath,
+            affiliateUrl: convertAffiliateUrl(
+              product.url,
+              state.affiliateMeta.uniqueCode,
+              program.uniqueCode,
+              state.user.userId,
+            ),
+          );
+        })
+        .where((product) => product != null)
+        .toList();

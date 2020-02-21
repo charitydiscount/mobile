@@ -1,7 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:charity_discount/models/product.dart';
 import 'package:charity_discount/models/promotion.dart';
 import 'package:charity_discount/models/rating.dart';
+import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
+import 'package:charity_discount/ui/products/product.dart';
+import 'package:charity_discount/ui/products/products_screen.dart';
 import 'package:charity_discount/ui/programs/promotion.dart';
 import 'package:charity_discount/ui/programs/rate_shop.dart';
 import 'package:charity_discount/ui/programs/rating.dart';
@@ -19,11 +23,13 @@ import 'package:async/async.dart';
 class ShopDetails extends StatefulWidget {
   final models.Program program;
   final ShopsService shopsService;
+  final SearchService searchService;
 
   const ShopDetails({
     Key key,
     @required this.program,
     @required this.shopsService,
+    @required this.searchService,
   }) : super(key: key);
 
   @override
@@ -32,11 +38,10 @@ class ShopDetails extends StatefulWidget {
 
 class _ShopDetailsState extends State<ShopDetails> {
   AsyncMemoizer _promotionsMemoizer = AsyncMemoizer();
+  AsyncMemoizer<ProductSearchResult> _productsMemoizer = AsyncMemoizer();
 
   @override
   Widget build(BuildContext context) {
-    var tr = AppLocalizations.of(context).tr;
-
     final logo = Hero(
       tag: 'shopLogo-${widget.program.id}',
       child: CachedNetworkImage(
@@ -172,6 +177,7 @@ class _ShopDetailsState extends State<ShopDetails> {
             fontSize: sectionTitleSize,
             color: titleColor,
           ),
+          textAlign: TextAlign.left,
         );
         List<Widget> promotionsWidgets = [promotionsTitle];
         promotionsWidgets.addAll(
@@ -195,25 +201,33 @@ class _ShopDetailsState extends State<ShopDetails> {
         },
         child: const Icon(Icons.add_shopping_cart),
       ),
-      body: ListView(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: logo,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: _buildInfo(context),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: promotionsBuilder,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: ratingBuilder,
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Center(child: logo),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: _buildInfo(context),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: promotionsBuilder,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: ratingBuilder,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Divider(height: 2.0),
+            ),
+            _buildProducts(),
+          ],
+        ),
       ),
     );
   }
@@ -223,7 +237,7 @@ class _ShopDetailsState extends State<ShopDetails> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Text(
-          '${AppLocalizations.of(context).plural('category', 1)}',
+          '${plural('category', 1)}',
           style: Theme.of(context).textTheme.caption,
         ),
         Padding(
@@ -240,7 +254,7 @@ class _ShopDetailsState extends State<ShopDetails> {
       showDuration: Duration(milliseconds: 2000),
       message: widget.program.defaultSaleCommissionType == 'percent' ||
               widget.program.defaultSaleCommissionType == 'variable'
-          ? AppLocalizations.of(context).tr('commissionDisclaimer')
+          ? tr('commissionDisclaimer')
           : '',
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -249,7 +263,7 @@ class _ShopDetailsState extends State<ShopDetails> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                '${capitalize(AppLocalizations.of(context).tr('commission'))} ',
+                '${capitalize(tr('commission'))} ',
                 style: Theme.of(context).textTheme.caption,
               ),
               widget.program.defaultSaleCommissionType == 'percent' ||
@@ -283,6 +297,40 @@ class _ShopDetailsState extends State<ShopDetails> {
           Expanded(child: commission),
         ],
       ),
+    );
+  }
+
+  Widget _buildProducts() {
+    if (widget.program.productsCount == 0) {
+      return Container();
+    }
+
+    return FutureBuilder(
+      future: _productsMemoizer.runOnce(() =>
+          Future.delayed(Duration(seconds: 1)).then((_) => widget.searchService
+              .getProductsForProgram(programId: widget.program.id))),
+      builder: (context, snapshot) {
+        final loading = buildConnectionLoading(
+          context: context,
+          snapshot: snapshot,
+        );
+        if (loading != null) {
+          return loading;
+        }
+
+        final appState = AppModel.of(context);
+        List products = prepareProducts(snapshot.data.products, appState);
+
+        return GridView.builder(
+          shrinkWrap: true,
+          primary: false,
+          physics: NeverScrollableScrollPhysics(),
+          gridDelegate: getGridDelegate(context, aspectRatioFactor: 0.95),
+          itemCount: products.length,
+          itemBuilder: (context, index) =>
+              ProductCard(product: products[index], showShopLogo: false),
+        );
+      },
     );
   }
 }

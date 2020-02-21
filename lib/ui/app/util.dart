@@ -49,7 +49,7 @@ Widget buildConnectionLoading({
           child: Padding(
             padding: const EdgeInsets.all(6.0),
             child: Text(
-              AppLocalizations.of(context).tr('connectionError'),
+              tr('connectionError'),
             ),
           ),
         ),

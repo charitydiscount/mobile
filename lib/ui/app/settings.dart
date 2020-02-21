@@ -5,6 +5,7 @@ import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/locale.dart';
 import 'package:easy_localization/easy_localization_delegate.dart';
 import 'package:easy_localization/easy_localization_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -30,14 +31,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     List<Widget> settingTiles = [];
     Widget language = ExpansionTile(
       leading: Icon(Icons.language),
-      title: Text(AppLocalizations.of(context).tr('language')),
+      title: Text(tr('language')),
       children:
           supportedLanguages.map((lang) => _buildLanguageTile(lang)).toList(),
     );
     settingTiles.add(language);
     Widget notifications = ListTile(
       leading: Icon(Icons.notifications),
-      title: Text(AppLocalizations.of(context).tr('notifications')),
+      title: Text(tr('notifications')),
       trailing: Switch.adaptive(
         value: _state.settings.notifications || false,
         onChanged: (bool newValue) {
@@ -56,7 +57,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     Widget theme = ExpansionTile(
       leading: Icon(Icons.color_lens),
-      title: Text(AppLocalizations.of(context).tr('theme.name')),
+      title: Text(tr('theme.name')),
       children: ThemeOption.values
           .map((themeOption) => _buildThemeRadioButton(themeOption))
           .toList(),
@@ -66,7 +67,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context).tr('settings'),
+          tr('settings'),
         ),
       ),
       body: ListView.separated(
@@ -114,8 +115,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildThemeRadioButton(ThemeOption value) => ListTile(
         title: Text(
-          AppLocalizations.of(context)
-              .tr('theme.${describeEnum(value).toLowerCase()}'),
+          tr('theme.${describeEnum(value).toLowerCase()}'),
         ),
         leading: Radio(
           value: value,

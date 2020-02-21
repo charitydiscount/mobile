@@ -32,7 +32,7 @@ class _DonateDialogState extends State<DonateDialog> {
   Widget build(BuildContext context) {
     return OperationDialog(
       title: Text(
-        AppLocalizations.of(context).tr(
+        tr(
           'operation.contributeTo',
           args: [widget.charityCase.title],
         ),
@@ -76,7 +76,6 @@ class _DonateWidgetState extends State<DonateWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var tr = AppLocalizations.of(context).tr;
     return StreamBuilder<Wallet>(
       stream: _pointsListener,
       builder: (context, snapshot) {
@@ -237,8 +236,6 @@ Future<TransactionResult> _waitForTx(
   String status = tx.data['status'];
   IconData notificationIcon;
   Color notifIconColor;
-
-  var tr = AppLocalizations.of(context).tr;
 
   TxType txType = txTypeFromString(tx.data['type']);
   switch (txType) {

@@ -21,7 +21,7 @@ class CommissionsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context).tr('wallet.commissions'),
+          tr('wallet.commissions'),
           style: TextStyle(color: Theme.of(context).primaryColor),
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -119,8 +119,7 @@ Color _getcommissionColor(Commission commission) {
 }
 
 String _getcommissionStatusName(Commission commission, BuildContext context) {
-  return AppLocalizations.of(context)
-      .tr('wallet.status.${commission.status.toLowerCase()}');
+  return tr('wallet.status.${commission.status.toLowerCase()}');
 }
 
 class CommissionDetails extends StatelessWidget {

@@ -52,7 +52,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
 
   get _getVerificationCodeLabel {
     return Text(
-      AppLocalizations.of(context).tr('authorizeFlow.title'),
+      tr('authorizeFlow.title'),
       textAlign: TextAlign.center,
       style: TextStyle(
         fontSize: 24.0,
@@ -63,7 +63,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
 
   get _getEmailLabel {
     return Text(
-      AppLocalizations.of(context).tr('authorizeFlow.subtitle'),
+      tr('authorizeFlow.subtitle'),
       textAlign: TextAlign.center,
       style: TextStyle(
         fontSize: 16.0,
@@ -120,7 +120,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
         ),
         alignment: Alignment.center,
         child: Text(
-          AppLocalizations.of(context).tr('authorizeFlow.paste'),
+          tr('authorizeFlow.paste'),
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
@@ -129,10 +129,8 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
           if (clipdboardData.text.length != 4 ||
               !clipdboardData.text.contains(RegExp(r'^[0-9]*$'))) {
             Flushbar(
-              title: AppLocalizations.of(context)
-                  .tr('authorizeFlow.pasteError.title'),
-              message: AppLocalizations.of(context)
-                  .tr('authorizeFlow.pasteError.message'),
+              title: tr('authorizeFlow.pasteError.title'),
+              message: tr('authorizeFlow.pasteError.message'),
             )..show(context);
             return;
           }
@@ -187,7 +185,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
         ),
         alignment: Alignment.center,
         child: Text(
-          AppLocalizations.of(context).tr('authorizeFlow.resend'),
+          tr('authorizeFlow.resend'),
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
@@ -455,10 +453,8 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
         Navigator.pop(context, authorized);
       } else {
         Flushbar(
-          title:
-              AppLocalizations.of(context).tr('authorizeFlow.checkError.title'),
-          message: AppLocalizations.of(context)
-              .tr('authorizeFlow.checkError.subtitle'),
+          title: tr('authorizeFlow.checkError.title'),
+          message: tr('authorizeFlow.checkError.subtitle'),
         )..show(context);
       }
     });

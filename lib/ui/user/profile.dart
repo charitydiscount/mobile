@@ -6,7 +6,7 @@ import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/user/user_avatar.dart';
 import 'package:charity_discount/ui/app/loading.dart';
 import 'package:charity_discount/util/remote_config.dart';
-import 'package:easy_localization/easy_localization_delegate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -20,7 +20,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context).tr('profile'),
+          tr('profile'),
         ),
       ),
       body: Profile(),
@@ -90,11 +90,11 @@ class _ProfileState extends State<Profile> {
         itemBuilder: (context) => [
           PopupMenuItem(
             value: ImageSource.gallery,
-            child: Text(AppLocalizations.of(context).tr('gallery')),
+            child: Text(tr('gallery')),
           ),
           PopupMenuItem(
             value: ImageSource.camera,
-            child: Text(AppLocalizations.of(context).tr('camera')),
+            child: Text(tr('camera')),
           ),
         ],
         onSelected: (source) {
@@ -127,7 +127,7 @@ class _ProfileState extends State<Profile> {
     final emailLabel = Text('Email: ');
     final email = appState?.user?.email ?? '';
 
-    final nameLabel = Text('${AppLocalizations.of(context).tr('name')}:');
+    final nameLabel = Text('${tr('name')}:');
     final name = appState.user.name ?? '';
 
     return LoadingScreen(

@@ -133,25 +133,25 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.add_shopping_cart),
             title: Text(
-              AppLocalizations.of(context).tr('shops'),
+              tr('shops'),
             ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.category),
             title: Text(
-              AppLocalizations.of(context).tr('product.title'),
+              tr('product.title'),
             ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             title: Text(
-              AppLocalizations.of(context).tr('charity'),
+              tr('charity'),
             ),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_balance_wallet),
             title: Text(
-              AppLocalizations.of(context).tr('wallet.name'),
+              tr('wallet.name'),
             ),
           ),
         ],
@@ -173,7 +173,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildProfileButton({BuildContext context, User user}) {
     final logoImage = UserAvatar(photoUrl: user.photoUrl);
-    final tr = AppLocalizations.of(context).tr;
     return InkWell(
       onTap: () {
         showModalBottomSheet(

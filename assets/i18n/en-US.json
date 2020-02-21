@@ -117,7 +117,7 @@
   "withdraw": "Withdraw",
   "category": {
     "one": "Category",
-    "other": "Categories"
+    "two": "Categories"
   },
   "all": "All",
   "commissionDisclaimer": "of the purchase not including VAT and transport",
@@ -178,7 +178,8 @@
       "title": "Price",
       "min": "Min price",
       "max": "Max price"
-    }
+    },
+    "soldBy": "Sold by"
   },
   "filter": {
     "title": "Filters",

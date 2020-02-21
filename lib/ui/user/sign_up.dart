@@ -28,7 +28,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget build(BuildContext context) {
-    final tr = AppLocalizations.of(context).tr;
     final logo = Hero(
       tag: 'hero',
       child: CircleAvatar(

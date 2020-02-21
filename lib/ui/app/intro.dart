@@ -84,8 +84,7 @@ class _IntroState extends State<Intro> with TickerProviderStateMixin {
                                   Opacity(
                                     opacity: .10,
                                     child: GradientText(
-                                      AppLocalizations.of(context)
-                                          .tr(page.title),
+                                      tr(page.title),
                                       gradient: LinearGradient(
                                         colors: page.titleGradient,
                                       ),
@@ -99,8 +98,7 @@ class _IntroState extends State<Intro> with TickerProviderStateMixin {
                                     padding:
                                         EdgeInsets.only(top: 30.0, left: 22.0),
                                     child: GradientText(
-                                      AppLocalizations.of(context)
-                                          .tr(page.title),
+                                      tr(page.title),
                                       gradient: LinearGradient(
                                         colors: page.titleGradient,
                                       ),
@@ -116,7 +114,7 @@ class _IntroState extends State<Intro> with TickerProviderStateMixin {
                               padding:
                                   const EdgeInsets.only(left: 34.0, top: 8.0),
                               child: Text(
-                                AppLocalizations.of(context).tr(page.body),
+                                tr(page.body),
                                 style: TextStyle(
                                   fontSize: 20.0,
                                   color: Color(0xFF9B9B9B),

@@ -2,7 +2,7 @@ import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/rating.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/state/state_model.dart';
-import 'package:easy_localization/easy_localization_delegate.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
@@ -37,7 +37,6 @@ class _RateScreenState extends State<RateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Function tr = AppLocalizations.of(context).tr;
     Widget headline = Text(
       tr(
         'review.addHeadline',
@@ -111,7 +110,7 @@ class _RateScreenState extends State<RateScreen> {
         labelStyle: TextStyle(
           color: Colors.grey,
         ),
-        labelText: AppLocalizations.of(context).tr('review.opinion'),
+        labelText: tr('review.opinion'),
       ),
       autovalidate: true,
       minLines: 1,
