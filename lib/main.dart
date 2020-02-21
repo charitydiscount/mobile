@@ -76,6 +76,7 @@ class _MainState extends State<Main> {
         if (appModel.introCompleted == false) {
           return Intro();
         }
+
         if (appModel.user != null && appModel.user.userId != null) {
           return StreamBuilder<bool>(
             stream: AppModel.of(context).loading,
@@ -88,7 +89,12 @@ class _MainState extends State<Main> {
                 return Scaffold(
                   body: Stack(
                     children: <Widget>[
-                      Image.asset('assets/images/splashscreen.png'),
+                      Image.asset(
+                        'assets/images/splashscreen.png',
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
+                        fit: BoxFit.cover,
+                      ),
                       loading,
                     ],
                   ),
@@ -107,7 +113,12 @@ class _MainState extends State<Main> {
         return Scaffold(
           body: Stack(
             children: <Widget>[
-              Image.asset('assets/images/splashscreen.png'),
+              Image.asset(
+                'assets/images/splashscreen.png',
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                fit: BoxFit.cover,
+              ),
               buildLoading(context),
             ],
           ),
