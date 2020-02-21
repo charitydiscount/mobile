@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:charity_discount/models/settings.dart';
 import 'package:charity_discount/util/locale.dart';
 import 'package:charity_discount/ui/app/util.dart';
@@ -158,6 +159,7 @@ class _MainState extends State<Main> {
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  HttpOverrides.global = CustomHttpOverrides();
   runApp(
     EasyLocalization(
       child: ScopedModel(
@@ -178,5 +180,14 @@ class UndefinedView extends StatelessWidget {
         child: Text('Route for $name is not defined'),
       ),
     );
+  }
+}
+
+class CustomHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }

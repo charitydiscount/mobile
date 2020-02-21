@@ -15,7 +15,7 @@ abstract class SearchServiceBase {
   Future<ProductSearchResult> searchProducts(
     String query, {
     String category,
-    int programId,
+    String programId,
     int from,
     SortStrategy sort,
     double minPrice,
@@ -23,6 +23,12 @@ abstract class SearchServiceBase {
   });
 
   Future<List<Product>> getFeaturedProducts({String userId});
+
+  Future<ProductSearchResult> getProductsForProgram({
+    String programId,
+    int size = 20,
+    int from = 0,
+  });
 }
 
 enum SortStrategy { priceAsc, priceDesc, relevance }
@@ -125,7 +131,7 @@ class SearchService implements SearchServiceBase {
   Future<ProductSearchResult> searchProducts(
     String query, {
     String category,
-    int programId,
+    String programId,
     int from = 0,
     SortStrategy sort,
     double minPrice,
@@ -158,5 +164,48 @@ class SearchService implements SearchServiceBase {
     List<Product> products = productsFromElastic(hits);
 
     return products;
+  }
+
+  @override
+  Future<ProductSearchResult> getProductsForProgram({
+    String programId,
+    int size = 20,
+    int from = 0,
+  }) async {
+    String elasticUrl = await remoteConfig.getElasticEndpoint();
+    String auth = await remoteConfig.getElasticAuth();
+
+    final body = {
+      'query': {
+        'term': {
+          'campaign_id': {'value': programId}
+        }
+      },
+      'size': size,
+      'from': from,
+    };
+
+    final response = await http.post(
+      '$elasticUrl/products/_search',
+      headers: {
+        'Authorization': 'Basic $auth',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Products load failed: (${response.statusCode})');
+    }
+
+    final data = jsonDecode(response.body)['hits'];
+    if (!data.containsKey('hits')) {
+      return ProductSearchResult([], 0);
+    }
+
+    return ProductSearchResult(
+      productsFromElastic(List.from(data['hits'])),
+      data['total']['value'] ?? 0,
+    );
   }
 }

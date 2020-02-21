@@ -372,6 +372,7 @@ class _ShopsWidgetState extends State<ShopsWidget>
           program: programForDisplay,
           userId: appState.user.userId,
           shopsService: widget.shopsService,
+          searchService: widget.searchService,
         );
       },
     );

@@ -223,32 +223,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
         ),
       );
 
-  List<Product> _prepareProducts(Iterable<Product> products) => products
-      .map((product) {
-        final program = _state.programs.firstWhere(
-              (program) => program.id == product.programId,
-              orElse: () => null,
-            ) ??
-            _state.programs.firstWhere(
-              (program) =>
-                  program.uniqueCode.compareTo(product.programName) == 0,
-              orElse: () => null,
-            );
-        if (program == null) {
-          return null;
-        }
-        return product.copyWith(
-          programLogo: program.logoPath,
-          affiliateUrl: convertAffiliateUrl(
-            product.url,
-            _state.affiliateMeta.uniqueCode,
-            program.uniqueCode,
-            _state.user.userId,
-          ),
-        );
-      })
-      .where((product) => product != null)
-      .toList();
+  List<Product> _prepareProducts(Iterable<Product> products) =>
+      prepareProducts(products, _state);
 
   Widget get _featuredProducts => FutureBuilder<List<Product>>(
         future: _featuredMemoizer.runOnce(
@@ -466,3 +442,31 @@ class _ProductsScreenState extends State<ProductsScreen> {
     );
   }
 }
+
+List<Product> prepareProducts(Iterable<Product> products, AppModel state) =>
+    products
+        .map((product) {
+          final program = state.programs.firstWhere(
+                (program) => program.id == product.programId,
+                orElse: () => null,
+              ) ??
+              state.programs.firstWhere(
+                (program) =>
+                    program.uniqueCode.compareTo(product.programName) == 0,
+                orElse: () => null,
+              );
+          if (program == null) {
+            return null;
+          }
+          return product.copyWith(
+            programLogo: program.logoPath,
+            affiliateUrl: convertAffiliateUrl(
+              product.url,
+              state.affiliateMeta.uniqueCode,
+              program.uniqueCode,
+              state.user.userId,
+            ),
+          );
+        })
+        .where((product) => product != null)
+        .toList();

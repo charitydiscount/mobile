@@ -44,6 +44,7 @@ class Program {
   final String currency;
   final String source;
   final int order;
+  final int productsCount;
   OverallRating rating;
 
   bool favorited;
@@ -69,6 +70,7 @@ class Program {
     this.source,
     this.rating,
     this.order,
+    this.productsCount,
   });
 
   factory Program.fromJson(Map json) {
@@ -96,6 +98,7 @@ class Program {
           ? OverallRating.fromJson(json['rating'])
           : OverallRating.fromJson({}),
       order: parseOrder(json),
+      productsCount: json['productsCount'] ?? 0,
     );
   }
 

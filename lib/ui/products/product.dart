@@ -5,8 +5,13 @@ import 'package:flutter/material.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
+  final bool showShopLogo;
 
-  ProductCard({Key key, @required this.product}) : super(key: key);
+  ProductCard({
+    Key key,
+    @required this.product,
+    this.showShopLogo = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +31,13 @@ class ProductCard extends StatelessWidget {
       ),
     );
 
-    final shopLogo = CachedNetworkImage(
-      imageUrl: product.programLogo,
-      width: 40,
-      fit: BoxFit.contain,
-    );
+    final shopLogo = showShopLogo
+        ? CachedNetworkImage(
+            imageUrl: product.programLogo,
+            width: 40,
+            fit: BoxFit.contain,
+          )
+        : Container();
 
     return SizedBox(
       width: MediaQuery.of(context).size.width / 2,
