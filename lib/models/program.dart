@@ -109,6 +109,7 @@ class Program {
         'name': name,
         'category': category,
         'mainUrl': mainUrl,
+        'affiliateUrl': affiliateUrl,
         'logoPath': logoPath,
         'defaultSaleCommissionRate': defaultSaleCommissionRate != null
             ? defaultSaleCommissionRate.toString()
@@ -121,6 +122,7 @@ class Program {
         'currency': currency,
         'source': source,
         'order': order,
+        'productsCount': productsCount,
       };
 }
 
