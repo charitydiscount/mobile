@@ -328,7 +328,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
                                   TxType.CASHOUT,
                                   double.tryParse(_amountController.text),
                                   'RON',
-                                  AppModel.of(context).user.userId,
+                                  _iban.electronicFormat,
                                 )
                                 .then((txRef) => showTxResult(txRef, context)
                                         .then((txStatus) {
@@ -336,16 +336,18 @@ class _CashoutScreenState extends State<CashoutScreen> {
                                         _txResult = txStatus;
                                       });
                                     }))
-                                .catchError((error) => Flushbar(
-                                      title:
-                                          'Failed to create the transaction request',
-                                      message: error.toString(),
-                                      icon: Icon(
-                                        Icons.error_outline,
-                                        color: Colors.red,
-                                      ),
-                                      reverseAnimationCurve: Curves.linear,
-                                    )?.show(context))
+                                .catchError(
+                                  (error) => Flushbar(
+                                    title:
+                                        'Failed to create the transaction request',
+                                    message: error.toString(),
+                                    icon: Icon(
+                                      Icons.error_outline,
+                                      color: Colors.red,
+                                    ),
+                                    reverseAnimationCurve: Curves.linear,
+                                  )?.show(context),
+                                )
                             : print('Failed to auth'),
                       );
                     },
