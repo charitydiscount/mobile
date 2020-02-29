@@ -88,7 +88,7 @@ class ProgramRating extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return rating.count > 0
+    return rating != null && rating.count > 0
         ? Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
