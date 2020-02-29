@@ -63,7 +63,7 @@ class Transaction {
   final DateTime date;
   final double amount;
   final String currency;
-  final String target;
+  final Target target;
 
   Transaction({
     this.type,
@@ -78,7 +78,7 @@ class Transaction {
         date: (json["date"] as Timestamp).toDate(),
         amount: json['amount'] != null ? json['amount'].toDouble() : null,
         currency: json['currency'] ?? 'RON',
-        target: json['target'] ?? '',
+        target: Target.fromJson(json['target']),
       );
 }
 

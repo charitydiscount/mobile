@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:charity_discount/models/commission.dart';
 import 'package:charity_discount/models/news.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -99,7 +97,7 @@ class FirebaseCharityService implements CharityService {
       'type': describeEnum(type),
       'amount': amount,
       'currency': currency,
-      'target': jsonEncode(target),
+      'target': target.toJson(),
       'createdAt': FieldValue.serverTimestamp(),
       'status': 'PENDING',
     });
