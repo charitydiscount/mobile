@@ -328,7 +328,10 @@ class _CashoutScreenState extends State<CashoutScreen> {
                                   TxType.CASHOUT,
                                   double.tryParse(_amountController.text),
                                   'RON',
-                                  _iban.electronicFormat,
+                                  Target(
+                                    id: _iban.electronicFormat,
+                                    name: _accountNameController.text,
+                                  ),
                                 )
                                 .then((txRef) => showTxResult(txRef, context)
                                         .then((txStatus) {
