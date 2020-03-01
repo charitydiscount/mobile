@@ -317,20 +317,27 @@ class _ShopDetailsState extends State<ShopDetails> {
 
   Widget _buildSellingCountries(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            tr('sellingIn'),
-            style: Theme.of(context).textTheme.caption,
-          ),
-          Text(
-            widget.program.sellingCountries
-                .map((country) => country.name)
-                .join(', '),
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-        ],
+      child: Tooltip(
+        showDuration: Duration(seconds: 5),
+        message: widget.program.sellingCountries
+            .map((country) => country.name)
+            .join(', '),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              tr('sellingIn'),
+              style: Theme.of(context).textTheme.caption,
+            ),
+            Text(
+              widget.program.sellingCountries
+                  .map((country) => country.name)
+                  .join(', '),
+              style: Theme.of(context).textTheme.subtitle1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }
