@@ -101,11 +101,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       onTap: () {
         var newSettings = _state.settings;
         newSettings.lang = language.code;
+        EasyLocalizationProvider.of(context)
+            .data
+            .changeLocale(locale: language.locale);
         setState(() {
-          _state.setSettings(newSettings);
-          EasyLocalizationProvider.of(context)
-              .data
-              .changeLocale(locale: language.locale);
+          _state.setSettings(newSettings, storeLocal: true);
         });
       },
     );
