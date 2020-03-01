@@ -214,7 +214,7 @@ class WalletScreen extends StatelessWidget {
           Text(
             tr(
               'wallet.cashback.dialog.minimumAmount',
-              args: ['${minAmount}RON'],
+              args: ['${minAmount}Lei'],
             ),
             style: Theme.of(context).textTheme.caption,
           ),

@@ -35,28 +35,23 @@ class _ImageCarouselState extends State<ImageCarousel> {
             );
           },
         ),
-        Positioned(
-          left: 0.0,
-          right: 0.0,
-          bottom: 0.0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: widget.images.asMap().entries.map(
-              (entry) {
-                return Container(
-                  width: 8.0,
-                  height: 8.0,
-                  margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _currentIndex == entry.key
-                        ? Color.fromRGBO(0, 0, 0, 0.9)
-                        : Color.fromRGBO(0, 0, 0, 0.4),
-                  ),
-                );
-              },
-            ).toList(),
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: widget.images.asMap().entries.map(
+            (entry) {
+              return Container(
+                width: 8.0,
+                height: 8.0,
+                margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _currentIndex == entry.key
+                      ? Color.fromRGBO(0, 0, 0, 0.9)
+                      : Color.fromRGBO(0, 0, 0, 0.4),
+                ),
+              );
+            },
+          ).toList(),
         )
       ],
     );

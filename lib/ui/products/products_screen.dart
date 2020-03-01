@@ -459,7 +459,7 @@ List<Product> prepareProducts(Iterable<Product> products, AppModel state) =>
             return null;
           }
           return product.copyWith(
-            programLogo: program.logoPath,
+            program: program,
             affiliateUrl: convertAffiliateUrl(
               product.url,
               state.affiliateMeta.uniqueCode,

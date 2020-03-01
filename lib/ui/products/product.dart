@@ -34,7 +34,7 @@ class ProductCard extends StatelessWidget {
 
     final shopLogo = showShopLogo
         ? CachedNetworkImage(
-            imageUrl: product.programLogo,
+            imageUrl: product.program.logoPath,
             width: 40,
             fit: BoxFit.contain,
           )

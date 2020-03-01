@@ -249,7 +249,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  '${tr('account.availableCashback')}: ${_state.wallet.cashback.acceptedAmount.toStringAsFixed(2)} RON',
+                  '${tr('account.availableCashback')}: ${_state.wallet.cashback.acceptedAmount.toStringAsFixed(2)} Lei',
                 ),
               ],
             ),

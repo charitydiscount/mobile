@@ -60,6 +60,7 @@ class Program {
   final int mainOrder;
   @JsonKey(defaultValue: 0)
   final int productsCount;
+  final List<SellingCountry> sellingCountries;
   OverallRating rating;
 
   bool favorited;
@@ -87,6 +88,7 @@ class Program {
     this.order,
     this.mainOrder,
     this.productsCount,
+    this.sellingCountries,
   });
 
   factory Program.fromJson(Map json) => _$ProgramFromJson(json);
@@ -150,4 +152,18 @@ class OverallRating {
   factory OverallRating.fromJson(Map json) => _$OverallRatingFromJson(json);
 
   Map<String, dynamic> toJson() => _$OverallRatingToJson(this);
+}
+
+@JsonSerializable()
+class SellingCountry {
+  final int id;
+  final String code;
+  final String name;
+  final String currency;
+
+  SellingCountry({this.id, this.code, this.name, this.currency});
+
+  factory SellingCountry.fromJson(Map json) => _$SellingCountryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SellingCountryToJson(this);
 }
