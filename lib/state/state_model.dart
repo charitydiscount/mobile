@@ -159,7 +159,6 @@ class AppModel extends Model {
     if (_programs == null) {
       var localPrograms = await localService.getPrograms();
       if (localPrograms != null) {
-        _programs = localPrograms;
         setPrograms(localPrograms, storeLocal: false);
       } else {
         var programs = await _shopsService.getAllPrograms();
