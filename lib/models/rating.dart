@@ -44,5 +44,5 @@ class Reviewer {
         photoUrl: user.photoUrl,
       );
 
-  Map<String, String> toJson() => _$ReviewerToJson(this);
+  Map<String, dynamic> toJson() => _$ReviewerToJson(this);
 }
