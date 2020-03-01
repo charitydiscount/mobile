@@ -95,7 +95,7 @@ class _DonateWidgetState extends State<DonateWidget> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
-                '${tr('account.availableCashback')} ${balance.toStringAsFixed(2)} RON',
+                '${tr('account.availableCashback')} ${balance.toStringAsFixed(2)} Lei',
                 textAlign: TextAlign.left,
               ),
             ),

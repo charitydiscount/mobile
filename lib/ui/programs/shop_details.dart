@@ -282,7 +282,10 @@ class _ShopDetailsState extends State<ShopDetails> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
               getProgramCommission(widget.program),
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline5
+                  .copyWith(color: Colors.green),
             ),
           ),
         ],
@@ -290,13 +293,43 @@ class _ShopDetailsState extends State<ShopDetails> {
     );
 
     return SizedBox(
-      height: 100,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      height: 130,
+      child: Column(
         children: <Widget>[
-          Expanded(child: category),
-          Expanded(child: commission),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Expanded(child: category),
+              Expanded(child: _buildSellingCountries(context)),
+            ],
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: commission,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSellingCountries(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            tr('sellingIn'),
+            style: Theme.of(context).textTheme.caption,
+          ),
+          Text(
+            widget.program.sellingCountries
+                .map((country) => country.name)
+                .join(', '),
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
         ],
       ),
     );

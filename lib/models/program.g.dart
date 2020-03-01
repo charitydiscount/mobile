@@ -31,6 +31,11 @@ Program _$ProgramFromJson(Map<String, dynamic> json) {
     order: json['order'] as int,
     mainOrder: json['mainOrder'] as int,
     productsCount: json['productsCount'] as int ?? 0,
+    sellingCountries: (json['sellingCountries'] as List)
+        ?.map((e) => e == null
+            ? null
+            : SellingCountry.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
   )
     ..saleCommissionRate = json['saleCommissionRate'] as String
     ..leadCommissionAmount = json['leadCommissionAmount'] as String
@@ -57,6 +62,7 @@ Map<String, dynamic> _$ProgramToJson(Program instance) => <String, dynamic>{
       'order': instance.order,
       'mainOrder': instance.mainOrder,
       'productsCount': instance.productsCount,
+      'sellingCountries': instance.sellingCountries,
       'rating': instance.rating,
       'favorited': instance.favorited,
       'saleCommissionRate': instance.saleCommissionRate,
@@ -75,4 +81,21 @@ Map<String, dynamic> _$OverallRatingToJson(OverallRating instance) =>
     <String, dynamic>{
       'count': instance.count,
       'rating': instance.overall,
+    };
+
+SellingCountry _$SellingCountryFromJson(Map<String, dynamic> json) {
+  return SellingCountry(
+    id: json['id'] as int,
+    code: json['code'] as String,
+    name: json['name'] as String,
+    currency: json['currency'] as String,
+  );
+}
+
+Map<String, dynamic> _$SellingCountryToJson(SellingCountry instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'code': instance.code,
+      'name': instance.name,
+      'currency': instance.currency,
     };

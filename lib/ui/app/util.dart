@@ -74,7 +74,7 @@ String getProgramCommission(Program program) {
     switch (getCommissionTypeEnum(program.defaultSaleCommissionType)) {
       case CommissionType.fixed:
         commission = _buildCommissionForDisplay(
-            commission, '${program.saleCommissionRate}RON');
+            commission, '${program.saleCommissionRate} ${program.currency}');
         break;
       case CommissionType.variable:
         commission = _buildCommissionForDisplay(
@@ -92,11 +92,11 @@ String getProgramCommission(Program program) {
     switch (getCommissionTypeEnum(program.defaultLeadCommissionType)) {
       case CommissionType.fixed:
         commission = _buildCommissionForDisplay(
-            commission, '${program.leadCommissionAmount}RON');
+            commission, '${program.leadCommissionAmount} ${program.currency}');
         break;
       case CommissionType.variable:
         commission = _buildCommissionForDisplay(
-            commission, '~${program.leadCommissionAmount}RON');
+            commission, '~${program.leadCommissionAmount} ${program.currency}');
         break;
       default:
     }

@@ -1,3 +1,5 @@
+import 'package:charity_discount/models/program.dart';
+
 class ProductSearchResult {
   final List<Product> products;
   final int totalFound;
@@ -17,7 +19,7 @@ class Product {
   final List<String> images;
   final String url;
   String affiliateUrl;
-  String programLogo;
+  Program program;
 
   Product({
     this.id,
@@ -31,7 +33,7 @@ class Product {
     this.url,
     this.oldPrice,
     this.affiliateUrl,
-    this.programLogo,
+    this.program,
   });
 
   factory Product.fromJson(Map json) => Product(
@@ -64,7 +66,7 @@ class Product {
     String images,
     String url,
     String affiliateUrl,
-    String programLogo,
+    Program program,
   }) =>
       Product(
         id: id ?? this.id,
@@ -78,7 +80,7 @@ class Product {
         url: url ?? this.url,
         oldPrice: oldPrice ?? this.oldPrice,
         affiliateUrl: affiliateUrl ?? this.affiliateUrl,
-        programLogo: programLogo ?? this.programLogo,
+        program: program ?? this.program,
       );
 }
 

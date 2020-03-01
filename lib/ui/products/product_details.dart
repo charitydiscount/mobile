@@ -1,4 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/product.dart';
+import 'package:charity_discount/ui/app/util.dart';
+import 'package:charity_discount/util/tools.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +10,7 @@ import 'package:charity_discount/ui/app/image_carousel.dart';
 class ProductDetails extends StatelessWidget {
   final Product product;
 
-  const ProductDetails({Key key, this.product}) : super(key: key);
+  ProductDetails({Key key, this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,7 @@ class ProductDetails extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Container(
-          height: 600,
+          height: 700,
           child: _buildProductHeader(context),
         ),
       ),
@@ -63,11 +66,6 @@ class ProductDetails extends StatelessWidget {
             ),
           )
         : Container();
-
-    final soldBy = Text(
-      '${tr('product.soldBy')}: ${this.product.programName}',
-      style: textTheme.subtitle1,
-    );
 
     final meta = Row(
       mainAxisSize: MainAxisSize.max,
@@ -123,10 +121,83 @@ class ProductDetails extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 12.0),
-          child: soldBy,
+          child: _buildShopInfo(context),
         ),
         Expanded(child: meta),
       ],
+    );
+  }
+
+  Widget _buildShopInfo(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: CachedNetworkImage(
+            imageUrl: product.program.logoPath,
+            width: 60,
+            fit: BoxFit.contain,
+          ),
+        ),
+        title: Text('${product.program.name}'),
+        subtitle: _buildSellingCountries(context),
+        trailing: Container(
+          width: 100,
+          height: 100,
+          child: _buildCommission(context),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCommission(BuildContext context) {
+    return Tooltip(
+      showDuration: Duration(milliseconds: 2000),
+      message: product.program.defaultSaleCommissionType == 'percent' ||
+              product.program.defaultSaleCommissionType == 'variable'
+          ? tr('commissionDisclaimer')
+          : '',
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                '${capitalize(tr('commission'))} ',
+                style: Theme.of(context).textTheme.caption,
+              ),
+              product.program.defaultSaleCommissionType == 'percent' ||
+                      product.program.defaultSaleCommissionType == 'variable'
+                  ? Icon(
+                      Icons.info,
+                      color: Colors.grey,
+                      size: Theme.of(context).textTheme.caption.fontSize,
+                    )
+                  : Container(),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              getProgramCommission(product.program),
+              style: Theme.of(context)
+                  .textTheme
+                  .headline5
+                  .copyWith(color: Colors.green),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSellingCountries(BuildContext context) {
+    return Text(
+      product.program.sellingCountries
+          .map((country) => country.name)
+          .join(', '),
+      style: Theme.of(context).textTheme.caption,
     );
   }
 }

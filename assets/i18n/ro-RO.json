@@ -143,7 +143,7 @@
       },
       "dialog": {
         "title": "Ce dorești să faci cu cashback-ul obținut?",
-        "description": "Ai posibilitatea fie să contribui la o lume mai bună, fie să ii retragi (total sau parțial).",
+        "description": "Ai posibilitatea fie să contribui la o lume mai bună, fie să îi retragi (total sau parțial).",
         "minimumAmount": "Suma minimă pentru retragere este {}."
       }
     },
@@ -193,5 +193,6 @@
     "dark": "Întunecată"
   },
   "gallery": "Galerie",
-  "camera": "Cameră"
+  "camera": "Cameră",
+  "sellingIn": "Disponibil în"
 }
