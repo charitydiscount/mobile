@@ -8,9 +8,7 @@ part of 'rating.dart';
 
 Review _$ReviewFromJson(Map<String, dynamic> json) {
   return Review(
-    reviewer: json['reviewer'] == null
-        ? null
-        : Reviewer.fromJson(json['reviewer'] as Map<String, dynamic>),
+    reviewer: Review.reviewerFromJson(json['reviewer']),
     rating: json['rating'] as int,
     description: json['description'] as String,
     createdAt: Review.createdAtFromJson(json['createdAt']),

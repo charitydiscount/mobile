@@ -7,6 +7,7 @@ part 'rating.g.dart';
 
 @JsonSerializable()
 class Review {
+  @JsonKey(fromJson: reviewerFromJson)
   final Reviewer reviewer;
   final int rating;
   final String description;
@@ -20,12 +21,15 @@ class Review {
     this.createdAt,
   });
 
-  factory Review.fromJson(Map json) => _$ReviewFromJson(json);
+  factory Review.fromJson(Map json) => _$ReviewFromJson(Map.from(json));
 
   Map<String, dynamic> toJson() => _$ReviewToJson(this);
 
   static DateTime createdAtFromJson(dynamic json) =>
       json is Timestamp ? json.toDate() : DateTime.parse(json);
+
+  static Reviewer reviewerFromJson(dynamic json) =>
+      Reviewer.fromJson(Map.from(json));
 }
 
 @JsonSerializable()
@@ -36,7 +40,7 @@ class Reviewer {
 
   Reviewer({this.userId, this.name, this.photoUrl});
 
-  factory Reviewer.fromJson(Map json) => _$ReviewerFromJson(json);
+  factory Reviewer.fromJson(Map json) => _$ReviewerFromJson(Map.from(json));
 
   factory Reviewer.fromUser(User user) => Reviewer(
         userId: user.userId,

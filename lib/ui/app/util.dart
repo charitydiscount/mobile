@@ -77,8 +77,14 @@ String getProgramCommission(Program program) {
             commission, '${program.saleCommissionRate} ${program.currency}');
         break;
       case CommissionType.variable:
-        commission = _buildCommissionForDisplay(
-            commission, '~${program.saleCommissionRate}%');
+        commission =
+            program.commissionMin != null && program.commissionMax != null
+                ? program.commissionMinDisplay +
+                    ' - ' +
+                    program.commissionMaxDisplay +
+                    '%'
+                : _buildCommissionForDisplay(
+                    commission, '~${program.saleCommissionRate}%');
         break;
       case CommissionType.percent:
         commission = _buildCommissionForDisplay(
@@ -106,7 +112,9 @@ String getProgramCommission(Program program) {
 }
 
 String _buildCommissionForDisplay(
-    String currentCommission, String toBeAddedCommission) {
+  String currentCommission,
+  String toBeAddedCommission,
+) {
   return currentCommission.isEmpty
       ? toBeAddedCommission
       : '$currentCommission + $toBeAddedCommission';

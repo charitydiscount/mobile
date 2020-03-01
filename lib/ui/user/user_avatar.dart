@@ -9,8 +9,8 @@ class UserAvatar extends StatelessWidget {
   const UserAvatar({
     Key key,
     this.photoUrl,
-    this.width,
-    this.height,
+    this.width = 35.0,
+    this.height = 35.0,
   }) : super(key: key);
 
   @override
@@ -22,6 +22,10 @@ class UserAvatar extends StatelessWidget {
               fit: BoxFit.cover,
               width: width,
               height: height,
+              errorWidget: (context, url, error) => Icon(
+                Icons.account_circle,
+                size: width,
+              ),
             )
           : Icon(
               Icons.account_circle,
