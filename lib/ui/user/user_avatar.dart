@@ -9,8 +9,8 @@ class UserAvatar extends StatelessWidget {
   const UserAvatar({
     Key key,
     this.photoUrl,
-    this.width,
-    this.height,
+    this.width = 35.0,
+    this.height = 35.0,
   }) : super(key: key);
 
   @override
