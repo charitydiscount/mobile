@@ -62,12 +62,24 @@ class Program {
   final int productsCount;
   @JsonKey(fromJson: sellingCountriesFromJson)
   final List<SellingCountry> sellingCountries;
+  @JsonKey(
+    fromJson: commissionMinFromJson,
+    toJson: commissionMinToJson,
+  )
+  final double commissionMin;
+  @JsonKey(
+    fromJson: commissionMaxFromJson,
+    toJson: commissionMaxToJson,
+  )
+  final double commissionMax;
   OverallRating rating;
 
   bool favorited;
   String saleCommissionRate;
   String leadCommissionAmount;
   String actualAffiliateUrl;
+  String commissionMinDisplay;
+  String commissionMaxDisplay;
 
   Program({
     this.id,
@@ -90,6 +102,8 @@ class Program {
     this.mainOrder,
     this.productsCount,
     this.sellingCountries,
+    this.commissionMin,
+    this.commissionMax,
   });
 
   factory Program.fromJson(Map json) => _$ProgramFromJson(Map.from(json));
@@ -136,6 +150,22 @@ class Program {
       (json as List)
           ?.map((e) => e == null ? null : SellingCountry.fromJson(Map.from(e)))
           ?.toList();
+
+  static double commissionMinFromJson(dynamic json) {
+    return json != null ? double.tryParse(json) ?? 0 : null;
+  }
+
+  static String commissionMinToJson(double commissionMin) {
+    return commissionMin != null ? commissionMin.toString() : null;
+  }
+
+  static double commissionMaxFromJson(dynamic json) {
+    return json != null ? double.tryParse(json) ?? 0 : null;
+  }
+
+  static String commissionMaxToJson(double commissionMax) {
+    return commissionMax != null ? commissionMax.toString() : null;
+  }
 }
 
 enum CommissionType {

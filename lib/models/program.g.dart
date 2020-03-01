@@ -33,10 +33,14 @@ Program _$ProgramFromJson(Map<String, dynamic> json) {
     productsCount: json['productsCount'] as int ?? 0,
     sellingCountries:
         Program.sellingCountriesFromJson(json['sellingCountries']),
+    commissionMin: Program.commissionMinFromJson(json['commissionMin']),
+    commissionMax: Program.commissionMaxFromJson(json['commissionMax']),
   )
     ..saleCommissionRate = json['saleCommissionRate'] as String
     ..leadCommissionAmount = json['leadCommissionAmount'] as String
-    ..actualAffiliateUrl = json['actualAffiliateUrl'] as String;
+    ..actualAffiliateUrl = json['actualAffiliateUrl'] as String
+    ..commissionMinDisplay = json['commissionMinDisplay'] as String
+    ..commissionMaxDisplay = json['commissionMaxDisplay'] as String;
 }
 
 Map<String, dynamic> _$ProgramToJson(Program instance) => <String, dynamic>{
@@ -60,11 +64,15 @@ Map<String, dynamic> _$ProgramToJson(Program instance) => <String, dynamic>{
       'mainOrder': instance.mainOrder,
       'productsCount': instance.productsCount,
       'sellingCountries': instance.sellingCountries,
+      'commissionMin': Program.commissionMinToJson(instance.commissionMin),
+      'commissionMax': Program.commissionMaxToJson(instance.commissionMax),
       'rating': instance.rating,
       'favorited': instance.favorited,
       'saleCommissionRate': instance.saleCommissionRate,
       'leadCommissionAmount': instance.leadCommissionAmount,
       'actualAffiliateUrl': instance.actualAffiliateUrl,
+      'commissionMinDisplay': instance.commissionMinDisplay,
+      'commissionMaxDisplay': instance.commissionMaxDisplay,
     };
 
 OverallRating _$OverallRatingFromJson(Map<String, dynamic> json) {

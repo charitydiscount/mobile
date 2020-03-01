@@ -392,6 +392,12 @@ class _ShopsWidgetState extends State<ShopsWidget>
         ? (program.defaultSaleCommissionRate * userPercentage)
             .toStringAsFixed(2)
         : null;
+    program.commissionMinDisplay = program.commissionMin != null
+        ? (program.commissionMin * userPercentage).toStringAsFixed(2)
+        : null;
+    program.commissionMaxDisplay = program.commissionMax != null
+        ? (program.commissionMax * userPercentage).toStringAsFixed(2)
+        : null;
     if (program.affiliateUrl != null && program.affiliateUrl.isNotEmpty) {
       program.actualAffiliateUrl = interpolateUserCode(
         program.affiliateUrl,

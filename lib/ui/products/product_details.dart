@@ -181,16 +181,25 @@ class ProductDetails extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
               getProgramCommission(product.program),
-              style: Theme.of(context)
-                  .textTheme
-                  .headline5
-                  .copyWith(color: Colors.green),
+              style: _hasCommissionInterval
+                  ? Theme.of(context)
+                      .textTheme
+                      .subtitle2
+                      .copyWith(color: Colors.green)
+                  : Theme.of(context)
+                      .textTheme
+                      .headline5
+                      .copyWith(color: Colors.green),
             ),
           ),
         ],
       ),
     );
   }
+
+  bool get _hasCommissionInterval =>
+      product.program.commissionMin != null &&
+      product.program.commissionMax != null;
 
   Widget _buildSellingCountries(BuildContext context) {
     return Text(
