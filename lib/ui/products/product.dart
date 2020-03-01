@@ -80,6 +80,7 @@ class ProductCard extends StatelessWidget {
                 ),
                 Expanded(
                   child: ButtonBar(
+                    alignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Row(
                         mainAxisSize: MainAxisSize.max,
@@ -90,9 +91,7 @@ class ProductCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
-                              product.oldPrice != null &&
-                                      product.price != null &&
-                                      product.oldPrice > product.price
+                              _hasOldPrice
                                   ? Text(
                                       '${product.oldPrice.toString()} Lei',
                                       style: TextStyle(
@@ -102,27 +101,16 @@ class ProductCard extends StatelessWidget {
                                     )
                                   : Container(),
                               product.price != null
-                                  ? Center(
-                                      child: Text(
-                                        '${product.price.toString()} Lei',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    )
+                                  ? Center(child: _buildPriceText())
                                   : Container(),
                             ],
                           ),
-                          Center(
-                            child: IconButton(
-                              padding: const EdgeInsets.only(top: 24),
-                              icon: const Icon(Icons.add_shopping_cart),
-                              color: Theme.of(context).primaryColor,
-                              onPressed: () {
-                                launchURL(product.affiliateUrl);
-                              },
-                            ),
+                          IconButton(
+                            icon: const Icon(Icons.add_shopping_cart),
+                            color: Theme.of(context).primaryColor,
+                            onPressed: () {
+                              launchURL(product.affiliateUrl);
+                            },
                           ),
                         ],
                       ),
@@ -136,4 +124,17 @@ class ProductCard extends StatelessWidget {
       ),
     );
   }
+
+  bool get _hasOldPrice =>
+      product.oldPrice != null &&
+      product.price != null &&
+      product.oldPrice > product.price;
+
+  Widget _buildPriceText() => Text(
+        '${product.price.toString()} Lei',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+        ),
+      );
 }
