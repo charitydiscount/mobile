@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:charity_discount/models/points.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'wallet.g.dart';
 
 class Wallet {
   final Points charityPoints;
@@ -60,7 +63,7 @@ class Transaction {
   final DateTime date;
   final double amount;
   final String currency;
-  final String target;
+  final Target target;
 
   Transaction({
     this.type,
@@ -75,6 +78,23 @@ class Transaction {
         date: (json["date"] as Timestamp).toDate(),
         amount: json['amount'] != null ? json['amount'].toDouble() : null,
         currency: json['currency'] ?? 'RON',
-        target: json['target'] ?? '',
+        target: Target.fromJson(json['target']),
       );
+}
+
+@JsonSerializable()
+class Target {
+  final String id;
+  final String name;
+
+  Target({this.id, this.name});
+
+  factory Target.fromJson(dynamic json) => json is String
+      ? Target(
+          id: json,
+          name: '',
+        )
+      : _$TargetFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TargetToJson(this);
 }

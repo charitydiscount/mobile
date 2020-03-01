@@ -6,7 +6,6 @@ import 'package:charity_discount/models/charity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
-
 import '../models/user.dart';
 
 class CharityService {
@@ -23,7 +22,7 @@ class CharityService {
     TxType type,
     double amount,
     String currency,
-    String target,
+    Target target,
   ) async {
     throw Error();
   }
@@ -91,14 +90,14 @@ class FirebaseCharityService implements CharityService {
     TxType type,
     double amount,
     String currency,
-    String target,
+    Target target,
   ) async {
     return _db.collection('requests').add({
       'userId': userId,
       'type': describeEnum(type),
       'amount': amount,
       'currency': currency,
-      'target': target,
+      'target': target.toJson(),
       'createdAt': FieldValue.serverTimestamp(),
       'status': 'PENDING',
     });

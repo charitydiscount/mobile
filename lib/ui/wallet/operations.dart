@@ -164,7 +164,10 @@ class _DonateWidgetState extends State<DonateWidget> {
                         TxType.DONATION,
                         double.tryParse(_amountController.text),
                         'RON',
-                        widget.charityCase.id,
+                        Target(
+                          id: widget.charityCase.id,
+                          name: widget.charityCase.title,
+                        ),
                       );
 
                       Navigator.of(context).pop(txRef);

@@ -66,10 +66,29 @@ class LocalService {
   Future<void> setPrograms(List<Program> programs) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('programs', programsToJson(programs));
+    await prefs.setString('programs-date', DateTime.now().toString());
   }
 
   Future<List<Program>> getPrograms() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String programsDateString = prefs.getString('programs-date');
+    bool isRecentEnough = true;
+    if (programsDateString == null) {
+      isRecentEnough = false;
+    } else if (DateTime.now()
+            .difference(DateTime.tryParse(programsDateString) ??
+                DateTime.fromMillisecondsSinceEpoch(0))
+            .inHours >
+        6) {
+      // Cache the programs for at most 6 hours
+      isRecentEnough = false;
+    }
+
+    if (!isRecentEnough) {
+      await prefs.remove('programs');
+      return null;
+    }
+
     var jsonPrograms = prefs.getStringList('programs');
     if (jsonPrograms == null) {
       return null;

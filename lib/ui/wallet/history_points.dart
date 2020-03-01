@@ -1,6 +1,5 @@
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/util/tools.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:timeline_list/timeline.dart';
@@ -68,10 +67,6 @@ Color _getTxColor(Transaction transaction) {
   }
 }
 
-String _getTxTypeName(Transaction transaction, BuildContext context) {
-  return tr(describeEnum(transaction.type).toLowerCase());
-}
-
 class TransactionDetails extends StatelessWidget {
   final Transaction tx;
 
@@ -91,8 +86,10 @@ class TransactionDetails extends StatelessWidget {
           ],
         ),
         trailing: Text(
-          _getTxTypeName(tx, context),
-          style: TextStyle(color: _getTxColor(tx)),
+          tx.type != TxType.BONUS ? tx.target.name ?? '' : '',
+          style: Theme.of(context).textTheme.caption.copyWith(
+                color: _getTxColor(tx),
+              ),
         ),
       ),
     );

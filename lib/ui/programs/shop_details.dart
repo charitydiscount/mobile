@@ -115,7 +115,9 @@ class _ShopDetailsState extends State<ShopDetails> {
                       title: tr('review.thankYou'),
                       message: tr('review.itIsImportant'),
                       reverseAnimationCurve: Curves.linear,
-                    ).show(context);
+                    ).show(context).then((value) {
+                      setState(() {});
+                    });
                   }
                 });
               },

@@ -147,7 +147,9 @@ class CommissionDetails extends StatelessWidget {
               _getcommissionStatusName(commission, context),
               style: TextStyle(color: _getcommissionColor(commission)),
             ),
-            commission.reason != null
+            parseCommissionStatus(commission.status) ==
+                        CommissionStatus.rejected &&
+                    commission.reason != null
                 ? Text(
                     commission.reason,
                     style: Theme.of(context).textTheme.caption,

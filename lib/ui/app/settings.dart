@@ -3,8 +3,6 @@ import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/notifications.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/locale.dart';
-import 'package:easy_localization/easy_localization_delegate.dart';
-import 'package:easy_localization/easy_localization_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -96,18 +94,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       title: Text(language.name),
-      trailing:
-          AppLocalizations.of(context).locale.languageCode == language.code
-              ? Icon(Icons.check)
-              : null,
+      trailing: EasyLocalizationProvider.of(context).data.locale.languageCode ==
+              language.code
+          ? Icon(Icons.check)
+          : null,
       onTap: () {
         var newSettings = _state.settings;
         newSettings.lang = language.code;
+        EasyLocalizationProvider.of(context)
+            .data
+            .changeLocale(locale: language.locale);
         setState(() {
-          _state.setSettings(newSettings);
-          EasyLocalizationProvider.of(context)
-              .data
-              .changeLocale(language.locale);
+          _state.setSettings(newSettings, storeLocal: true);
         });
       },
     );

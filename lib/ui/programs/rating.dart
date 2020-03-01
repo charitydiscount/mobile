@@ -88,24 +88,20 @@ class ProgramRating extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return rating.count > 0
+    return rating != null && rating.count > 0
         ? Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              RatingBar(
-                initialRating: rating.overall,
+              RatingBarIndicator(
                 direction: Axis.horizontal,
-                allowHalfRating: true,
-                glow: false,
-                ignoreGestures: true,
+                rating: rating.overall,
                 itemCount: 5,
                 itemSize: iconSize,
                 itemBuilder: (context, _) => Icon(
                   Icons.star,
                   color: Colors.green,
                 ),
-                onRatingUpdate: (rating) {},
               ),
               Text(
                 ' (${rating.count})',

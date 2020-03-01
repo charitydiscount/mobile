@@ -140,7 +140,7 @@ class AppModel extends Model {
   void setPrograms(List<Program> programs, {bool storeLocal = true}) {
     _programs = [];
     _programs.addAll(programs);
-    _programs.sort((p1, p2) => p1.order.compareTo(p2.order));
+    _programs.sort((p1, p2) => p1.getOrder().compareTo(p2.getOrder()));
     if (storeLocal) {
       localService.setPrograms(_programs);
     }
@@ -159,7 +159,6 @@ class AppModel extends Model {
     if (_programs == null) {
       var localPrograms = await localService.getPrograms();
       if (localPrograms != null) {
-        _programs = localPrograms;
         setPrograms(localPrograms, storeLocal: false);
       } else {
         var programs = await _shopsService.getAllPrograms();

@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'program.g.dart';
 
 List<Program> fromFirestoreBatch(DocumentSnapshot doc) {
   List data = doc.data['batch'] ?? [];
@@ -28,7 +31,9 @@ List<Program> fromJsonStringList(List<String> jsonList) {
   );
 }
 
+@JsonSerializable()
 class Program {
+  @JsonKey(fromJson: idFromJson)
   final String id;
   final String uniqueCode;
   final String status;
@@ -37,13 +42,23 @@ class Program {
   final String mainUrl;
   final String affiliateUrl;
   final String logoPath;
+  @JsonKey(
+    toJson: defaultSaleCommissionRateToJson,
+    fromJson: defaultSaleCommissionRateFromJson,
+  )
   final double defaultSaleCommissionRate;
   final String defaultSaleCommissionType;
+  @JsonKey(
+    toJson: defaultLeadCommissionAmountToJson,
+    fromJson: defaultLeadCommissionAmountFromJson,
+  )
   final double defaultLeadCommissionAmount;
   final String defaultLeadCommissionType;
   final String currency;
   final String source;
   final int order;
+  final int mainOrder;
+  @JsonKey(defaultValue: 0)
   final int productsCount;
   OverallRating rating;
 
@@ -70,80 +85,49 @@ class Program {
     this.source,
     this.rating,
     this.order,
+    this.mainOrder,
     this.productsCount,
   });
 
-  factory Program.fromJson(Map json) {
-    return Program(
-      id: json['id'].toString(),
-      uniqueCode: json['uniqueCode'],
-      status: json['status'] ?? 'active',
-      name: json['name'] ?? '',
-      category: json['category'] ?? '',
-      mainUrl: json['mainUrl'] ?? '',
-      affiliateUrl: json['affiliateUrl'] ?? '',
-      logoPath:
-          json['logoPath'] ?? 'https://charitydiscount.ro/img/favicon.png',
-      defaultSaleCommissionRate: json['defaultSaleCommissionRate'] != null
-          ? double.tryParse(json['defaultSaleCommissionRate']) ?? 0
-          : null,
-      defaultSaleCommissionType: json['defaultSaleCommissionType'],
-      defaultLeadCommissionAmount: json['defaultLeadCommissionAmount'] != null
-          ? double.tryParse(json['defaultLeadCommissionAmount']) ?? 0
-          : null,
-      defaultLeadCommissionType: json['defaultLeadCommissionType'],
-      currency: json['currency'] ?? 'RON',
-      source: json['source'] ?? '',
-      rating: json['rating'] != null
-          ? OverallRating.fromJson(json['rating'])
-          : OverallRating.fromJson({}),
-      order: parseOrder(json),
-      productsCount: json['productsCount'] ?? 0,
-    );
+  factory Program.fromJson(Map json) => _$ProgramFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProgramToJson(this);
+
+  int getOrder() {
+    if (mainOrder != null) {
+      return mainOrder;
+    }
+
+    if (order != null) {
+      return order;
+    }
+
+    return 10000;
   }
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'uniqueCode': uniqueCode,
-        'status': status,
-        'name': name,
-        'category': category,
-        'mainUrl': mainUrl,
-        'affiliateUrl': affiliateUrl,
-        'logoPath': logoPath,
-        'defaultSaleCommissionRate': defaultSaleCommissionRate != null
-            ? defaultSaleCommissionRate.toString()
-            : null,
-        'defaultSaleCommissionType': defaultSaleCommissionType,
-        'defaultLeadCommissionAmount': defaultLeadCommissionAmount != null
-            ? defaultLeadCommissionAmount.toString()
-            : null,
-        'defaultLeadCommissionType': defaultLeadCommissionType,
-        'currency': currency,
-        'source': source,
-        'order': order,
-        'productsCount': productsCount,
-      };
-}
+  static String idFromJson(dynamic json) => json.toString();
 
-int parseOrder(dynamic json) {
-  if (json['mainOrder'] is int) {
-    return json['mainOrder'];
+  static double defaultSaleCommissionRateFromJson(dynamic json) {
+    return json != null ? double.tryParse(json) ?? 0 : null;
   }
 
-  if (json['mainOrder'] != null) {
-    return int.tryParse(json['mainOrder']);
+  static String defaultSaleCommissionRateToJson(
+      double defaultSaleCommissionRate) {
+    return defaultSaleCommissionRate != null
+        ? defaultSaleCommissionRate.toString()
+        : null;
   }
 
-  if (json['order'] is int) {
-    return json['order'];
+  static double defaultLeadCommissionAmountFromJson(dynamic json) {
+    return json != null ? double.tryParse(json) ?? 0 : null;
   }
 
-  if (json['order'] != null) {
-    return int.tryParse(json['order']);
+  static String defaultLeadCommissionAmountToJson(
+      double defaultLeadCommissionAmount) {
+    return defaultLeadCommissionAmount != null
+        ? defaultLeadCommissionAmount.toString()
+        : null;
   }
-
-  return 10000;
 }
 
 enum CommissionType {
@@ -155,16 +139,15 @@ enum CommissionType {
 CommissionType getCommissionTypeEnum(String type) => CommissionType.values
     .firstWhere((e) => e.toString() == 'CommissionType.' + type.toLowerCase());
 
+@JsonSerializable()
 class OverallRating {
   int count;
+  @JsonKey(name: 'rating')
   double overall;
 
   OverallRating({this.count, this.overall});
 
-  factory OverallRating.fromJson(Map json) => OverallRating(
-        count: json['count'] ?? 0,
-        overall: json['rating'] != null
-            ? double.tryParse(json['rating'].toString()) ?? null
-            : null,
-      );
+  factory OverallRating.fromJson(Map json) => _$OverallRatingFromJson(json);
+
+  Map<String, dynamic> toJson() => _$OverallRatingToJson(this);
 }
