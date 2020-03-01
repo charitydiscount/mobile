@@ -31,11 +31,8 @@ Program _$ProgramFromJson(Map<String, dynamic> json) {
     order: json['order'] as int,
     mainOrder: json['mainOrder'] as int,
     productsCount: json['productsCount'] as int ?? 0,
-    sellingCountries: (json['sellingCountries'] as List)
-        ?.map((e) => e == null
-            ? null
-            : SellingCountry.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    sellingCountries:
+        Program.sellingCountriesFromJson(json['sellingCountries']),
   )
     ..saleCommissionRate = json['saleCommissionRate'] as String
     ..leadCommissionAmount = json['leadCommissionAmount'] as String

@@ -94,7 +94,7 @@ class Target {
           id: json,
           name: '',
         )
-      : _$TargetFromJson(json);
+      : _$TargetFromJson(Map.from(json));
 
   Map<String, dynamic> toJson() => _$TargetToJson(this);
 }

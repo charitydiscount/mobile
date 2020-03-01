@@ -15,7 +15,7 @@ class ProgramMeta {
         ratings: Map.from(json['ratings'] ?? {}).map(
           (key, value) => MapEntry(
             key,
-            OverallRating.fromJson(value),
+            OverallRating.fromJson(Map.from(value)),
           ),
         ),
       );
