@@ -30,7 +30,7 @@ Program _$ProgramFromJson(Map<String, dynamic> json) {
         : OverallRating.fromJson(json['rating'] as Map<String, dynamic>),
     order: json['order'] as int,
     mainOrder: json['mainOrder'] as int,
-    productsCount: json['productsCount'] as int,
+    productsCount: json['productsCount'] as int ?? 0,
   )
     ..saleCommissionRate = json['saleCommissionRate'] as String
     ..leadCommissionAmount = json['leadCommissionAmount'] as String

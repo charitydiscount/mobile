@@ -58,6 +58,7 @@ class Program {
   final String source;
   final int order;
   final int mainOrder;
+  @JsonKey(defaultValue: 0)
   final int productsCount;
   OverallRating rating;
 
