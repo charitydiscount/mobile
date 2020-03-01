@@ -13,7 +13,7 @@ Review _$ReviewFromJson(Map<String, dynamic> json) {
         : Reviewer.fromJson(json['reviewer'] as Map<String, dynamic>),
     rating: json['rating'] as int,
     description: json['description'] as String,
-    createdAt: Review.createdAtfromJson(json['createdAt']),
+    createdAt: Review.createdAtFromJson(json['createdAt']),
   );
 }
 

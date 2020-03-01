@@ -10,7 +10,7 @@ class Review {
   final Reviewer reviewer;
   final int rating;
   final String description;
-  @JsonKey(fromJson: createdAtfromJson)
+  @JsonKey(fromJson: createdAtFromJson)
   final DateTime createdAt;
 
   Review({
@@ -24,10 +24,8 @@ class Review {
 
   Map<String, dynamic> toJson() => _$ReviewToJson(this);
 
-  static DateTime createdAtfromJson(dynamic json) =>
-      json['createdAt'] is Timestamp
-          ? json['createdAt'].toDate()
-          : DateTime.parse(json['createdAt']);
+  static DateTime createdAtFromJson(dynamic json) =>
+      json is Timestamp ? json.toDate() : DateTime.parse(json);
 }
 
 @JsonSerializable()
