@@ -87,19 +87,10 @@ class _MainState extends State<Main> {
                 snapshot: snapshot,
               );
               if (loading != null) {
-                return Scaffold(
-                  body: Stack(
-                    children: <Widget>[
-                      Image.asset(
-                        'assets/images/splashscreen.png',
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        fit: BoxFit.cover,
-                      ),
-                      loading,
-                    ],
-                  ),
-                );
+                return AppLoading(child: loading);
+              }
+              if (snapshot.data == true) {
+                return AppLoading(child: buildLoading(context));
               }
               return HomeScreen(initialScreen: initialScreen);
             },
@@ -111,19 +102,7 @@ class _MainState extends State<Main> {
               context, '/signin', (r) => false),
         );
 
-        return Scaffold(
-          body: Stack(
-            children: <Widget>[
-              Image.asset(
-                'assets/images/splashscreen.png',
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                fit: BoxFit.cover,
-              ),
-              buildLoading(context),
-            ],
-          ),
-        );
+        return AppLoading(child: buildLoading(context));
       },
     );
   }
@@ -164,6 +143,32 @@ class _MainState extends State<Main> {
           ),
         ),
         navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
+      ),
+    );
+  }
+}
+
+class AppLoading extends StatelessWidget {
+  const AppLoading({
+    Key key,
+    @required this.child,
+  }) : super(key: key);
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: <Widget>[
+          Image.asset(
+            'assets/images/splashscreen.png',
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            fit: BoxFit.cover,
+          ),
+          child,
+        ],
       ),
     );
   }
