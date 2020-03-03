@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/models/program.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:charity_discount/models/user.dart';
@@ -95,6 +96,22 @@ class LocalService {
     }
 
     return fromJsonStringList(jsonPrograms);
+  }
+
+  Future<void> setAffiliateMeta(TwoPerformantMeta meta) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('affiliateMeta', jsonEncode(meta.toJson()));
+  }
+
+  Future<TwoPerformantMeta> getAffiliateMeta() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var affiliateMetaPrefs = prefs.getString('affiliateMeta');
+    if (affiliateMetaPrefs == null) {
+      return null;
+    }
+
+    return TwoPerformantMeta.fromJson(jsonDecode(affiliateMetaPrefs));
   }
 }
 

@@ -1,4 +1,7 @@
 import 'package:charity_discount/models/program.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'meta.g.dart';
 
 class ProgramMeta {
   final int count;
@@ -21,6 +24,7 @@ class ProgramMeta {
       );
 }
 
+@JsonSerializable()
 class TwoPerformantMeta {
   final String uniqueCode;
   final double percentage;
@@ -28,8 +32,7 @@ class TwoPerformantMeta {
   TwoPerformantMeta({this.uniqueCode, this.percentage});
 
   factory TwoPerformantMeta.fromJson(Map<String, dynamic> json) =>
-      TwoPerformantMeta(
-        uniqueCode: json['uniqueCode'],
-        percentage: json['percentage'],
-      );
+      _$TwoPerformantMetaFromJson(Map.from(json));
+
+  Map<String, dynamic> toJson() => _$TwoPerformantMetaToJson(this);
 }
