@@ -16,18 +16,15 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logo = Hero(
-      tag: 'productLogo-${product.id}',
-      child: CachedNetworkImage(
-        imageUrl: product.images.first,
+    final logo = CachedNetworkImage(
+      imageUrl: product.images.first,
+      height: 80,
+      fit: BoxFit.contain,
+      errorWidget: (context, url, error) => Container(
         height: 80,
-        fit: BoxFit.contain,
-        errorWidget: (context, url, error) => Container(
-          height: 80,
-          child: Icon(
-            Icons.error,
-            color: Colors.grey,
-          ),
+        child: Icon(
+          Icons.error,
+          color: Colors.grey,
         ),
       ),
     );
