@@ -10,6 +10,7 @@ import 'package:charity_discount/ui/user/profile.dart';
 import 'package:charity_discount/ui/programs/programs.dart';
 import 'package:charity_discount/ui/user/user_avatar.dart';
 import 'package:charity_discount/util/url.dart';
+import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -158,9 +159,12 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: selectedNavIndex,
         onTap: _onItemTapped,
       ),
-      body: IndexedStack(
-        children: _widgets,
-        index: selectedNavIndex,
+      body: DoubleBackToCloseApp(
+        snackBar: SnackBar(content: Text(tr('doubleBack'))),
+        child: IndexedStack(
+          children: _widgets,
+          index: selectedNavIndex,
+        ),
       ),
     );
   }
