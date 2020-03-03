@@ -1,4 +1,5 @@
 import 'package:charity_discount/models/program.dart';
+import 'package:charity_discount/util/tools.dart';
 
 class ProductSearchResult {
   final List<Product> products;
@@ -40,7 +41,7 @@ class Product {
         id: json['product_id'] != null
             ? json['product_id'].toString()
             : json['id'].toString(),
-        title: json['title'],
+        title: removeAllHtmlTags(json['title']),
         price: double.tryParse(json['price'].toString()),
         programId:
             json['campaign_id'].toString() ?? json['programId'].toString(),
