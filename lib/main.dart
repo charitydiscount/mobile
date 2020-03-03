@@ -4,6 +4,7 @@ import 'package:charity_discount/util/locale.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -171,6 +172,8 @@ class _MainState extends State<Main> {
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = CustomHttpOverrides();
+  FlutterError.onError = Crashlytics.instance.recordFlutterError;
+
   runApp(
     EasyLocalization(
       child: ScopedModel(
