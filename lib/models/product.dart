@@ -19,6 +19,7 @@ class Product {
   final String category;
   final List<String> images;
   final String url;
+  final DateTime timestamp;
   String affiliateUrl;
   Program program;
 
@@ -35,6 +36,7 @@ class Product {
     this.oldPrice,
     this.affiliateUrl,
     this.program,
+    this.timestamp,
   });
 
   factory Product.fromJson(Map json) => Product(
@@ -53,6 +55,7 @@ class Product {
             : _getImages(json, 'imageUrl'),
         url: json['url'],
         oldPrice: double.tryParse(json['old_price'].toString()),
+        timestamp: DateTime.parse(json['@timestamp']),
       );
 
   Product copyWith({
@@ -68,6 +71,7 @@ class Product {
     String url,
     String affiliateUrl,
     Program program,
+    DateTime timestamp,
   }) =>
       Product(
         id: id ?? this.id,
@@ -82,6 +86,7 @@ class Product {
         oldPrice: oldPrice ?? this.oldPrice,
         affiliateUrl: affiliateUrl ?? this.affiliateUrl,
         program: program ?? this.program,
+        timestamp: timestamp ?? this.timestamp,
       );
 }
 

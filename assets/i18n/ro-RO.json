@@ -179,7 +179,9 @@
       "min": "Preț minim",
       "max": "Preț maxim"
     },
-    "soldBy": "Vândut de"
+    "soldBy": "Vândut de",
+    "updatedAt": "Actualizat la",
+    "disclaimer": "Date afișate doar cu scop de prezentare. Pentru a obține informații cât mai acurate, accesați website-ul magazinului"
   },
   "filter": {
     "title": "Filtre",
