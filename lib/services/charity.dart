@@ -140,10 +140,10 @@ class FirebaseCharityService implements CharityService {
       News(
         id: '1',
         createdAt: DateTime.now(),
-        title: 'Charity Discount Launched',
+        title: 'CharityDiscount Launched',
         imageUrl: 'https://charitydiscount.ro/img/charity_discount.png',
         body:
-            'It is a pleasure to announce the launch of <strong>Charity Discount</strong>',
+            'It is a pleasure to announce the launch of <strong>CharityDiscount</strong>',
       ),
       News(
         id: '1',
