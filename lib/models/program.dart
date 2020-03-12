@@ -60,7 +60,10 @@ class Program {
   final int mainOrder;
   @JsonKey(defaultValue: 0)
   final int productsCount;
-  @JsonKey(fromJson: sellingCountriesFromJson)
+  @JsonKey(
+    fromJson: sellingCountriesFromJson,
+    toJson: sellingCountriesToJson,
+  )
   final List<SellingCountry> sellingCountries;
   @JsonKey(
     fromJson: commissionMinFromJson,
@@ -72,6 +75,7 @@ class Program {
     toJson: commissionMaxToJson,
   )
   final double commissionMax;
+  @JsonKey(ignore: true)
   OverallRating rating;
 
   bool favorited;
@@ -150,6 +154,9 @@ class Program {
       (json as List)
           ?.map((e) => e == null ? null : SellingCountry.fromJson(Map.from(e)))
           ?.toList();
+
+  static sellingCountriesToJson(List<SellingCountry> sellingCountries) =>
+      sellingCountries.map((c) => c.toJson()).toList();
 
   static double commissionMinFromJson(dynamic json) {
     return json != null ? double.tryParse(json) ?? 0 : null;

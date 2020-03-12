@@ -77,7 +77,7 @@ class FirebaseShopsService implements ShopsService {
   void _handleFavDocNotExistent(
       dynamic e, String userId, models.Program program) {
     if (!(e is PlatformException)) {
-      return;
+      throw e;
     }
 
     DocumentReference ref = _db.collection('favoriteShops').document(userId);

@@ -116,8 +116,12 @@
   "donate": "Donate",
   "withdraw": "Withdraw",
   "category": {
+    "zero": "No category",
     "one": "Category",
-    "two": "Categories"
+    "two": "Categories",
+    "few": "Categories",
+    "many": "Categories",
+    "other": "Category"
   },
   "all": "All",
   "commissionDisclaimer": "of the purchase not including VAT and transport",

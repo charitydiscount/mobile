@@ -116,8 +116,12 @@
   "donate": "Donează",
   "withdraw": "Retrage",
   "category": {
+    "zero": "Nicio categorie",
     "one": "Categorie",
-    "two": "Categorii"
+    "two": "Categorii",
+    "few": "Categorii",
+    "many": "Categorii",
+    "other": "Categorie"
   },
   "all": "Toate",
   "commissionDisclaimer": "din valoarea comenzii fără TVA și transport",
