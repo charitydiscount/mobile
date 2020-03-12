@@ -363,14 +363,30 @@ class _ShopDetailsState extends State<ShopDetails> {
         final appState = AppModel.of(context);
         List products = prepareProducts(snapshot.data.products, appState);
 
-        return GridView.builder(
-          shrinkWrap: true,
-          primary: false,
-          physics: NeverScrollableScrollPhysics(),
-          gridDelegate: getGridDelegate(context, aspectRatioFactor: 0.95),
-          itemCount: products.length,
-          itemBuilder: (context, index) =>
-              ProductCard(product: products[index], showShopLogo: false),
+        return Column(
+          children: <Widget>[
+            GridView.builder(
+              shrinkWrap: true,
+              primary: false,
+              physics: NeverScrollableScrollPhysics(),
+              gridDelegate: getGridDelegate(context, aspectRatioFactor: 0.95),
+              itemCount: products.length,
+              itemBuilder: (context, index) =>
+                  ProductCard(product: products[index], showShopLogo: false),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                bottom: 24.0,
+                top: 24.0,
+                left: 12.0,
+                right: 48.0,
+              ),
+              child: Text(
+                tr('completeOffer'),
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+            ),
+          ],
         );
       },
     );
