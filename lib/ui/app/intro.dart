@@ -169,7 +169,7 @@ class _IntroState extends State<Intro> with TickerProviderStateMixin {
 
 var pageList = [
   PageModel(
-      imageUrl: 'assets/icons/icon.png',
+      imageUrl: 'assets/icons/logo.png',
       title: 'intro.getInvolved.title',
       body: 'intro.getInvolved.body',
       titleGradient: gradients[0]),

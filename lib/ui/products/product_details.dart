@@ -119,6 +119,7 @@ class ProductDetails extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 12.0),
           child: price,
         ),
+        _buildUpdatedAt(context),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 12.0),
           child: _buildShopInfo(context),
@@ -207,6 +208,28 @@ class ProductDetails extends StatelessWidget {
           .map((country) => country.name)
           .join(', '),
       style: Theme.of(context).textTheme.caption,
+    );
+  }
+
+  Widget _buildUpdatedAt(BuildContext context) {
+    return Tooltip(
+      showDuration: Duration(seconds: 5),
+      message: tr('product.disclaimer'),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            '${tr('product.updatedAt')} ${formatDateTime(product.timestamp)}',
+            style: Theme.of(context).textTheme.caption,
+            textAlign: TextAlign.center,
+          ),
+          Icon(
+            Icons.info,
+            color: Colors.grey,
+            size: Theme.of(context).textTheme.caption.fontSize,
+          )
+        ],
+      ),
     );
   }
 }

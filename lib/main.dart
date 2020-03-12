@@ -4,6 +4,7 @@ import 'package:charity_discount/util/locale.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -42,12 +43,12 @@ class _MainState extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
-    var data = EasyLocalizationProvider.of(context).data;
+    var currentLocale = EasyLocalization.of(context).locale;
 
-    if (data.locale != null) {
+    if (currentLocale != null) {
       return _buildMain(
         context: context,
-        locale: data.locale,
+        locale: currentLocale,
       );
     } else {
       return FutureBuilder(
@@ -86,19 +87,10 @@ class _MainState extends State<Main> {
                 snapshot: snapshot,
               );
               if (loading != null) {
-                return Scaffold(
-                  body: Stack(
-                    children: <Widget>[
-                      Image.asset(
-                        'assets/images/splashscreen.png',
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        fit: BoxFit.cover,
-                      ),
-                      loading,
-                    ],
-                  ),
-                );
+                return AppLoading(child: loading);
+              }
+              if (snapshot.data == true) {
+                return AppLoading(child: buildLoading(context));
               }
               return HomeScreen(initialScreen: initialScreen);
             },
@@ -110,59 +102,67 @@ class _MainState extends State<Main> {
               context, '/signin', (r) => false),
         );
 
-        return Scaffold(
-          body: Stack(
-            children: <Widget>[
-              Image.asset(
-                'assets/images/splashscreen.png',
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                fit: BoxFit.cover,
-              ),
-              buildLoading(context),
-            ],
-          ),
-        );
+        return AppLoading(child: buildLoading(context));
       },
     );
   }
 
   Widget _buildMain({BuildContext context, Locale locale}) {
     var state = AppModel.of(context);
-    return EasyLocalizationProvider(
-      data: EasyLocalizationProvider.of(context).data,
-      child: MaterialApp(
-        title: 'CharityDiscount',
-        theme: buildTheme(dark: state.settings.theme == ThemeOption.DARK),
-        darkTheme: buildTheme(dark: state.settings.theme != ThemeOption.LIGHT),
-        debugShowCheckedModeBanner: false,
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          EasyLocalizationDelegate(
-            locale: locale,
-            path: 'assets/i18n',
-          ),
-        ],
-        supportedLocales: supportedLanguages.map((l) => l.locale).toList(),
-        locale: locale,
-        initialRoute: '/',
-        routes: {
-          '/': (context) => SafeArea(child: _buildDefaultWidget()),
-          '/signin': (context) => SafeArea(child: SignInScreen()),
-          '/signup': (context) => SafeArea(child: SignUpScreen()),
-          '/forgot-password': (context) =>
-              SafeArea(child: ForgotPasswordScreen()),
-          '/wallet': (context) =>
-              SafeArea(child: _buildDefaultWidget(initialScreen: 3)),
-        },
-        navigatorKey: state.navigatorKey,
-        onUnknownRoute: (settings) => MaterialPageRoute(
-          builder: (context) => UndefinedView(
-            name: settings.name,
-          ),
+    return MaterialApp(
+      title: 'CharityDiscount',
+      theme: buildTheme(dark: state.settings.theme == ThemeOption.DARK),
+      darkTheme: buildTheme(dark: state.settings.theme != ThemeOption.LIGHT),
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        EasyLocalization.of(context).delegate,
+      ],
+      supportedLocales: EasyLocalization.of(context).supportedLocales,
+      locale: locale,
+      initialRoute: '/',
+      routes: {
+        '/': (context) => SafeArea(child: _buildDefaultWidget()),
+        '/signin': (context) => SafeArea(child: SignInScreen()),
+        '/signup': (context) => SafeArea(child: SignUpScreen()),
+        '/forgot-password': (context) =>
+            SafeArea(child: ForgotPasswordScreen()),
+        '/wallet': (context) =>
+            SafeArea(child: _buildDefaultWidget(initialScreen: 3)),
+      },
+      navigatorKey: state.navigatorKey,
+      onUnknownRoute: (settings) => MaterialPageRoute(
+        builder: (context) => UndefinedView(
+          name: settings.name,
         ),
-        navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
+      ),
+      navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
+    );
+  }
+}
+
+class AppLoading extends StatelessWidget {
+  const AppLoading({
+    Key key,
+    @required this.child,
+  }) : super(key: key);
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: <Widget>[
+          Image.asset(
+            'assets/images/splashscreen.png',
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            fit: BoxFit.cover,
+          ),
+          child,
+        ],
       ),
     );
   }
@@ -171,8 +171,12 @@ class _MainState extends State<Main> {
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = CustomHttpOverrides();
+  FlutterError.onError = Crashlytics.instance.recordFlutterError;
+
   runApp(
     EasyLocalization(
+      path: 'assets/i18n',
+      supportedLocales: supportedLanguages.map((l) => l.locale).toList(),
       child: ScopedModel(
         model: AppModel(),
         child: Main(),

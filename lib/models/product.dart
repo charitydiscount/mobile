@@ -1,4 +1,5 @@
 import 'package:charity_discount/models/program.dart';
+import 'package:charity_discount/util/tools.dart';
 
 class ProductSearchResult {
   final List<Product> products;
@@ -18,6 +19,7 @@ class Product {
   final String category;
   final List<String> images;
   final String url;
+  final DateTime timestamp;
   String affiliateUrl;
   Program program;
 
@@ -34,13 +36,14 @@ class Product {
     this.oldPrice,
     this.affiliateUrl,
     this.program,
+    this.timestamp,
   });
 
   factory Product.fromJson(Map json) => Product(
         id: json['product_id'] != null
             ? json['product_id'].toString()
             : json['id'].toString(),
-        title: json['title'],
+        title: removeAllHtmlTags(json['title']),
         price: double.tryParse(json['price'].toString()),
         programId:
             json['campaign_id'].toString() ?? json['programId'].toString(),
@@ -52,6 +55,7 @@ class Product {
             : _getImages(json, 'imageUrl'),
         url: json['url'],
         oldPrice: double.tryParse(json['old_price'].toString()),
+        timestamp: DateTime.parse(json['@timestamp']),
       );
 
   Product copyWith({
@@ -67,6 +71,7 @@ class Product {
     String url,
     String affiliateUrl,
     Program program,
+    DateTime timestamp,
   }) =>
       Product(
         id: id ?? this.id,
@@ -81,6 +86,7 @@ class Product {
         oldPrice: oldPrice ?? this.oldPrice,
         affiliateUrl: affiliateUrl ?? this.affiliateUrl,
         program: program ?? this.program,
+        timestamp: timestamp ?? this.timestamp,
       );
 }
 

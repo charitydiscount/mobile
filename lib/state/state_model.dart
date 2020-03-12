@@ -7,6 +7,7 @@ import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/util/remote_config.dart';
+import 'package:charity_discount/util/url.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
@@ -61,11 +62,14 @@ class AppModel extends Model {
         List<Future> futuresForLoading = [
           metaService.getTwoPerformantMeta().then((twoPMeta) {
             _affiliateMeta = twoPMeta;
+            localService.setAffiliateMeta(_affiliateMeta);
             return true;
           }),
           updateProgramsMeta(),
         ];
-        Future.wait(futuresForLoading).then((loaded) => loading.add(false));
+        Future.wait(futuresForLoading).then((loaded) {
+          loading.add(false);
+        });
       },
     );
   }
@@ -141,6 +145,41 @@ class AppModel extends Model {
     _programs = [];
     _programs.addAll(programs);
     _programs.sort((p1, p2) => p1.getOrder().compareTo(p2.getOrder()));
+    if (storeLocal) {
+      _programs.forEach((program) {
+        final userPercentage = affiliateMeta.percentage;
+        program.leadCommissionAmount =
+            program.defaultLeadCommissionAmount != null
+                ? (program.defaultLeadCommissionAmount * userPercentage)
+                    .toStringAsFixed(2)
+                : null;
+        program.saleCommissionRate = program.defaultSaleCommissionRate != null
+            ? (program.defaultSaleCommissionRate * userPercentage)
+                .toStringAsFixed(2)
+            : null;
+        program.commissionMinDisplay = program.commissionMin != null
+            ? (program.commissionMin * userPercentage).toStringAsFixed(2)
+            : null;
+        program.commissionMaxDisplay = program.commissionMax != null
+            ? (program.commissionMax * userPercentage).toStringAsFixed(2)
+            : null;
+        if (program.affiliateUrl != null && program.affiliateUrl.isNotEmpty) {
+          program.actualAffiliateUrl = interpolateUserCode(
+            program.affiliateUrl,
+            program.uniqueCode,
+            user.userId,
+          );
+        } else {
+          // fallback to the previous strategy (probably old cache)
+          program.actualAffiliateUrl = convertAffiliateUrl(
+            program.mainUrl,
+            affiliateMeta.uniqueCode,
+            program.uniqueCode,
+            user.userId,
+          );
+        }
+      });
+    }
     if (storeLocal) {
       localService.setPrograms(_programs);
     }

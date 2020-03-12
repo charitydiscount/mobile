@@ -116,8 +116,12 @@
   "donate": "Donează",
   "withdraw": "Retrage",
   "category": {
+    "zero": "Nicio categorie",
     "one": "Categorie",
-    "two": "Categorii"
+    "two": "Categorii",
+    "few": "Categorii",
+    "many": "Categorii",
+    "other": "Categorie"
   },
   "all": "Toate",
   "commissionDisclaimer": "din valoarea comenzii fără TVA și transport",
@@ -128,11 +132,11 @@
       "title": "Charity Points",
       "subtitle": "Puncte dobândite în schimbul donațiilor",
       "available": "Puncte disponibile",
-      "description": "Acestea pot fi folosite în magazinele partenere"
+      "description": "Mai multe detalii în curând"
     },
     "cashback": {
       "title": "Cashback",
-      "subtitle": "Banii primiți in urma cumpărăturilor",
+      "subtitle": "Bani primiți în urma cumpărăturilor",
       "available": {
         "title": "Cashback disponibil",
         "description": "Bani care pot fi donați sau retrași"
@@ -179,7 +183,9 @@
       "min": "Preț minim",
       "max": "Preț maxim"
     },
-    "soldBy": "Vândut de"
+    "soldBy": "Vândut de",
+    "updatedAt": "Actualizat la",
+    "disclaimer": "Date afișate doar cu scop de prezentare. Pentru a obține informații cât mai acurate, accesați website-ul magazinului"
   },
   "filter": {
     "title": "Filtre",
@@ -194,5 +200,7 @@
   },
   "gallery": "Galerie",
   "camera": "Cameră",
-  "sellingIn": "Disponibil în"
+  "sellingIn": "Disponibil în",
+  "doubleBack": "Apasă din nou pentru a ieși",
+  "completeOffer": "Consultă întreaga ofertă accesând site-ul magazinului"
 }

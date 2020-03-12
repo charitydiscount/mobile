@@ -10,9 +10,9 @@ import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/programs/shop.dart';
 import 'package:charity_discount/ui/app/util.dart';
-import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:substring_highlight/substring_highlight.dart';
 
 class ProgramsList extends StatefulWidget {
   final ShopsService shopsService;
@@ -383,36 +383,6 @@ class _ShopsWidgetState extends State<ShopsWidget>
     Program program,
     Map<String, OverallRating> overallRatings,
   ) {
-    final userPercentage = appState.affiliateMeta.percentage;
-    program.leadCommissionAmount = program.defaultLeadCommissionAmount != null
-        ? (program.defaultLeadCommissionAmount * userPercentage)
-            .toStringAsFixed(2)
-        : null;
-    program.saleCommissionRate = program.defaultSaleCommissionRate != null
-        ? (program.defaultSaleCommissionRate * userPercentage)
-            .toStringAsFixed(2)
-        : null;
-    program.commissionMinDisplay = program.commissionMin != null
-        ? (program.commissionMin * userPercentage).toStringAsFixed(2)
-        : null;
-    program.commissionMaxDisplay = program.commissionMax != null
-        ? (program.commissionMax * userPercentage).toStringAsFixed(2)
-        : null;
-    if (program.affiliateUrl != null && program.affiliateUrl.isNotEmpty) {
-      program.actualAffiliateUrl = interpolateUserCode(
-        program.affiliateUrl,
-        program.uniqueCode,
-        appState.user.userId,
-      );
-    } else {
-      // fallback to the previous strategy (probably old cache)
-      program.actualAffiliateUrl = convertAffiliateUrl(
-        program.mainUrl,
-        appState.affiliateMeta.uniqueCode,
-        program.uniqueCode,
-        appState.user.userId,
-      );
-    }
     if (overallRatings.containsKey(program.uniqueCode)) {
       program.rating = overallRatings[program.uniqueCode];
     }
@@ -478,7 +448,9 @@ class ProgramsSearch extends SearchDelegate<String> {
     }
 
     List<Program> programs = appState.programs
-        .where((p) => _exactMatch ? p.name == query : p.name.startsWith(query))
+        .where((p) => _exactMatch
+            ? p.name.toLowerCase() == query.toLowerCase()
+            : p.name.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
     return ShopsWidget(
@@ -496,9 +468,14 @@ class ProgramsSearch extends SearchDelegate<String> {
     }
     _exactMatch = false;
 
-    List<Widget> suggestions = appState.programs
-        .where((p) => _exactMatch ? p.name == query : p.name.startsWith(query))
-        .map((p) => Suggestion(name: p.name, query: query))
+    List<Program> suggestedPrograms = appState.programs
+        .where((p) => _exactMatch
+            ? p.name.toLowerCase() == query.toLowerCase()
+            : p.name.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+    List<Widget> suggestions = suggestedPrograms
+        .map((p) =>
+            Suggestion(name: p.name.toLowerCase(), query: query.toLowerCase()))
         .map((Suggestion hit) => _buildSuggestionWidget(hit, context))
         .toList();
 
@@ -518,19 +495,17 @@ class ProgramsSearch extends SearchDelegate<String> {
         },
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-          child: RichText(
-            text: TextSpan(
-              text: hit.query,
-              style: Theme.of(context).textTheme.bodyText2,
-              children: [
-                TextSpan(
-                  text: hit.name.split(hit.query)[1],
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.bodyText2.color,
-                  ),
-                ),
-              ],
+          child: SubstringHighlight(
+            text: hit.name, // each string needing highlighting
+            term: hit.query, // user typed "m4a"
+            textStyle: TextStyle(
+              // non-highlight style
+              color: Colors.grey,
+            ),
+            textStyleHighlight: TextStyle(
+              // highlight style
+              color: Colors.black,
+              decoration: TextDecoration.underline,
             ),
           ),
         ),

@@ -25,9 +25,6 @@ Program _$ProgramFromJson(Map<String, dynamic> json) {
     currency: json['currency'] as String,
     favorited: json['favorited'] as bool,
     source: json['source'] as String,
-    rating: json['rating'] == null
-        ? null
-        : OverallRating.fromJson(json['rating'] as Map<String, dynamic>),
     order: json['order'] as int,
     mainOrder: json['mainOrder'] as int,
     productsCount: json['productsCount'] as int ?? 0,
@@ -63,10 +60,10 @@ Map<String, dynamic> _$ProgramToJson(Program instance) => <String, dynamic>{
       'order': instance.order,
       'mainOrder': instance.mainOrder,
       'productsCount': instance.productsCount,
-      'sellingCountries': instance.sellingCountries,
+      'sellingCountries':
+          Program.sellingCountriesToJson(instance.sellingCountries),
       'commissionMin': Program.commissionMinToJson(instance.commissionMin),
       'commissionMax': Program.commissionMaxToJson(instance.commissionMax),
-      'rating': instance.rating,
       'favorited': instance.favorited,
       'saleCommissionRate': instance.saleCommissionRate,
       'leadCommissionAmount': instance.leadCommissionAmount,

@@ -9,6 +9,7 @@ import 'package:charity_discount/ui/charity/charity.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 enum CashbackAction { CANCEL, DONATE, CASHOUT }
 
@@ -98,50 +99,28 @@ class WalletScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Stack(
-                children: <Widget>[
-                  AboutPointsWidget(
-                    points: state.wallet.charityPoints,
-                    currency: 'Charity Points',
-                    headingLeading: Icon(
-                      Icons.favorite,
-                      color: Colors.red,
-                    ),
-                    heading: tr('wallet.points.title'),
-                    subtitle: tr('wallet.points.subtitle'),
-                    acceptedTitle: tr('wallet.points.available'),
-                    acceptedDescription: tr('wallet.points.description'),
-                    acceptedAction: IconButton(
-                      icon: Icon(
-                        Icons.shopping_cart,
-                        color: Theme.of(context).accentColor,
-                      ),
-                      iconSize: 25,
-                      onPressed: () {},
-                    ),
+              child: AboutPointsWidget(
+                points: state.wallet.charityPoints,
+                currency: 'Charity Points',
+                headingLeading: Icon(
+                  Icons.favorite,
+                  color: Colors.red,
+                ),
+                heading: tr('wallet.points.title'),
+                subtitle: tr('wallet.points.subtitle'),
+                acceptedTitle: tr('wallet.points.available'),
+                acceptedDescription: tr('wallet.points.description'),
+                acceptedAction: IconButton(
+                  icon: Icon(
+                    Icons.shopping_cart,
+                    color: Theme.of(context).accentColor,
                   ),
-                  Positioned.fill(
-                    child: Card(
-                      color: Colors.transparent,
-                      child: Container(
-                        color: Colors.grey.withOpacity(0.65),
-                        child: Center(
-                          child: RotationTransition(
-                            turns: AlwaysStoppedAnimation(15 / 360),
-                            child: Text(
-                              tr('soon'),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 24,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                  iconSize: 25,
+                  onPressed: () {
+                    Fluttertoast.showToast(
+                        msg: tr('wallet.points.description'));
+                  },
+                ),
               ),
             ),
             FlatButton(

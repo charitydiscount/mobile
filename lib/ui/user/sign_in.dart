@@ -47,7 +47,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
     final logo = Hero(
       tag: 'hero',
-      child: Image.asset('assets/icons/icon.png', scale: 5, height: 50),
+      child: Image.asset('assets/icons/logo.png', scale: 5, height: 50),
     );
 
     final termsButton = FlatButton(

@@ -94,16 +94,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       title: Text(language.name),
-      trailing: EasyLocalizationProvider.of(context).data.locale.languageCode ==
-              language.code
-          ? Icon(Icons.check)
-          : null,
+      trailing:
+          EasyLocalization.of(context).locale.languageCode == language.code
+              ? Icon(Icons.check)
+              : null,
       onTap: () {
         var newSettings = _state.settings;
         newSettings.lang = language.code;
-        EasyLocalizationProvider.of(context)
-            .data
-            .changeLocale(locale: language.locale);
+        EasyLocalization.of(context).locale = language.locale;
         setState(() {
           _state.setSettings(newSettings, storeLocal: true);
         });

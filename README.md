@@ -1,6 +1,6 @@
-# Charity Discount
+# CharityDiscount
 
-Charity Discount Mobile (Flutter) App. 
+CharityDiscount Mobile (Flutter) App. 
 
 ## Getting Started
 

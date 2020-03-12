@@ -140,10 +140,10 @@ class FirebaseCharityService implements CharityService {
       News(
         id: '1',
         createdAt: DateTime.now(),
-        title: 'Charity Discount Launched',
+        title: 'CharityDiscount Launched',
         imageUrl: 'https://charitydiscount.ro/img/charity_discount.png',
         body:
-            'It is a pleasure to announce the launch of <strong>Charity Discount</strong>',
+            'It is a pleasure to announce the launch of <strong>CharityDiscount</strong>',
       ),
       News(
         id: '1',
@@ -196,11 +196,13 @@ class FirebaseCharityService implements CharityService {
               commissions.add(value);
             }
           });
-          return List<Commission>.from(
+          var result = List<Commission>.from(
             commissions
                 .map((commissionJson) => Commission.fromJson(commissionJson))
                 .toList(),
           );
+          result.sort((c1, c2) => c2.createdAt.compareTo(c1.createdAt));
+          return result;
         }),
       );
 }
