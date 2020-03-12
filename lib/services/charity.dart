@@ -196,11 +196,13 @@ class FirebaseCharityService implements CharityService {
               commissions.add(value);
             }
           });
-          return List<Commission>.from(
+          var result = List<Commission>.from(
             commissions
                 .map((commissionJson) => Commission.fromJson(commissionJson))
                 .toList(),
           );
+          result.sort((c1, c2) => c2.createdAt.compareTo(c1.createdAt));
+          return result;
         }),
       );
 }
