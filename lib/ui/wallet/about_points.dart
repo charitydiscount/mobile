@@ -34,13 +34,22 @@ class AboutPointsWidget extends StatelessWidget {
         child: headingLeading,
         width: 30,
       ),
-      title: Text(
-        heading,
-        style: Theme.of(context).textTheme.headline5,
-      ),
-      subtitle: Text(
-        subtitle,
-        style: Theme.of(context).textTheme.subtitle2,
+      title: Tooltip(
+        message: subtitle,
+        showDuration: Duration(seconds: 5),
+        child: Row(
+          children: <Widget>[
+            Text(
+              heading,
+              style: Theme.of(context).textTheme.headline5,
+            ),
+            Icon(
+              Icons.info,
+              color: Colors.grey,
+              size: Theme.of(context).textTheme.bodyText1.fontSize,
+            )
+          ],
+        ),
       ),
     );
     ListTile availablePoints = ListTile(
