@@ -43,12 +43,12 @@ class _MainState extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
-    var data = EasyLocalizationProvider.of(context).data;
+    var currentLocale = EasyLocalization.of(context).locale;
 
-    if (data.locale != null) {
+    if (currentLocale != null) {
       return _buildMain(
         context: context,
-        locale: data.locale,
+        locale: currentLocale,
       );
     } else {
       return FutureBuilder(
@@ -109,41 +109,35 @@ class _MainState extends State<Main> {
 
   Widget _buildMain({BuildContext context, Locale locale}) {
     var state = AppModel.of(context);
-    return EasyLocalizationProvider(
-      data: EasyLocalizationProvider.of(context).data,
-      child: MaterialApp(
-        title: 'CharityDiscount',
-        theme: buildTheme(dark: state.settings.theme == ThemeOption.DARK),
-        darkTheme: buildTheme(dark: state.settings.theme != ThemeOption.LIGHT),
-        debugShowCheckedModeBanner: false,
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          EasyLocalizationDelegate(
-            locale: locale,
-            path: 'assets/i18n',
-          ),
-        ],
-        supportedLocales: supportedLanguages.map((l) => l.locale).toList(),
-        locale: locale,
-        initialRoute: '/',
-        routes: {
-          '/': (context) => SafeArea(child: _buildDefaultWidget()),
-          '/signin': (context) => SafeArea(child: SignInScreen()),
-          '/signup': (context) => SafeArea(child: SignUpScreen()),
-          '/forgot-password': (context) =>
-              SafeArea(child: ForgotPasswordScreen()),
-          '/wallet': (context) =>
-              SafeArea(child: _buildDefaultWidget(initialScreen: 3)),
-        },
-        navigatorKey: state.navigatorKey,
-        onUnknownRoute: (settings) => MaterialPageRoute(
-          builder: (context) => UndefinedView(
-            name: settings.name,
-          ),
+    return MaterialApp(
+      title: 'CharityDiscount',
+      theme: buildTheme(dark: state.settings.theme == ThemeOption.DARK),
+      darkTheme: buildTheme(dark: state.settings.theme != ThemeOption.LIGHT),
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        EasyLocalization.of(context).delegate,
+      ],
+      supportedLocales: EasyLocalization.of(context).supportedLocales,
+      locale: locale,
+      initialRoute: '/',
+      routes: {
+        '/': (context) => SafeArea(child: _buildDefaultWidget()),
+        '/signin': (context) => SafeArea(child: SignInScreen()),
+        '/signup': (context) => SafeArea(child: SignUpScreen()),
+        '/forgot-password': (context) =>
+            SafeArea(child: ForgotPasswordScreen()),
+        '/wallet': (context) =>
+            SafeArea(child: _buildDefaultWidget(initialScreen: 3)),
+      },
+      navigatorKey: state.navigatorKey,
+      onUnknownRoute: (settings) => MaterialPageRoute(
+        builder: (context) => UndefinedView(
+          name: settings.name,
         ),
-        navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
       ),
+      navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
     );
   }
 }
@@ -181,6 +175,8 @@ void main() {
 
   runApp(
     EasyLocalization(
+      path: 'assets/i18n',
+      supportedLocales: supportedLanguages.map((l) => l.locale).toList(),
       child: ScopedModel(
         model: AppModel(),
         child: Main(),
