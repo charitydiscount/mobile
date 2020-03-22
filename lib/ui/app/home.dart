@@ -46,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     state.setServices(
       getFirebaseShopsService(state.user.userId),
-      getFirebaseCharityService(),
     );
   }
 

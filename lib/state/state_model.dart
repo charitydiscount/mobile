@@ -4,6 +4,7 @@ import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/services/charity.dart';
+import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/util/remote_config.dart';
@@ -31,9 +32,11 @@ class AppModel extends Model {
   ProgramMeta _programsMeta;
   Wallet wallet;
   ShopsService _shopsService;
-  CharityService _charityService;
+  CharityService _charityService = getFirebaseCharityService();
   double minimumWithdrawalAmount;
   BehaviorSubject<bool> loading;
+  String _referralCode;
+  bool _referralSent = false;
 
   final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey(debugLabel: 'Main Navigator');
@@ -46,9 +49,8 @@ class AppModel extends Model {
         .then((threshold) => minimumWithdrawalAmount = threshold);
   }
 
-  void setServices(ShopsService shopService, CharityService charityService) {
+  void setServices(ShopsService shopService) {
     _shopsService = shopService;
-    _charityService = charityService;
   }
 
   void createListeners() {
@@ -58,6 +60,18 @@ class AppModel extends Model {
         if (profile == null) {
           return;
         }
+
+        if (referralCode != null &&
+            _referralSent == false &&
+            DateTime.now()
+                    .toUtc()
+                    .difference(profile.metadata.creationTime.toUtc())
+                    .inMinutes <
+                5) {
+          _referralSent = true;
+          _charityService.createReferralRequest(referralCode);
+        }
+
         setUser(User.fromFirebaseAuth(profile));
         List<Future> futuresForLoading = [
           metaService.getTwoPerformantMeta().then((twoPMeta) {
@@ -240,5 +254,11 @@ class AppModel extends Model {
     user.savedAccounts
         .removeWhere((account) => account.iban == savedAccount.iban);
     _charityService.removeAccount(savedAccount);
+  }
+
+  String get referralCode => _referralCode;
+  void setReferralCode(String referralCode) {
+    _referralCode = referralCode;
+    notifyListeners();
   }
 }

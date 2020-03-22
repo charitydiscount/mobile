@@ -52,6 +52,10 @@ class CharityService {
   Future<List<Commission>> getUserCommissions() async {
     throw Error();
   }
+
+  Future<void> createReferralRequest(String referralCode) {
+    throw Error();
+  }
 }
 
 class FirebaseCharityService implements CharityService {
@@ -205,4 +209,16 @@ class FirebaseCharityService implements CharityService {
           return result;
         }),
       );
+
+  @override
+  Future<void> createReferralRequest(String referralCode) =>
+      _auth.currentUser().then(
+            (user) => _db.collection('referral-requests').add(
+              {
+                'newUserId': user.uid,
+                'referralCode': referralCode,
+                'createdAt': FieldValue.serverTimestamp(),
+              },
+            ),
+          );
 }
