@@ -91,7 +91,7 @@ packages:
       name: build_runner_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.5.2"
+    version: "4.5.3"
   built_collection:
     dependency: transitive
     description:
@@ -231,7 +231,7 @@ packages:
       name: easy_localization
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1+3"
+    version: "2.0.2"
   firebase:
     dependency: transitive
     description:
@@ -333,9 +333,11 @@ packages:
   flushbar:
     dependency: "direct main"
     description:
-      name: flushbar
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: master
+      resolved-ref: "13c55a888c1693f1c8269ea30d55c614a1bfee16"
+      url: "https://github.com/AndreHaueisen/flushbar"
+    source: git
     version: "1.9.1"
   flutter:
     dependency: "direct main"
@@ -531,7 +533,7 @@ packages:
       name: http_parser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.3"
+    version: "3.1.4"
   iban:
     dependency: transitive
     description:
