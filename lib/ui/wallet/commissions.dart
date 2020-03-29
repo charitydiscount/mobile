@@ -88,7 +88,11 @@ class CommissionsWidget extends StatelessWidget {
         ),
         position: TimelineItemPosition.right,
         iconBackground: _getcommissionColor(commission),
-        icon: Icon(Icons.monetization_on, color: Colors.white),
+        icon: Icon(
+            commission.source != referralModel.SOURCE
+                ? Icons.monetization_on
+                : Icons.people,
+            color: Colors.white),
       );
     }).toList();
 
@@ -156,6 +160,7 @@ class CommissionDetails extends StatelessWidget {
             '${commission.amount.toStringAsFixed(2)} ${commission.currency}'),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
               _getcommissionStatusName(commission, context),
@@ -178,7 +183,12 @@ class CommissionDetails extends StatelessWidget {
             ),
           ],
         ),
-        trailing: trailing,
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            trailing,
+          ],
+        ),
       ),
     );
   }
