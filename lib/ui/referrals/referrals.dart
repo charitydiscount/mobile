@@ -21,15 +21,17 @@ class ReferralsScreen extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.only(top: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            ReferralLink(charityService: charityService),
             Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Referrals(charityService: charityService),
+              padding: const EdgeInsets.symmetric(
+                vertical: 16.0,
+                horizontal: 12.0,
+              ),
+              child: ReferralLink(charityService: charityService),
             ),
+            Referrals(charityService: charityService),
           ],
         ),
       ),
@@ -63,15 +65,17 @@ class ReferralLink extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             ListTile(
+              contentPadding: EdgeInsets.zero,
               title: Text(tr('referralCall')),
               subtitle: Text(tr('referralDetails')),
             ),
             TextFormField(
               readOnly: true,
               initialValue: referralLink,
+              maxLines: 2,
               textAlign: TextAlign.center,
               textAlignVertical: TextAlignVertical.center,
-              style: TextStyle(fontSize: 14, color: Colors.green),
+              style: TextStyle(fontSize: 16, color: Colors.green),
               decoration: InputDecoration(
                 border: InputBorder.none,
                 suffixIcon: IconButton(
@@ -141,16 +145,27 @@ class Referrals extends StatelessWidget {
                     leading: CircleAvatar(
                       backgroundColor: Colors.transparent,
                       radius: 60.0,
-                      child: UserAvatar(
-                        photoUrl: referral.photoUrl,
-                        // width: 120.0,
-                        // height: 120.0,
-                      ),
+                      child: UserAvatar(photoUrl: referral.photoUrl),
                     ),
                     title: Text(referral.name),
-                    trailing: Text(
-                      '${addUpCommissions(referral).toStringAsFixed(2)} RON',
-                      style: Theme.of(context).textTheme.button,
+                    trailing: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          '${addUpCommissionsForStatus(referral, 'paid').toStringAsFixed(2)} RON',
+                          style: Theme.of(context)
+                              .textTheme
+                              .button
+                              .copyWith(color: Colors.green),
+                        ),
+                        Text(
+                          '${addUpCommissionsForStatus(referral, 'pending').toStringAsFixed(2)} RON',
+                          style: Theme.of(context)
+                              .textTheme
+                              .button
+                              .copyWith(color: Colors.yellowAccent.shade700),
+                        ),
+                      ],
                     ),
                   );
                 }),
@@ -160,8 +175,9 @@ class Referrals extends StatelessWidget {
     );
   }
 
-  double addUpCommissions(Referral referral) =>
+  double addUpCommissionsForStatus(Referral referral, String status) =>
       referral.commissions
+          ?.where((element) => element.status == status)
           ?.map((commission) => commission.amount)
           ?.reduce((value, element) => value += element) ??
       0;

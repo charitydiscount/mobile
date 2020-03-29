@@ -38,6 +38,11 @@ class RemoteConfigWrapper {
     return configValue.asString();
   }
 
+  Future<String> getMetaImage() async {
+    RemoteConfigValue configValue = await _getValue('meta_image_url');
+    return configValue.asString();
+  }
+
   Future<String> getString(String key) async {
     RemoteConfigValue configValue = await _getValue(key);
     return configValue.asString();

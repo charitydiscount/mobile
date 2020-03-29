@@ -265,6 +265,7 @@ class FirebaseCharityService implements CharityService {
     final user = await _auth.currentUser();
     final packageInfo = await PackageInfo.fromPlatform();
     String prefix = await remoteConfig.getDynamicLinksPrefix();
+    String imageUrl = await remoteConfig.getMetaImage();
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: prefix,
       link: Uri.parse('https://charitydiscount.ro/referral/${user.uid}'),
@@ -285,8 +286,7 @@ class FirebaseCharityService implements CharityService {
       socialMetaTagParameters: SocialMetaTagParameters(
         title: tr('referralMeta.title'),
         description: tr('referralMeta.description'),
-        imageUrl:
-            Uri.parse('https://charitydiscount.ro/img/charity_discount.png'),
+        imageUrl: Uri.parse(imageUrl),
       ),
     );
 
