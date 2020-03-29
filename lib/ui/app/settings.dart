@@ -29,14 +29,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     List<Widget> settingTiles = [];
     Widget language = ExpansionTile(
       leading: Icon(Icons.language),
-      title: Text(tr('language')),
+      title: Text(tr('language', context: context)),
       children:
           supportedLanguages.map((lang) => _buildLanguageTile(lang)).toList(),
     );
     settingTiles.add(language);
     Widget notifications = ListTile(
       leading: Icon(Icons.notifications),
-      title: Text(tr('notifications')),
+      title: Text(tr('notifications', context: context)),
       trailing: Switch.adaptive(
         value: _state.settings.notifications || false,
         onChanged: (bool newValue) {
@@ -55,7 +55,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     Widget theme = ExpansionTile(
       leading: Icon(Icons.color_lens),
-      title: Text(tr('theme.name')),
+      title: Text(tr('theme.name', context: context)),
       children: ThemeOption.values
           .map((themeOption) => _buildThemeRadioButton(themeOption))
           .toList(),
@@ -65,7 +65,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          tr('settings'),
+          tr('settings', context: context),
         ),
       ),
       body: ListView.separated(
@@ -111,7 +111,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildThemeRadioButton(ThemeOption value) => ListTile(
         title: Text(
-          tr('theme.${describeEnum(value).toLowerCase()}'),
+          tr('theme.${describeEnum(value).toLowerCase()}', context: context),
         ),
         leading: Radio(
           value: value,
