@@ -44,6 +44,9 @@ class _ProfileState extends State<Profile> {
 
   Widget build(BuildContext context) {
     var appState = AppModel.of(context);
+    if (appState.user == null) {
+      return Container();
+    }
 
     List<Widget> logoWidgets = [
       CircleAvatar(

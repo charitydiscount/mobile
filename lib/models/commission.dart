@@ -8,6 +8,8 @@ class Commission {
   final String status;
   final String reason;
   final CommissionProgram program;
+  final String source;
+  final String referralId;
 
   Commission({
     this.amount,
@@ -17,6 +19,8 @@ class Commission {
     this.status,
     this.reason,
     this.program,
+    this.source,
+    this.referralId,
   });
 
   factory Commission.fromJson(dynamic json) => Commission(
@@ -27,6 +31,8 @@ class Commission {
         status: json['status'],
         reason: json['reason'] ?? null,
         program: CommissionProgram.fromJson(json['program']),
+        source: json['source'],
+        referralId: json['referralId'],
       );
 }
 

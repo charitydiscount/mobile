@@ -202,5 +202,13 @@
   "camera": "Camera",
   "sellingIn": "Selling in",
   "doubleBack": "Tap back again to exit",
-  "completeOffer": "Check out the entire offer by accessing the shop's site"
+  "completeOffer": "Check out the entire offer by accessing the shop's site",
+  "referrals": "Referrals",
+  "referralBonus": "Referral",
+  "referralCall": "Invite your friends",
+  "referralDetails": "With each cashback they receive, you gain the equivalent of 10% of its value. All they have to do is to use your custom link to register",
+  "referralMeta": {
+    "title": "Shop Smart with CharityDiscount",
+    "description": "Explore the hundreds of shops and millions of products available on CharityDiscount"
+  }
 }

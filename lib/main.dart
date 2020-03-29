@@ -5,6 +5,7 @@ import 'package:charity_discount/ui/app/util.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -30,8 +31,8 @@ class _MainState extends State<Main> {
   @override
   void initState() {
     super.initState();
-
     final state = AppModel.of(context);
+    _initDynamicLinks();
     state.addListener(() {
       if (state.settings.theme != _theme) {
         setState(() {
@@ -139,6 +140,34 @@ class _MainState extends State<Main> {
       ),
       navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
     );
+  }
+
+  void _initDynamicLinks() async {
+    final PendingDynamicLinkData data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+    _handleDeepLinks(data?.link);
+
+    FirebaseDynamicLinks.instance.onLink(
+      onSuccess: (PendingDynamicLinkData dynamicLink) async {
+        _handleDeepLinks(dynamicLink?.link);
+      },
+      onError: (OnLinkErrorException e) async {
+        print(e.message);
+      },
+    );
+  }
+
+  void _handleDeepLinks(Uri deepLink) {
+    if (deepLink == null) {
+      return;
+    }
+
+    switch (deepLink.pathSegments.first) {
+      case 'referral':
+        AppModel.of(context).setReferralCode(deepLink.pathSegments.last);
+        break;
+      default:
+    }
   }
 }
 
