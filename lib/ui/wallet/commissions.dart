@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/commission.dart';
 import 'package:charity_discount/models/program.dart';
+import 'package:charity_discount/models/referral.dart' as referralModel;
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/tools.dart';
@@ -134,7 +135,20 @@ class CommissionDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logo = commission?.program?.logo ?? program?.logoPath;
+    Widget trailing;
+    if (commission.source != referralModel.SOURCE) {
+      final logo = commission?.program?.logo ?? program?.logoPath;
+      trailing = logo != null
+          ? CachedNetworkImage(
+              imageUrl: logo,
+              width: 100,
+              alignment: Alignment.center,
+              fit: BoxFit.fitHeight,
+            )
+          : Container(width: 0);
+    } else {
+      trailing = Text(tr('referralBonus'));
+    }
     return Card(
       child: ListTile(
         isThreeLine: true,
@@ -164,14 +178,7 @@ class CommissionDetails extends StatelessWidget {
             ),
           ],
         ),
-        trailing: logo != null
-            ? CachedNetworkImage(
-                imageUrl: logo,
-                width: 100,
-                alignment: Alignment.center,
-                fit: BoxFit.fitHeight,
-              )
-            : Container(width: 0),
+        trailing: trailing,
       ),
     );
   }

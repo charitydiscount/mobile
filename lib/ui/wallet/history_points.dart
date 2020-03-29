@@ -27,6 +27,9 @@ class HistoryPointsWidget extends StatelessWidget {
         case TxType.COMMISSION:
           txIcon = Icon(Icons.monetization_on, color: Colors.white);
           break;
+        case TxType.REFERRAL:
+          txIcon = Icon(Icons.people, color: Colors.white);
+          break;
         default:
       }
       return TimelineModel(
@@ -62,6 +65,8 @@ Color _getTxColor(Transaction transaction) {
       return Colors.red;
     case TxType.COMMISSION:
       return Colors.cyan;
+    case TxType.REFERRAL:
+      return Colors.purple;
     default:
       return Colors.grey;
   }
@@ -74,7 +79,8 @@ class TransactionDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int decimalsToDisplay = tx.type == TxType.BONUS ? 4 : 2;
+    int decimalsToDisplay =
+        tx.type == TxType.BONUS || tx.type == TxType.REFERRAL ? 4 : 2;
     return Card(
       child: ListTile(
         title: Text(
@@ -86,7 +92,11 @@ class TransactionDetails extends StatelessWidget {
           ],
         ),
         trailing: Text(
-          tx.type != TxType.BONUS ? tx.target.name ?? '' : '',
+          tx.type != TxType.BONUS &&
+                  tx.type != TxType.COMMISSION &&
+                  tx.type != TxType.REFERRAL
+              ? tx.target.name ?? ''
+              : '',
           style: Theme.of(context).textTheme.caption.copyWith(
                 color: _getTxColor(tx),
               ),

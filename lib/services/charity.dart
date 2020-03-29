@@ -1,10 +1,15 @@
 import 'package:charity_discount/models/commission.dart';
 import 'package:charity_discount/models/news.dart';
+import 'package:charity_discount/models/referral.dart';
+import 'package:charity_discount/util/remote_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/models/charity.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
+import 'package:package_info/package_info.dart';
 import 'package:rxdart/rxdart.dart';
 import '../models/user.dart';
 
@@ -54,6 +59,14 @@ class CharityService {
   }
 
   Future<void> createReferralRequest(String referralCode) {
+    throw Error();
+  }
+
+  Future<List<Referral>> getReferrals() async {
+    throw Error();
+  }
+
+  Future<ShortDynamicLink> getReferralLink() async {
     throw Error();
   }
 }
@@ -221,4 +234,62 @@ class FirebaseCharityService implements CharityService {
               },
             ),
           );
+
+  @override
+  Future<List<Referral>> getReferrals() async {
+    final user = await _auth.currentUser();
+    final List<Referral> referrals = await _db
+        .collection('referrals')
+        .where('ownerId', isEqualTo: user.uid)
+        .getDocuments()
+        .then((referralDocs) => referralDocs.documents
+            .map((refDoc) => Referral.fromJson(refDoc.data))
+            .toList());
+
+    if (referrals.isNotEmpty) {
+      List<Commission> commissions = await getUserCommissions();
+      if (commissions != null) {
+        referrals.forEach((referral) {
+          referral.setCommissions(commissions
+              .where((element) => element.referralId == referral.userId)
+              .toList());
+        });
+      }
+    }
+
+    return referrals;
+  }
+
+  @override
+  Future<ShortDynamicLink> getReferralLink() async {
+    final user = await _auth.currentUser();
+    final packageInfo = await PackageInfo.fromPlatform();
+    String prefix = await remoteConfig.getDynamicLinksPrefix();
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      uriPrefix: prefix,
+      link: Uri.parse('https://charitydiscount.ro/referral/${user.uid}'),
+      androidParameters: AndroidParameters(
+        packageName: packageInfo.packageName,
+        minimumVersion: 500,
+      ),
+      iosParameters: IosParameters(
+        bundleId: packageInfo.packageName,
+        appStoreId: '1492115913',
+        minimumVersion: '500',
+      ),
+      googleAnalyticsParameters: GoogleAnalyticsParameters(
+        campaign: 'referrals',
+        medium: 'social',
+        source: 'mobile',
+      ),
+      socialMetaTagParameters: SocialMetaTagParameters(
+        title: tr('referralMeta.title'),
+        description: tr('referralMeta.description'),
+        imageUrl:
+            Uri.parse('https://charitydiscount.ro/img/charity_discount.png'),
+      ),
+    );
+
+    return parameters.buildShortLink();
+  }
 }

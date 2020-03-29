@@ -70,7 +70,7 @@ packages:
       name: build_daemon
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.3"
+    version: "2.1.4"
   build_resolvers:
     dependency: transitive
     description:
@@ -322,7 +322,7 @@ packages:
       name: firebase_storage
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.3"
+    version: "3.1.5"
   fixnum:
     dependency: transitive
     description:
@@ -335,10 +335,10 @@ packages:
     description:
       path: "."
       ref: master
-      resolved-ref: "13c55a888c1693f1c8269ea30d55c614a1bfee16"
+      resolved-ref: "58b6ba2872503813fe8aa5a843d99e5f7af9b97c"
       url: "https://github.com/AndreHaueisen/flushbar"
     source: git
-    version: "1.9.1"
+    version: "1.10.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -442,7 +442,7 @@ packages:
       name: font_awesome_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "8.7.0"
+    version: "8.8.1"
   glob:
     dependency: transitive
     description:
@@ -456,7 +456,7 @@ packages:
       name: google_sign_in
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.2.0"
+    version: "4.3.0"
   google_sign_in_platform_interface:
     dependency: transitive
     description:
@@ -568,7 +568,7 @@ packages:
       name: image_picker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.3+4"
+    version: "0.6.4"
   intl:
     dependency: "direct main"
     description:
@@ -603,7 +603,7 @@ packages:
       name: json_serializable
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.2.5"
+    version: "3.3.0"
   local_auth:
     dependency: "direct main"
     description:
@@ -666,7 +666,14 @@ packages:
       name: package_config
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.9.2"
+    version: "1.9.3"
+  package_info:
+    dependency: "direct main"
+    description:
+      name: package_info
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.0+16"
   package_resolver:
     dependency: transitive
     description:
@@ -786,6 +793,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  share:
+    dependency: "direct main"
+    description:
+      name: share
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.3+6"
   shared_preferences:
     dependency: "direct main"
     description:

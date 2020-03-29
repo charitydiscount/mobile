@@ -5,6 +5,7 @@ import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/products/products_screen.dart';
 import 'package:charity_discount/ui/app/settings.dart';
+import 'package:charity_discount/ui/referrals/referrals.dart';
 import 'package:charity_discount/ui/wallet/wallet.dart';
 import 'package:charity_discount/ui/user/profile.dart';
 import 'package:charity_discount/ui/programs/programs.dart';
@@ -205,6 +206,26 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             );
             menuTiles.add(profileTile);
+
+            ListTile referrals = ListTile(
+              leading: Icon(Icons.people),
+              title: Text(
+                tr('referrals'),
+                style: titleStyle,
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => ReferralsScreen(
+                      charityService: getFirebaseCharityService(),
+                    ),
+                    settings: RouteSettings(name: 'Referrals'),
+                  ),
+                );
+              },
+            );
+            menuTiles.add(referrals);
 
             ListTile settings = ListTile(
               leading: Icon(Icons.settings),

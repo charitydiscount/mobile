@@ -33,6 +33,11 @@ class RemoteConfigWrapper {
     return configValue.asString();
   }
 
+  Future<String> getDynamicLinksPrefix() async {
+    RemoteConfigValue configValue = await _getValue('dynamic_link_prefix');
+    return configValue.asString();
+  }
+
   Future<String> getString(String key) async {
     RemoteConfigValue configValue = await _getValue(key);
     return configValue.asString();
