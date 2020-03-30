@@ -3,7 +3,6 @@ import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/ui/user/user_avatar.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
 
@@ -47,18 +46,19 @@ class ReferralLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<ShortDynamicLink>(
+    return FutureBuilder<String>(
       future: charityService.getReferralLink(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container();
-        }
-        if (snapshot.hasError || !snapshot.hasData) {
-          print(snapshot.error);
-          return Container();
+        final loading = buildConnectionLoading(
+          context: context,
+          snapshot: snapshot,
+        );
+
+        if (loading != null) {
+          return loading;
         }
 
-        String referralLink = snapshot.data.shortUrl.toString();
+        String referralLink = snapshot.data;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,17 +105,11 @@ class Referrals extends StatelessWidget {
       initialData: [],
       future: charityService.getReferrals(),
       builder: (context, snapshot) {
-        final loading = buildConnectionLoading(
-          context: context,
-          snapshot: snapshot,
-        );
-
-        if (loading != null) {
-          return loading;
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container();
         }
-
-        if (snapshot.data.isEmpty) {
-          return Container(width: 0, height: 0);
+        if (snapshot.hasError || !snapshot.hasData || snapshot.data.isEmpty) {
+          return Container();
         }
 
         return Column(
@@ -175,10 +169,19 @@ class Referrals extends StatelessWidget {
     );
   }
 
-  double addUpCommissionsForStatus(Referral referral, String status) =>
-      referral.commissions
-          ?.where((element) => element.status == status)
-          ?.map((commission) => commission.amount)
-          ?.reduce((value, element) => value += element) ??
-      0;
+  double addUpCommissionsForStatus(Referral referral, String status) {
+    if (referral.commissions == null || referral.commissions.isEmpty) {
+      return 0;
+    }
+
+    final commissionsForStatus =
+        referral.commissions.where((element) => element.status == status);
+    if (commissionsForStatus.isNotEmpty) {
+      return commissionsForStatus
+          .map((commission) => commission.amount)
+          .reduce((value, element) => value += element);
+    } else {
+      return 0;
+    }
+  }
 }

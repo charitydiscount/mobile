@@ -66,7 +66,7 @@ class CharityService {
     throw Error();
   }
 
-  Future<ShortDynamicLink> getReferralLink() async {
+  Future<String> getReferralLink() async {
     throw Error();
   }
 }
@@ -74,6 +74,7 @@ class CharityService {
 class FirebaseCharityService implements CharityService {
   final Firestore _db = Firestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  String _cachedReferralLink;
 
   @override
   Future<Map<String, Charity>> getCases() async {
@@ -261,7 +262,11 @@ class FirebaseCharityService implements CharityService {
   }
 
   @override
-  Future<ShortDynamicLink> getReferralLink() async {
+  Future<String> getReferralLink() async {
+    if (_cachedReferralLink != null) {
+      return _cachedReferralLink;
+    }
+
     final user = await _auth.currentUser();
     final packageInfo = await PackageInfo.fromPlatform();
     String prefix = await remoteConfig.getDynamicLinksPrefix();
@@ -290,6 +295,16 @@ class FirebaseCharityService implements CharityService {
       ),
     );
 
-    return parameters.buildShortLink();
+    final shortUrl = await parameters.buildShortLink();
+
+    if (shortUrl.warnings.isNotEmpty) {
+      print(shortUrl.warnings);
+    }
+
+    String link = shortUrl.shortUrl.toString();
+
+    _cachedReferralLink = link;
+
+    return link;
   }
 }
