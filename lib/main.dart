@@ -142,14 +142,10 @@ class _MainState extends State<Main> {
     );
   }
 
-  void _initDynamicLinks() async {
-    final PendingDynamicLinkData data =
-        await FirebaseDynamicLinks.instance.getInitialLink();
-    _handleDeepLinks(data?.link);
-
+  void _initDynamicLinks() {
     FirebaseDynamicLinks.instance.onLink(
       onSuccess: (PendingDynamicLinkData dynamicLink) async {
-        _handleDeepLinks(dynamicLink?.link);
+        return _handleDeepLinks(dynamicLink?.link);
       },
       onError: (OnLinkErrorException e) async {
         print(e.message);
