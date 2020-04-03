@@ -69,7 +69,7 @@ class AppModel extends Model {
             FirebaseDynamicLinks.instance
                 .getInitialLink()
                 .then((PendingDynamicLinkData data) {
-              if (data.link != null) {
+              if (data?.link != null) {
                 switch (data.link.pathSegments.first) {
                   case 'referral':
                     _referralSent = true;
