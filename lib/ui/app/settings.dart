@@ -7,6 +7,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:package_info/package_info.dart';
 
 class SettingsScreen extends StatefulWidget {
   SettingsScreen({Key key}) : super(key: key);
@@ -68,16 +69,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
           tr('settings', context: context),
         ),
       ),
-      body: ListView.separated(
-        primary: true,
-        shrinkWrap: true,
-        separatorBuilder: (BuildContext context, int index) {
-          return Divider();
-        },
-        itemBuilder: (BuildContext context, int index) {
-          return settingTiles[index];
-        },
-        itemCount: settingTiles.length,
+      body: Stack(
+        children: <Widget>[
+          ListView.separated(
+            primary: true,
+            shrinkWrap: true,
+            separatorBuilder: (BuildContext context, int index) {
+              return Divider();
+            },
+            itemBuilder: (BuildContext context, int index) {
+              return settingTiles[index];
+            },
+            itemCount: settingTiles.length,
+          ),
+          FutureBuilder<PackageInfo>(
+              future: PackageInfo.fromPlatform(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(width: 0, height: 0);
+                }
+
+                return Positioned(
+                  child: Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Text(
+                        snapshot.data.version,
+                        style: Theme.of(context).textTheme.caption,
+                      ),
+                    ),
+                  ),
+                );
+              }),
+        ],
       ),
     );
   }
