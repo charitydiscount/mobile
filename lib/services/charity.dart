@@ -9,7 +9,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
-import 'package:package_info/package_info.dart';
 import 'package:rxdart/rxdart.dart';
 import '../models/user.dart';
 
@@ -66,7 +65,7 @@ class CharityService {
     throw Error();
   }
 
-  Future<ShortDynamicLink> getReferralLink() async {
+  Future<String> getReferralLink() async {
     throw Error();
   }
 }
@@ -74,6 +73,7 @@ class CharityService {
 class FirebaseCharityService implements CharityService {
   final Firestore _db = Firestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  String _cachedReferralLink;
 
   @override
   Future<Map<String, Charity>> getCases() async {
@@ -247,12 +247,16 @@ class FirebaseCharityService implements CharityService {
             .toList());
 
     if (referrals.isNotEmpty) {
+      referrals.sort((r1, r2) => r2.createdAt.compareTo(r1.createdAt));
       List<Commission> commissions = await getUserCommissions();
       if (commissions != null) {
         referrals.forEach((referral) {
-          referral.setCommissions(commissions
+          List<Commission> referralCommissions = commissions
               .where((element) => element.referralId == referral.userId)
-              .toList());
+              .toList();
+          referralCommissions
+              .sort((e1, e2) => e1.createdAt.compareTo(e2.createdAt));
+          referral.setCommissions(referralCommissions);
         });
       }
     }
@@ -261,20 +265,23 @@ class FirebaseCharityService implements CharityService {
   }
 
   @override
-  Future<ShortDynamicLink> getReferralLink() async {
+  Future<String> getReferralLink() async {
+    if (_cachedReferralLink != null) {
+      return _cachedReferralLink;
+    }
+
     final user = await _auth.currentUser();
-    final packageInfo = await PackageInfo.fromPlatform();
     String prefix = await remoteConfig.getDynamicLinksPrefix();
     String imageUrl = await remoteConfig.getMetaImage();
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: prefix,
       link: Uri.parse('https://charitydiscount.ro/referral/${user.uid}'),
       androidParameters: AndroidParameters(
-        packageName: packageInfo.packageName,
+        packageName: 'com.clover.charity_discount',
         minimumVersion: 500,
       ),
       iosParameters: IosParameters(
-        bundleId: packageInfo.packageName,
+        bundleId: 'com.clover.CharityDiscount',
         appStoreId: '1492115913',
         minimumVersion: '500',
       ),
@@ -290,6 +297,16 @@ class FirebaseCharityService implements CharityService {
       ),
     );
 
-    return parameters.buildShortLink();
+    final shortUrl = await parameters.buildShortLink();
+
+    if (shortUrl.warnings.isNotEmpty) {
+      print(shortUrl.warnings);
+    }
+
+    String link = shortUrl.shortUrl.toString();
+
+    _cachedReferralLink = link;
+
+    return link;
   }
 }

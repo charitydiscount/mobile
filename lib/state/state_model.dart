@@ -9,6 +9,7 @@ import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/util/remote_config.dart';
 import 'package:charity_discount/util/url.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
@@ -61,15 +62,28 @@ class AppModel extends Model {
           return;
         }
 
-        if (referralCode != null &&
-            _referralSent == false &&
-            DateTime.now()
-                    .toUtc()
-                    .difference(profile.metadata.creationTime.toUtc())
-                    .inMinutes <
-                5) {
-          _referralSent = true;
-          _charityService.createReferralRequest(referralCode);
+        if (_referralSent == false &&
+            _isRecentEnough(profile.metadata.creationTime)) {
+          if (referralCode == null) {
+            // Ensure that there is no pending dynamic link
+            FirebaseDynamicLinks.instance
+                .getInitialLink()
+                .then((PendingDynamicLinkData data) {
+              if (data?.link != null) {
+                switch (data.link.pathSegments.first) {
+                  case 'referral':
+                    _referralSent = true;
+                    _charityService
+                        .createReferralRequest(data.link.pathSegments.last);
+                    break;
+                  default:
+                }
+              }
+            });
+          } else {
+            _referralSent = true;
+            _charityService.createReferralRequest(referralCode);
+          }
         }
 
         setUser(User.fromFirebaseAuth(profile));
@@ -93,6 +107,9 @@ class AppModel extends Model {
     await _profileListener.cancel();
     loading.close();
   }
+
+  bool _isRecentEnough(DateTime creationTime) =>
+      DateTime.now().toUtc().difference(creationTime.toUtc()).inMinutes < 5;
 
   static AppModel of(
     BuildContext context, {

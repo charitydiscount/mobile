@@ -232,6 +232,8 @@ class AuthService {
     userInfo.displayName = '$firstName $lastName';
     await authResult.user.updateProfile(userInfo);
 
+    await updateCurrentUser();
+
     return authResult.user;
   }
 }

@@ -3,10 +3,13 @@ import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/notifications.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/locale.dart';
+import 'package:charity_discount/util/social_icons.dart';
+import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:package_info/package_info.dart';
 
 class SettingsScreen extends StatefulWidget {
   SettingsScreen({Key key}) : super(key: key);
@@ -62,23 +65,69 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
     settingTiles.add(theme);
 
+    settingTiles.add(_buildSocialTile(
+      icon: SocialIcons.facebook,
+      title: 'Facebook',
+      url: 'https://www.facebook.com/charitydiscount',
+    ));
+
+    settingTiles.add(_buildSocialTile(
+      icon: SocialIcons.instagram,
+      title: 'Instagram',
+      url: 'https://www.instagram.com/charitydiscount',
+    ));
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
           tr('settings', context: context),
         ),
       ),
-      body: ListView.separated(
-        primary: true,
-        shrinkWrap: true,
-        separatorBuilder: (BuildContext context, int index) {
-          return Divider();
-        },
-        itemBuilder: (BuildContext context, int index) {
-          return settingTiles[index];
-        },
-        itemCount: settingTiles.length,
+      body: Stack(
+        children: <Widget>[
+          ListView.separated(
+            primary: true,
+            shrinkWrap: true,
+            separatorBuilder: (BuildContext context, int index) {
+              return Divider();
+            },
+            itemBuilder: (BuildContext context, int index) {
+              return settingTiles[index];
+            },
+            itemCount: settingTiles.length,
+          ),
+          FutureBuilder<PackageInfo>(
+              future: PackageInfo.fromPlatform(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(width: 0, height: 0);
+                }
+
+                return Positioned(
+                  child: Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Text(
+                        snapshot.data.version,
+                        style: Theme.of(context).textTheme.caption,
+                      ),
+                    ),
+                  ),
+                );
+              }),
+        ],
       ),
+    );
+  }
+
+  Widget _buildSocialTile({IconData icon, String title, String url}) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      onTap: () {
+        launchURL(url);
+      },
     );
   }
 

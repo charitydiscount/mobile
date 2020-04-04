@@ -210,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile referrals = ListTile(
               leading: Icon(Icons.people),
               title: Text(
-                tr('referrals'),
+                tr('referralsLabel'),
                 style: titleStyle,
               ),
               onTap: () {
