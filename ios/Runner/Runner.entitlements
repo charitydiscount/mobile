@@ -11,8 +11,6 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:charitydiscount.page.link</string>
-		<string>applinks:charitydiscount.ro</string>
-		<string>applinks:charitydiscount-test.web.app</string>
 		<string>applinks:charitydev.page.link</string>
 	</array>
 </dict>
