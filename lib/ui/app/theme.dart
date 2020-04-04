@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 ThemeData buildTheme({bool dark = false}) {
   TextTheme _buildTextTheme(TextTheme base) {
@@ -6,6 +7,11 @@ ThemeData buildTheme({bool dark = false}) {
   }
 
   final ThemeData base = dark ? ThemeData.dark() : ThemeData.light();
+
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: const Color(0xFFE32029),
+    statusBarBrightness: base.brightness,
+  ));
 
   return base.copyWith(
     textTheme: _buildTextTheme(base.textTheme),
