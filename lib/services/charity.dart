@@ -9,7 +9,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
-import 'package:package_info/package_info.dart';
 import 'package:rxdart/rxdart.dart';
 import '../models/user.dart';
 
@@ -268,18 +267,17 @@ class FirebaseCharityService implements CharityService {
     }
 
     final user = await _auth.currentUser();
-    final packageInfo = await PackageInfo.fromPlatform();
     String prefix = await remoteConfig.getDynamicLinksPrefix();
     String imageUrl = await remoteConfig.getMetaImage();
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: prefix,
       link: Uri.parse('https://charitydiscount.ro/referral/${user.uid}'),
       androidParameters: AndroidParameters(
-        packageName: packageInfo.packageName,
+        packageName: 'com.clover.charity_discount',
         minimumVersion: 500,
       ),
       iosParameters: IosParameters(
-        bundleId: packageInfo.packageName,
+        bundleId: 'com.clover.CharityDiscount',
         appStoreId: '1492115913',
         minimumVersion: '500',
       ),

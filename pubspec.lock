@@ -7,14 +7,14 @@ packages:
       name: _fe_analyzer_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.3"
+    version: "2.0.0"
   analyzer:
     dependency: transitive
     description:
       name: analyzer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.39.4"
+    version: "0.39.5"
   apple_sign_in:
     dependency: "direct main"
     description:
@@ -231,7 +231,7 @@ packages:
       name: easy_localization
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.2"
+    version: "2.1.0+0"
   firebase:
     dependency: transitive
     description:
@@ -582,7 +582,7 @@ packages:
       name: io
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.3"
+    version: "0.3.4"
   js:
     dependency: transitive
     description:
@@ -667,13 +667,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.9.3"
-  package_info:
-    dependency: "direct main"
-    description:
-      name: package_info
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.0+16"
   package_resolver:
     dependency: transitive
     description:
