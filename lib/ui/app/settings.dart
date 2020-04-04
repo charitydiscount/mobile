@@ -3,6 +3,8 @@ import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/notifications.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/locale.dart';
+import 'package:charity_discount/util/social_icons.dart';
+import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -63,6 +65,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
     settingTiles.add(theme);
 
+    settingTiles.add(_buildSocialTile(
+      icon: SocialIcons.facebook,
+      title: 'Facebook',
+      url: 'https://www.facebook.com/charitydiscount',
+    ));
+
+    settingTiles.add(_buildSocialTile(
+      icon: SocialIcons.instagram,
+      title: 'Instagram',
+      url: 'https://www.instagram.com/charitydiscount',
+    ));
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -104,6 +118,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
               }),
         ],
       ),
+    );
+  }
+
+  Widget _buildSocialTile({IconData icon, String title, String url}) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      onTap: () {
+        launchURL(url);
+      },
     );
   }
 
