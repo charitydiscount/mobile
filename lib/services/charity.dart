@@ -247,12 +247,16 @@ class FirebaseCharityService implements CharityService {
             .toList());
 
     if (referrals.isNotEmpty) {
+      referrals.sort((r1, r2) => r2.createdAt.compareTo(r1.createdAt));
       List<Commission> commissions = await getUserCommissions();
       if (commissions != null) {
         referrals.forEach((referral) {
-          referral.setCommissions(commissions
+          List<Commission> referralCommissions = commissions
               .where((element) => element.referralId == referral.userId)
-              .toList());
+              .toList();
+          referralCommissions
+              .sort((e1, e2) => e1.createdAt.compareTo(e2.createdAt));
+          referral.setCommissions(referralCommissions);
         });
       }
     }
