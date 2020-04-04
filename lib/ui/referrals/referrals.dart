@@ -5,6 +5,7 @@ import 'package:charity_discount/ui/user/user_avatar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
+import 'package:charity_discount/util/tools.dart';
 
 class ReferralsScreen extends StatelessWidget {
   final CharityService charityService;
@@ -122,7 +123,7 @@ class Referrals extends StatelessWidget {
                 vertical: 8.0,
               ),
               child: Text(
-                tr('referrals'),
+                '${tr('referrals')} (${snapshot.data.length})',
                 style: Theme.of(context).textTheme.subtitle1,
                 textAlign: TextAlign.left,
               ),
@@ -142,6 +143,10 @@ class Referrals extends StatelessWidget {
                       child: UserAvatar(photoUrl: referral.photoUrl),
                     ),
                     title: Text(referral.name),
+                    subtitle: Text(
+                      formatDateTime(referral.createdAt),
+                      style: Theme.of(context).textTheme.caption,
+                    ),
                     trailing: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
