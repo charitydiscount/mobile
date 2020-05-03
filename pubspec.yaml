@@ -44,7 +44,7 @@ dependencies:
   intl: ^0.16.1
   firebase_remote_config: ^0.3.0
   cupertino_icons: ^0.1.2
-  flutter_svg: ^0.15.0
+  flutter_svg: ^0.17.4
   iban_form_field: ^0.1.9
   flutter_html: ^0.11.0
   flutter_rating_bar: ^3.0.0
