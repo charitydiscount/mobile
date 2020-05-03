@@ -6,6 +6,7 @@ import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/services/meta.dart';
+import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/util/remote_config.dart';
 import 'package:charity_discount/util/url.dart';
@@ -34,6 +35,7 @@ class AppModel extends Model {
   Wallet wallet;
   ShopsService _shopsService;
   CharityService _charityService = getFirebaseCharityService();
+  SearchServiceBase searchService;
   double minimumWithdrawalAmount;
   BehaviorSubject<bool> loading;
   String _referralCode;
@@ -50,8 +52,9 @@ class AppModel extends Model {
         .then((threshold) => minimumWithdrawalAmount = threshold);
   }
 
-  void setServices(ShopsService shopService) {
+  void setServices(ShopsService shopService, SearchServiceBase searchService) {
     _shopsService = shopService;
+    this.searchService = searchService;
   }
 
   void createListeners() {

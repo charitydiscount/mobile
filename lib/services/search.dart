@@ -29,12 +29,15 @@ abstract class SearchServiceBase {
     int size = 20,
     int from = 0,
   });
+
+  Future<ProductPriceHistory> getProductPriceHistory(productId);
 }
 
 enum SortStrategy { priceAsc, priceDesc, relevance }
 
 class SearchService implements SearchServiceBase {
   String _baseUrl;
+  Map<String, ProductSearchResult> _cache = Map();
 
   dynamic _search(
     String entity,
@@ -172,6 +175,9 @@ class SearchService implements SearchServiceBase {
     int size = 20,
     int from = 0,
   }) async {
+    final cachedResult = _getCachedResult(programId, size, from);
+    if (cachedResult != null) return cachedResult;
+
     String elasticUrl = await remoteConfig.getElasticEndpoint();
     String auth = await remoteConfig.getElasticAuth();
 
@@ -203,9 +209,69 @@ class SearchService implements SearchServiceBase {
       return ProductSearchResult([], 0);
     }
 
-    return ProductSearchResult(
+    final result = ProductSearchResult(
       productsFromElastic(List.from(data['hits'])),
       data['total']['value'] ?? 0,
+    );
+    _cacheResult(programId, result);
+
+    return result;
+  }
+
+  ProductSearchResult _getCachedResult(String programId, int size, int from) {
+    final cache = _cache[programId];
+    if (cache == null) return null;
+    if (cache.products.length < from + size) return null;
+
+    return ProductSearchResult(
+      cache.products.sublist(from, size),
+      cache.totalFound,
+    );
+  }
+
+  void _cacheResult(String programId, ProductSearchResult result) {
+    if (_cache[programId] == null) {
+      _cache[programId] = result;
+    } else {
+      _cache[programId].products.addAll(result.products);
+    }
+  }
+
+  @override
+  Future<ProductPriceHistory> getProductPriceHistory(productId) async {
+    String elasticUrl = await remoteConfig.getElasticEndpoint();
+    String auth = await remoteConfig.getElasticAuth();
+
+    final body = {
+      'query': {
+        'term': {
+          '_id': {'value': productId}
+        }
+      },
+      'size': 45,
+    };
+
+    final response = await http.post(
+      '$elasticUrl/prices-*/_search',
+      headers: {
+        'Authorization': 'Basic $auth',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Product history load failed: (${response.statusCode})');
+    }
+
+    final data = jsonDecode(response.body)['hits'];
+    if (!data.containsKey('hits')) {
+      return ProductPriceHistory(productId, []);
+    }
+
+    return ProductPriceHistory(
+      productId,
+      productHistoryFromElastic(List.from(data['hits'])),
     );
   }
 }

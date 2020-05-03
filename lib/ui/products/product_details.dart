@@ -1,11 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/product.dart';
+import 'package:charity_discount/services/search.dart';
+import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/util/tools.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/ui/app/image_carousel.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 class ProductDetails extends StatelessWidget {
   final Product product;
@@ -26,7 +29,7 @@ class ProductDetails extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Container(
-          height: 700,
+          height: 900,
           child: _buildProductHeader(context),
         ),
       ),
@@ -124,7 +127,36 @@ class ProductDetails extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 12.0),
           child: _buildShopInfo(context),
         ),
-        Expanded(child: meta),
+        Flexible(
+          flex: 1,
+          child: meta,
+        ),
+        Flexible(
+          flex: 4,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8, right: 8, bottom: 60),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      tr('product.history'),
+                      textAlign: TextAlign.left,
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: PriceChart(
+                    searchService: AppModel.of(context).searchService,
+                    productId: product.id,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -231,5 +263,46 @@ class ProductDetails extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class PriceChart extends StatelessWidget {
+  final SearchService searchService;
+  final String productId;
+
+  PriceChart({this.searchService, this.productId});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<ProductPriceHistory>(
+      future: searchService.getProductPriceHistory(productId),
+      builder: (context, snapshot) {
+        final loadingWidget = buildConnectionLoading(
+          snapshot: snapshot,
+          context: context,
+        );
+        if (loadingWidget != null) return loadingWidget;
+
+        if (snapshot.data.history.isEmpty) return Text(tr('insufficientData'));
+
+        return charts.TimeSeriesChart(
+          _toSeries(snapshot.data),
+          animate: true,
+        );
+      },
+    );
+  }
+
+  List<charts.Series<ProductPriceHistoryEntry, DateTime>> _toSeries(
+      ProductPriceHistory history) {
+    return [
+      charts.Series<ProductPriceHistoryEntry, DateTime>(
+        id: 'priceHistory',
+        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        domainFn: (ProductPriceHistoryEntry entry, _) => entry.timestamp,
+        measureFn: (ProductPriceHistoryEntry entry, _) => entry.price,
+        data: history.history,
+      ),
+    ];
   }
 }

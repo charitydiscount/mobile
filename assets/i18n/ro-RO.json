@@ -185,7 +185,8 @@
     },
     "soldBy": "Vândut de",
     "updatedAt": "Actualizat la",
-    "disclaimer": "Date afișate doar cu scop de prezentare. Pentru a obține informații cât mai acurate, accesați website-ul magazinului"
+    "disclaimer": "Date afișate doar cu scop de prezentare. Pentru a obține informații cât mai acurate, accesați website-ul magazinului",
+    "history": "Istoric preț"
   },
   "filter": {
     "title": "Filtre",
@@ -211,5 +212,6 @@
   "referralMeta": {
     "title": "Cumpără inteligent prin CharityDiscount",
     "description": "Alege și cumpără inteligent din sutele de magazine și milioanele de produse disponibile prin CharityDiscount"
-  }
+  },
+  "insufficientData": "Date insuficiente"
 }

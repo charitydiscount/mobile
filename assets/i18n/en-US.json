@@ -185,7 +185,8 @@
     },
     "soldBy": "Sold by",
     "updatedAt": "Updated at",
-    "disclaimer": "Information only for presentation purposes. The most accurate information can be obtained by accessing the shop's website"
+    "disclaimer": "Information only for presentation purposes. The most accurate information can be obtained by accessing the shop's website",
+    "history": "Price history"
   },
   "filter": {
     "title": "Filters",
@@ -211,5 +212,6 @@
   "referralMeta": {
     "title": "Shop Smart with CharityDiscount",
     "description": "Explore the hundreds of shops and millions of products available on CharityDiscount"
-  }
+  },
+  "insufficientData": "Insufficient data"
 }
