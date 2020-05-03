@@ -8,6 +8,28 @@ class ProductSearchResult {
   ProductSearchResult(this.products, this.totalFound);
 }
 
+class ProductPriceHistoryEntry {
+  final DateTime timestamp;
+  final double price;
+  final double oldPrice;
+
+  ProductPriceHistoryEntry({this.timestamp, this.price, this.oldPrice});
+
+  factory ProductPriceHistoryEntry.fromJson(Map json) =>
+      ProductPriceHistoryEntry(
+        timestamp: DateTime.parse(json['@timestamp']),
+        price: double.tryParse(json['price'].toString()),
+        oldPrice: double.tryParse(json['old_price'].toString()),
+      );
+}
+
+class ProductPriceHistory {
+  final String productId;
+  final List<ProductPriceHistoryEntry> history;
+
+  ProductPriceHistory(this.productId, this.history);
+}
+
 class Product {
   final String id;
   final String title;
@@ -41,7 +63,7 @@ class Product {
 
   factory Product.fromJson(Map json) => Product(
         id: json['product_id'] != null
-            ? json['product_id'].toString()
+            ? json['aff_code']
             : json['id'].toString(),
         title: removeAllHtmlTags(json['title']),
         price: double.tryParse(json['price'].toString()),
@@ -98,5 +120,15 @@ List<String> _getImages(dynamic json, String key) =>
 List<Product> productsFromElastic(List json) => List<Product>.from(
       json
           .map((jsonProduct) => Product.fromJson(jsonProduct['_source']))
+          .toList(),
+    );
+
+List<ProductPriceHistoryEntry> productHistoryFromElastic(List json) =>
+    List<ProductPriceHistoryEntry>.from(
+      json
+          .map(
+            (jsonProduct) =>
+                ProductPriceHistoryEntry.fromJson(jsonProduct['_source']),
+          )
           .toList(),
     );

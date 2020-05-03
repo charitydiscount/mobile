@@ -349,7 +349,7 @@ class _ShopDetailsState extends State<ShopDetails> {
 
     return FutureBuilder(
       future: _productsMemoizer.runOnce(() =>
-          Future.delayed(Duration(seconds: 1)).then((_) => widget.searchService
+          Future.delayed(Duration(milliseconds: 500)).then((_) => widget.searchService
               .getProductsForProgram(programId: widget.program.id))),
       builder: (context, snapshot) {
         final loading = buildConnectionLoading(

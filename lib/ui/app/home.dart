@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int selectedNavIndex = 0;
   List<Widget> _widgets = [Container(), Container(), Container(), Container()];
   List<bool> _loadedWidgets = [false, false, false, false];
-  SearchService _searchService = SearchService();
+  SearchServiceBase _searchService = SearchService();
   bool _showNotifications = true;
 
   _HomeScreenState({this.selectedNavIndex});
@@ -47,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     state.setServices(
       getFirebaseShopsService(state.user.userId),
+      _searchService,
     );
   }
 
