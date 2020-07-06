@@ -30,7 +30,7 @@ class Settings {
     this.lang,
     this.notifications,
     this.displayMode,
-    this.theme = ThemeOption.SYSTEM,
+    this.theme = ThemeOption.LIGHT,
   });
 
   factory Settings.fromJson(Map<String, dynamic> json) => Settings(

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/product.dart';
 import 'package:charity_discount/models/promotion.dart';
 import 'package:charity_discount/models/rating.dart';
+import 'package:charity_discount/services/analytics.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/ui/products/product.dart';
@@ -199,6 +200,14 @@ class _ShopDetailsState extends State<ShopDetails> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          analytics.logEvent(
+            name: 'access_shop',
+            parameters: {
+              'id': widget.program.id,
+              'name': widget.program.name,
+              'screen': 'program_details',
+            },
+          );
           launchURL(widget.program.actualAffiliateUrl);
         },
         child: const Icon(Icons.add_shopping_cart),
@@ -349,7 +358,8 @@ class _ShopDetailsState extends State<ShopDetails> {
 
     return FutureBuilder(
       future: _productsMemoizer.runOnce(() =>
-          Future.delayed(Duration(milliseconds: 500)).then((_) => widget.searchService
+          Future.delayed(Duration(milliseconds: 500)).then((_) => widget
+              .searchService
               .getProductsForProgram(programId: widget.program.id))),
       builder: (context, snapshot) {
         final loading = buildConnectionLoading(

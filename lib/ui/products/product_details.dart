@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/product.dart';
+import 'package:charity_discount/services/analytics.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/util.dart';
@@ -23,6 +24,14 @@ class ProductDetails extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          analytics.logEvent(
+            name: 'access_shop',
+            parameters: {
+              'id': product.program.id,
+              'name': product.program.name,
+              'screen': 'product_details',
+            },
+          );
           launchURL(product.affiliateUrl);
         },
         child: const Icon(Icons.add_shopping_cart),

@@ -171,7 +171,7 @@ class _ProfileState extends State<Profile> {
   }
 
   Future _pickImage(ImageSource source) async {
-    File selectedImage = await ImagePicker.pickImage(source: source);
+    final selectedImage = await ImagePicker().getImage(source: source);
     if (selectedImage == null) {
       return;
     }

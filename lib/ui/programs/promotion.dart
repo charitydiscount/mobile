@@ -1,4 +1,5 @@
 import 'package:charity_discount/models/promotion.dart';
+import 'package:charity_discount/services/analytics.dart';
 import 'package:charity_discount/util/tools.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/util/url.dart';
@@ -18,6 +19,14 @@ class PromotionWidget extends StatelessWidget {
         children: <Widget>[
           ListTile(
             onTap: () {
+              analytics.logEvent(
+                name: 'access_shop',
+                parameters: {
+                  'id': promotion.program.id,
+                  'name': promotion.program.name,
+                  'screen': 'promotion',
+                },
+              );
               launchURL(promotion.actualAffiliateUrl);
             },
             leading: Padding(
