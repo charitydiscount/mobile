@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:charity_discount/services/analytics.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/ui/programs/rating.dart';
@@ -37,6 +38,14 @@ class ShopHalfTile extends StatelessWidget {
       icon: const Icon(Icons.add_shopping_cart),
       color: Theme.of(context).primaryColor,
       onPressed: () {
+        analytics.logEvent(
+          name: 'access_shop',
+          parameters: {
+            'id': program.id,
+            'name': program.name,
+            'screen': 'programs',
+          },
+        );
         launchURL(program.actualAffiliateUrl);
       },
     );
@@ -72,10 +81,14 @@ class ShopHalfTile extends StatelessWidget {
       child: Card(
         child: InkWell(
           onTap: () {
+            analytics.logViewItem(
+              itemId: program.id,
+              itemName: program.name,
+              itemCategory: 'program',
+            );
             Navigator.push(
               context,
               MaterialPageRoute(
-                maintainState: true,
                 builder: (BuildContext context) => ShopDetails(
                   program: program,
                   shopsService: shopsService,

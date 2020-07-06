@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/product.dart';
+import 'package:charity_discount/services/analytics.dart';
 import 'package:charity_discount/ui/products/product_details.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,11 @@ class ProductCard extends StatelessWidget {
       child: Card(
         child: InkWell(
           onTap: () {
+            analytics.logViewItem(
+              itemId: product.id,
+              itemName: product.title,
+              itemCategory: 'product',
+            );
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -106,6 +112,14 @@ class ProductCard extends StatelessWidget {
                             icon: const Icon(Icons.add_shopping_cart),
                             color: Theme.of(context).primaryColor,
                             onPressed: () {
+                              analytics.logEvent(
+                                name: 'access_shop',
+                                parameters: {
+                                  'id': product.program.id,
+                                  'name': product.program.name,
+                                  'screen': 'products',
+                                },
+                              );
                               launchURL(product.affiliateUrl);
                             },
                           ),

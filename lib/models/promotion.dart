@@ -1,3 +1,7 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'promotion.g.dart';
+
 List<Promotion> promotionsFromJsonArray(List json) {
   return List<Promotion>.from(
     json.map((promotion) => Promotion.fromJson(promotion)).toList(),
@@ -13,6 +17,7 @@ class Promotion {
   final DateTime promotionEnd;
   final String landingPageLink;
   final String affiliateUrl;
+  final PromotionProgram program;
 
   String actualAffiliateUrl;
 
@@ -25,6 +30,7 @@ class Promotion {
     this.promotionEnd,
     this.landingPageLink,
     this.affiliateUrl,
+    this.program,
   });
 
   factory Promotion.fromJson(Map<String, dynamic> json) => Promotion(
@@ -36,5 +42,19 @@ class Promotion {
         promotionEnd: DateTime.parse(json['promotionEnd']),
         landingPageLink: json['landingPageLink'],
         affiliateUrl: json['affiliateUrl'],
+        program: PromotionProgram.fromJson(json['program']),
       );
+}
+
+@JsonSerializable()
+class PromotionProgram {
+  final int id;
+  final String name;
+
+  PromotionProgram({this.id, this.name});
+
+  factory PromotionProgram.fromJson(dynamic json) =>
+      _$PromotionProgramFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PromotionProgramToJson(this);
 }

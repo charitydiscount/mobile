@@ -1,12 +1,13 @@
 import 'dart:io';
 import 'package:charity_discount/models/settings.dart';
+import 'package:charity_discount/services/analytics.dart';
 import 'package:charity_discount/util/locale.dart';
 import 'package:charity_discount/ui/app/util.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -17,8 +18,6 @@ import 'package:charity_discount/ui/user/sign_up.dart';
 import 'package:charity_discount/ui/user/forgot_password.dart';
 import 'package:charity_discount/ui/app/intro.dart';
 import 'package:charity_discount/state/state_model.dart';
-
-final FirebaseAnalytics analytics = FirebaseAnalytics();
 
 class Main extends StatefulWidget {
   @override
@@ -110,9 +109,20 @@ class _MainState extends State<Main> {
 
   Widget _buildMain({BuildContext context, Locale locale}) {
     var state = AppModel.of(context);
+    var theme = buildTheme(dark: state.settings.theme == ThemeOption.DARK);
+
+    bool isDark = state.settings.theme == ThemeOption.DARK;
+    SystemChrome.setSystemUIOverlayStyle(
+      isDark
+          ? SystemUiOverlayStyle.dark
+              .copyWith(statusBarColor: theme.primaryColor)
+          : SystemUiOverlayStyle.light
+              .copyWith(statusBarColor: theme.primaryColor),
+    );
+
     return MaterialApp(
       title: 'CharityDiscount',
-      theme: buildTheme(dark: state.settings.theme == ThemeOption.DARK),
+      theme: theme,
       darkTheme: buildTheme(dark: state.settings.theme != ThemeOption.LIGHT),
       debugShowCheckedModeBanner: false,
       localizationsDelegates: [
