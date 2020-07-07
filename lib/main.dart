@@ -134,13 +134,26 @@ class _MainState extends State<Main> {
       locale: locale,
       initialRoute: '/',
       routes: {
-        '/': (context) => SafeArea(child: _buildDefaultWidget()),
-        '/signin': (context) => SafeArea(child: SignInScreen()),
-        '/signup': (context) => SafeArea(child: SignUpScreen()),
-        '/forgot-password': (context) =>
-            SafeArea(child: ForgotPasswordScreen()),
-        '/wallet': (context) =>
-            SafeArea(child: _buildDefaultWidget(initialScreen: 3)),
+        '/': (context) => SafeArea(
+              child: _buildDefaultWidget(),
+              top: false,
+            ),
+        '/signin': (context) => SafeArea(
+              child: SignInScreen(),
+              top: false,
+            ),
+        '/signup': (context) => SafeArea(
+              child: SignUpScreen(),
+              top: false,
+            ),
+        '/forgot-password': (context) => SafeArea(
+              child: ForgotPasswordScreen(),
+              top: false,
+            ),
+        '/wallet': (context) => SafeArea(
+              child: _buildDefaultWidget(initialScreen: 3),
+              top: false,
+            ),
       },
       navigatorKey: state.navigatorKey,
       onUnknownRoute: (settings) => MaterialPageRoute(
