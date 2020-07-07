@@ -114,10 +114,14 @@ class _MainState extends State<Main> {
     bool isDark = state.settings.theme == ThemeOption.DARK;
     SystemChrome.setSystemUIOverlayStyle(
       isDark
-          ? SystemUiOverlayStyle.dark
-              .copyWith(statusBarColor: theme.primaryColor)
-          : SystemUiOverlayStyle.light
-              .copyWith(statusBarColor: theme.primaryColor),
+          ? SystemUiOverlayStyle.light.copyWith(
+              statusBarColor: theme.primaryColor,
+              statusBarBrightness: Brightness.light,
+            )
+          : SystemUiOverlayStyle.dark.copyWith(
+              statusBarColor: theme.primaryColor,
+              statusBarBrightness: Brightness.light,
+            ),
     );
 
     return MaterialApp(
