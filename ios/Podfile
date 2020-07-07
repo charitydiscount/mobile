@@ -33,6 +33,7 @@ def parse_KV_file(file, separator='=')
 end
 
 target 'Runner' do
+  pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => '6.26.0'
   use_frameworks!
   use_modular_headers!
   
@@ -80,10 +81,6 @@ end
 
 # Prevent Cocoapods from embedding a second Flutter framework and causing an error with the new Xcode build system.
 install! 'cocoapods',
-  # :disable_input_output_paths => true
-  # :generate_multiple_pod_projects => true,
-  # :incremental_installation => true
-
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
