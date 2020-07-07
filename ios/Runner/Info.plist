@@ -95,9 +95,5 @@
 		<string>https://charitydiscount.ro/invite</string>
 		<string>https://charitydiscount-test.web.app/invite</string>
 	</array>
-	<key>UIUserInterfaceStyle</key>
-	<string>Light</string>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<true/>
 </dict>
 </plist>
