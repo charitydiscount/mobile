@@ -12,8 +12,9 @@ Widget buildLoading(BuildContext context, {Widget waitingDisplay}) {
     child: Center(
       child: Column(
         children: <Widget>[
-          CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation(Theme.of(context).accentColor),
+          Padding(
+            padding: const EdgeInsets.only(top: 25.0),
+            child: CircularProgressIndicator(),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),

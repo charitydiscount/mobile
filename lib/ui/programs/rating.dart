@@ -21,7 +21,7 @@ class RatingWidget extends StatelessWidget {
     );
     Widget userName = Text(
       rating.reviewer.name,
-      style: Theme.of(context).textTheme.headline6,
+      style: Theme.of(context).textTheme.subtitle1,
     );
     Widget reviewDate = Text(
       formatDate(rating.createdAt),
@@ -49,26 +49,27 @@ class RatingWidget extends StatelessWidget {
           dense: true,
           title: Padding(
             padding: const EdgeInsets.symmetric(vertical: 12.0),
-            child: Center(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  userAvatar,
-                  Column(
-                    children: <Widget>[
-                      userName,
-                      reviewDate,
-                      stars,
-                    ],
-                  ),
-                ],
-              ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                userAvatar,
+                Column(
+                  children: <Widget>[
+                    userName,
+                    reviewDate,
+                    stars,
+                  ],
+                ),
+              ],
             ),
           ),
           subtitle: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(rating.description),
+            child: Text(
+              rating.description,
+              style: Theme.of(context).textTheme.bodyText2,
+            ),
           ),
         ),
       ),

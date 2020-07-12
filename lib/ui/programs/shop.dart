@@ -5,6 +5,7 @@ import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/ui/programs/rating.dart';
 import 'package:charity_discount/ui/programs/shop_details.dart';
 import 'package:charity_discount/ui/app/util.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/util/url.dart';
@@ -33,10 +34,9 @@ class ShopHalfTile extends StatelessWidget {
         fit: BoxFit.contain,
       ),
     );
-    final linkButton = IconButton(
+    final linkButton = FlatButton(
       padding: EdgeInsets.zero,
-      icon: const Icon(Icons.add_shopping_cart),
-      color: Theme.of(context).primaryColor,
+      child: Text(tr('access')),
       onPressed: () {
         analytics.logEvent(
           name: 'access_shop',

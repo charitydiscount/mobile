@@ -71,11 +71,7 @@ class _ProfileState extends State<Profile> {
                 height: 0,
               );
             }
-            return CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation(
-                Theme.of(context).primaryColor,
-              ),
-            );
+            return CircularProgressIndicator();
           },
         ),
       );

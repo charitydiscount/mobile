@@ -3,6 +3,7 @@ import 'package:charity_discount/models/product.dart';
 import 'package:charity_discount/services/analytics.dart';
 import 'package:charity_discount/ui/products/product_details.dart';
 import 'package:charity_discount/util/url.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class ProductCard extends StatelessWidget {
@@ -92,13 +93,14 @@ class ProductCard extends StatelessWidget {
                         children: <Widget>[
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
                             children: <Widget>[
                               _hasOldPrice
                                   ? Text(
                                       '${product.oldPrice.toString()} Lei',
                                       style: TextStyle(
-                                        fontSize: 10,
+                                        fontSize: 8,
                                         decoration: TextDecoration.lineThrough,
                                       ),
                                     )
@@ -108,20 +110,24 @@ class ProductCard extends StatelessWidget {
                                   : Container(),
                             ],
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.add_shopping_cart),
-                            color: Theme.of(context).primaryColor,
-                            onPressed: () {
-                              analytics.logEvent(
-                                name: 'access_shop',
-                                parameters: {
-                                  'id': product.program.id,
-                                  'name': product.program.name,
-                                  'screen': 'products',
-                                },
-                              );
-                              launchURL(product.affiliateUrl);
-                            },
+                          Center(
+                            child: FlatButton(
+                              child: Text(
+                                tr('access'),
+                                style: TextStyle(fontSize: 12),
+                              ),
+                              onPressed: () {
+                                analytics.logEvent(
+                                  name: 'access_shop',
+                                  parameters: {
+                                    'id': product.program.id,
+                                    'name': product.program.name,
+                                    'screen': 'products',
+                                  },
+                                );
+                                launchURL(product.affiliateUrl);
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -145,7 +151,7 @@ class ProductCard extends StatelessWidget {
         '${product.price.toString()} Lei',
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 16,
+          fontSize: 12,
         ),
       );
 }
