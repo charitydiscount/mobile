@@ -22,7 +22,10 @@ class ProductDetails extends StatelessWidget {
       appBar: AppBar(
         title: Text(product.title),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.open_in_new),
+        label: Text(tr('accessShop')),
         onPressed: () {
           analytics.logEvent(
             name: 'access_shop',
@@ -34,7 +37,6 @@ class ProductDetails extends StatelessWidget {
           );
           launchURL(product.affiliateUrl);
         },
-        child: const Icon(Icons.add_shopping_cart),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -166,6 +168,7 @@ class ProductDetails extends StatelessWidget {
             ),
           ),
         ),
+        SizedBox(height: 50),
       ],
     );
   }

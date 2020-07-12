@@ -262,11 +262,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation(
-              Theme.of(context).accentColor,
-            ),
-          ),
+          child: CircularProgressIndicator(),
         ),
       );
     }
@@ -282,11 +278,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
           : Padding(
               padding: const EdgeInsets.all(8.0),
               child: Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(
-                    Theme.of(context).accentColor,
-                  ),
-                ),
+                child: CircularProgressIndicator(),
               ),
             ),
     );

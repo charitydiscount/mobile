@@ -198,7 +198,10 @@ class _ShopDetailsState extends State<ShopDetails> {
       appBar: AppBar(
         title: Text(widget.program.name),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.open_in_new),
+        label: Text(tr('accessShop')),
         onPressed: () {
           analytics.logEvent(
             name: 'access_shop',
@@ -210,7 +213,6 @@ class _ShopDetailsState extends State<ShopDetails> {
           );
           launchURL(widget.program.actualAffiliateUrl);
         },
-        child: const Icon(Icons.add_shopping_cart),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -237,6 +239,7 @@ class _ShopDetailsState extends State<ShopDetails> {
               child: Divider(height: 2.0),
             ),
             _buildProducts(),
+            SizedBox(height: 50),
           ],
         ),
       ),
