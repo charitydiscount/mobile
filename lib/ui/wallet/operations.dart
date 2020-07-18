@@ -117,7 +117,11 @@ class _DonateWidgetState extends State<DonateWidget> {
                       return 'Doar cifre';
                     }
 
-                    if (double.parse(value) > balance) {
+                    if (amount < 1) {
+                      return tr('operation.minimumAmount', args: ['1']);
+                    }
+
+                    if (amount > balance) {
                       return tr('account.insufficientCashback');
                     }
 

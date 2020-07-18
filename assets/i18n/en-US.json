@@ -57,7 +57,8 @@
     "cashoutRejected": {
       "title": "Cashout rejected",
       "message": "The transaction could not be processed"
-    }
+    },
+    "minimumAmount": "The minimum amount is {}."
   },
   "account": {
     "save": "Save account",
