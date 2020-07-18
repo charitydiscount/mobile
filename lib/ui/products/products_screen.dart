@@ -385,13 +385,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
         ],
       ),
       titlePadding: const EdgeInsets.fromLTRB(16.0, 10.0, 8.0, 2.0),
-      contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      contentPadding: EdgeInsets.symmetric(horizontal: 8),
       children: [
         Container(
           height: 200,
-          padding: EdgeInsets.all(8),
+          padding: EdgeInsets.symmetric(horizontal: 8),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(tr('product.price.title')),
               Expanded(
@@ -411,11 +411,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
               ),
               ButtonBar(
                 children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.check,
-                      color: Theme.of(context).primaryColor,
-                    ),
+                  FlatButton(
+                    child: Text(tr('apply')),
                     onPressed: () {
                       if (_priceFormKey.currentState.validate()) {
                         Navigator.of(context).pop({

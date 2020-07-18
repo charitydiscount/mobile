@@ -215,5 +215,6 @@
     "title": "Shop Smart with CharityDiscount",
     "description": "Explore the hundreds of shops and millions of products available on CharityDiscount"
   },
-  "insufficientData": "Insufficient data"
+  "insufficientData": "Insufficient data",
+  "apply": "Apply"
 }
