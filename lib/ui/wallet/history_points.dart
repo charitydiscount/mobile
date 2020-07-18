@@ -1,4 +1,5 @@
 import 'package:charity_discount/models/wallet.dart';
+import 'package:charity_discount/util/amounts.dart';
 import 'package:charity_discount/util/tools.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -79,12 +80,9 @@ class TransactionDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int decimalsToDisplay =
-        tx.type == TxType.BONUS || tx.type == TxType.REFERRAL ? 4 : 2;
     return Card(
       child: ListTile(
-        title: Text(
-            '${tx.amount.toStringAsFixed(decimalsToDisplay)} ${tx.currency}'),
+        title: Text('${AmountHelper.amountToString(tx.amount)} ${tx.currency}'),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[

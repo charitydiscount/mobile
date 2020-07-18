@@ -2,6 +2,7 @@ import 'package:charity_discount/models/referral.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/ui/user/user_avatar.dart';
+import 'package:charity_discount/util/amounts.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
@@ -151,14 +152,14 @@ class Referrals extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          '${addUpCommissionsForStatus(referral, 'paid').toStringAsFixed(2)} RON',
+                          '${AmountHelper.amountToString(addUpCommissionsForStatus(referral, 'paid'))} RON',
                           style: Theme.of(context)
                               .textTheme
                               .button
                               .copyWith(color: Colors.green),
                         ),
                         Text(
-                          '${addUpCommissionsForStatus(referral, 'pending').toStringAsFixed(2)} RON',
+                          '${AmountHelper.amountToString(addUpCommissionsForStatus(referral, 'pending'))} RON',
                           style: Theme.of(context)
                               .textTheme
                               .button

@@ -7,6 +7,7 @@ import 'package:charity_discount/ui/wallet/transactions.dart';
 import 'package:charity_discount/ui/wallet/about_points.dart';
 import 'package:charity_discount/ui/charity/charity.dart';
 import 'package:charity_discount/ui/app/util.dart';
+import 'package:charity_discount/util/amounts.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -193,7 +194,7 @@ class WalletScreen extends StatelessWidget {
           Text(
             tr(
               'wallet.cashback.dialog.minimumAmount',
-              args: ['${minAmount}Lei'],
+              args: ['${AmountHelper.amountToString(minAmount)}Lei'],
             ),
             style: Theme.of(context).textTheme.caption,
           ),

@@ -2,6 +2,7 @@ import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/loading.dart';
 import 'package:charity_discount/ui/app/util.dart';
+import 'package:charity_discount/util/amounts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flushbar/flushbar.dart';
@@ -95,7 +96,7 @@ class _DonateWidgetState extends State<DonateWidget> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
-                '${tr('account.availableCashback')} ${balance.toStringAsFixed(2)} Lei',
+                '${tr('account.availableCashback')} ${AmountHelper.amountToString(balance)} Lei',
                 textAlign: TextAlign.left,
               ),
             ),

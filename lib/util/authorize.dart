@@ -13,7 +13,10 @@ Future<bool> authorize({
   final canCheckBiometrics = await _localAuthentication.canCheckBiometrics;
 
   return canCheckBiometrics == true
-      ? _localAuthentication.authenticateWithBiometrics(localizedReason: title)
+      ? _localAuthentication.authenticateWithBiometrics(
+          localizedReason: title,
+          stickyAuth: true,
+        )
       : Navigator.push(
           context,
           MaterialPageRoute(
