@@ -1,6 +1,7 @@
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/util.dart';
+import 'package:charity_discount/util/amounts.dart';
 import 'package:charity_discount/util/animated_pages.dart';
 import 'package:charity_discount/util/authorize.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -204,10 +205,21 @@ class _CashoutScreenState extends State<CashoutScreen> {
                 return 'Doar numere';
               }
 
-              if (amount > _state.wallet.cashback.acceptedAmount ||
-                  _state.wallet.cashback.acceptedAmount <
+              if (_state.wallet.cashback.acceptedAmount <
                       _state.minimumWithdrawalAmount ||
                   amount < _state.minimumWithdrawalAmount) {
+                if (_validAmount != false) {
+                  WidgetsBinding.instance
+                      .addPostFrameCallback((_) => setState(() {
+                            _validAmount = false;
+                          }));
+                }
+                return tr('wallet.cashback.dialog.minimumAmount', args: [
+                  AmountHelper.amountToString(_state.minimumWithdrawalAmount)
+                ]);
+              }
+
+              if (amount > _state.wallet.cashback.acceptedAmount) {
                 if (_validAmount != false) {
                   WidgetsBinding.instance
                       .addPostFrameCallback((_) => setState(() {
@@ -249,7 +261,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  '${tr('account.availableCashback')}: ${_state.wallet.cashback.acceptedAmount.toStringAsFixed(2)} Lei',
+                  '${tr('account.availableCashback')}: ${AmountHelper.amountToString(_state.wallet.cashback.acceptedAmount)} Lei',
                 ),
               ],
             ),
@@ -293,7 +305,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: Icon(Icons.monetization_on),
                   ),
-                  title: Text(_amount.toStringAsFixed(2)),
+                  title: Text(AmountHelper.amountToString(_amount)),
                   subtitle: Text(tr('account.amount')),
                   trailing: getTrailingIcons(),
                 ),
@@ -500,8 +512,8 @@ class _CashoutScreenState extends State<CashoutScreen> {
           setState(() {
             _stackIndex = index;
             if (index == 1 && _amountController.text.isEmpty) {
-              _amountController.text =
-                  _state.wallet.cashback.acceptedAmount.toStringAsFixed(2);
+              _amountController.text = AmountHelper.amountToString(
+                  _state.wallet.cashback.acceptedAmount);
               if (_state.wallet.cashback.acceptedAmount >=
                   _state.minimumWithdrawalAmount) {
                 _validAmount = true;

@@ -1,4 +1,5 @@
 import 'package:charity_discount/models/points.dart';
+import 'package:charity_discount/util/amounts.dart';
 import 'package:flutter/material.dart';
 
 class AboutPointsWidget extends StatelessWidget {
@@ -59,7 +60,7 @@ class AboutPointsWidget extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Text(
-              points.acceptedAmount.toStringAsFixed(2),
+              AmountHelper.amountToString(points.acceptedAmount),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 24,
@@ -95,7 +96,7 @@ class AboutPointsWidget extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Text(
-                points.pendingAmount.toStringAsFixed(2),
+                AmountHelper.amountToString(points.pendingAmount),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 24,

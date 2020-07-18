@@ -57,7 +57,8 @@
     "cashoutRejected": {
       "title": "Cashout respins",
       "message": "Tranzacția nu a putut fi procesată"
-    }
+    },
+    "minimumAmount": "Cel putin {}."
   },
   "account": {
     "save": "Salvează cont",
@@ -214,5 +215,6 @@
     "title": "Cumpără inteligent prin CharityDiscount",
     "description": "Alege și cumpără inteligent din sutele de magazine și milioanele de produse disponibile prin CharityDiscount"
   },
-  "insufficientData": "Date insuficiente"
+  "insufficientData": "Date insuficiente",
+  "apply": "Aplică"
 }

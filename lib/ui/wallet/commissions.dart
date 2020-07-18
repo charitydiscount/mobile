@@ -4,6 +4,7 @@ import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/referral.dart' as referralModel;
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/util/amounts.dart';
 import 'package:charity_discount/util/tools.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -157,7 +158,7 @@ class CommissionDetails extends StatelessWidget {
       child: ListTile(
         isThreeLine: true,
         title: Text(
-            '${commission.amount.toStringAsFixed(2)} ${commission.currency}'),
+            '${AmountHelper.amountToString(commission.amount)} ${commission.currency}'),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
