@@ -137,7 +137,7 @@ class _DonateWidgetState extends State<DonateWidget> {
                   ),
                   keyboardType: TextInputType.number,
                   inputFormatters: [
-                    WhitelistingTextInputFormatter(
+                    FilteringTextInputFormatter.allow(
                       RegExp(r'^\d+\.?\d{0,2}$'),
                     ),
                   ],
