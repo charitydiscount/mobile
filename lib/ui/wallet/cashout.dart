@@ -250,7 +250,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
             ),
             keyboardType: TextInputType.number,
             inputFormatters: [
-              WhitelistingTextInputFormatter(
+              FilteringTextInputFormatter.allow(
                 RegExp(r'^\d+\.?\d{0,2}$'),
               ),
             ],

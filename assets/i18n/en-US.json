@@ -216,5 +216,28 @@
     "description": "Explore the hundreds of shops and millions of products available on CharityDiscount"
   },
   "insufficientData": "Insufficient data",
-  "apply": "Apply"
+  "apply": "Apply",
+  "gotIt": "Got it",
+  "welcome": {
+    "register": {
+      "title": "Sign up",
+      "subtitle": "So we know who to send the cashback"
+    },
+    "findShop": {
+      "title": "Find the shop you want",
+      "subtitle": "or product. You can choose from hundreds of shops and millions of products"
+    },
+    "openShop": {
+      "title": "Open the shop's website",
+      "subtitle": "from CharityDiscount and make your purchase from it"
+    },
+    "receiveCashback": {
+      "title": "Receive cashback",
+      "subtitle": "The shop knows you arrived to it through CharityDiscount so it offers some money back"
+    },
+    "spendCashback": {
+      "title": "Donate or withdraw",
+      "subtitle": "You can donate to a supported cause or withdraw the received cashback"
+    }
+  }
 }
