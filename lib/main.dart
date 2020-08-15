@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:charity_discount/models/settings.dart';
 import 'package:charity_discount/services/analytics.dart';
+import 'package:charity_discount/ui/app/welcome.dart';
 import 'package:charity_discount/util/locale.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:firebase_analytics/observer.dart';
@@ -16,7 +17,6 @@ import 'package:charity_discount/ui/app/home.dart';
 import 'package:charity_discount/ui/user/sign_in.dart';
 import 'package:charity_discount/ui/user/sign_up.dart';
 import 'package:charity_discount/ui/user/forgot_password.dart';
-import 'package:charity_discount/ui/app/intro.dart';
 import 'package:charity_discount/state/state_model.dart';
 
 class Main extends StatefulWidget {
@@ -75,7 +75,7 @@ class _MainState extends State<Main> {
     return ScopedModelDescendant<AppModel>(
       builder: (context, child, appModel) {
         if (appModel.introCompleted == false) {
-          return Intro();
+          return WelcomeScreen();
         }
 
         if (appModel.user != null && appModel.user.userId != null) {

@@ -11,6 +11,7 @@ ThemeData buildTheme({bool dark = false}) {
     textTheme: _buildTextTheme(base.textTheme),
     primaryColor: const Color(0xFFE32029),
     accentColor: const Color(0xFFA80000),
+    secondaryHeaderColor: const Color(0xFF21ACE4),
     floatingActionButtonTheme: base.floatingActionButtonTheme.copyWith(
       backgroundColor: const Color(0xFFA80000),
       foregroundColor: Colors.white,

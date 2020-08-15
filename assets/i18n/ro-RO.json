@@ -216,5 +216,28 @@
     "description": "Alege și cumpără inteligent din sutele de magazine și milioanele de produse disponibile prin CharityDiscount"
   },
   "insufficientData": "Date insuficiente",
-  "apply": "Aplică"
+  "apply": "Aplică",
+  "gotIt": "Am înteles",
+  "welcome": {
+    "register": {
+      "title": "Te înregistrezi",
+      "subtitle": "Altfel nu am putea să îți acordăm cashback-ul"
+    },
+    "findShop": {
+      "title": "Cauți magazinul dorit",
+      "subtitle": "sau produsul. Ai la dispoziție sute de magazine și milioane de produse"
+    },
+    "openShop": {
+      "title": "Accesezi site-ul magazinul",
+      "subtitle": "din CharityDiscount și cumperi exact cum te-ai obișnuit"
+    },
+    "receiveCashback": {
+      "title": "Primești cashback",
+      "subtitle": "Magazinul știe că ai ajuns la el prin CharityDiscount, așa că oferă o parte din sumă înapoi"
+    },
+    "spendCashback": {
+      "title": "Donezi sau retragi",
+      "subtitle": "Cashback-ul primit poți să îl donezi unei cauze susținute de CharityDiscount sau să îl retragi"
+    }
+  }
 }
