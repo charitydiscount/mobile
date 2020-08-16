@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:charity_discount/controllers/user_controller.dart';
 import 'package:charity_discount/services/auth.dart';
-import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/user/user_avatar.dart';
 import 'package:charity_discount/ui/app/loading.dart';
@@ -162,7 +161,6 @@ class _ProfileState extends State<Profile> {
     await userController.signOut();
     await AppModel.of(context).closeListeners();
     AppModel.of(context).setUser(null);
-    clearInstances();
     await Navigator.pushNamedAndRemoveUntil(context, '/signin', (r) => false);
   }
 

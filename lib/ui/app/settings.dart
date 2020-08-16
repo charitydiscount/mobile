@@ -1,6 +1,7 @@
 import 'package:charity_discount/models/settings.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/notifications.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/locale.dart';
 import 'package:charity_discount/util/social_icons.dart';
@@ -49,7 +50,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _state.setSettings(newSettings, storeLocal: true);
           });
           fcm.getToken().then(
-                (token) => metaService.setNotifications(token, newValue),
+                (token) => locator<MetaService>().setNotifications(
+                  token,
+                  newValue,
+                ),
               );
         },
       ),

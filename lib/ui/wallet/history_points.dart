@@ -59,13 +59,13 @@ class HistoryPointsWidget extends StatelessWidget {
 Color _getTxColor(Transaction transaction) {
   switch (transaction.type) {
     case TxType.BONUS:
-      return Colors.green;
+      return Colors.cyan;
     case TxType.CASHOUT:
       return Colors.blueGrey;
     case TxType.DONATION:
       return Colors.red;
     case TxType.COMMISSION:
-      return Colors.cyan;
+      return Colors.green;
     case TxType.REFERRAL:
       return Colors.purple;
     default:

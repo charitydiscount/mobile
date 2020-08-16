@@ -5,11 +5,13 @@ import 'package:charity_discount/models/rating.dart';
 import 'package:charity_discount/services/analytics.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/ui/products/product.dart';
 import 'package:charity_discount/ui/products/products_screen.dart';
 import 'package:charity_discount/ui/programs/promotion.dart';
 import 'package:charity_discount/ui/programs/rate_shop.dart';
 import 'package:charity_discount/ui/programs/rating.dart';
+import 'package:charity_discount/ui/tutorial/access_explanation.dart';
 import 'package:charity_discount/util/tools.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -156,7 +158,7 @@ class _ShopDetailsState extends State<ShopDetails> {
 
     Widget promotionsBuilder = FutureBuilder(
       future: _promotionsMemoizer.runOnce(
-        () => affiliateService.getPromotions(
+        () => locator<AffiliateService>().getPromotions(
           affiliateUniqueCode: appState.affiliateMeta.uniqueCode,
           programId: widget.program.id,
           programUniqueCode: widget.program.uniqueCode,
@@ -202,7 +204,7 @@ class _ShopDetailsState extends State<ShopDetails> {
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.open_in_new),
         label: Text(tr('accessShop')),
-        onPressed: () {
+        onPressed: () async {
           analytics.logEvent(
             name: 'access_shop',
             parameters: {
@@ -211,6 +213,12 @@ class _ShopDetailsState extends State<ShopDetails> {
               'screen': 'program_details',
             },
           );
+
+          bool continueToShop = await showExplanationDialog(context);
+          if (continueToShop != true) {
+            return;
+          }
+
           launchURL(widget.program.actualAffiliateUrl);
         },
       ),

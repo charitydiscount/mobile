@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:charity_discount/models/meta.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +8,8 @@ import 'package:rxdart/rxdart.dart';
 class MetaService {
   final _db = Firestore.instance;
   final _auth = FirebaseAuth.instance;
-  Observable<ProgramMeta> _programsMetaListener;
+  BehaviorSubject<ProgramMeta> _metaStream = BehaviorSubject();
+  StreamSubscription _programsMetaListener;
 
   Future<TwoPerformantMeta> getTwoPerformantMeta() async {
     var twoPMeta = await _db.collection('meta').document('2performant').get();
@@ -25,15 +27,16 @@ class MetaService {
 
   Observable<ProgramMeta> get programsMetaStream {
     if (_programsMetaListener == null) {
-      _programsMetaListener = Observable(
-        _db
-            .collection('meta')
-            .document('programs')
-            .snapshots()
-            .asyncMap((snap) => ProgramMeta.fromJson(snap.data)),
-      );
+      _programsMetaListener = _db
+          .collection('meta')
+          .document('programs')
+          .snapshots()
+          .asyncMap((snap) => ProgramMeta.fromJson(snap.data))
+          .listen((meta) {
+        _metaStream.add(meta);
+      });
     }
-    return _programsMetaListener;
+    return _metaStream;
   }
 
   Future<void> addFcmToken(String token) => _auth.currentUser().then(
@@ -72,6 +75,11 @@ class MetaService {
               'notifications': notificationsEnabled,
             }, merge: true),
           );
-}
 
-MetaService metaService = MetaService();
+  Future<void> closeListeners() async {
+    if (_programsMetaListener != null) {
+      await _programsMetaListener.cancel();
+      await _metaStream.close();
+    }
+  }
+}

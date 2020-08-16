@@ -1,5 +1,6 @@
 import 'package:charity_discount/models/promotion.dart';
 import 'package:charity_discount/services/analytics.dart';
+import 'package:charity_discount/ui/tutorial/access_explanation.dart';
 import 'package:charity_discount/util/tools.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/util/url.dart';
@@ -18,7 +19,7 @@ class PromotionWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           ListTile(
-            onTap: () {
+            onTap: () async {
               analytics.logEvent(
                 name: 'access_shop',
                 parameters: {
@@ -27,6 +28,12 @@ class PromotionWidget extends StatelessWidget {
                   'screen': 'promotion',
                 },
               );
+
+              bool continueToShop = await showExplanationDialog(context);
+              if (continueToShop != true) {
+                return;
+              }
+
               launchURL(promotion.actualAffiliateUrl);
             },
             leading: Padding(

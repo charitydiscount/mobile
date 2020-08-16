@@ -5,6 +5,7 @@ import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/ui/programs/rating.dart';
 import 'package:charity_discount/ui/programs/shop_details.dart';
 import 'package:charity_discount/ui/app/util.dart';
+import 'package:charity_discount/ui/tutorial/access_explanation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/program.dart' as models;
@@ -37,7 +38,7 @@ class ShopHalfTile extends StatelessWidget {
     final linkButton = FlatButton(
       padding: EdgeInsets.zero,
       child: Text(tr('access')),
-      onPressed: () {
+      onPressed: () async {
         analytics.logEvent(
           name: 'access_shop',
           parameters: {
@@ -46,6 +47,12 @@ class ShopHalfTile extends StatelessWidget {
             'screen': 'programs',
           },
         );
+
+        bool continueToShop = await showExplanationDialog(context);
+        if (continueToShop != true) {
+          return;
+        }
+
         launchURL(program.actualAffiliateUrl);
       },
     );

@@ -2,8 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/product.dart';
 import 'package:charity_discount/services/analytics.dart';
 import 'package:charity_discount/services/search.dart';
-import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/ui/app/util.dart';
+import 'package:charity_discount/ui/tutorial/access_explanation.dart';
 import 'package:charity_discount/util/tools.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -26,7 +27,7 @@ class ProductDetails extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.open_in_new),
         label: Text(tr('accessShop')),
-        onPressed: () {
+        onPressed: () async {
           analytics.logEvent(
             name: 'access_shop',
             parameters: {
@@ -35,6 +36,12 @@ class ProductDetails extends StatelessWidget {
               'screen': 'product_details',
             },
           );
+
+          bool continueToShop = await showExplanationDialog(context);
+          if (continueToShop != true) {
+            return;
+          }
+
           launchURL(product.affiliateUrl);
         },
       ),
@@ -160,7 +167,7 @@ class ProductDetails extends StatelessWidget {
                 ),
                 Expanded(
                   child: PriceChart(
-                    searchService: AppModel.of(context).searchService,
+                    searchService: locator<SearchServiceBase>(),
                     productId: product.id,
                   ),
                 ),

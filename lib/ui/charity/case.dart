@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/services/affiliate.dart';
 import 'package:charity_discount/services/charity.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/ui/charity/case_details.dart';
 import 'package:charity_discount/ui/wallet/operations.dart';
 import 'package:charity_discount/util/url.dart';
@@ -44,7 +45,11 @@ class CaseWidget extends StatelessWidget {
       ),
       onPressed: () {
         if (Platform.isIOS) {
-          affiliateService.launchWebApp('wallet', 'case', charityCase.id);
+          locator<AffiliateService>().launchWebApp(
+            'wallet',
+            'case',
+            charityCase.id,
+          );
         } else {
           showDialog(
             context: context,

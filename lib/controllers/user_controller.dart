@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:charity_discount/services/auth.dart';
-import 'package:charity_discount/services/factory.dart';
-import 'package:charity_discount/services/local.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/notifications.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
@@ -55,12 +53,9 @@ class UserController {
       await authListener.cancel();
     }
     var token = await fcm.getToken();
-    await metaService.removeFcmToken(token);
+    await locator<MetaService>().removeFcmToken(token);
     _iosSubscription?.cancel();
-    await getFirebaseShopsService(authService.currentUser.uid)
-        .closeFavoritesSink();
-    await authService.signOut();
-    await localService.clear();
+    await resetServices();
   }
 
   Future<void> resetPassword(email) async {
@@ -73,7 +68,7 @@ class UserController {
 
   void _registerFcmToken() async {
     final token = await fcm.getToken();
-    metaService.addFcmToken(token);
+    locator<MetaService>().addFcmToken(token);
   }
 }
 

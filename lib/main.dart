@@ -1,7 +1,11 @@
 import 'dart:io';
 import 'package:charity_discount/models/settings.dart';
+import 'package:charity_discount/router.dart';
 import 'package:charity_discount/services/analytics.dart';
+import 'package:charity_discount/services/navigation.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/ui/app/welcome.dart';
+import 'package:charity_discount/util/constants.dart';
 import 'package:charity_discount/util/locale.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:firebase_analytics/observer.dart';
@@ -133,6 +137,7 @@ class _MainState extends State<Main> {
       supportedLocales: EasyLocalization.of(context).supportedLocales,
       locale: locale,
       initialRoute: '/',
+      onGenerateRoute: Router.generateRoute,
       routes: {
         '/': (context) => SafeArea(
               child: _buildDefaultWidget(),
@@ -155,17 +160,12 @@ class _MainState extends State<Main> {
               top: false,
             ),
       },
-      navigatorKey: state.navigatorKey,
-      onUnknownRoute: (settings) => MaterialPageRoute(
-        builder: (context) => UndefinedView(
-          name: settings.name,
-        ),
-      ),
+      navigatorKey: locator<NavigationService>().navigatorKey,
       navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
     );
   }
 
-  void _initDynamicLinks() {
+  void _initDynamicLinks() async {
     FirebaseDynamicLinks.instance.onLink(
       onSuccess: (PendingDynamicLinkData dynamicLink) async {
         return _handleDeepLinks(dynamicLink?.link);
@@ -174,16 +174,50 @@ class _MainState extends State<Main> {
         print(e.message);
       },
     );
+
+    final PendingDynamicLinkData data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+    final Uri deepLink = data?.link;
+
+    if (deepLink != null) {
+      _handleDeepLinks(deepLink);
+    }
   }
 
-  void _handleDeepLinks(Uri deepLink) {
+  void _handleDeepLinks(Uri deepLink) async {
     if (deepLink == null) {
       return;
     }
 
     switch (deepLink.pathSegments.first) {
-      case 'referral':
+      case DeepLinkPath.referral:
         AppModel.of(context).setReferralCode(deepLink.pathSegments.last);
+        break;
+      case DeepLinkPath.shop:
+        if (AppModel.of(context).user == null) {
+          return;
+        }
+        var programs = await AppModel.of(context).programsFuture;
+        var program = programs.firstWhere(
+          (p) =>
+              p.name.toLowerCase() == deepLink.pathSegments.last.toLowerCase(),
+          orElse: () => null,
+        );
+
+        if (program == null) {
+          return;
+        }
+
+        analytics.logViewItem(
+          itemId: program.id,
+          itemName: program.name,
+          itemCategory: 'program',
+        );
+
+        locator<NavigationService>().navigateTo(
+          Routes.shopDetails,
+          arguments: program,
+        );
         break;
       default:
     }
@@ -221,6 +255,8 @@ void main() {
   HttpOverrides.global = CustomHttpOverrides();
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
 
+  setupServices();
+
   runApp(
     EasyLocalization(
       path: 'assets/i18n',
@@ -231,19 +267,6 @@ void main() {
       ),
     ),
   );
-}
-
-class UndefinedView extends StatelessWidget {
-  final String name;
-  const UndefinedView({Key key, this.name}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('Route for $name is not defined'),
-      ),
-    );
-  }
 }
 
 class CustomHttpOverrides extends HttpOverrides {
