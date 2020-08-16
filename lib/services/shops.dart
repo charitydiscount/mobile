@@ -6,33 +6,28 @@ import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:charity_discount/models/favorite_shops.dart';
 
-class ShopsService {
-  BehaviorSubject<FavoriteShops> get favoritePrograms => throw Error();
+abstract class ShopsService {
+  BehaviorSubject<FavoriteShops> get favoritePrograms;
 
-  Future<List<models.Program>> getAllPrograms() async {
-    throw Error();
-  }
+  Future<List<models.Program>> getAllPrograms();
 
   Future<void> setFavoriteShop(
     String userId,
     models.Program program,
     bool favorite,
-  ) async {
-    throw Error();
-  }
+  );
 
-  Future<List<Review>> getProgramRating(String programId) async {
-    throw Error();
-  }
+  Future<List<Review>> getProgramRating(String programId);
 
-  Future<void> saveReview(models.Program program, Review review) async {
-    throw Error();
-  }
+  Future<void> saveReview(models.Program program, Review review);
+
+  Future<void> closeFavoritesSink();
+
+  void listenToFavShops(String userId);
 }
 
 class FirebaseShopsService implements ShopsService {
   final _db = Firestore.instance;
-  final String userId;
   Observable<DocumentSnapshot> _favRef;
   StreamSubscription _favListener;
   BehaviorSubject<FavoriteShops> _favoritePrograms =
@@ -40,18 +35,6 @@ class FirebaseShopsService implements ShopsService {
 
   @override
   BehaviorSubject<FavoriteShops> get favoritePrograms => _favoritePrograms;
-
-  FirebaseShopsService(this.userId) {
-    _favRef = Observable(
-        _db.collection('favoriteShops').document(userId).snapshots());
-    _favListener = _favRef.listen((snap) {
-      if (snap.exists) {
-        _favoritePrograms.add(FavoriteShops.fromJson(snap.data));
-      } else {
-        _favoritePrograms.add(FavoriteShops(userId: userId, programs: {}));
-      }
-    });
-  }
 
   @override
   Future<void> setFavoriteShop(
@@ -162,5 +145,18 @@ class FirebaseShopsService implements ShopsService {
         }
       },
     );
+  }
+
+  @override
+  void listenToFavShops(String userId) {
+    _favRef = Observable(
+        _db.collection('favoriteShops').document(userId).snapshots());
+    _favListener = _favRef.listen((snap) {
+      if (snap.exists) {
+        _favoritePrograms.add(FavoriteShops.fromJson(snap.data));
+      } else {
+        _favoritePrograms.add(FavoriteShops(userId: userId, programs: {}));
+      }
+    });
   }
 }

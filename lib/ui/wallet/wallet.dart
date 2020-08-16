@@ -22,8 +22,9 @@ class WalletScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<Wallet>(
-      stream:
-          charityService.getPointsListener(AppModel.of(context).user.userId),
+      stream: charityService.getWalletStream(
+        AppModel.of(context).user.userId,
+      ),
       builder: (context, snapshot) {
         final loading = buildConnectionLoading(
           context: context,

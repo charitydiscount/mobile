@@ -75,5 +75,3 @@ class AffiliateService {
     _baseUrl = await remoteConfig.getAffiliateEndpoint();
   }
 }
-
-final AffiliateService affiliateService = AffiliateService();

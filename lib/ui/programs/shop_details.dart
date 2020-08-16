@@ -5,6 +5,7 @@ import 'package:charity_discount/models/rating.dart';
 import 'package:charity_discount/services/analytics.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/ui/products/product.dart';
 import 'package:charity_discount/ui/products/products_screen.dart';
 import 'package:charity_discount/ui/programs/promotion.dart';
@@ -157,7 +158,7 @@ class _ShopDetailsState extends State<ShopDetails> {
 
     Widget promotionsBuilder = FutureBuilder(
       future: _promotionsMemoizer.runOnce(
-        () => affiliateService.getPromotions(
+        () => locator<AffiliateService>().getPromotions(
           affiliateUniqueCode: appState.affiliateMeta.uniqueCode,
           programId: widget.program.id,
           programUniqueCode: widget.program.uniqueCode,

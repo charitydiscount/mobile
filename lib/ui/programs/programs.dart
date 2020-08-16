@@ -7,6 +7,7 @@ import 'package:charity_discount/models/suggestion.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/programs/shop.dart';
 import 'package:charity_discount/ui/app/util.dart';
@@ -41,6 +42,7 @@ class _ProgramsListState extends State<ProgramsList>
   void initState() {
     super.initState();
     _appState = AppModel.of(context);
+    locator<ShopsService>().listenToFavShops(_appState.user.userId);
   }
 
   @override
@@ -287,7 +289,7 @@ class _ShopsWidgetState extends State<ShopsWidget>
 
         final favoritePrograms = favoriteShops.programs;
         return StreamBuilder<ProgramMeta>(
-          stream: metaService.programsMetaStream,
+          stream: locator<MetaService>().programsMetaStream,
           builder: (context, snapshot) {
             return _buildShopList(
               List.of(widget.programs),

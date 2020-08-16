@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:charity_discount/models/commission.dart';
 import 'package:charity_discount/models/news.dart';
 import 'package:charity_discount/models/referral.dart';
@@ -12,12 +14,12 @@ import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 import '../models/user.dart';
 
-class CharityService {
+abstract class CharityService {
   Future<Map<String, Charity>> getCases() async {
     throw Error();
   }
 
-  Observable<Wallet> getPointsListener(String userId) {
+  Observable<Wallet> getWalletStream(String userId) {
     throw Error();
   }
 
@@ -68,12 +70,16 @@ class CharityService {
   Future<String> getReferralLink() async {
     throw Error();
   }
+
+  Future<void> closeListeners();
 }
 
 class FirebaseCharityService implements CharityService {
   final Firestore _db = Firestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String _cachedReferralLink;
+  BehaviorSubject<Wallet> _walletStream = BehaviorSubject();
+  StreamSubscription _pointsListener;
 
   @override
   Future<Map<String, Charity>> getCases() async {
@@ -89,16 +95,25 @@ class FirebaseCharityService implements CharityService {
   }
 
   @override
-  Observable<Wallet> getPointsListener(String userId) {
-    return Observable(
-      _db.collection('points').document(userId).snapshots().map(
-        (pointsSnapshop) {
-          return pointsSnapshop.exists
+  Observable<Wallet> getWalletStream(String userId) {
+    if (_pointsListener != null) {
+      return _walletStream;
+    }
+
+    _pointsListener = _db
+        .collection('points')
+        .document(userId)
+        .snapshots()
+        .map(
+          (pointsSnapshop) => pointsSnapshop.exists
               ? Wallet.fromJson(pointsSnapshop.data)
-              : null;
-        },
-      ),
-    );
+              : null,
+        )
+        .listen((wallet) {
+      _walletStream.add(wallet);
+    });
+
+    return _walletStream;
   }
 
   @override
@@ -308,5 +323,14 @@ class FirebaseCharityService implements CharityService {
     _cachedReferralLink = link;
 
     return link;
+  }
+
+  @override
+  Future<void> closeListeners() async {
+    if (_pointsListener != null) {
+      await _pointsListener.cancel();
+      await _walletStream.close();
+    }
+    return null;
   }
 }

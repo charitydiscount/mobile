@@ -1,7 +1,9 @@
 import 'package:charity_discount/models/user.dart';
-import 'package:charity_discount/services/factory.dart';
+import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/notifications.dart';
 import 'package:charity_discount/services/search.dart';
+import 'package:charity_discount/services/shops.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/products/products_screen.dart';
 import 'package:charity_discount/ui/app/settings.dart';
@@ -29,7 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
   int selectedNavIndex = 0;
   List<Widget> _widgets = [Container(), Container(), Container(), Container()];
   List<bool> _loadedWidgets = [false, false, false, false];
-  SearchServiceBase _searchService = SearchService();
   bool _showNotifications = true;
 
   _HomeScreenState({this.selectedNavIndex});
@@ -45,10 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
         _showNotifications = state.settings.notifications;
       }
     });
-    state.setServices(
-      getFirebaseShopsService(state.user.userId),
-      _searchService,
-    );
   }
 
   void _configureFcm(BuildContext context) {
@@ -97,22 +94,22 @@ class _HomeScreenState extends State<HomeScreen> {
       switch (selectedNavIndex) {
         case 0:
           _widgets[selectedNavIndex] = ProgramsList(
-            searchService: _searchService,
-            shopsService: getFirebaseShopsService(appState.user.userId),
+            searchService: locator<SearchServiceBase>(),
+            shopsService: locator<ShopsService>(),
           );
           break;
         case 1:
           _widgets[selectedNavIndex] =
-              ProductsScreen(searchService: _searchService);
+              ProductsScreen(searchService: locator<SearchServiceBase>());
           break;
         case 2:
           _widgets[selectedNavIndex] = CharityWidget(
-            charityService: getFirebaseCharityService(),
+            charityService: locator<CharityService>(),
           );
           break;
         case 3:
           _widgets[selectedNavIndex] = WalletScreen(
-            charityService: getFirebaseCharityService(),
+            charityService: locator<CharityService>(),
           );
           break;
         default:
@@ -219,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (BuildContext context) => ReferralsScreen(
-                      charityService: getFirebaseCharityService(),
+                      charityService: locator<CharityService>(),
                     ),
                     settings: RouteSettings(name: 'Referrals'),
                   ),

@@ -4,10 +4,10 @@ import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/services/charity.dart';
-import 'package:charity_discount/services/factory.dart';
 import 'package:charity_discount/services/meta.dart';
-import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
+import 'package:charity_discount/state/locator.dart';
+import 'package:charity_discount/util/constants.dart';
 import 'package:charity_discount/util/remote_config.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -34,16 +34,10 @@ class AppModel extends Model {
   TwoPerformantMeta _affiliateMeta;
   ProgramMeta _programsMeta;
   Wallet wallet;
-  ShopsService _shopsService;
-  CharityService _charityService = getFirebaseCharityService();
-  SearchServiceBase searchService;
   double minimumWithdrawalAmount;
   BehaviorSubject<bool> loading;
   String _referralCode;
   bool _referralSent = false;
-
-  final GlobalKey<NavigatorState> navigatorKey =
-      GlobalKey(debugLabel: 'Main Navigator');
 
   AppModel() {
     createListeners();
@@ -51,11 +45,6 @@ class AppModel extends Model {
     remoteConfig
         .getWithdrawalThreshold()
         .then((threshold) => minimumWithdrawalAmount = threshold);
-  }
-
-  void setServices(ShopsService shopService, SearchServiceBase searchService) {
-    _shopsService = shopService;
-    this.searchService = searchService;
   }
 
   void createListeners() {
@@ -75,10 +64,11 @@ class AppModel extends Model {
                 .then((PendingDynamicLinkData data) {
               if (data?.link != null) {
                 switch (data.link.pathSegments.first) {
-                  case 'referral':
+                  case DeepLinkPath.referral:
                     _referralSent = true;
-                    _charityService
-                        .createReferralRequest(data.link.pathSegments.last);
+                    locator<CharityService>().createReferralRequest(
+                      data.link.pathSegments.last,
+                    );
                     break;
                   default:
                 }
@@ -86,13 +76,15 @@ class AppModel extends Model {
             });
           } else {
             _referralSent = true;
-            _charityService.createReferralRequest(referralCode);
+            locator<CharityService>().createReferralRequest(
+              referralCode,
+            );
           }
         }
 
         setUser(User.fromFirebaseAuth(profile));
         List<Future> futuresForLoading = [
-          metaService.getTwoPerformantMeta().then((twoPMeta) {
+          locator<MetaService>().getTwoPerformantMeta().then((twoPMeta) {
             _affiliateMeta = twoPMeta;
             localService.setAffiliateMeta(_affiliateMeta);
             return true;
@@ -179,7 +171,7 @@ class AppModel extends Model {
   ProgramMeta get programsMeta => _programsMeta;
 
   Future<bool> updateProgramsMeta() {
-    return metaService.getProgramsMeta().then((programsMeta) {
+    return locator<MetaService>().getProgramsMeta().then((programsMeta) {
       _programsMeta = programsMeta;
       notifyListeners();
       return true;
@@ -246,7 +238,7 @@ class AppModel extends Model {
       if (localPrograms != null) {
         setPrograms(localPrograms, storeLocal: false);
       } else {
-        var programs = await _shopsService.getAllPrograms();
+        var programs = await locator<ShopsService>().getAllPrograms();
         setPrograms(programs);
       }
     }
@@ -255,13 +247,13 @@ class AppModel extends Model {
   }
 
   Future<void> refreshPrograms() async {
-    var programs = await _shopsService.getAllPrograms();
+    var programs = await locator<ShopsService>().getAllPrograms();
     setPrograms(programs);
   }
 
   Future<List<SavedAccount>> get savedAccounts => user.savedAccounts != null
       ? Future.value(user.savedAccounts)
-      : _charityService.userAccounts.then((savedAccounts) {
+      : locator<CharityService>().userAccounts.then((savedAccounts) {
           user.savedAccounts = savedAccounts;
           return savedAccounts;
         });
@@ -279,13 +271,13 @@ class AppModel extends Model {
         user.savedAccounts.add(savedAccount);
       }
     }
-    return _charityService.saveAccount(savedAccount);
+    return locator<CharityService>().saveAccount(savedAccount);
   }
 
   void deleteSavedAccount(SavedAccount savedAccount) {
     user.savedAccounts
         .removeWhere((account) => account.iban == savedAccount.iban);
-    _charityService.removeAccount(savedAccount);
+    locator<CharityService>().removeAccount(savedAccount);
   }
 
   String get referralCode => _referralCode;

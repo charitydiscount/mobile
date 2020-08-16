@@ -69,7 +69,7 @@ class _DonateWidgetState extends State<DonateWidget> {
 
   @override
   void initState() {
-    _pointsListener = widget.charityService.getPointsListener(
+    _pointsListener = widget.charityService.getWalletStream(
       AppModel.of(context).user.userId,
     );
     super.initState();
