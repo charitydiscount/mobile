@@ -21,6 +21,7 @@ import 'package:charity_discount/services/local.dart';
 
 class AppModel extends Model {
   bool _introCompleted = false;
+  bool _explanationSkipped = false;
   User _user;
   Settings _settings = Settings(
     displayMode: DisplayMode.GRID,
@@ -125,6 +126,7 @@ class AppModel extends Model {
     Settings settings = await localService.getSettingsLocal();
     bool isIntroCompleted = await localService.isIntroCompleted();
     List<Program> programs = await localService.getPrograms();
+    bool explanationSkipped = await localService.isExplanationSkipped();
 
     if (user != null && _user == null) {
       setUser(user);
@@ -138,12 +140,22 @@ class AppModel extends Model {
     if (programs != null) {
       setPrograms(programs, storeLocal: false);
     }
+    if (explanationSkipped != null) {
+      skipExplanation(explanationSkipped);
+    }
   }
 
   bool get introCompleted => _introCompleted;
   void finishIntro() {
     _introCompleted = true;
     localService.setIntroCompleted();
+    notifyListeners();
+  }
+
+  bool get explanationSkipped => _explanationSkipped;
+  void skipExplanation(bool skip) {
+    _explanationSkipped = skip;
+    localService.setSkipExplanation(skip);
     notifyListeners();
   }
 

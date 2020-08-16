@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/product.dart';
 import 'package:charity_discount/services/analytics.dart';
 import 'package:charity_discount/ui/products/product_details.dart';
+import 'package:charity_discount/ui/tutorial/access_explanation.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -116,7 +117,7 @@ class ProductCard extends StatelessWidget {
                                 tr('access'),
                                 style: TextStyle(fontSize: 12),
                               ),
-                              onPressed: () {
+                              onPressed: () async {
                                 analytics.logEvent(
                                   name: 'access_shop',
                                   parameters: {
@@ -125,6 +126,13 @@ class ProductCard extends StatelessWidget {
                                     'screen': 'products',
                                   },
                                 );
+
+                                bool continueToShop =
+                                    await showExplanationDialog(context);
+                                if (continueToShop != true) {
+                                  return;
+                                }
+
                                 launchURL(product.affiliateUrl);
                               },
                             ),

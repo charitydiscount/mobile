@@ -64,6 +64,21 @@ class LocalService {
     return prefs.getBool('introCompleted');
   }
 
+  Future<void> setSkipExplanation(bool skip) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('skipExplanation', skip);
+  }
+
+  Future<bool> isExplanationSkipped() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (prefs.getBool('skipExplanation') == null) {
+      return false;
+    }
+
+    return prefs.getBool('skipExplanation');
+  }
+
   Future<void> setPrograms(List<Program> programs) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('programs', programsToJson(programs));
