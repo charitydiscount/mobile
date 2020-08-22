@@ -2,8 +2,8 @@ import 'package:charity_discount/models/product.dart';
 import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/suggestion.dart';
 import 'package:charity_discount/services/auth.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/util/remote_config.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -79,9 +79,9 @@ class SearchService implements SearchServiceBase {
       url = '$url&max=$maxPrice';
     }
 
-    IdTokenResult authToken = await authService.currentUser.getIdToken();
+    String authToken = await locator<AuthService>().currentUser.getIdToken();
     final response = await http.get(url, headers: {
-      'Authorization': 'Bearer ${authToken.token}',
+      'Authorization': 'Bearer $authToken',
     });
 
     if (response.statusCode != 200) {

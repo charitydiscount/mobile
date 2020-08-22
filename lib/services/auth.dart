@@ -12,25 +12,24 @@ import 'dart:convert';
 class AuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['profile', 'email']);
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final Firestore _db = Firestore.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  FirebaseUser currentUser;
-  BehaviorSubject<FirebaseUser> profile = BehaviorSubject();
+  User currentUser;
+  BehaviorSubject<User> profile = BehaviorSubject();
 
   AuthService() {
-    _auth.onAuthStateChanged.listen((u) => _setUser(u));
+    _auth.authStateChanges().listen((u) => _setUser(u));
   }
 
-  void _setUser(FirebaseUser u) {
+  void _setUser(User u) {
     currentUser = u;
     profile.add(u);
   }
 
-  Future<void> updateCurrentUser() =>
-      _auth.currentUser().then((user) => _setUser(user));
+  void updateCurrentUser() => _setUser(_auth.currentUser);
 
-  Future<FirebaseUser> signInWithEmailAndPass(email, password) async {
-    AuthResult authResult = await _auth.signInWithEmailAndPassword(
+  Future<User> signInWithEmailAndPass(email, password) async {
+    final authResult = await _auth.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
@@ -46,8 +45,7 @@ class AuthService {
     await _auth.signOut();
   }
 
-  Future<FirebaseUser> signInWithGoogle(
-      {AuthCredential previousCredential}) async {
+  Future<User> signInWithGoogle({AuthCredential previousCredential}) async {
     GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     if (googleUser == null) {
       // User canceled the google sign in flow
@@ -55,13 +53,13 @@ class AuthService {
     }
 
     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    AuthCredential credential = GoogleAuthProvider.getCredential(
+    AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
 
-    AuthResult authResult = await _auth.signInWithCredential(credential);
-    FirebaseUser user = authResult.user;
+    final authResult = await _auth.signInWithCredential(credential);
+    User user = authResult.user;
 
     final googleApisUrl =
         'https://www.googleapis.com/oauth2/v3/userinfo?alt=json&access_token=${googleAuth.accessToken}';
@@ -75,7 +73,7 @@ class AuthService {
         await updateUser(
           firstName: userInfoJson['given_name'],
           lastName: userInfoJson['family_name'],
-          photoUrl: user.photoUrl ?? userInfoJson['picture'],
+          photoUrl: user.photoURL ?? userInfoJson['picture'],
         );
       }
     }
@@ -87,7 +85,7 @@ class AuthService {
     return user;
   }
 
-  Future<FirebaseUser> signInWithFacebook(
+  Future<User> signInWithFacebook(
     FacebookLoginResult result,
   ) async {
     final token = result.accessToken.token;
@@ -100,8 +98,8 @@ class AuthService {
 
     Map<String, dynamic> userInfoJson = json.decode(graphResponse.body);
 
-    final credential = FacebookAuthProvider.getCredential(accessToken: token);
-    AuthResult authResult;
+    final credential = FacebookAuthProvider.credential(token);
+    UserCredential authResult;
     try {
       authResult = await _auth.signInWithCredential(credential);
     } catch (e) {
@@ -116,31 +114,30 @@ class AuthService {
           throw e;
       }
     }
-    FirebaseUser user = authResult.user;
+    User user = authResult.user;
     if (userInfoJson['first_name'] != null ||
         userInfoJson['last_name'] != null ||
         userInfoJson['picture'] != null) {
       updateUser(
         firstName: userInfoJson['first_name'],
         lastName: userInfoJson['last_name'],
-        photoUrl: user.photoUrl ?? userInfoJson['picture']['data']['url'],
+        photoUrl: user.photoURL ?? userInfoJson['picture']['data']['url'],
       );
     }
 
     return user;
   }
 
-  Future<FirebaseUser> signInWithApple(
-      AuthorizationResult authorizationResult) async {
+  Future<User> signInWithApple(AuthorizationResult authorizationResult) async {
     final AppleIdCredential appleIdCredential = authorizationResult.credential;
 
-    OAuthProvider oAuthProvider = OAuthProvider(providerId: 'apple.com');
-    final AuthCredential credential = oAuthProvider.getCredential(
+    OAuthProvider oAuthProvider = OAuthProvider('apple.com');
+    final AuthCredential credential = oAuthProvider.credential(
       idToken: String.fromCharCodes(appleIdCredential.identityToken),
       accessToken: String.fromCharCodes(appleIdCredential.authorizationCode),
     );
 
-    AuthResult authResult;
+    UserCredential authResult;
     try {
       authResult = await _auth.signInWithCredential(credential);
     } catch (e) {
@@ -155,7 +152,7 @@ class AuthService {
           throw e;
       }
     }
-    FirebaseUser user = authResult.user;
+    User user = authResult.user;
 
     if (appleIdCredential.fullName.givenName != null ||
         appleIdCredential.fullName.familyName != null) {
@@ -168,10 +165,10 @@ class AuthService {
     return user;
   }
 
-  Future<FirebaseUser> _handleDifferentCredential(
+  Future<User> _handleDifferentCredential(
       {AuthCredential credential, String email}) async {
-    final signInMethods = await _auth.fetchSignInMethodsForEmail(email: email);
-    if (signInMethods.contains(GoogleAuthProvider.providerId)) {
+    final signInMethods = await _auth.fetchSignInMethodsForEmail(email);
+    if (signInMethods.contains(GoogleAuthProvider.PROVIDER_ID)) {
       return signInWithGoogle(previousCredential: credential);
     } else {
       throw PlatformException(
@@ -198,44 +195,34 @@ class AuthService {
     String name,
     String photoUrl,
   }) async {
-    return _auth.currentUser().then((user) async {
-      UserUpdateInfo updateUser = UserUpdateInfo();
-      if (name != null && name.isNotEmpty) {
-        updateUser.displayName = name.trim();
-      }
-      if (photoUrl != null) {
-        updateUser.photoUrl = photoUrl;
-      }
-      return user.updateProfile(updateUser);
-    });
+    return _auth.currentUser.updateProfile(
+      displayName: name.trim(),
+      photoURL: photoUrl,
+    );
   }
 
   Future<void> updateUserSettings(
       String userId, Map<String, dynamic> settings) async {
-    DocumentReference ref = _db.collection('settings').document(userId);
+    DocumentReference ref = _db.collection('settings').doc(userId);
 
-    return ref.setData(settings, merge: true);
+    return ref.set(settings, SetOptions(merge: true));
   }
 
-  Future<FirebaseUser> createUser(
+  Future<User> createUser(
     String email,
     String password,
     String firstName,
     String lastName,
   ) async {
-    AuthResult authResult = await _auth.createUserWithEmailAndPassword(
+    UserCredential authResult = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
 
-    UserUpdateInfo userInfo = UserUpdateInfo();
-    userInfo.displayName = '$firstName $lastName';
-    await authResult.user.updateProfile(userInfo);
+    await authResult.user.updateProfile(displayName: '$firstName $lastName');
 
-    await updateCurrentUser();
+    updateCurrentUser();
 
     return authResult.user;
   }
 }
-
-final AuthService authService = AuthService();

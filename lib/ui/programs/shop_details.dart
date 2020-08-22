@@ -86,8 +86,9 @@ class _ShopDetailsState extends State<ShopDetails> {
         );
 
         Review thisUserReview = snapshot.data.firstWhere(
-            (r) => r.reviewer.userId == appState.user.userId,
-            orElse: () => null);
+          (r) => r.reviewer.userId == appState.user.userId,
+          orElse: () => null,
+        );
         bool alreadyReviewed = thisUserReview != null;
 
         Widget addReview = ClipOval(

@@ -19,15 +19,17 @@ class _ImageCarouselState extends State<ImageCarousel> {
     return Column(
       children: [
         CarouselSlider.builder(
-          enableInfiniteScroll: false,
           itemCount: widget.images.length,
-          viewportFraction: 1.0,
-          aspectRatio: 4 / 3,
-          onPageChanged: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
+          options: CarouselOptions(
+            enableInfiniteScroll: false,
+            viewportFraction: 1.0,
+            aspectRatio: 4 / 3,
+            onPageChanged: (index, _) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+          ),
           itemBuilder: (context, index) {
             return CachedNetworkImage(
               imageUrl: widget.images[index],

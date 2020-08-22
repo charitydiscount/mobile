@@ -27,8 +27,8 @@ abstract class ShopsService {
 }
 
 class FirebaseShopsService implements ShopsService {
-  final _db = Firestore.instance;
-  Observable<DocumentSnapshot> _favRef;
+  final _db = FirebaseFirestore.instance;
+  Stream<DocumentSnapshot> _favRef;
   StreamSubscription _favListener;
   BehaviorSubject<FavoriteShops> _favoritePrograms =
       BehaviorSubject<FavoriteShops>();
@@ -39,14 +39,14 @@ class FirebaseShopsService implements ShopsService {
   @override
   Future<void> setFavoriteShop(
       String userId, models.Program program, bool favorite) async {
-    DocumentReference ref = _db.collection('favoriteShops').document(userId);
+    DocumentReference ref = _db.collection('favoriteShops').doc(userId);
 
     if (favorite) {
-      return ref.updateData({
+      return ref.update({
         'programs.${program.uniqueCode}': program.toJson(),
       }).catchError((e) => _handleFavDocNotExistent(e, userId, program));
     } else {
-      return ref.updateData({
+      return ref.update({
         'programs.${program.uniqueCode}': FieldValue.delete(),
       }).catchError((e) => print(e));
     }
@@ -63,23 +63,25 @@ class FirebaseShopsService implements ShopsService {
       throw e;
     }
 
-    DocumentReference ref = _db.collection('favoriteShops').document(userId);
-    ref.setData({
+    DocumentReference ref = _db.collection('favoriteShops').doc(userId);
+    ref.set({
       'userId': userId,
       'programs': {
         '${program.uniqueCode}': program.toJson(),
       }
-    }, merge: true);
+    }, SetOptions(merge: true));
   }
 
   @override
   Future<List<models.Program>> getAllPrograms() async {
-    final snap = await _db.collection('programs').document('all').get();
+    final snap = await _db.collection('programs').doc('all').get();
     if (!snap.exists) {
       return [];
     }
 
-    return snap.data.entries
+    return snap
+        .data()
+        .entries
         .where((snapEntry) => snapEntry.key.compareTo('updatedAt') != 0)
         .map((snapEntry) {
           final program = models.Program.fromJson(
@@ -94,13 +96,13 @@ class FirebaseShopsService implements ShopsService {
   @override
   Future<List<Review>> getProgramRating(String programId) async {
     DocumentSnapshot snap =
-        await _db.collection('reviews').document(programId).get();
+        await _db.collection('reviews').doc(programId).get();
 
     if (!snap.exists) {
       return [];
     }
 
-    Map reviews = snap.data['reviews'];
+    Map reviews = snap.data()['reviews'];
     return List.from(reviews.entries)
         .map((r) => Review.fromJson(r.value))
         .toList();
@@ -108,7 +110,7 @@ class FirebaseShopsService implements ShopsService {
 
   @override
   Future<void> saveReview(models.Program program, Review review) async {
-    await _db.collection('reviews').document(program.uniqueCode).updateData(
+    await _db.collection('reviews').doc(program.uniqueCode).update(
       {
         'shopUniqueCode': program.uniqueCode,
         'reviews.${review.reviewer.userId}': {
@@ -130,9 +132,8 @@ class FirebaseShopsService implements ShopsService {
       return null;
     }
 
-    DocumentReference ref =
-        _db.collection('reviews').document(program.uniqueCode);
-    return ref.setData(
+    DocumentReference ref = _db.collection('reviews').doc(program.uniqueCode);
+    return ref.set(
       {
         'shopUniqueCode': program.uniqueCode,
         'reviews': {
@@ -149,11 +150,10 @@ class FirebaseShopsService implements ShopsService {
 
   @override
   void listenToFavShops(String userId) {
-    _favRef = Observable(
-        _db.collection('favoriteShops').document(userId).snapshots());
+    _favRef = _db.collection('favoriteShops').doc(userId).snapshots();
     _favListener = _favRef.listen((snap) {
       if (snap.exists) {
-        _favoritePrograms.add(FavoriteShops.fromJson(snap.data));
+        _favoritePrograms.add(FavoriteShops.fromJson(snap.data()));
       } else {
         _favoritePrograms.add(FavoriteShops(userId: userId, programs: {}));
       }

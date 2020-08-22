@@ -52,7 +52,7 @@ class Settings {
       };
 
   factory Settings.fromDocument(DocumentSnapshot doc) {
-    return Settings.fromJson(doc.data);
+    return Settings.fromJson(doc.data());
   }
 }
 

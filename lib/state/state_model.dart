@@ -40,6 +40,7 @@ class AppModel extends Model {
   bool _referralSent = false;
 
   AppModel() {
+    setupServices();
     createListeners();
     initFromLocal();
     remoteConfig
@@ -49,7 +50,7 @@ class AppModel extends Model {
 
   void createListeners() {
     loading = BehaviorSubject();
-    _profileListener = authService.profile.listen(
+    _profileListener = locator<AuthService>().profile.listen(
       (profile) {
         if (profile == null) {
           return;

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:charity_discount/models/settings.dart';
-import 'package:charity_discount/router.dart';
+import 'package:charity_discount/router.dart' as appRouter;
 import 'package:charity_discount/services/analytics.dart';
 import 'package:charity_discount/services/navigation.dart';
 import 'package:charity_discount/state/locator.dart';
@@ -9,6 +9,7 @@ import 'package:charity_discount/util/constants.dart';
 import 'package:charity_discount/util/locale.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
@@ -137,7 +138,7 @@ class _MainState extends State<Main> {
       supportedLocales: EasyLocalization.of(context).supportedLocales,
       locale: locale,
       initialRoute: '/',
-      onGenerateRoute: Router.generateRoute,
+      onGenerateRoute: appRouter.Router.generateRoute,
       routes: {
         '/': (context) => SafeArea(
               child: _buildDefaultWidget(),
@@ -255,15 +256,25 @@ void main() {
   HttpOverrides.global = CustomHttpOverrides();
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
 
-  setupServices();
-
   runApp(
     EasyLocalization(
       path: 'assets/i18n',
       supportedLocales: supportedLanguages.map((l) => l.locale).toList(),
-      child: ScopedModel(
-        model: AppModel(),
-        child: Main(),
+      child: FutureBuilder(
+        future: Firebase.initializeApp(),
+        builder: (context, snapshot) {
+          var loading = buildConnectionLoading(
+            context: context,
+            snapshot: snapshot,
+          );
+          if (loading != null) {
+            return loading;
+          }
+          return ScopedModel(
+            model: AppModel(),
+            child: Main(),
+          );
+        },
       ),
     ),
   );

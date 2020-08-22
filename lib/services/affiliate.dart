@@ -1,12 +1,13 @@
 import 'package:charity_discount/models/promotion.dart';
 import 'package:charity_discount/services/auth.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/util/remote_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AffiliateService {
-  final Firestore _db = Firestore.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String _baseUrl;
 
@@ -15,22 +16,24 @@ class AffiliateService {
     String programId,
     String programUniqueCode,
   }) =>
-      _auth.currentUser().then(
-            (user) => _db
-                .collection('promotions')
-                .document(programId)
-                .get()
-                .then((snap) => snap.exists
-                    ? _promotionsFromSnapData(
-                        snap.data, affiliateUniqueCode, programUniqueCode, user)
-                    : []),
-          );
+      _db
+          .collection('promotions')
+          .doc(programId)
+          .get()
+          .then((snap) => snap.exists
+              ? _promotionsFromSnapData(
+                  snap.data(),
+                  affiliateUniqueCode,
+                  programUniqueCode,
+                  _auth.currentUser,
+                )
+              : []);
 
   List<Promotion> _promotionsFromSnapData(
     Map<String, dynamic> snapData,
     String affiliateUniqueCode,
     String programUniqueCode,
-    FirebaseUser user,
+    User user,
   ) =>
       snapData.entries
           .map((snapEntry) {
@@ -64,9 +67,9 @@ class AffiliateService {
       await _setBaseUrl();
     }
 
-    return authService.currentUser.getIdToken().then((idToken) {
+    return locator<AuthService>().currentUser.getIdToken().then((idToken) {
       return launchURL(
-        '$_baseUrl/auth/$route?access_token=${idToken.token}&itemKey=$itemKey&itemValue=$itemValue',
+        '$_baseUrl/auth/$route?access_token=$idToken&itemKey=$itemKey&itemValue=$itemValue',
       );
     });
   }

@@ -59,4 +59,6 @@ class CommissionProgram {
 
 CommissionStatus parseCommissionStatus(String commissionStatus) =>
     CommissionStatus.values.firstWhere(
-        (cS) => cS.toString() == 'CommissionStatus.' + commissionStatus);
+      (cS) => cS.toString() == 'CommissionStatus.' + commissionStatus,
+      orElse: () => null,
+    );

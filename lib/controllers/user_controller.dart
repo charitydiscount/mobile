@@ -22,22 +22,22 @@ class UserController {
   }) async {
     switch (provider) {
       case Strategy.EmailAndPass:
-        await authService.signInWithEmailAndPass(
+        await locator<AuthService>().signInWithEmailAndPass(
             credentials['email'], credentials['password']);
         break;
       case Strategy.Google:
-        await authService.signInWithGoogle();
+        await locator<AuthService>().signInWithGoogle();
         break;
       case Strategy.Facebook:
-        await authService.signInWithFacebook(facebookResult);
+        await locator<AuthService>().signInWithFacebook(facebookResult);
         break;
       case Strategy.Apple:
-        await authService.signInWithApple(appleResult);
+        await locator<AuthService>().signInWithApple(appleResult);
         break;
       default:
         return;
     }
-    await authService.updateCurrentUser();
+    locator<AuthService>().updateCurrentUser();
     if (Platform.isIOS) {
       _iosSubscription = fcm.onIosSettingsRegistered.listen((data) {
         _registerFcmToken();
@@ -59,11 +59,12 @@ class UserController {
   }
 
   Future<void> resetPassword(email) async {
-    await authService.resetPassword(email);
+    await locator<AuthService>().resetPassword(email);
   }
 
-  Future<FirebaseUser> signUp(email, password, firstName, lastName) async {
-    return await authService.createUser(email, password, firstName, lastName);
+  Future<User> signUp(email, password, firstName, lastName) async {
+    return await locator<AuthService>()
+        .createUser(email, password, firstName, lastName);
   }
 
   void _registerFcmToken() async {

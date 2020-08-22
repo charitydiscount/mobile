@@ -6,32 +6,32 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MetaService {
-  final _db = Firestore.instance;
+  final _db = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
   BehaviorSubject<ProgramMeta> _metaStream = BehaviorSubject();
   StreamSubscription _programsMetaListener;
 
   Future<TwoPerformantMeta> getTwoPerformantMeta() async {
-    var twoPMeta = await _db.collection('meta').document('2performant').get();
-    return TwoPerformantMeta.fromJson(twoPMeta.data);
+    var twoPMeta = await _db.collection('meta').doc('2performant').get();
+    return TwoPerformantMeta.fromJson(twoPMeta.data());
   }
 
   Future<ProgramMeta> getProgramsMeta() async {
-    var programsMeta = await _db.collection('meta').document('programs').get();
+    var programsMeta = await _db.collection('meta').doc('programs').get();
     if (programsMeta == null) {
       return ProgramMeta(count: 0, categories: []);
     }
 
-    return ProgramMeta.fromJson(programsMeta.data);
+    return ProgramMeta.fromJson(programsMeta.data());
   }
 
-  Observable<ProgramMeta> get programsMetaStream {
+  Stream<ProgramMeta> get programsMetaStream {
     if (_programsMetaListener == null) {
       _programsMetaListener = _db
           .collection('meta')
-          .document('programs')
+          .doc('programs')
           .snapshots()
-          .asyncMap((snap) => ProgramMeta.fromJson(snap.data))
+          .asyncMap((snap) => ProgramMeta.fromJson(snap.data()))
           .listen((meta) {
         _metaStream.add(meta);
       });
@@ -39,42 +39,39 @@ class MetaService {
     return _metaStream;
   }
 
-  Future<void> addFcmToken(String token) => _auth.currentUser().then(
-        (user) => _db
-            .collection('users')
-            .document(user.uid)
-            .collection('tokens')
-            .document(token)
-            .setData({
-          'token': token,
-          'createdAt': FieldValue.serverTimestamp(),
-          'platform': Platform.operatingSystem,
-        }),
-      );
+  Future<void> addFcmToken(String token) => _db
+          .collection('users')
+          .doc(_auth.currentUser.uid)
+          .collection('tokens')
+          .doc(token)
+          .set({
+        'token': token,
+        'createdAt': FieldValue.serverTimestamp(),
+        'platform': Platform.operatingSystem,
+      });
 
-  Future<void> removeFcmToken(String token) => _auth.currentUser().then(
-        (user) => _db
-            .collection('users')
-            .document(user.uid)
-            .collection('tokens')
-            .document(token)
-            .delete(),
-      );
+  Future<void> removeFcmToken(String token) => _db
+      .collection('users')
+      .doc(_auth.currentUser.uid)
+      .collection('tokens')
+      .doc(token)
+      .delete();
 
   Future<void> setNotifications(
     String deviceToken,
     bool notificationsEnabled,
   ) =>
-      _auth.currentUser().then(
-            (user) => _db
-                .collection('users')
-                .document(user.uid)
-                .collection('tokens')
-                .document(deviceToken)
-                .setData({
-              'notifications': notificationsEnabled,
-            }, merge: true),
-          );
+      _db
+          .collection('users')
+          .doc(_auth.currentUser.uid)
+          .collection('tokens')
+          .doc(deviceToken)
+          .set(
+        {
+          'notifications': notificationsEnabled,
+        },
+        SetOptions(merge: true),
+      );
 
   Future<void> closeListeners() async {
     if (_programsMetaListener != null) {
