@@ -77,8 +77,10 @@ class CommissionsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<TimelineModel> items = commissions.map((commission) {
-      final program = programs.firstWhere((p) => p.id == commission.shopId,
-          orElse: () => null);
+      final program = programs.firstWhere(
+        (p) => p.id == commission.shopId,
+        orElse: () => null,
+      );
       return TimelineModel(
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:iban_form_field/iban_form_field.dart';
 
@@ -22,11 +22,11 @@ class User {
     this.photoUrl,
   });
 
-  factory User.fromFirebaseAuth(FirebaseUser firebaseUser) => User(
-        email: firebaseUser.email,
-        name: firebaseUser.displayName,
-        userId: firebaseUser.uid,
-        photoUrl: firebaseUser.photoUrl,
+  factory User.fromFirebaseAuth(auth.User user) => User(
+        email: user.email,
+        name: user.displayName,
+        userId: user.uid,
+        photoUrl: user.photoURL,
       );
 
   factory User.fromJson(Map<String, dynamic> userJson) => User(

@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/models/charity.dart';
 import 'package:flutter/services.dart';
-import 'package:rxdart/rxdart.dart';
 
 class DonateDialog extends StatefulWidget {
   final Charity charityCase;
@@ -64,7 +63,7 @@ class DonateWidget extends StatefulWidget {
 }
 
 class _DonateWidgetState extends State<DonateWidget> {
-  Observable<Wallet> _pointsListener;
+  Stream<Wallet> _pointsListener;
   final TextEditingController _amountController = TextEditingController();
 
   @override
@@ -236,16 +235,17 @@ class OperationDialog extends StatelessWidget {
 
 Future<TransactionResult> _waitForTx(
     DocumentReference txRef, BuildContext context) async {
-  DocumentSnapshot tx = await txRef.snapshots().skip(1).firstWhere((tx) {
-    return tx.data.containsKey('status');
-  });
+  DocumentSnapshot tx = await txRef.snapshots().skip(1).firstWhere(
+        (tx) => tx.data().containsKey('status'),
+        orElse: () => null,
+      );
   String title;
   String message;
-  String status = tx.data['status'];
+  String status = tx.data()['status'];
   IconData notificationIcon;
   Color notifIconColor;
 
-  TxType txType = txTypeFromString(tx.data['type']);
+  TxType txType = txTypeFromString(tx.data()['type']);
   switch (txType) {
     case TxType.DONATION:
       if (status == 'ACCEPTED') {

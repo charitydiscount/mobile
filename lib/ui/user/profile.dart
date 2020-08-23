@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:charity_discount/controllers/user_controller.dart';
 import 'package:charity_discount/services/auth.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/user/user_avatar.dart';
 import 'package:charity_discount/ui/app/loading.dart';
@@ -199,7 +200,7 @@ class _ProfileState extends State<Profile> {
         setState(() {
           userState.photoUrl = imageUrl;
         });
-        authService.updateUser(photoUrl: imageUrl);
+        locator<AuthService>().updateUser(photoUrl: imageUrl);
       });
     });
   }
