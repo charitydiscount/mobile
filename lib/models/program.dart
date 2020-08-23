@@ -5,7 +5,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'program.g.dart';
 
 List<Program> fromFirestoreBatch(DocumentSnapshot doc) {
-  List data = doc.data['batch'] ?? [];
+  List data = doc.data()['batch'] ?? [];
   return fromJsonArray(data);
 }
 
@@ -181,8 +181,11 @@ enum CommissionType {
   fixed,
 }
 
-CommissionType getCommissionTypeEnum(String type) => CommissionType.values
-    .firstWhere((e) => e.toString() == 'CommissionType.' + type.toLowerCase());
+CommissionType getCommissionTypeEnum(String type) =>
+    CommissionType.values.firstWhere(
+      (e) => e.toString() == 'CommissionType.' + type.toLowerCase(),
+      orElse: () => null,
+    );
 
 @JsonSerializable()
 class OverallRating {

@@ -62,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         onLaunch: _handleBackgroundNotification,
         onResume: _handleBackgroundNotification,
+        onBackgroundMessage: backgroundMessageHandler,
       );
     } else {
       fcm.configure(
@@ -75,6 +76,12 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       );
     }
+  }
+
+  static Future<dynamic> backgroundMessageHandler(
+    Map<String, dynamic> message,
+  ) async {
+    return Future.value(true);
   }
 
   Future<dynamic> _handleBackgroundNotification(Map<String, dynamic> message) {

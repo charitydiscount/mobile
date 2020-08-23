@@ -19,7 +19,7 @@ abstract class CharityService {
     throw Error();
   }
 
-  Observable<Wallet> getWalletStream(String userId) {
+  Stream<Wallet> getWalletStream(String userId) {
     throw Error();
   }
 
@@ -75,7 +75,7 @@ abstract class CharityService {
 }
 
 class FirebaseCharityService implements CharityService {
-  final Firestore _db = Firestore.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String _cachedReferralLink;
   BehaviorSubject<Wallet> _walletStream = BehaviorSubject();
@@ -83,11 +83,11 @@ class FirebaseCharityService implements CharityService {
 
   @override
   Future<Map<String, Charity>> getCases() async {
-    QuerySnapshot qS = await _db.collection('cases').getDocuments();
-    Map<String, Charity> cases = Map.fromIterable(qS.documents,
+    QuerySnapshot qS = await _db.collection('cases').get();
+    Map<String, Charity> cases = Map.fromIterable(qS.docs,
         key: (snap) => snap.documentID,
         value: (snap) {
-          Charity charityCase = Charity.fromJson(snap.data);
+          Charity charityCase = Charity.fromJson(snap.data());
           charityCase.id = snap.documentID;
           return charityCase;
         });
@@ -95,18 +95,18 @@ class FirebaseCharityService implements CharityService {
   }
 
   @override
-  Observable<Wallet> getWalletStream(String userId) {
+  Stream<Wallet> getWalletStream(String userId) {
     if (_pointsListener != null) {
       return _walletStream;
     }
 
     _pointsListener = _db
         .collection('points')
-        .document(userId)
+        .doc(userId)
         .snapshots()
         .map(
           (pointsSnapshop) => pointsSnapshop.exists
-              ? Wallet.fromJson(pointsSnapshop.data)
+              ? Wallet.fromJson(pointsSnapshop.data())
               : null,
         )
         .listen((wallet) {
@@ -136,35 +136,32 @@ class FirebaseCharityService implements CharityService {
   }
 
   @override
-  Future<List<SavedAccount>> get userAccounts =>
-      _auth.currentUser().then((user) => _db
-          .collection('users')
-          .document(user.uid)
-          .collection('accounts')
-          .getDocuments()
-          .then(
-            (docs) => docs.documents
-                .map((accountSnap) => SavedAccount.fromJson(accountSnap))
-                .toList(),
-          ));
+  Future<List<SavedAccount>> get userAccounts => _db
+      .collection('users')
+      .doc(_auth.currentUser.uid)
+      .collection('accounts')
+      .get()
+      .then(
+        (docs) => docs.docs
+            .map((accountSnap) => SavedAccount.fromJson(accountSnap.data()))
+            .toList(),
+      );
 
   @override
-  Future<void> saveAccount(SavedAccount savedAccount) =>
-      _auth.currentUser().then((user) => _db
-          .collection('users')
-          .document(user.uid)
-          .collection('accounts')
-          .document(savedAccount.iban)
-          .setData(savedAccount.toJson(), merge: true));
+  Future<void> saveAccount(SavedAccount savedAccount) => _db
+      .collection('users')
+      .doc(_auth.currentUser.uid)
+      .collection('accounts')
+      .doc(savedAccount.iban)
+      .set(savedAccount.toJson(), SetOptions(merge: true));
 
   @override
-  Future<void> removeAccount(SavedAccount savedAccount) =>
-      _auth.currentUser().then((user) => _db
-          .collection('users')
-          .document(user.uid)
-          .collection('accounts')
-          .document(savedAccount.iban)
-          .delete());
+  Future<void> removeAccount(SavedAccount savedAccount) => _db
+      .collection('users')
+      .doc(_auth.currentUser.uid)
+      .collection('accounts')
+      .doc(savedAccount.iban)
+      .delete();
 
   @override
   Future<List<News>> getNews() {
@@ -190,75 +187,67 @@ class FirebaseCharityService implements CharityService {
   }
 
   @override
-  Future<void> sendOtpCode() => _auth.currentUser().then(
-        (user) => _db.collection('otp-requests').document(user.uid).setData({
-          'userId': user.uid,
-          'requestedAt': FieldValue.serverTimestamp(),
-        }),
-      );
+  Future<void> sendOtpCode() =>
+      _db.collection('otp-requests').doc(_auth.currentUser.uid).set({
+        'userId': _auth.currentUser.uid,
+        'requestedAt': FieldValue.serverTimestamp(),
+      });
 
   @override
-  Future<bool> checkOtpCode(int code) => _auth.currentUser().then(
-        (user) =>
-            _db.collection('otps').document(user.uid).get().then((otpSnap) {
-          final codeMatches = otpSnap.data['code'] == code;
+  Future<bool> checkOtpCode(int code) =>
+      _db.collection('otps').doc(_auth.currentUser.uid).get().then((otpSnap) {
+        final codeMatches = otpSnap.data()['code'] == code;
 
-          if (codeMatches) {
-            otpSnap.reference.setData({'used': true}, merge: true);
-          }
+        if (codeMatches) {
+          otpSnap.reference.set({'used': true}, SetOptions(merge: true));
+        }
 
-          return codeMatches;
-        }),
-      );
+        return codeMatches;
+      });
 
   @override
-  Future<List<Commission>> getUserCommissions() => _auth.currentUser().then(
-        (user) => _db
-            .collection('commissions')
-            .document(user.uid)
-            .get()
-            .then((commissionsSnap) {
-          if (!commissionsSnap.exists) {
-            return null;
-          }
+  Future<List<Commission>> getUserCommissions() => _db
+          .collection('commissions')
+          .doc(_auth.currentUser.uid)
+          .get()
+          .then((commissionsSnap) {
+        if (!commissionsSnap.exists) {
+          return null;
+        }
 
-          List commissions = [];
-          commissionsSnap.data.forEach((key, value) {
-            if (key != 'userId') {
-              commissions.add(value);
-            }
-          });
-          var result = List<Commission>.from(
-            commissions
-                .map((commissionJson) => Commission.fromJson(commissionJson))
-                .toList(),
-          );
-          result.sort((c1, c2) => c2.createdAt.compareTo(c1.createdAt));
-          return result;
-        }),
-      );
+        List commissions = [];
+        commissionsSnap.data().forEach((key, value) {
+          if (key != 'userId') {
+            commissions.add(value);
+          }
+        });
+        var result = List<Commission>.from(
+          commissions
+              .map((commissionJson) => Commission.fromJson(commissionJson))
+              .toList(),
+        );
+        result.sort((c1, c2) => c2.createdAt.compareTo(c1.createdAt));
+        return result;
+      });
 
   @override
   Future<void> createReferralRequest(String referralCode) =>
-      _auth.currentUser().then(
-            (user) => _db.collection('referral-requests').add(
-              {
-                'newUserId': user.uid,
-                'referralCode': referralCode,
-                'createdAt': FieldValue.serverTimestamp(),
-              },
-            ),
-          );
+      _db.collection('referral-requests').add(
+        {
+          'newUserId': _auth.currentUser.uid,
+          'referralCode': referralCode,
+          'createdAt': FieldValue.serverTimestamp(),
+        },
+      );
 
   @override
   Future<List<Referral>> getReferrals() async {
-    final user = await _auth.currentUser();
     final List<Referral> referrals = await _db
         .collection('referrals')
-        .where('ownerId', isEqualTo: user.uid)
-        .getDocuments()
-        .then((referralDocs) => referralDocs.documents
-            .map((refDoc) => Referral.fromJson(refDoc.data))
+        .where('ownerId', isEqualTo: _auth.currentUser.uid)
+        .get()
+        .then((referralDocs) => referralDocs.docs
+            .map((refDoc) => Referral.fromJson(refDoc.data()))
             .toList());
 
     if (referrals.isNotEmpty) {
@@ -285,12 +274,12 @@ class FirebaseCharityService implements CharityService {
       return _cachedReferralLink;
     }
 
-    final user = await _auth.currentUser();
     String prefix = await remoteConfig.getDynamicLinksPrefix();
     String imageUrl = await remoteConfig.getMetaImage();
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: prefix,
-      link: Uri.parse('https://charitydiscount.ro/referral/${user.uid}'),
+      link: Uri.parse(
+          'https://charitydiscount.ro/referral/${_auth.currentUser.uid}'),
       androidParameters: AndroidParameters(
         packageName: 'com.clover.charity_discount',
         minimumVersion: 500,
