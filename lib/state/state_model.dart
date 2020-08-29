@@ -11,7 +11,6 @@ import 'package:charity_discount/util/constants.dart';
 import 'package:charity_discount/util/remote_config.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/user.dart';
@@ -20,8 +19,10 @@ import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/local.dart';
 
 class AppModel extends Model {
+  bool _loading = true;
   bool _introCompleted = false;
   bool _explanationSkipped = false;
+  bool _referralSent = false;
   User _user;
   Settings _settings = Settings(
     displayMode: DisplayMode.GRID,
@@ -35,12 +36,9 @@ class AppModel extends Model {
   ProgramMeta _programsMeta;
   Wallet wallet;
   double minimumWithdrawalAmount;
-  BehaviorSubject<bool> loading;
   String _referralCode;
-  bool _referralSent = false;
 
   AppModel() {
-    setupServices();
     createListeners();
     initFromLocal();
     remoteConfig
@@ -49,10 +47,10 @@ class AppModel extends Model {
   }
 
   void createListeners() {
-    loading = BehaviorSubject();
     _profileListener = locator<AuthService>().profile.listen(
       (profile) {
         if (profile == null) {
+          finishLoading();
           return;
         }
 
@@ -93,7 +91,7 @@ class AppModel extends Model {
           updateProgramsMeta(),
         ];
         Future.wait(futuresForLoading).then((loaded) {
-          loading.add(false);
+          finishLoading();
         });
       },
     );
@@ -102,16 +100,12 @@ class AppModel extends Model {
   Future<void> closeListeners() async {
     clearFavoriteShops();
     await _profileListener.cancel();
-    loading.close();
   }
 
   bool _isRecentEnough(DateTime creationTime) =>
       DateTime.now().toUtc().difference(creationTime.toUtc()).inMinutes < 5;
 
-  static AppModel of(
-    BuildContext context, {
-    bool rebuildOnChange = false,
-  }) =>
+  static AppModel of(BuildContext context, {bool rebuildOnChange = false}) =>
       ScopedModel.of<AppModel>(context, rebuildOnChange: rebuildOnChange);
 
   Future<Null> initFromLocal() async {
@@ -136,6 +130,15 @@ class AppModel extends Model {
     if (explanationSkipped != null) {
       skipExplanation(explanationSkipped);
     }
+  }
+
+  bool get loading => _loading;
+  void finishLoading() {
+    if (!_loading) {
+      return;
+    }
+    _loading = false;
+    notifyListeners();
   }
 
   bool get introCompleted => _introCompleted;

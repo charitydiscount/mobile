@@ -159,7 +159,7 @@ class ProductCard extends StatelessWidget {
         '${product.price.toString()} Lei',
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 12,
+          fontSize: 10,
         ),
       );
 }

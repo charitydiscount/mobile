@@ -16,5 +16,6 @@ ThemeData buildTheme({bool dark = false}) {
       backgroundColor: const Color(0xFFA80000),
       foregroundColor: Colors.white,
     ),
+    toggleableActiveColor: const Color(0xFFE32029),
   );
 }

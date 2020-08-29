@@ -358,7 +358,6 @@ class _ShopsWidgetState extends State<ShopsWidget>
 
     return GridView.builder(
       key: Key('ProgramsGridView${widget.key.toString()}'),
-      addAutomaticKeepAlives: true,
       shrinkWrap: true,
       gridDelegate: getGridDelegate(context),
       itemCount: programs.length,

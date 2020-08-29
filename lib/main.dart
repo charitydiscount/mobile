@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:async/async.dart';
 import 'package:charity_discount/models/settings.dart';
 import 'package:charity_discount/router.dart' as appRouter;
 import 'package:charity_discount/services/analytics.dart';
@@ -79,27 +80,16 @@ class _MainState extends State<Main> {
   Widget _buildDefaultWidget({int initialScreen = 0}) {
     return ScopedModelDescendant<AppModel>(
       builder: (context, child, appModel) {
-        if (appModel.introCompleted == false) {
+        if (appModel.loading) {
+          return AppLoading(child: buildLoading(context));
+        }
+
+        if (!appModel.introCompleted) {
           return WelcomeScreen();
         }
 
         if (appModel.user != null && appModel.user.userId != null) {
-          return StreamBuilder<bool>(
-            stream: AppModel.of(context).loading,
-            builder: (context, snapshot) {
-              final loading = buildConnectionLoading(
-                context: context,
-                snapshot: snapshot,
-              );
-              if (loading != null) {
-                return AppLoading(child: loading);
-              }
-              if (snapshot.data == true) {
-                return AppLoading(child: buildLoading(context));
-              }
-              return HomeScreen(initialScreen: initialScreen);
-            },
-          );
+          return HomeScreen(initialScreen: initialScreen);
         }
 
         WidgetsBinding.instance.addPostFrameCallback(
@@ -255,13 +245,16 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = CustomHttpOverrides();
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
+  AsyncMemoizer<FirebaseApp> _firebaseMemoizer = AsyncMemoizer();
+
+  setupServices();
 
   runApp(
     EasyLocalization(
       path: 'assets/i18n',
       supportedLocales: supportedLanguages.map((l) => l.locale).toList(),
       child: FutureBuilder(
-        future: Firebase.initializeApp(),
+        future: _firebaseMemoizer.runOnce(() => Firebase.initializeApp()),
         builder: (context, snapshot) {
           var loading = buildConnectionLoading(
             context: context,
