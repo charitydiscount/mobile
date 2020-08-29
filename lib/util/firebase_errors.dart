@@ -1,7 +1,7 @@
-import 'package:flutter/services.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 String getExceptionText(Exception e) {
-  if (e is PlatformException) {
+  if (e is FirebaseException) {
     switch (e.message) {
       case 'There is no user record corresponding to this identifier. The user may have been deleted.':
         return 'User with this email address not found.';

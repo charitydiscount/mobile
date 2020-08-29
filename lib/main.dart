@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:async/async.dart';
 import 'package:charity_discount/models/settings.dart';
 import 'package:charity_discount/router.dart' as appRouter;
 import 'package:charity_discount/services/analytics.dart';
@@ -241,11 +240,11 @@ class AppLoading extends StatelessWidget {
   }
 }
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = CustomHttpOverrides();
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
-  AsyncMemoizer<FirebaseApp> _firebaseMemoizer = AsyncMemoizer();
+  await Firebase.initializeApp();
 
   setupServices();
 
@@ -253,21 +252,9 @@ void main() {
     EasyLocalization(
       path: 'assets/i18n',
       supportedLocales: supportedLanguages.map((l) => l.locale).toList(),
-      child: FutureBuilder(
-        future: _firebaseMemoizer.runOnce(() => Firebase.initializeApp()),
-        builder: (context, snapshot) {
-          var loading = buildConnectionLoading(
-            context: context,
-            snapshot: snapshot,
-          );
-          if (loading != null) {
-            return loading;
-          }
-          return ScopedModel(
-            model: AppModel(),
-            child: Main(),
-          );
-        },
+      child: ScopedModel(
+        model: AppModel(),
+        child: Main(),
       ),
     ),
   );
