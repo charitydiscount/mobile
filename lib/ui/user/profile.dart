@@ -166,7 +166,10 @@ class _ProfileState extends State<Profile> {
   }
 
   Future _pickImage(ImageSource source) async {
-    final selectedImage = await ImagePicker().getImage(source: source);
+    final selectedImage = await ImagePicker().getImage(
+      source: source,
+      imageQuality: 85,
+    );
     if (selectedImage == null) {
       return;
     }
@@ -174,7 +177,8 @@ class _ProfileState extends State<Profile> {
       sourcePath: selectedImage.path,
       cropStyle: CropStyle.circle,
       compressFormat: ImageCompressFormat.jpg,
-      compressQuality: 30,
+      maxHeight: 400,
+      maxWidth: 400,
     );
     if (croppedImage == null) {
       return;
