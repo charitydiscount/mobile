@@ -5,6 +5,7 @@ import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/meta.dart';
+import 'package:charity_discount/services/notifications.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/util/constants.dart';
@@ -26,8 +27,8 @@ class AppModel extends Model {
   User _user;
   Settings _settings = Settings(
     displayMode: DisplayMode.GRID,
-    lang: 'en',
-    notifications: true,
+    notificationsForCashback: true,
+    notificationsForPromotions: true,
   );
   StreamSubscription _profileListener;
   List<Program> _programs;
@@ -120,6 +121,20 @@ class AppModel extends Model {
     }
     if (settings != null) {
       setSettings(settings);
+      if (settings.notificationsForPromotions == null) {
+        final token = await fcm.getToken();
+        await locator<MetaService>().setNotificationsForPromotions(
+          token,
+          true,
+        );
+      }
+    } else {
+      await localService.storeSettingsLocal(_settings);
+      final token = await fcm.getToken();
+      await locator<MetaService>().setNotificationsForPromotions(
+        token,
+        true,
+      );
     }
     if (isIntroCompleted != null) {
       finishIntro();

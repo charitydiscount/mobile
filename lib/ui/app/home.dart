@@ -31,7 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
   int selectedNavIndex = 0;
   List<Widget> _widgets = [Container(), Container(), Container(), Container()];
   List<bool> _loadedWidgets = [false, false, false, false];
-  bool _showNotifications = true;
 
   _HomeScreenState({this.selectedNavIndex});
 
@@ -39,43 +38,22 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _configureFcm(context);
-    var state = AppModel.of(context);
-    state.addListener(() {
-      if (_showNotifications != state.settings.notifications) {
-        _configureFcm(context);
-        _showNotifications = state.settings.notifications;
-      }
-    });
   }
 
   void _configureFcm(BuildContext context) {
-    _showNotifications = AppModel.of(context).settings.notifications;
-    if (_showNotifications) {
-      fcm.configure(
-        onMessage: (Map<String, dynamic> message) async {
-          if (mounted) {
-            Flushbar(
-              title: message['notification']['title'],
-              message: message['notification']['body'],
-            )?.show(context);
-          }
-        },
-        onLaunch: _handleBackgroundNotification,
-        onResume: _handleBackgroundNotification,
-        onBackgroundMessage: backgroundMessageHandler,
-      );
-    } else {
-      fcm.configure(
-        onMessage: (Map<String, dynamic> message) async {
-          if (mounted) {
-            Flushbar(
-              title: message['notification']['title'],
-              message: message['notification']['body'],
-            )?.show(context);
-          }
-        },
-      );
-    }
+    fcm.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        if (mounted) {
+          Flushbar(
+            title: message['notification']['title'],
+            message: message['notification']['body'],
+          )?.show(context);
+        }
+      },
+      onLaunch: _handleBackgroundNotification,
+      onResume: _handleBackgroundNotification,
+      onBackgroundMessage: backgroundMessageHandler,
+    );
   }
 
   static Future<dynamic> backgroundMessageHandler(

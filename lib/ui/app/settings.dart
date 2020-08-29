@@ -5,6 +5,7 @@ import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/locale.dart';
 import 'package:charity_discount/util/social_icons.dart';
+import 'package:charity_discount/util/tools.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
@@ -38,25 +39,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
           supportedLanguages.map((lang) => _buildLanguageTile(lang)).toList(),
     );
     settingTiles.add(language);
-    Widget notifications = ListTile(
+    Widget notifications = ExpansionTile(
       leading: Icon(Icons.notifications),
       title: Text(tr('notifications', context: context)),
-      trailing: Switch.adaptive(
-        value: _state.settings.notifications || false,
-        onChanged: (bool newValue) {
-          var newSettings = _state.settings;
-          newSettings.notifications = newValue;
-          setState(() {
-            _state.setSettings(newSettings, storeLocal: true);
-          });
-          fcm.getToken().then(
-                (token) => locator<MetaService>().setNotifications(
-                  token,
-                  newValue,
-                ),
-              );
-        },
-      ),
+      children: [
+        ListTile(
+          title: Text(capitalize(tr('commission', context: context))),
+          trailing: Switch.adaptive(
+            value: _state.settings.notificationsForCashback || false,
+            onChanged: (bool newValue) {
+              var newSettings = _state.settings;
+              newSettings.notificationsForCashback = newValue;
+              setState(() {
+                _state.setSettings(newSettings, storeLocal: true);
+              });
+              fcm.getToken().then(
+                    (token) => locator<MetaService>().setNotifications(
+                      token,
+                      newValue,
+                    ),
+                  );
+            },
+          ),
+        ),
+        ListTile(
+          title: Text(tr('promotion.promotions', context: context)),
+          trailing: Switch.adaptive(
+            value: _state.settings.notificationsForPromotions || false,
+            onChanged: (bool newValue) {
+              var newSettings = _state.settings;
+              newSettings.notificationsForPromotions = newValue;
+              setState(() {
+                _state.setSettings(newSettings, storeLocal: true);
+              });
+              fcm.getToken().then(
+                    (token) =>
+                        locator<MetaService>().setNotificationsForPromotions(
+                      token,
+                      newValue,
+                    ),
+                  );
+            },
+          ),
+        ),
+      ],
     );
     settingTiles.add(notifications);
 
@@ -152,12 +178,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ? Icon(Icons.check)
               : null,
       onTap: () {
-        var newSettings = _state.settings;
-        newSettings.lang = language.code;
         EasyLocalization.of(context).locale = language.locale;
-        setState(() {
-          _state.setSettings(newSettings, storeLocal: true);
-        });
+        setState(() {});
       },
     );
   }
