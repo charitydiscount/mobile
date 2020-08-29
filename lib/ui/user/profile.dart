@@ -197,10 +197,11 @@ class _ProfileState extends State<Profile> {
       _uploadTask.onComplete.then((snap) async {
         String imageUrl = await snap.ref.getDownloadURL();
         var userState = AppModel.of(context).user;
+        userState.photoUrl = imageUrl;
+        await locator<AuthService>().updateUser(photoUrl: imageUrl);
         setState(() {
-          userState.photoUrl = imageUrl;
+          AppModel.of(context).setUser(userState);
         });
-        locator<AuthService>().updateUser(photoUrl: imageUrl);
       });
     });
   }
