@@ -11,6 +11,7 @@ import 'package:charity_discount/ui/products/products_screen.dart';
 import 'package:charity_discount/ui/programs/promotion.dart';
 import 'package:charity_discount/ui/programs/rate_shop.dart';
 import 'package:charity_discount/ui/programs/rating.dart';
+import 'package:charity_discount/ui/programs/reviews.dart';
 import 'package:charity_discount/ui/tutorial/access_explanation.dart';
 import 'package:charity_discount/util/tools.dart';
 import 'package:charity_discount/ui/app/util.dart';
@@ -42,6 +43,7 @@ class ShopDetails extends StatefulWidget {
 class _ShopDetailsState extends State<ShopDetails> {
   AsyncMemoizer _promotionsMemoizer = AsyncMemoizer();
   AsyncMemoizer<ProductSearchResult> _productsMemoizer = AsyncMemoizer();
+  AsyncMemoizer<List<Review>> _reviewsMemoizer = AsyncMemoizer();
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +62,9 @@ class _ShopDetailsState extends State<ShopDetails> {
         Theme.of(context).textTheme.headline5.fontSize * 0.7;
 
     Widget ratingBuilder = FutureBuilder<List<Review>>(
-      future: widget.shopsService.getProgramRating(widget.program.uniqueCode),
+      future: _reviewsMemoizer.runOnce(
+        () => widget.shopsService.getProgramRating(widget.program.uniqueCode),
+      ),
       builder: (context, snapshot) {
         final loading = buildConnectionLoading(
           context: context,
@@ -120,7 +124,9 @@ class _ShopDetailsState extends State<ShopDetails> {
                       message: tr('review.itIsImportant'),
                       reverseAnimationCurve: Curves.linear,
                     ).show(context).then((value) {
-                      setState(() {});
+                      setState(() {
+                        _reviewsMemoizer = AsyncMemoizer();
+                      });
                     });
                   }
                 });
@@ -129,7 +135,10 @@ class _ShopDetailsState extends State<ShopDetails> {
           ),
         );
 
+        snapshot.data.sort((r1, r2) => r2.createdAt.compareTo(r1.createdAt));
+
         List<Widget> reviewsWidgets = snapshot.data
+            .take(3)
             .map((rating) => RatingWidget(rating: rating))
             .toList();
 
@@ -149,6 +158,27 @@ class _ShopDetailsState extends State<ShopDetails> {
         ];
 
         reviewSection.addAll(reviewsWidgets);
+
+        if (snapshot.data.length > 3) {
+          reviewSection.add(
+            Center(
+              child: FlatButton(
+                child: Text(tr('seeAll')),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => ProgramReviewsScreen(
+                        reviews: snapshot.data,
+                      ),
+                      settings: RouteSettings(name: 'Reviews'),
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        }
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -393,8 +423,10 @@ class _ShopDetailsState extends State<ShopDetails> {
               physics: NeverScrollableScrollPhysics(),
               gridDelegate: getGridDelegate(context, aspectRatioFactor: 0.95),
               itemCount: products.length,
-              itemBuilder: (context, index) =>
-                  ProductCard(product: products[index], showShopLogo: false),
+              itemBuilder: (context, index) => ProductCard(
+                product: products[index],
+                showShopLogo: false,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(
