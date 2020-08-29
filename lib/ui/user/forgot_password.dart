@@ -141,10 +141,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         )..show(context);
       } catch (e) {
         _changeLoadingVisible();
-        print("Forgot Password Error: $e");
+        print('Forgot Password Error: $e');
         String exception = getExceptionText(e);
         Flushbar(
-          title: "Forgot Password Error",
+          title: 'Forgot Password Error',
           message: exception,
           duration: Duration(seconds: 10),
         )..show(context);

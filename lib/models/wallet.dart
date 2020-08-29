@@ -74,8 +74,8 @@ class Transaction {
   });
 
   factory Transaction.fromJson(dynamic json) => Transaction(
-        type: txTypeFromString(json["type"] as String),
-        date: (json["date"] as Timestamp).toDate(),
+        type: txTypeFromString(json['type'] as String),
+        date: (json['date'] as Timestamp).toDate(),
         amount: json['amount'] != null ? json['amount'].toDouble() : null,
         currency: json['currency'] ?? 'RON',
         target: Target.fromJson(json['target']),

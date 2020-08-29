@@ -497,14 +497,12 @@ class ProgramsSearch extends SearchDelegate<String> {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
           child: SubstringHighlight(
-            text: hit.name, // each string needing highlighting
-            term: hit.query, // user typed "m4a"
+            text: hit.name,
+            term: hit.query,
             textStyle: TextStyle(
-              // non-highlight style
               color: Colors.grey,
             ),
             textStyleHighlight: TextStyle(
-              // highlight style
               color: Colors.black,
               decoration: TextDecoration.underline,
             ),
