@@ -95,5 +95,7 @@
 		<string>https://charitydiscount.ro/invite</string>
 		<string>https://charitydiscount-test.web.app/invite</string>
 	</array>
+	<key>MinimumOSVersion</key>
+  <string>10.0</string>
 </dict>
 </plist>
