@@ -53,7 +53,6 @@ class _CharityState extends State<CharityWidget>
           key: Key('casesList'),
           children: caseWidgets,
           shrinkWrap: true,
-          addAutomaticKeepAlives: true,
           primary: true,
           gridDelegate: getGridDelegate(
             context,

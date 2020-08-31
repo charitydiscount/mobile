@@ -244,5 +244,6 @@
     "title": "A Short Explanation",
     "content": "You are about to open the shop's website. You can freely browse and purchase the products you want.\nThe website will remember that you arrived from CharityDiscount for a few days (only on this device).\nShortly after your purchase, your cashback will show up in CharityDiscount (you will also be notified).\nInitially, the cashback will be in a pending state for a few days (usually between 14 and 60) and after that, if you haven't returned the products, it will become available.",
     "disableExplanation": "I don't need to see this again"
-  }
+  },
+  "seeAll": "See all"
 }

@@ -14,9 +14,9 @@ class Charity {
   });
 
   factory Charity.fromJson(Map<String, dynamic> json) => Charity(
-        title: json["title"] as String,
-        description: json["description"] as String,
-        images: (json["images"] as List)
+        title: json['title'] as String,
+        description: json['description'] as String,
+        images: (json['images'] as List)
             ?.map(
               (img) => img == null
                   ? null
@@ -25,7 +25,7 @@ class Charity {
                     ),
             )
             ?.toList(),
-        site: json["site"] ?? null,
+        site: json['site'] ?? null,
       );
 }
 
@@ -35,6 +35,6 @@ class CharityImage {
   CharityImage({this.url});
 
   factory CharityImage.fromJson(Map<String, dynamic> json) => CharityImage(
-        url: json["url"] as String,
+        url: json['url'] as String,
       );
 }

@@ -79,27 +79,16 @@ class _MainState extends State<Main> {
   Widget _buildDefaultWidget({int initialScreen = 0}) {
     return ScopedModelDescendant<AppModel>(
       builder: (context, child, appModel) {
-        if (appModel.introCompleted == false) {
+        if (appModel.loading) {
+          return AppLoading(child: buildLoading(context));
+        }
+
+        if (!appModel.introCompleted) {
           return WelcomeScreen();
         }
 
         if (appModel.user != null && appModel.user.userId != null) {
-          return StreamBuilder<bool>(
-            stream: AppModel.of(context).loading,
-            builder: (context, snapshot) {
-              final loading = buildConnectionLoading(
-                context: context,
-                snapshot: snapshot,
-              );
-              if (loading != null) {
-                return AppLoading(child: loading);
-              }
-              if (snapshot.data == true) {
-                return AppLoading(child: buildLoading(context));
-              }
-              return HomeScreen(initialScreen: initialScreen);
-            },
-          );
+          return HomeScreen(initialScreen: initialScreen);
         }
 
         WidgetsBinding.instance.addPostFrameCallback(
@@ -251,30 +240,21 @@ class AppLoading extends StatelessWidget {
   }
 }
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = CustomHttpOverrides();
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
+  await Firebase.initializeApp();
+
+  setupServices();
 
   runApp(
     EasyLocalization(
       path: 'assets/i18n',
       supportedLocales: supportedLanguages.map((l) => l.locale).toList(),
-      child: FutureBuilder(
-        future: Firebase.initializeApp(),
-        builder: (context, snapshot) {
-          var loading = buildConnectionLoading(
-            context: context,
-            snapshot: snapshot,
-          );
-          if (loading != null) {
-            return loading;
-          }
-          return ScopedModel(
-            model: AppModel(),
-            child: Main(),
-          );
-        },
+      child: ScopedModel(
+        model: AppModel(),
+        child: Main(),
       ),
     ),
   );

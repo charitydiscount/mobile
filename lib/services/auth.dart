@@ -185,8 +185,9 @@ class AuthService {
     String photoUrl,
   }) async {
     await updateFirebaseUser(
-      name:
-          firstName != null || lastName != null ? '$firstName $lastName' : null,
+      name: firstName != null || lastName != null
+          ? '$firstName $lastName'.trim()
+          : null,
       photoUrl: photoUrl,
     );
   }
@@ -196,7 +197,7 @@ class AuthService {
     String photoUrl,
   }) async {
     return _auth.currentUser.updateProfile(
-      displayName: name.trim(),
+      displayName: name,
       photoURL: photoUrl,
     );
   }

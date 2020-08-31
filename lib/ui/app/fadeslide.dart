@@ -27,7 +27,11 @@ class _FadeSlideState extends State<FadeSlide>
       duration: const Duration(seconds: 1),
       vsync: this,
     );
-    Future.delayed(widget.delay).then((_) => _controller.animateTo(1.0));
+    Future.delayed(widget.delay).then((_) {
+      if (mounted) {
+        _controller.animateTo(1.0);
+      }
+    });
 
     _offsetAnimation = Tween<Offset>(
       begin: const Offset(0, 0.2),

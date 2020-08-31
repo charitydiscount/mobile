@@ -166,7 +166,10 @@ class _ProfileState extends State<Profile> {
   }
 
   Future _pickImage(ImageSource source) async {
-    final selectedImage = await ImagePicker().getImage(source: source);
+    final selectedImage = await ImagePicker().getImage(
+      source: source,
+      imageQuality: 85,
+    );
     if (selectedImage == null) {
       return;
     }
@@ -174,7 +177,8 @@ class _ProfileState extends State<Profile> {
       sourcePath: selectedImage.path,
       cropStyle: CropStyle.circle,
       compressFormat: ImageCompressFormat.jpg,
-      compressQuality: 30,
+      maxHeight: 400,
+      maxWidth: 400,
     );
     if (croppedImage == null) {
       return;
@@ -197,10 +201,11 @@ class _ProfileState extends State<Profile> {
       _uploadTask.onComplete.then((snap) async {
         String imageUrl = await snap.ref.getDownloadURL();
         var userState = AppModel.of(context).user;
+        userState.photoUrl = imageUrl;
+        await locator<AuthService>().updateUser(photoUrl: imageUrl);
         setState(() {
-          userState.photoUrl = imageUrl;
+          AppModel.of(context).setUser(userState);
         });
-        locator<AuthService>().updateUser(photoUrl: imageUrl);
       });
     });
   }

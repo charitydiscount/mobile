@@ -54,6 +54,7 @@ class UserController {
     }
     var token = await fcm.getToken();
     await locator<MetaService>().removeFcmToken(token);
+    await locator<MetaService>().setNotificationsForPromotions(token, false);
     _iosSubscription?.cancel();
     await resetServices();
   }
@@ -69,7 +70,8 @@ class UserController {
 
   void _registerFcmToken() async {
     final token = await fcm.getToken();
-    locator<MetaService>().addFcmToken(token);
+    await locator<MetaService>().addFcmToken(token);
+    await locator<MetaService>().setNotificationsForPromotions(token, true);
   }
 }
 

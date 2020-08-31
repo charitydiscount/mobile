@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:device_info/device_info.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
@@ -343,7 +344,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   void _handleAuthError(Exception e) {
     _toggleLoadingVisible();
-    if (e is PlatformException) {
+    if (e is FirebaseException) {
       Flushbar(
         title: 'Sign In Error',
         message: e.message,

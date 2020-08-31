@@ -270,7 +270,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
       shrinkWrap: true,
       primary: false,
       controller: _productsScrollController,
-      addAutomaticKeepAlives: true,
       gridDelegate: getGridDelegate(context, aspectRatioFactor: 0.95),
       itemCount: _products.length + (_searchInProgress ? 1 : 0),
       itemBuilder: (context, index) => index < _products.length

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:charity_discount/models/meta.dart';
+import 'package:charity_discount/services/notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
@@ -72,6 +73,23 @@ class MetaService {
         },
         SetOptions(merge: true),
       );
+
+  Future<void> setNotificationsForPromotions(
+    String deviceToken,
+    bool notificationsEnabled,
+  ) {
+    return notificationsEnabled
+        ? fcm.subscribeToTopic('campaigns')
+        : fcm.unsubscribeFromTopic('campaigns');
+    // return _db.collection('notifications').doc('promotions').set(
+    //   {
+    //     _auth.currentUser.uid: notificationsEnabled
+    //         ? FieldValue.arrayUnion([deviceToken])
+    //         : FieldValue.arrayRemove([deviceToken]),
+    //   },
+    //   SetOptions(merge: true),
+    // );
+  }
 
   Future<void> closeListeners() async {
     if (_programsMetaListener != null) {

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/models/rating.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:charity_discount/models/favorite_shops.dart';
 
@@ -58,8 +57,11 @@ class FirebaseShopsService implements ShopsService {
   }
 
   void _handleFavDocNotExistent(
-      dynamic e, String userId, models.Program program) {
-    if (!(e is PlatformException)) {
+    dynamic e,
+    String userId,
+    models.Program program,
+  ) {
+    if (!(e is FirebaseException)) {
       throw e;
     }
 
@@ -128,7 +130,7 @@ class FirebaseShopsService implements ShopsService {
     models.Program program,
     Review review,
   ) async {
-    if (!(e is PlatformException)) {
+    if (!(e is FirebaseException)) {
       return null;
     }
 

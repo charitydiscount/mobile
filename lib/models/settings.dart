@@ -21,21 +21,21 @@ DisplayMode displayModeFromString(String displayModeString) {
 }
 
 class Settings {
-  String lang;
-  bool notifications = true;
+  bool notificationsForCashback = true;
+  bool notificationsForPromotions = true;
   DisplayMode displayMode = DisplayMode.LIST;
   ThemeOption theme;
 
   Settings({
-    this.lang,
-    this.notifications,
+    this.notificationsForCashback,
+    this.notificationsForPromotions,
     this.displayMode,
     this.theme = ThemeOption.LIGHT,
   });
 
   factory Settings.fromJson(Map<String, dynamic> json) => Settings(
-        lang: json['lang'] ?? 'en',
-        notifications: json['notifications'] ?? true,
+        notificationsForCashback: json['notifications'] ?? true,
+        notificationsForPromotions: json['notificationsForPromotions'] ?? true,
         displayMode: displayModeFromString(
           json['displayMode'] ?? DisplayMode.LIST.toString(),
         ),
@@ -45,8 +45,8 @@ class Settings {
       );
 
   Map<String, dynamic> toJson() => {
-        'lang': lang,
-        'notifications': notifications,
+        'notifications': notificationsForCashback,
+        'notificationsForPromotions': notificationsForPromotions,
         'displayMode': displayMode.toString(),
         'theme': theme.toString(),
       };
