@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/product.dart';
 import 'package:charity_discount/models/promotion.dart';
 import 'package:charity_discount/models/rating.dart';
-import 'package:charity_discount/services/analytics.dart';
+import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/state/locator.dart';
@@ -12,7 +12,6 @@ import 'package:charity_discount/ui/programs/promotion.dart';
 import 'package:charity_discount/ui/programs/rate_shop.dart';
 import 'package:charity_discount/ui/programs/rating.dart';
 import 'package:charity_discount/ui/programs/reviews.dart';
-import 'package:charity_discount/ui/tutorial/access_explanation.dart';
 import 'package:charity_discount/util/tools.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -26,15 +25,8 @@ import 'package:async/async.dart';
 
 class ShopDetails extends StatefulWidget {
   final models.Program program;
-  final ShopsService shopsService;
-  final SearchService searchService;
 
-  const ShopDetails({
-    Key key,
-    @required this.program,
-    @required this.shopsService,
-    @required this.searchService,
-  }) : super(key: key);
+  const ShopDetails({Key key, @required this.program}) : super(key: key);
 
   @override
   _ShopDetailsState createState() => _ShopDetailsState();
@@ -63,7 +55,8 @@ class _ShopDetailsState extends State<ShopDetails> {
 
     Widget ratingBuilder = FutureBuilder<List<Review>>(
       future: _reviewsMemoizer.runOnce(
-        () => widget.shopsService.getProgramRating(widget.program.uniqueCode),
+        () =>
+            locator<ShopsService>().getProgramRating(widget.program.uniqueCode),
       ),
       builder: (context, snapshot) {
         final loading = buildConnectionLoading(
@@ -95,45 +88,46 @@ class _ShopDetailsState extends State<ShopDetails> {
         );
         bool alreadyReviewed = thisUserReview != null;
 
-        Widget addReview = ClipOval(
-          child: Container(
-            color: Colors.green,
-            child: IconButton(
-              color: Colors.white,
-              icon: alreadyReviewed ? Icon(Icons.edit) : Icon(Icons.add),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    maintainState: true,
-                    builder: (BuildContext context) => RateScreen(
-                      program: widget.program,
-                      shopsService: widget.shopsService,
-                      existingReview: thisUserReview,
-                    ),
-                    settings: RouteSettings(name: 'ProvideRating'),
-                  ),
-                ).then((createdReview) {
-                  if (createdReview != null && createdReview) {
-                    Flushbar(
-                      icon: Icon(
-                        Icons.check,
-                        color: Colors.green,
-                      ),
-                      title: tr('review.thankYou'),
-                      message: tr('review.itIsImportant'),
-                      reverseAnimationCurve: Curves.linear,
-                    ).show(context).then((value) {
-                      setState(() {
-                        _reviewsMemoizer = AsyncMemoizer();
+        Widget addReview = locator<AuthService>().isActualUser()
+            ? ClipOval(
+                child: Container(
+                  color: Colors.green,
+                  child: IconButton(
+                    color: Colors.white,
+                    icon: alreadyReviewed ? Icon(Icons.edit) : Icon(Icons.add),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          maintainState: true,
+                          builder: (BuildContext context) => RateScreen(
+                            program: widget.program,
+                            existingReview: thisUserReview,
+                          ),
+                          settings: RouteSettings(name: 'ProvideRating'),
+                        ),
+                      ).then((createdReview) {
+                        if (createdReview != null && createdReview) {
+                          Flushbar(
+                            icon: Icon(
+                              Icons.check,
+                              color: Colors.green,
+                            ),
+                            title: tr('review.thankYou'),
+                            message: tr('review.itIsImportant'),
+                            reverseAnimationCurve: Curves.linear,
+                          ).show(context).then((value) {
+                            setState(() {
+                              _reviewsMemoizer = AsyncMemoizer();
+                            });
+                          });
+                        }
                       });
-                    });
-                  }
-                });
-              },
-            ),
-          ),
-        );
+                    },
+                  ),
+                ),
+              )
+            : Container();
 
         snapshot.data.sort((r1, r2) => r2.createdAt.compareTo(r1.createdAt));
 
@@ -235,22 +229,14 @@ class _ShopDetailsState extends State<ShopDetails> {
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.open_in_new),
         label: Text(tr('accessShop')),
-        onPressed: () async {
-          analytics.logEvent(
-            name: 'access_shop',
-            parameters: {
-              'id': widget.program.id,
-              'name': widget.program.name,
-              'screen': 'program_details',
-            },
+        onPressed: () {
+          openAffiliateLink(
+            widget.program.actualAffiliateUrl,
+            context,
+            widget.program.id,
+            widget.program.name,
+            'program_details',
           );
-
-          bool continueToShop = await showExplanationDialog(context);
-          if (continueToShop != true) {
-            return;
-          }
-
-          launchURL(widget.program.actualAffiliateUrl);
         },
       ),
       body: SingleChildScrollView(
@@ -400,9 +386,9 @@ class _ShopDetailsState extends State<ShopDetails> {
 
     return FutureBuilder(
       future: _productsMemoizer.runOnce(() =>
-          Future.delayed(Duration(milliseconds: 500)).then((_) => widget
-              .searchService
-              .getProductsForProgram(programId: widget.program.id))),
+          Future.delayed(Duration(milliseconds: 500)).then((_) =>
+              locator<SearchServiceBase>()
+                  .getProductsForProgram(programId: widget.program.id))),
       builder: (context, snapshot) {
         final loading = buildConnectionLoading(
           context: context,
@@ -420,7 +406,6 @@ class _ShopDetailsState extends State<ShopDetails> {
             GridView.builder(
               shrinkWrap: true,
               primary: false,
-              physics: NeverScrollableScrollPhysics(),
               gridDelegate: getGridDelegate(context, aspectRatioFactor: 0.95),
               itemCount: products.length,
               itemBuilder: (context, index) => ProductCard(

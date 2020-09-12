@@ -1,10 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/product.dart';
-import 'package:charity_discount/services/analytics.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/ui/app/util.dart';
-import 'package:charity_discount/ui/tutorial/access_explanation.dart';
 import 'package:charity_discount/util/tools.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -27,22 +25,14 @@ class ProductDetails extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.open_in_new),
         label: Text(tr('accessShop')),
-        onPressed: () async {
-          analytics.logEvent(
-            name: 'access_shop',
-            parameters: {
-              'id': product.program.id,
-              'name': product.program.name,
-              'screen': 'product_details',
-            },
+        onPressed: () {
+          openAffiliateLink(
+            product.affiliateUrl,
+            context,
+            product.program.id,
+            product.program.name,
+            'product_details',
           );
-
-          bool continueToShop = await showExplanationDialog(context);
-          if (continueToShop != true) {
-            return;
-          }
-
-          launchURL(product.affiliateUrl);
         },
       ),
       body: SingleChildScrollView(
@@ -166,10 +156,7 @@ class ProductDetails extends StatelessWidget {
                   ],
                 ),
                 Expanded(
-                  child: PriceChart(
-                    searchService: locator<SearchServiceBase>(),
-                    productId: product.id,
-                  ),
+                  child: PriceChart(productId: product.id),
                 ),
               ],
             ),
@@ -186,9 +173,18 @@ class ProductDetails extends StatelessWidget {
         leading: Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: CachedNetworkImage(
-            imageUrl: product.program.logoPath,
+            imageUrl: Uri.tryParse(product.program.logoPath) != null
+                ? product.program.logoPath
+                : null,
             width: 60,
             fit: BoxFit.contain,
+            errorWidget: (context, url, error) => Container(
+              height: 80,
+              child: Icon(
+                Icons.error,
+                color: Colors.grey,
+              ),
+            ),
           ),
         ),
         title: Text('${product.program.name}'),
@@ -286,15 +282,14 @@ class ProductDetails extends StatelessWidget {
 }
 
 class PriceChart extends StatelessWidget {
-  final SearchService searchService;
   final String productId;
 
-  PriceChart({this.searchService, this.productId});
+  PriceChart({this.productId});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<ProductPriceHistory>(
-      future: searchService.getProductPriceHistory(productId),
+      future: locator<SearchServiceBase>().getProductPriceHistory(productId),
       builder: (context, snapshot) {
         final loadingWidget = buildConnectionLoading(
           snapshot: snapshot,

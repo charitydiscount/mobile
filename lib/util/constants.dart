@@ -7,4 +7,5 @@ abstract class DeepLinkPath {
 
 abstract class Routes {
   static const String shopDetails = 'ShopDetails';
+  static const String signIn = '/signin';
 }

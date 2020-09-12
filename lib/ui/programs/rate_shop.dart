@@ -1,6 +1,7 @@
 import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/rating.dart';
 import 'package:charity_discount/services/shops.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -8,13 +9,11 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class RateScreen extends StatefulWidget {
   final Program program;
-  final ShopsService shopsService;
   final Review existingReview;
 
   RateScreen({
     Key key,
     @required this.program,
-    @required this.shopsService,
     this.existingReview,
   }) : super(key: key);
 
@@ -33,6 +32,12 @@ class _RateScreenState extends State<RateScreen> {
       _rating = widget.existingReview.rating;
       _descriptionController.text = widget.existingReview.description;
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _descriptionController.dispose();
   }
 
   @override
@@ -145,7 +150,7 @@ class _RateScreenState extends State<RateScreen> {
                       rating: _rating,
                       description: _descriptionController.text,
                     );
-                    widget.shopsService
+                    locator<ShopsService>()
                         .saveReview(widget.program, review)
                         .then((_) {
                       Navigator.of(context).pop(true);

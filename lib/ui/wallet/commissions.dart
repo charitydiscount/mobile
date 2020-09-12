@@ -3,6 +3,7 @@ import 'package:charity_discount/models/commission.dart';
 import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/referral.dart' as referralModel;
 import 'package:charity_discount/services/charity.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/amounts.dart';
 import 'package:charity_discount/util/tools.dart';
@@ -14,9 +15,7 @@ import 'package:timeline_list/timeline.dart';
 import 'package:timeline_list/timeline_model.dart';
 
 class CommissionsScreen extends StatelessWidget {
-  final CharityService charityService;
-
-  const CommissionsScreen({Key key, this.charityService}) : super(key: key);
+  const CommissionsScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +41,7 @@ class CommissionsScreen extends StatelessWidget {
             return loading;
           }
           return FutureBuilder<List<Commission>>(
-            future: charityService.getUserCommissions(),
+            future: locator<CharityService>().getUserCommissions(),
             builder: (context, snapshot) {
               final loading = buildConnectionLoading(
                 context: context,

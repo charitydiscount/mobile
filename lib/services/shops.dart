@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/models/rating.dart';
+import 'package:charity_discount/services/auth.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:charity_discount/models/favorite_shops.dart';
 
@@ -11,7 +14,6 @@ abstract class ShopsService {
   Future<List<models.Program>> getAllPrograms();
 
   Future<void> setFavoriteShop(
-    String userId,
     models.Program program,
     bool favorite,
   );
@@ -22,11 +24,12 @@ abstract class ShopsService {
 
   Future<void> closeFavoritesSink();
 
-  void listenToFavShops(String userId);
+  void listenToFavShops();
 }
 
 class FirebaseShopsService implements ShopsService {
   final _db = FirebaseFirestore.instance;
+  final _auth = FirebaseAuth.instance;
   Stream<DocumentSnapshot> _favRef;
   StreamSubscription _favListener;
   BehaviorSubject<FavoriteShops> _favoritePrograms =
@@ -36,14 +39,17 @@ class FirebaseShopsService implements ShopsService {
   BehaviorSubject<FavoriteShops> get favoritePrograms => _favoritePrograms;
 
   @override
-  Future<void> setFavoriteShop(
-      String userId, models.Program program, bool favorite) async {
-    DocumentReference ref = _db.collection('favoriteShops').doc(userId);
+  Future<void> setFavoriteShop(models.Program program, bool favorite) async {
+    DocumentReference ref =
+        _db.collection('favoriteShops').doc(_auth.currentUser.uid);
 
     if (favorite) {
       return ref.update({
         'programs.${program.uniqueCode}': program.toJson(),
-      }).catchError((e) => _handleFavDocNotExistent(e, userId, program));
+      }).catchError((e) => _handleFavDocNotExistent(
+            e,
+            program,
+          ));
     } else {
       return ref.update({
         'programs.${program.uniqueCode}': FieldValue.delete(),
@@ -58,16 +64,16 @@ class FirebaseShopsService implements ShopsService {
 
   void _handleFavDocNotExistent(
     dynamic e,
-    String userId,
     models.Program program,
   ) {
     if (!(e is FirebaseException)) {
       throw e;
     }
 
-    DocumentReference ref = _db.collection('favoriteShops').doc(userId);
+    DocumentReference ref =
+        _db.collection('favoriteShops').doc(_auth.currentUser.uid);
     ref.set({
-      'userId': userId,
+      'userId': _auth.currentUser.uid,
       'programs': {
         '${program.uniqueCode}': program.toJson(),
       }
@@ -151,13 +157,23 @@ class FirebaseShopsService implements ShopsService {
   }
 
   @override
-  void listenToFavShops(String userId) {
-    _favRef = _db.collection('favoriteShops').doc(userId).snapshots();
+  void listenToFavShops() {
+    if (!locator<AuthService>().isActualUser()) {
+      return;
+    }
+    if (_favListener != null) {
+      _favListener.cancel();
+    }
+    _favRef =
+        _db.collection('favoriteShops').doc(_auth.currentUser.uid).snapshots();
     _favListener = _favRef.listen((snap) {
       if (snap.exists) {
         _favoritePrograms.add(FavoriteShops.fromJson(snap.data()));
       } else {
-        _favoritePrograms.add(FavoriteShops(userId: userId, programs: {}));
+        _favoritePrograms.add(FavoriteShops(
+          userId: _auth.currentUser.uid,
+          programs: {},
+        ));
       }
     });
   }

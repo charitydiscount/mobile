@@ -1,4 +1,5 @@
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/util/constants.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -73,4 +74,58 @@ Future<bool> showExplanationDialog(BuildContext context) async {
   );
 
   return continueToShop ?? false;
+}
+
+Future<bool> showSignInDialog(BuildContext context) async {
+  bool continueToShop = await showDialog(
+    context: context,
+    builder: signInDialogBuilder,
+    barrierDismissible: false,
+  );
+
+  return continueToShop ?? false;
+}
+
+SimpleDialog signInDialogBuilder(BuildContext context) {
+  Widget title = Text(tr('signInExplanation.title'));
+  Widget content = Text(tr('signInExplanation.content'));
+  Widget controls = ButtonBar(
+    children: [
+      FlatButton(
+        padding: EdgeInsets.symmetric(horizontal: 12),
+        child: Text(
+          tr('signIn').toUpperCase(),
+          style: TextStyle(color: Theme.of(context).primaryColor),
+        ),
+        onPressed: () {
+          Navigator.pushNamed(context, Routes.signIn);
+        },
+      ),
+    ],
+  );
+
+  return SimpleDialog(
+    title: Stack(
+      children: <Widget>[
+        title,
+        Positioned(
+          right: -10.0,
+          top: -10.0,
+          child: CloseButton(),
+        ),
+      ],
+    ),
+    children: [
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: content,
+          ),
+          controls,
+        ],
+      ),
+    ],
+  );
 }

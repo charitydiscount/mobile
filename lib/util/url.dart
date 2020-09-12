@@ -1,3 +1,8 @@
+import 'package:charity_discount/services/analytics.dart';
+import 'package:charity_discount/services/auth.dart';
+import 'package:charity_discount/state/locator.dart';
+import 'package:charity_discount/ui/tutorial/access_explanation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<void> launchURL(String url, {Map<String, String> headers}) async {
@@ -35,4 +40,33 @@ String interpolateUserCode(
   return affiliateUrl
       .replaceAll(PROGRAM_LINK_PLACEHOLDER, programUniqueCode)
       .replaceAll(USER_LINK_PLACEHOLDER, userId);
+}
+
+void openAffiliateLink(
+  String url,
+  BuildContext context,
+  String eventId,
+  String eventName,
+  String eventScreen,
+) async {
+  if (!locator<AuthService>().isActualUser()) {
+    showSignInDialog(context);
+    return;
+  }
+
+  analytics.logEvent(
+    name: 'access_shop',
+    parameters: {
+      'id': eventId,
+      'name': eventName,
+      'screen': eventScreen,
+    },
+  );
+
+  bool continueToShop = await showExplanationDialog(context);
+  if (continueToShop != true) {
+    return;
+  }
+
+  launchURL(url);
 }

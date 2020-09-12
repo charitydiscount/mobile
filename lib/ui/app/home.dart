@@ -1,8 +1,7 @@
 import 'package:charity_discount/models/user.dart';
+import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/notifications.dart';
-import 'package:charity_discount/services/search.dart';
-import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/products/products_screen.dart';
@@ -12,6 +11,7 @@ import 'package:charity_discount/ui/wallet/wallet.dart';
 import 'package:charity_discount/ui/user/profile.dart';
 import 'package:charity_discount/ui/programs/programs.dart';
 import 'package:charity_discount/ui/user/user_avatar.dart';
+import 'package:charity_discount/util/constants.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flushbar/flushbar.dart';
@@ -78,24 +78,16 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_loadedWidgets[selectedNavIndex] == false) {
       switch (selectedNavIndex) {
         case 0:
-          _widgets[selectedNavIndex] = ProgramsList(
-            searchService: locator<SearchServiceBase>(),
-            shopsService: locator<ShopsService>(),
-          );
+          _widgets[selectedNavIndex] = ProgramsList();
           break;
         case 1:
-          _widgets[selectedNavIndex] =
-              ProductsScreen(searchService: locator<SearchServiceBase>());
+          _widgets[selectedNavIndex] = ProductsScreen();
           break;
         case 2:
-          _widgets[selectedNavIndex] = CharityWidget(
-            charityService: locator<CharityService>(),
-          );
+          _widgets[selectedNavIndex] = CharityWidget();
           break;
         case 3:
-          _widgets[selectedNavIndex] = WalletScreen(
-            charityService: locator<CharityService>(),
-          );
+          _widgets[selectedNavIndex] = WalletScreen();
           break;
         default:
       }
@@ -159,6 +151,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildProfileButton({BuildContext context, User user}) {
+    if (!locator<AuthService>().isActualUser()) {
+      return FlatButton(
+        child: Text(
+          tr('signIn').toUpperCase(),
+          style: TextStyle(color: Colors.white),
+        ),
+        onPressed: () {
+          Navigator.pushNamed(context, Routes.signIn);
+        },
+      );
+    }
+
     final logoImage = UserAvatar(photoUrl: user.photoUrl);
     return InkWell(
       onTap: () {

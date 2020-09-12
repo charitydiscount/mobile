@@ -40,8 +40,9 @@ class AppModel extends Model {
   String _referralCode;
 
   AppModel() {
-    createListeners();
-    initFromLocal();
+    initFromLocal().then((_) {
+      createListeners();
+    });
     remoteConfig
         .getWithdrawalThreshold()
         .then((threshold) => minimumWithdrawalAmount = threshold);
@@ -51,7 +52,10 @@ class AppModel extends Model {
     _profileListener = locator<AuthService>().profile.listen(
       (profile) {
         if (profile == null) {
-          finishLoading();
+          if (user == null) {
+            // No auth in progress
+            finishLoading();
+          }
           return;
         }
 
@@ -85,8 +89,7 @@ class AppModel extends Model {
         setUser(User.fromFirebaseAuth(profile));
         List<Future> futuresForLoading = [
           locator<MetaService>().getTwoPerformantMeta().then((twoPMeta) {
-            _affiliateMeta = twoPMeta;
-            localService.setAffiliateMeta(_affiliateMeta);
+            setAffiliateMeta(twoPMeta);
             return true;
           }),
           updateProgramsMeta(),
@@ -188,6 +191,12 @@ class AppModel extends Model {
 
   TwoPerformantMeta get affiliateMeta => _affiliateMeta;
   ProgramMeta get programsMeta => _programsMeta;
+
+  void setAffiliateMeta(TwoPerformantMeta twoPerformantMeta) {
+    _affiliateMeta = twoPerformantMeta;
+    localService.setAffiliateMeta(_affiliateMeta);
+    notifyListeners();
+  }
 
   Future<bool> updateProgramsMeta() {
     return locator<MetaService>().getProgramsMeta().then((programsMeta) {

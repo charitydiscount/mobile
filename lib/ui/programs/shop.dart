@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/services/analytics.dart';
-import 'package:charity_discount/services/search.dart';
+import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/shops.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/ui/programs/rating.dart';
 import 'package:charity_discount/ui/programs/shop_details.dart';
 import 'package:charity_discount/ui/app/util.dart';
-import 'package:charity_discount/ui/tutorial/access_explanation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/program.dart' as models;
@@ -13,17 +13,8 @@ import 'package:charity_discount/util/url.dart';
 
 class ShopHalfTile extends StatelessWidget {
   final models.Program program;
-  final String userId;
-  final ShopsService shopsService;
-  final SearchService searchService;
 
-  ShopHalfTile({
-    Key key,
-    this.program,
-    this.userId,
-    this.shopsService,
-    this.searchService,
-  }) : super(key: key);
+  ShopHalfTile({Key key, this.program}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,22 +29,14 @@ class ShopHalfTile extends StatelessWidget {
     final linkButton = FlatButton(
       padding: EdgeInsets.zero,
       child: Text(tr('access')),
-      onPressed: () async {
-        analytics.logEvent(
-          name: 'access_shop',
-          parameters: {
-            'id': program.id,
-            'name': program.name,
-            'screen': 'programs',
-          },
+      onPressed: () {
+        openAffiliateLink(
+          program.actualAffiliateUrl,
+          context,
+          program.id,
+          program.name,
+          'programs',
         );
-
-        bool continueToShop = await showExplanationDialog(context);
-        if (continueToShop != true) {
-          return;
-        }
-
-        launchURL(program.actualAffiliateUrl);
       },
     );
 
@@ -96,11 +79,8 @@ class ShopHalfTile extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (BuildContext context) => ShopDetails(
-                  program: program,
-                  shopsService: shopsService,
-                  searchService: searchService,
-                ),
+                builder: (BuildContext context) =>
+                    ShopDetails(program: program),
                 settings: RouteSettings(name: 'ShopDetails'),
               ),
             );
@@ -134,7 +114,12 @@ class ShopHalfTile extends StatelessWidget {
                 Center(child: cashback),
                 ButtonBar(
                   children: <Widget>[
-                    favoriteButton,
+                    locator<AuthService>().isActualUser()
+                        ? favoriteButton
+                        : Container(
+                            width: 0,
+                            height: 0,
+                          ),
                     linkButton,
                   ],
                 ),
@@ -147,6 +132,6 @@ class ShopHalfTile extends StatelessWidget {
   }
 
   void _setFavorite(models.Program program, bool favorite) async {
-    await shopsService.setFavoriteShop(userId, program, favorite);
+    await locator<ShopsService>().setFavoriteShop(program, favorite);
   }
 }

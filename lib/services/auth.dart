@@ -58,7 +58,7 @@ class AuthService {
       idToken: googleAuth.idToken,
     );
 
-    final authResult = await _auth.signInWithCredential(credential);
+    UserCredential authResult = await _signInWithCredential(credential);
     User user = authResult.user;
 
     final googleApisUrl =
@@ -85,6 +85,22 @@ class AuthService {
     return user;
   }
 
+  Future<UserCredential> _signInWithCredential(
+    AuthCredential credential,
+  ) async {
+    UserCredential authResult;
+
+    if (_auth.currentUser == null) {
+      authResult = await _auth.signInWithCredential(credential);
+    } else if (_auth.currentUser.isAnonymous) {
+      authResult = await _auth.currentUser.linkWithCredential(credential);
+    } else {
+      throw Exception('User already logged in');
+    }
+
+    return authResult;
+  }
+
   Future<User> signInWithFacebook(
     FacebookLoginResult result,
   ) async {
@@ -101,7 +117,7 @@ class AuthService {
     final credential = FacebookAuthProvider.credential(token);
     UserCredential authResult;
     try {
-      authResult = await _auth.signInWithCredential(credential);
+      authResult = await _signInWithCredential(credential);
     } catch (e) {
       switch (e.code) {
         case 'ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL':
@@ -139,7 +155,7 @@ class AuthService {
 
     UserCredential authResult;
     try {
-      authResult = await _auth.signInWithCredential(credential);
+      authResult = await _signInWithCredential(credential);
     } catch (e) {
       switch (e.code) {
         case 'ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL':
@@ -226,4 +242,7 @@ class AuthService {
 
     return authResult.user;
   }
+
+  bool isActualUser() =>
+      _auth.currentUser != null && !_auth.currentUser.isAnonymous;
 }
