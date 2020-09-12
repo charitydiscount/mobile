@@ -74,6 +74,11 @@ class _SignInScreenState extends State<SignInScreen> {
     );
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text('CharityDiscount'),
+        primary: true,
+        automaticallyImplyLeading: false,
+      ),
       body: LoadingScreen(
         child: Center(
           child: Column(

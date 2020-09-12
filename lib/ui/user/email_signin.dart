@@ -75,6 +75,11 @@ class _SignInScreenState extends State<EmailSignInScreen> {
     );
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text('CharityDiscount'),
+        primary: true,
+        automaticallyImplyLeading: false,
+      ),
       body: LoadingScreen(
         child: SingleChildScrollView(
           child: Center(

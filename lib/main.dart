@@ -94,7 +94,7 @@ class _MainState extends State<Main> {
 
         WidgetsBinding.instance.addPostFrameCallback(
           (_) => Navigator.pushNamedAndRemoveUntil(
-              context, '/signin', (r) => false),
+              context, Routes.signIn, (r) => false),
         );
 
         return AppLoading(child: buildLoading(context));

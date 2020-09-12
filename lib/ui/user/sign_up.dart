@@ -187,6 +187,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text('CharityDiscount'),
+        primary: true,
+        automaticallyImplyLeading: false,
+      ),
       body: LoadingScreen(
         child: Form(
           key: _formKey,

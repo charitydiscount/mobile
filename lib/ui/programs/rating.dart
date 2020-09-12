@@ -16,11 +16,11 @@ class RatingWidget extends StatelessWidget {
       child: SizedBox(
         height: 50,
         width: 50,
-        child: UserAvatar(photoUrl: rating.reviewer.photoUrl),
+        child: UserAvatar(photoUrl: rating.reviewer?.photoUrl),
       ),
     );
     Widget userName = Text(
-      rating.reviewer.name,
+      rating.reviewer?.name ?? '-',
       style: Theme.of(context).textTheme.subtitle1,
     );
     Widget reviewDate = Text(
@@ -67,7 +67,7 @@ class RatingWidget extends StatelessWidget {
           subtitle: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              rating.description,
+              rating.description ?? '',
               style: Theme.of(context).textTheme.bodyText2,
             ),
           ),
