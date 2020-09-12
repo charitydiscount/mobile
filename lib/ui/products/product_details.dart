@@ -166,10 +166,7 @@ class ProductDetails extends StatelessWidget {
                   ],
                 ),
                 Expanded(
-                  child: PriceChart(
-                    searchService: locator<SearchServiceBase>(),
-                    productId: product.id,
-                  ),
+                  child: PriceChart(productId: product.id),
                 ),
               ],
             ),
@@ -286,15 +283,14 @@ class ProductDetails extends StatelessWidget {
 }
 
 class PriceChart extends StatelessWidget {
-  final SearchService searchService;
   final String productId;
 
-  PriceChart({this.searchService, this.productId});
+  PriceChart({this.productId});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<ProductPriceHistory>(
-      future: searchService.getProductPriceHistory(productId),
+      future: locator<SearchServiceBase>().getProductPriceHistory(productId),
       builder: (context, snapshot) {
         final loadingWidget = buildConnectionLoading(
           snapshot: snapshot,

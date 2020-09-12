@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/services/analytics.dart';
-import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/ui/programs/rating.dart';
 import 'package:charity_discount/ui/programs/shop_details.dart';
 import 'package:charity_discount/ui/app/util.dart';
@@ -13,17 +13,8 @@ import 'package:charity_discount/util/url.dart';
 
 class ShopHalfTile extends StatelessWidget {
   final models.Program program;
-  final String userId;
-  final ShopsService shopsService;
-  final SearchService searchService;
 
-  ShopHalfTile({
-    Key key,
-    this.program,
-    this.userId,
-    this.shopsService,
-    this.searchService,
-  }) : super(key: key);
+  ShopHalfTile({Key key, this.program}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -96,11 +87,8 @@ class ShopHalfTile extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (BuildContext context) => ShopDetails(
-                  program: program,
-                  shopsService: shopsService,
-                  searchService: searchService,
-                ),
+                builder: (BuildContext context) =>
+                    ShopDetails(program: program),
                 settings: RouteSettings(name: 'ShopDetails'),
               ),
             );
@@ -147,6 +135,6 @@ class ShopHalfTile extends StatelessWidget {
   }
 
   void _setFavorite(models.Program program, bool favorite) async {
-    await shopsService.setFavoriteShop(userId, program, favorite);
+    await locator<ShopsService>().setFavoriteShop(program, favorite);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:charity_discount/models/product.dart';
 import 'package:charity_discount/services/search.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/ui/products/product.dart';
@@ -10,10 +11,7 @@ import 'package:async/async.dart';
 import 'package:flutter/services.dart';
 
 class ProductsScreen extends StatefulWidget {
-  final SearchServiceBase searchService;
-
-  const ProductsScreen({Key key, @required this.searchService})
-      : super(key: key);
+  const ProductsScreen({Key key}) : super(key: key);
 
   @override
   _ProductsScreenState createState() => _ProductsScreenState();
@@ -56,7 +54,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   }
 
   void _searchProducts(int from) {
-    widget.searchService
+    locator<SearchServiceBase>()
         .searchProducts(
           _query,
           from: from,
@@ -228,7 +226,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
   Widget get _featuredProducts => FutureBuilder<List<Product>>(
         future: _featuredMemoizer.runOnce(
-          () => widget.searchService.getFeaturedProducts(
+          () => locator<SearchServiceBase>().getFeaturedProducts(
             userId: _state.user.userId,
           ),
         ),

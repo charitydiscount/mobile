@@ -5,7 +5,6 @@ import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/suggestion.dart';
 import 'package:charity_discount/services/meta.dart';
-import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
@@ -16,14 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 
 class ProgramsList extends StatefulWidget {
-  final ShopsService shopsService;
-  final SearchServiceBase searchService;
-
-  ProgramsList({
-    Key key,
-    @required this.shopsService,
-    @required this.searchService,
-  }) : super(key: key);
+  ProgramsList({Key key}) : super(key: key);
 
   _ProgramsListState createState() => _ProgramsListState();
 }
@@ -42,7 +34,7 @@ class _ProgramsListState extends State<ProgramsList>
   void initState() {
     super.initState();
     _appState = AppModel.of(context);
-    locator<ShopsService>().listenToFavShops(_appState.user.userId);
+    locator<ShopsService>().listenToFavShops();
   }
 
   @override
@@ -93,8 +85,6 @@ class _ProgramsListState extends State<ProgramsList>
                   programs: programs,
                   category: _category,
                   onlyFavorites: _onlyFavorites,
-                  searchService: widget.searchService,
-                  shopsService: widget.shopsService,
                   sortStrategy: _sortStrategy,
                   scrollController: _scrollController,
                 ),
@@ -113,11 +103,7 @@ class _ProgramsListState extends State<ProgramsList>
       onPressed: () {
         showSearch(
           context: context,
-          delegate: ProgramsSearch(
-            appState: _appState,
-            searchService: widget.searchService,
-            shopsService: widget.shopsService,
-          ),
+          delegate: ProgramsSearch(appState: _appState),
         );
       },
     );
@@ -254,8 +240,6 @@ class ShopsWidget extends StatefulWidget {
   final AppModel appState;
   final bool onlyFavorites;
   final String category;
-  final ShopsService shopsService;
-  final SearchServiceBase searchService;
   final _SortStrategy sortStrategy;
   final ScrollController scrollController;
 
@@ -265,8 +249,6 @@ class ShopsWidget extends StatefulWidget {
     @required this.appState,
     this.onlyFavorites = false,
     this.category,
-    @required this.shopsService,
-    @required this.searchService,
     this.sortStrategy = _SortStrategy.relevance,
     this.scrollController,
   }) : super(key: key);
@@ -282,7 +264,7 @@ class _ShopsWidgetState extends State<ShopsWidget>
     super.build(context);
     return StreamBuilder(
       initialData: widget.appState.favoriteShops,
-      stream: widget.shopsService.favoritePrograms,
+      stream: locator<ShopsService>().favoritePrograms,
       builder: (context, snapshot) {
         FavoriteShops favoriteShops = snapshot.data;
         widget.appState.setFavoriteShops(favoriteShops);
@@ -371,9 +353,6 @@ class _ShopsWidgetState extends State<ShopsWidget>
         return ShopHalfTile(
           key: Key(programForDisplay.uniqueCode),
           program: programForDisplay,
-          userId: appState.user.userId,
-          shopsService: widget.shopsService,
-          searchService: widget.searchService,
         );
       },
     );
@@ -398,14 +377,8 @@ class _ShopsWidgetState extends State<ShopsWidget>
 class ProgramsSearch extends SearchDelegate<String> {
   final AppModel appState;
   bool _exactMatch = false;
-  final ShopsService shopsService;
-  final SearchServiceBase searchService;
 
-  ProgramsSearch({
-    this.appState,
-    @required this.shopsService,
-    @required this.searchService,
-  });
+  ProgramsSearch({this.appState});
 
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -454,12 +427,7 @@ class ProgramsSearch extends SearchDelegate<String> {
             : p.name.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
-    return ShopsWidget(
-      programs: programs,
-      appState: appState,
-      searchService: searchService,
-      shopsService: shopsService,
-    );
+    return ShopsWidget(programs: programs, appState: appState);
   }
 
   @override

@@ -1,8 +1,6 @@
 import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/notifications.dart';
-import 'package:charity_discount/services/search.dart';
-import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/products/products_screen.dart';
@@ -78,14 +76,10 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_loadedWidgets[selectedNavIndex] == false) {
       switch (selectedNavIndex) {
         case 0:
-          _widgets[selectedNavIndex] = ProgramsList(
-            searchService: locator<SearchServiceBase>(),
-            shopsService: locator<ShopsService>(),
-          );
+          _widgets[selectedNavIndex] = ProgramsList();
           break;
         case 1:
-          _widgets[selectedNavIndex] =
-              ProductsScreen(searchService: locator<SearchServiceBase>());
+          _widgets[selectedNavIndex] = ProductsScreen();
           break;
         case 2:
           _widgets[selectedNavIndex] = CharityWidget(

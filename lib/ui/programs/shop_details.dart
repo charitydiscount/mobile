@@ -26,15 +26,8 @@ import 'package:async/async.dart';
 
 class ShopDetails extends StatefulWidget {
   final models.Program program;
-  final ShopsService shopsService;
-  final SearchService searchService;
 
-  const ShopDetails({
-    Key key,
-    @required this.program,
-    @required this.shopsService,
-    @required this.searchService,
-  }) : super(key: key);
+  const ShopDetails({Key key, @required this.program}) : super(key: key);
 
   @override
   _ShopDetailsState createState() => _ShopDetailsState();
@@ -63,7 +56,8 @@ class _ShopDetailsState extends State<ShopDetails> {
 
     Widget ratingBuilder = FutureBuilder<List<Review>>(
       future: _reviewsMemoizer.runOnce(
-        () => widget.shopsService.getProgramRating(widget.program.uniqueCode),
+        () =>
+            locator<ShopsService>().getProgramRating(widget.program.uniqueCode),
       ),
       builder: (context, snapshot) {
         final loading = buildConnectionLoading(
@@ -108,7 +102,6 @@ class _ShopDetailsState extends State<ShopDetails> {
                     maintainState: true,
                     builder: (BuildContext context) => RateScreen(
                       program: widget.program,
-                      shopsService: widget.shopsService,
                       existingReview: thisUserReview,
                     ),
                     settings: RouteSettings(name: 'ProvideRating'),
@@ -400,9 +393,9 @@ class _ShopDetailsState extends State<ShopDetails> {
 
     return FutureBuilder(
       future: _productsMemoizer.runOnce(() =>
-          Future.delayed(Duration(milliseconds: 500)).then((_) => widget
-              .searchService
-              .getProductsForProgram(programId: widget.program.id))),
+          Future.delayed(Duration(milliseconds: 500)).then((_) =>
+              locator<SearchService>()
+                  .getProductsForProgram(programId: widget.program.id))),
       builder: (context, snapshot) {
         final loading = buildConnectionLoading(
           context: context,
