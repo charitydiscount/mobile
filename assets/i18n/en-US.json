@@ -2,6 +2,8 @@
   "password": "Password",
   "signIn": "Sign in",
   "signUp": "Sign Up",
+  "useOtherAuthMethods": "Use other sign in methods",
+  "authError": "Something doesn't seem right",
   "alreadyAccount": "I have an account already",
   "charity": "Charity",
   "shops": "Shops",

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:apple_sign_in/apple_sign_in.dart';
+import 'package:charity_discount/ui/user/email_signin.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,7 +10,6 @@ import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:charity_discount/util/validator.dart';
 import 'package:charity_discount/ui/app/loading.dart';
 import 'package:charity_discount/controllers/user_controller.dart';
 import 'package:charity_discount/state/state_model.dart';
@@ -21,12 +21,8 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _email = TextEditingController();
-  final TextEditingController _password = TextEditingController();
-
-  bool _autoValidate = false;
   bool _loadingVisible = false;
+
   @override
   void initState() {
     super.initState();
@@ -79,45 +75,30 @@ class _SignInScreenState extends State<SignInScreen> {
 
     return Scaffold(
       body: LoadingScreen(
-        child: SingleChildScrollView(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.95,
-                maxWidth: 600,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              Expanded(
+                child: logo,
+                flex: 1,
               ),
-              child: Form(
-                key: _formKey,
-                autovalidate: _autoValidate,
-                child: Column(
+              Expanded(
+                child: _buildPlatformSpecificSocial(),
+                flex: 2,
+              ),
+              Expanded(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    Expanded(child: logo),
-                    Expanded(
-                      flex: 2,
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                          child: _buildLoginForm(),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildPlatformSpecificSocial(),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        termsButton,
-                        privacyButton,
-                      ],
-                    ),
+                    termsButton,
+                    privacyButton,
                   ],
                 ),
               ),
-            ),
+            ],
           ),
         ),
         inAsyncCall: _loadingVisible,
@@ -130,134 +111,11 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
-  Widget _buildLoginForm() {
-    final email = TextFormField(
-      keyboardType: TextInputType.emailAddress,
-      autofocus: false,
-      controller: _email,
-      validator: Validator.validateEmail,
-      decoration: InputDecoration(
-        prefixIcon: Padding(
-          padding: EdgeInsets.only(left: 5.0),
-          child: Icon(
-            Icons.email,
-            color: Colors.grey,
-          ),
-        ),
-        hintText: 'Email',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-      ),
-    );
-
-    final password = TextFormField(
-      autofocus: false,
-      obscureText: true,
-      controller: _password,
-      validator: Validator.validatePassword,
-      decoration: InputDecoration(
-        prefixIcon: Padding(
-          padding: EdgeInsets.only(left: 5.0),
-          child: Icon(
-            Icons.lock,
-            color: Colors.grey,
-          ),
-        ),
-        hintText: tr('password'),
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-      ),
-    );
-
-    final loginButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.0),
-      child: Container(
-        width: double.infinity,
-        child: RaisedButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          onPressed: () async => _emailLogin(
-              email: _email.text, password: _password.text, context: context),
-          padding: EdgeInsets.all(12),
-          color: Theme.of(context).primaryColor,
-          child: Text(
-            tr('signIn').toUpperCase(),
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ),
-    );
-
-    final forgotLabel = FlatButton(
-      child: Text(
-        tr('forgotPassword'),
-        style: TextStyle(color: Theme.of(context).hintColor),
-      ),
-      onPressed: () {
-        Navigator.pushNamed(context, '/forgot-password');
-      },
-    );
-
-    final signUpButton = FlatButton(
-      child: Text(
-        tr('createAccount'),
-        style: TextStyle(color: Colors.blue, fontSize: 16),
-      ),
-      onPressed: () {
-        Navigator.pushNamed(context, '/signup');
-      },
-    );
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        email,
-        password,
-        loginButton,
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [signUpButton, forgotLabel],
-        )
-      ],
-    );
-  }
-
   void _toggleLoadingVisible() {
     if (mounted) {
       setState(() {
         _loadingVisible = !_loadingVisible;
       });
-    }
-  }
-
-  void _emailLogin({
-    String email,
-    String password,
-    BuildContext context,
-  }) async {
-    if (_formKey.currentState.validate()) {
-      try {
-        SystemChannels.textInput.invokeMethod('TextInput.hide');
-        _toggleLoadingVisible();
-        AppModel.of(context).createListeners();
-        await userController.signIn(
-          Strategy.EmailAndPass,
-          credentials: {'email': email, 'password': password},
-        );
-        _toggleLoadingVisible();
-        Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
-      } catch (e) {
-        _handleAuthError(e);
-      }
-    } else {
-      setState(() => _autoValidate = true);
     }
   }
 
@@ -334,7 +192,7 @@ class _SignInScreenState extends State<SignInScreen> {
       case FacebookLoginStatus.error:
         _toggleLoadingVisible();
         Flushbar(
-          title: 'Sign In Error',
+          title: tr('authError'),
           message: result.errorMessage,
           duration: Duration(seconds: 5),
         )..show(context);
@@ -346,7 +204,7 @@ class _SignInScreenState extends State<SignInScreen> {
     _toggleLoadingVisible();
     if (e is FirebaseException) {
       Flushbar(
-        title: 'Sign In Error',
+        title: tr('authError'),
         message: e.message,
         duration: Duration(seconds: 5),
       )..show(context);
@@ -359,12 +217,12 @@ class _SignInScreenState extends State<SignInScreen> {
     }
 
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    return FutureBuilder(
+    return FutureBuilder<IosDeviceInfo>(
       future: deviceInfo.iosInfo,
       builder: (context, snapshop) {
         if (snapshop.connectionState == ConnectionState.waiting ||
             snapshop.hasError ||
-            !snapshop.data.systemVersion.contains('13')) {
+            !_isAppleSignInSupported(snapshop.data)) {
           return Container(
             width: 0,
             height: 0,
@@ -376,15 +234,30 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
+  bool _isAppleSignInSupported(IosDeviceInfo deviceInfo) {
+    int majorVersion = int.parse(deviceInfo.systemVersion.substring(0, 2));
+    return majorVersion >= 13;
+  }
+
   Widget _buildSocialFragmet({bool includeApple = true}) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     List<Widget> buttons = [
+      SignInButton(
+        Buttons.Email,
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => EmailSignInScreen(),
+            settings: RouteSettings(name: 'EmailSignIn'),
+          ),
+        ),
+      ),
       SignInButton(
         isDark ? Buttons.Google : Buttons.GoogleDark,
         onPressed: () => _googleLogin(context),
       ),
       SignInButton(
-        Buttons.Facebook,
+        Buttons.FacebookNew,
         onPressed: () => _facebookLogin(context),
       ),
     ];

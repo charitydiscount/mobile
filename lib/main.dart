@@ -9,6 +9,7 @@ import 'package:charity_discount/util/constants.dart';
 import 'package:charity_discount/util/locale.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -113,6 +114,8 @@ class _MainState extends State<Main> {
           : SystemUiOverlayStyle.light
               .copyWith(statusBarColor: theme.primaryColor),
     );
+
+    FirebaseAuth.instance.setLanguageCode(locale.languageCode);
 
     return MaterialApp(
       title: 'CharityDiscount',

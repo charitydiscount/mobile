@@ -2,6 +2,8 @@
   "password": "Parolă",
   "signIn": "Intră",
   "signUp": "Sign Up",
+  "useOtherAuthMethods": "Folosește alta metoda",
+  "authError": "A apărut o problemă",
   "alreadyAccount": "Am cont deja",
   "charity": "Caritate",
   "shops": "Magazine",

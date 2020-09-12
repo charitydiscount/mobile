@@ -8,6 +8,7 @@ import 'package:charity_discount/util/social_icons.dart';
 import 'package:charity_discount/util/tools.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -179,6 +180,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               : null,
       onTap: () {
         EasyLocalization.of(context).locale = language.locale;
+        FirebaseAuth.instance.setLanguageCode(language.locale.languageCode);
         setState(() {});
       },
     );
