@@ -29,10 +29,12 @@ class AuthService {
   void updateCurrentUser() => _setUser(_auth.currentUser);
 
   Future<User> signInWithEmailAndPass(email, password) async {
-    final authResult = await _auth.signInWithEmailAndPassword(
+    AuthCredential credential = EmailAuthProvider.credential(
       email: email,
       password: password,
     );
+
+    UserCredential authResult = await _signInWithCredential(credential);
 
     return authResult.user;
   }
@@ -93,7 +95,21 @@ class AuthService {
     if (_auth.currentUser == null) {
       authResult = await _auth.signInWithCredential(credential);
     } else if (_auth.currentUser.isAnonymous) {
-      authResult = await _auth.currentUser.linkWithCredential(credential);
+      try {
+        authResult = await _auth.currentUser.linkWithCredential(credential);
+      } catch (e) {
+        switch (e.code) {
+          case 'email-already-in-use':
+          case 'credential-already-in-use':
+            // Delete the anonymous user
+            await _auth.currentUser.delete();
+            // Sign-in with the already existing account
+            authResult = await _auth.signInWithCredential(credential);
+            break;
+          default:
+            throw e;
+        }
+      }
     } else {
       throw Exception('User already logged in');
     }
@@ -120,7 +136,7 @@ class AuthService {
       authResult = await _signInWithCredential(credential);
     } catch (e) {
       switch (e.code) {
-        case 'ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL':
+        case 'account-exists-with-different-credential':
           return _handleDifferentCredential(
             credential: credential,
             email: userInfoJson['email'],

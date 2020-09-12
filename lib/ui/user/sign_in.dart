@@ -214,12 +214,15 @@ class _SignInScreenState extends State<SignInScreen> {
         duration: Duration(seconds: 5),
       )..show(context);
     } else {
-      Flushbar(
-        title: tr('authError'),
-        message: e.toString(),
-        duration: Duration(seconds: 5),
-      )..show(context);
-      throw e;
+      if (e is PlatformException) {
+        Flushbar(
+          title: tr('authError'),
+          message: e.toString(),
+          duration: Duration(seconds: 5),
+        )..show(context);
+      } else {
+        printError(e.toString());
+      }
     }
   }
 

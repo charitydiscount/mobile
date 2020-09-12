@@ -49,6 +49,7 @@ class AppModel extends Model {
   }
 
   void createListeners() {
+    setLoading(true);
     _profileListener = locator<AuthService>().profile.listen(
       (profile) {
         if (profile == null) {
@@ -87,16 +88,31 @@ class AppModel extends Model {
         }
 
         setUser(User.fromFirebaseAuth(profile));
-        List<Future> futuresForLoading = [
-          locator<MetaService>().getTwoPerformantMeta().then((twoPMeta) {
-            setAffiliateMeta(twoPMeta);
-            return true;
-          }),
-          updateProgramsMeta(),
-        ];
-        Future.wait(futuresForLoading).then((loaded) {
+
+        List<Future> futuresForLoading = [];
+
+        if (affiliateMeta == null) {
+          futuresForLoading.add(
+            locator<MetaService>().getTwoPerformantMeta().then(
+              (twoPMeta) {
+                setAffiliateMeta(twoPMeta);
+                return true;
+              },
+            ),
+          );
+        }
+
+        if (programsMeta == null) {
+          futuresForLoading.add(updateProgramsMeta());
+        }
+
+        if (futuresForLoading.isEmpty) {
           finishLoading();
-        });
+        } else {
+          Future.wait(futuresForLoading).then((loaded) {
+            finishLoading();
+          });
+        }
       },
     );
   }
@@ -151,12 +167,16 @@ class AppModel extends Model {
   }
 
   bool get loading => _loading;
-  void finishLoading() {
-    if (!_loading) {
+  void setLoading(bool loading) {
+    if (loading == _loading) {
       return;
     }
-    _loading = false;
+    _loading = loading;
     notifyListeners();
+  }
+
+  void finishLoading() {
+    setLoading(false);
   }
 
   bool get introCompleted => _introCompleted;
@@ -213,7 +233,7 @@ class AppModel extends Model {
     _programs.sort((p1, p2) => p1.getOrder().compareTo(p2.getOrder()));
     if (storeLocal) {
       _programs.forEach((program) {
-        final userPercentage = affiliateMeta.percentage;
+        final userPercentage = affiliateMeta?.percentage ?? 0.6;
         program.leadCommissionAmount =
             program.defaultLeadCommissionAmount != null
                 ? (program.defaultLeadCommissionAmount * userPercentage)
