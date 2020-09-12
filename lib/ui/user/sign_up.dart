@@ -22,9 +22,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   bool _autoValidate = false;
   bool _loadingVisible = false;
+
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _email.dispose();
+    _password.dispose();
+    _firstName.dispose();
+    _lastName.dispose();
   }
 
   Widget build(BuildContext context) {

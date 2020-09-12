@@ -1,6 +1,7 @@
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/fadeslide.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
@@ -19,25 +20,59 @@ class WelcomeScreen extends StatelessWidget {
           children: [
             _Header(),
             _Steps(),
-            FadeSlide(
-              delay: Duration(milliseconds: 5500),
-              child: RaisedButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: EdgeInsets.all(12),
-                color: Theme.of(context).primaryColor,
-                child: Text(
-                  tr('gotIt').toUpperCase(),
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () {
-                  AppModel.of(context, rebuildOnChange: true).finishIntro();
-                },
-              ),
-            ),
+            _GotItButton(),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _GotItButton extends StatefulWidget {
+  const _GotItButton({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  __GotItButtonState createState() => __GotItButtonState();
+}
+
+class __GotItButtonState extends State<_GotItButton> {
+  bool loading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeSlide(
+      delay: Duration(milliseconds: 5500),
+      child: RaisedButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: EdgeInsets.all(12),
+        color: Theme.of(context).primaryColor,
+        child: loading
+            ? SizedBox(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                  strokeWidth: 3.0,
+                ),
+                height: 15.0,
+                width: 15.0,
+              )
+            : Text(
+                tr('gotIt').toUpperCase(),
+                style: TextStyle(color: Colors.white),
+              ),
+        onPressed: () async {
+          if (loading) {
+            return;
+          }
+          setState(() {
+            loading = true;
+          });
+          await FirebaseAuth.instance.signInAnonymously();
+          AppModel.of(context, rebuildOnChange: true).finishIntro();
+        },
       ),
     );
   }

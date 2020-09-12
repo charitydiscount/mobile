@@ -21,9 +21,17 @@ class _SignInScreenState extends State<EmailSignInScreen> {
 
   bool _autoValidate = false;
   bool _loadingVisible = false;
+
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _email.dispose();
+    _password.dispose();
   }
 
   Widget get horizontalLine => Padding(
@@ -114,11 +122,6 @@ class _SignInScreenState extends State<EmailSignInScreen> {
         inAsyncCall: _loadingVisible,
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   Widget _buildLoginForm() {

@@ -1,4 +1,5 @@
 import 'package:charity_discount/models/wallet.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/loading.dart';
 import 'package:charity_discount/ui/app/util.dart';
@@ -13,13 +14,8 @@ import 'package:flutter/services.dart';
 
 class DonateDialog extends StatefulWidget {
   final Charity charityCase;
-  final CharityService charityService;
 
-  DonateDialog({
-    Key key,
-    @required this.charityCase,
-    @required this.charityService,
-  }) : super(key: key);
+  DonateDialog({Key key, @required this.charityCase}) : super(key: key);
 
   @override
   _DonateDialogState createState() => _DonateDialogState();
@@ -40,7 +36,6 @@ class _DonateDialogState extends State<DonateDialog> {
       body: DonateWidget(
         charityCase: widget.charityCase,
         formKey: _formKey,
-        charityService: widget.charityService,
       ),
     );
   }
@@ -49,13 +44,11 @@ class _DonateDialogState extends State<DonateDialog> {
 class DonateWidget extends StatefulWidget {
   final Charity charityCase;
   final GlobalKey<FormState> formKey;
-  final CharityService charityService;
 
   DonateWidget({
     Key key,
     @required this.charityCase,
     @required this.formKey,
-    @required this.charityService,
   }) : super(key: key);
 
   @override
@@ -68,10 +61,16 @@ class _DonateWidgetState extends State<DonateWidget> {
 
   @override
   void initState() {
-    _pointsListener = widget.charityService.getWalletStream(
+    _pointsListener = locator<CharityService>().getWalletStream(
       AppModel.of(context).user.userId,
     );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _amountController.dispose();
   }
 
   @override
@@ -163,7 +162,7 @@ class _DonateWidgetState extends State<DonateWidget> {
                   onPressed: () {
                     if (widget.formKey.currentState.validate() &&
                         _amountController.text.isNotEmpty) {
-                      var txRef = widget.charityService.createTransaction(
+                      var txRef = locator<CharityService>().createTransaction(
                         AppModel.of(context).user.userId,
                         TxType.DONATION,
                         double.tryParse(_amountController.text),

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/models/rating.dart';
+import 'package:charity_discount/services/auth.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
@@ -156,6 +158,12 @@ class FirebaseShopsService implements ShopsService {
 
   @override
   void listenToFavShops() {
+    if (!locator<AuthService>().isActualUser()) {
+      return;
+    }
+    if (_favListener != null) {
+      _favListener.cancel();
+    }
     _favRef =
         _db.collection('favoriteShops').doc(_auth.currentUser.uid).snapshots();
     _favListener = _favRef.listen((snap) {

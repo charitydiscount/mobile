@@ -1,5 +1,7 @@
 import 'package:charity_discount/models/wallet.dart';
+import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/charity.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/wallet/cashout.dart';
 import 'package:charity_discount/ui/wallet/commissions.dart';
@@ -8,6 +10,7 @@ import 'package:charity_discount/ui/wallet/about_points.dart';
 import 'package:charity_discount/ui/charity/charity.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/util/amounts.dart';
+import 'package:charity_discount/util/constants.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -15,14 +18,42 @@ import 'package:fluttertoast/fluttertoast.dart';
 enum CashbackAction { CANCEL, DONATE, CASHOUT }
 
 class WalletScreen extends StatelessWidget {
-  final CharityService charityService;
-
-  WalletScreen({Key key, @required this.charityService}) : super(key: key);
+  WalletScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (!locator<AuthService>().isActualUser()) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Text(tr('signInExplanation.content')),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: RaisedButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                color: Theme.of(context).primaryColor,
+                child: Text(
+                  tr('signIn').toUpperCase(),
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, Routes.signIn);
+                },
+              ),
+            )
+          ],
+        ),
+      );
+    }
+
     return StreamBuilder<Wallet>(
-      stream: charityService.getWalletStream(
+      stream: locator<CharityService>().getWalletStream(
         AppModel.of(context).user.userId,
       ),
       builder: (context, snapshot) {
@@ -83,8 +114,7 @@ class WalletScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               maintainState: true,
-                              builder: (context) =>
-                                  CashoutScreen(charityService: charityService),
+                              builder: (context) => CashoutScreen(),
                               settings: RouteSettings(name: 'Cashout'),
                             ),
                           );
@@ -134,9 +164,7 @@ class WalletScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (BuildContext context) => CommissionsScreen(
-                      charityService: charityService,
-                    ),
+                    builder: (BuildContext context) => CommissionsScreen(),
                     settings: RouteSettings(name: 'Commissions'),
                   ),
                 );
@@ -256,7 +284,7 @@ class WalletScreen extends StatelessWidget {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: CharityWidget(charityService: charityService),
+            child: CharityWidget(),
           ),
         ],
       ),

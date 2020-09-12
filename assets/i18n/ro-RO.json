@@ -1,7 +1,7 @@
 {
   "password": "Parolă",
-  "signIn": "Intră",
-  "signUp": "Sign Up",
+  "signIn": "Conectează-te",
+  "signUp": "Crează cont nou",
   "useOtherAuthMethods": "Folosește alta metoda",
   "authError": "A apărut o problemă",
   "alreadyAccount": "Am cont deja",
@@ -247,5 +247,9 @@
     "content": "Urmează să accesezi site-ul magazinului. Acolo poți căuta și cumpăra ce dorești.\n\nSite-ul va reține pentru câteva zile că ai ajuns prin intermediul CharityDiscount (doar pe acest dispozitiv).\n\nLa scurt timp după ce ai plasat comanda dorită, cashback-ul va fi vizibil în CharityDiscount (vei primi și notificare).\n\nÎn primă fază, cashback-ul va fi in așteptare, iar după un anumit număr de zile (între 14 și 60 cel mai des), daca nu ai returnat produsele, va fi disponibil.",
     "disableExplanation": "Nu mai afișa acest mesaj"
   },
-  "seeAll": "Vezi toate"
+  "seeAll": "Vezi toate",
+  "signInExplanation": {
+    "title": "Conectează-te",
+    "content": "Pentru a beneficia de întreaga experiență, trebuie să te conectezi cu contul tău. Durează doar câteva secunde, promitem 👇"
+  }
 }

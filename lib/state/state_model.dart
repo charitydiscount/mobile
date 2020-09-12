@@ -40,8 +40,9 @@ class AppModel extends Model {
   String _referralCode;
 
   AppModel() {
-    createListeners();
-    initFromLocal();
+    initFromLocal().then((_) {
+      createListeners();
+    });
     remoteConfig
         .getWithdrawalThreshold()
         .then((threshold) => minimumWithdrawalAmount = threshold);
@@ -51,7 +52,9 @@ class AppModel extends Model {
     _profileListener = locator<AuthService>().profile.listen(
       (profile) {
         if (profile == null) {
-          finishLoading();
+          if (user == null) {
+            finishLoading();
+          }
           return;
         }
 

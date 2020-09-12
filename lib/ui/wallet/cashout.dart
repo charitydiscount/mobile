@@ -1,4 +1,5 @@
 import 'package:charity_discount/services/charity.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/util/amounts.dart';
@@ -16,9 +17,7 @@ import 'package:charity_discount/ui/wallet/operations.dart';
 import 'package:async/async.dart';
 
 class CashoutScreen extends StatefulWidget {
-  final CharityService charityService;
-
-  CashoutScreen({Key key, @required this.charityService}) : super(key: key);
+  CashoutScreen({Key key}) : super(key: key);
 
   @override
   _CashoutScreenState createState() => _CashoutScreenState();
@@ -331,10 +330,10 @@ class _CashoutScreenState extends State<CashoutScreen> {
                       authorize(
                         context: context,
                         title: tr('authorizeFlow.title'),
-                        charityService: widget.charityService,
+                        charityService: locator<CharityService>(),
                       ).then(
                         (didAuthenticate) => didAuthenticate == true
-                            ? widget.charityService
+                            ? locator<CharityService>()
                                 .createTransaction(
                                   AppModel.of(context).user.userId,
                                   TxType.CASHOUT,

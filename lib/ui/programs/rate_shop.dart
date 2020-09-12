@@ -35,6 +35,12 @@ class _RateScreenState extends State<RateScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _descriptionController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Widget headline = Text(
       tr(

@@ -208,6 +208,13 @@ class _SignInScreenState extends State<SignInScreen> {
         message: e.message,
         duration: Duration(seconds: 5),
       )..show(context);
+    } else {
+      Flushbar(
+        title: tr('authError'),
+        message: e.toString(),
+        duration: Duration(seconds: 5),
+      )..show(context);
+      throw e;
     }
   }
 

@@ -32,8 +32,17 @@ class _ImageCarouselState extends State<ImageCarousel> {
           ),
           itemBuilder: (context, index) {
             return CachedNetworkImage(
-              imageUrl: widget.images[index],
+              imageUrl: Uri.tryParse(widget.images[index]) != null
+                  ? widget.images[index]
+                  : null,
               fit: BoxFit.contain,
+              errorWidget: (context, url, error) => Container(
+                height: 80,
+                child: Icon(
+                  Icons.error,
+                  color: Colors.grey,
+                ),
+              ),
             );
           },
         ),

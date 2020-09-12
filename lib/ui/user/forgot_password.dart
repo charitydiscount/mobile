@@ -17,9 +17,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   bool _autoValidate = false;
   bool _loadingVisible = false;
+
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _email.dispose();
   }
 
   Widget build(BuildContext context) {

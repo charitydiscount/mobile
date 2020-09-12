@@ -4,6 +4,7 @@ import 'package:charity_discount/models/favorite_shops.dart';
 import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/suggestion.dart';
+import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/state/locator.dart';
@@ -38,6 +39,12 @@ class _ProgramsListState extends State<ProgramsList>
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
     Widget toolbar = Container(
@@ -45,7 +52,12 @@ class _ProgramsListState extends State<ProgramsList>
         children: <Widget>[
           _buildCategoriesButton(context),
           _buildSortButton(context),
-          _buildFavoritesButton(context),
+          locator<AuthService>().isActualUser()
+              ? _buildFavoritesButton(context)
+              : Container(
+                  width: 0,
+                  height: 0,
+                ),
           _buildSearchButton(context),
         ],
       ),
