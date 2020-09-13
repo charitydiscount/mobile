@@ -31,7 +31,7 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> userJson) => User(
         email: userJson['email'],
-        name: userJson['displayName'],
+        name: userJson['name'],
         userId: userJson['uid'],
         photoUrl: userJson['photoUrl'],
       );

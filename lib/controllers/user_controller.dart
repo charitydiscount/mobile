@@ -37,7 +37,6 @@ class UserController {
       default:
         return;
     }
-    locator<AuthService>().updateCurrentUser();
     if (Platform.isIOS) {
       _iosSubscription = fcm.onIosSettingsRegistered.listen((data) {
         _registerFcmToken();

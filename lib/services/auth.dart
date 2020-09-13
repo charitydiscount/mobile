@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -12,21 +11,13 @@ import 'dart:convert';
 class AuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['profile', 'email']);
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  User currentUser;
+  User get currentUser => _auth.currentUser;
   BehaviorSubject<User> profile = BehaviorSubject();
 
   AuthService() {
-    _auth.authStateChanges().listen((u) => _setUser(u));
+    _auth.authStateChanges().listen((u) => profile.add(u));
   }
-
-  void _setUser(User u) {
-    currentUser = u;
-    profile.add(u);
-  }
-
-  void updateCurrentUser() => _setUser(_auth.currentUser);
 
   Future<User> signInWithEmailAndPass(email, password) async {
     AuthCredential credential = EmailAuthProvider.credential(
@@ -174,7 +165,7 @@ class AuthService {
       authResult = await _signInWithCredential(credential);
     } catch (e) {
       switch (e.code) {
-        case 'ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL':
+        case 'account-exists-with-different-credential':
           return _handleDifferentCredential(
             credential: credential,
             email: appleIdCredential.email,
@@ -234,13 +225,6 @@ class AuthService {
     );
   }
 
-  Future<void> updateUserSettings(
-      String userId, Map<String, dynamic> settings) async {
-    DocumentReference ref = _db.collection('settings').doc(userId);
-
-    return ref.set(settings, SetOptions(merge: true));
-  }
-
   Future<User> createUser(
     String email,
     String password,
@@ -254,11 +238,13 @@ class AuthService {
 
     await authResult.user.updateProfile(displayName: '$firstName $lastName');
 
-    updateCurrentUser();
-
     return authResult.user;
   }
 
   bool isActualUser() =>
       _auth.currentUser != null && !_auth.currentUser.isAnonymous;
+
+  Future<void> signInAnonymously() async {
+    await _auth.signInAnonymously();
+  }
 }

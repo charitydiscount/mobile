@@ -23,12 +23,14 @@ DisplayMode displayModeFromString(String displayModeString) {
 class Settings {
   bool notificationsForCashback = true;
   bool notificationsForPromotions = true;
+  bool notificationsEmail = true;
   DisplayMode displayMode = DisplayMode.LIST;
   ThemeOption theme;
 
   Settings({
     this.notificationsForCashback,
     this.notificationsForPromotions,
+    this.notificationsEmail,
     this.displayMode,
     this.theme = ThemeOption.LIGHT,
   });
@@ -36,6 +38,7 @@ class Settings {
   factory Settings.fromJson(Map<String, dynamic> json) => Settings(
         notificationsForCashback: json['notifications'] ?? true,
         notificationsForPromotions: json['notificationsForPromotions'] ?? true,
+        notificationsEmail: json['notificationsEmail'] ?? true,
         displayMode: displayModeFromString(
           json['displayMode'] ?? DisplayMode.LIST.toString(),
         ),
@@ -47,6 +50,7 @@ class Settings {
   Map<String, dynamic> toJson() => {
         'notifications': notificationsForCashback,
         'notificationsForPromotions': notificationsForPromotions,
+        'notificationsEmail': notificationsEmail,
         'displayMode': displayMode.toString(),
         'theme': theme.toString(),
       };

@@ -50,12 +50,15 @@ class AppModel extends Model {
 
   void createListeners() {
     setLoading(true);
+    if (_profileListener != null) {
+      return;
+    }
     _profileListener = locator<AuthService>().profile.listen(
       (profile) {
         if (profile == null) {
           if (user == null) {
             // No auth in progress
-            finishLoading();
+            locator<AuthService>().signInAnonymously();
           }
           return;
         }

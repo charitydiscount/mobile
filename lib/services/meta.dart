@@ -33,9 +33,7 @@ class MetaService {
           .doc('programs')
           .snapshots()
           .asyncMap((snap) => ProgramMeta.fromJson(snap.data()))
-          .listen((meta) {
-        _metaStream.add(meta);
-      });
+          .listen((meta) => _metaStream.add(meta));
     }
     return _metaStream;
   }
@@ -90,6 +88,14 @@ class MetaService {
     //   SetOptions(merge: true),
     // );
   }
+
+  Future<void> setEmailNotifications(bool disabled) =>
+      _db.collection('users').doc(_auth.currentUser.uid).set(
+        {
+          'disableMailNotification': disabled,
+        },
+        SetOptions(merge: true),
+      );
 
   Future<void> closeListeners() async {
     if (_programsMetaListener != null) {
