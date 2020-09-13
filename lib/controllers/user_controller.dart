@@ -37,6 +37,7 @@ class UserController {
       default:
         return;
     }
+
     if (Platform.isIOS) {
       _iosSubscription = fcm.onIosSettingsRegistered.listen((data) {
         _registerFcmToken();

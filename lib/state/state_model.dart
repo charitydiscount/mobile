@@ -123,6 +123,7 @@ class AppModel extends Model {
   Future<void> closeListeners() async {
     clearFavoriteShops();
     await _profileListener.cancel();
+    _profileListener = null;
   }
 
   bool _isRecentEnough(DateTime creationTime) =>

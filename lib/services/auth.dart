@@ -213,6 +213,8 @@ class AuthService {
           : null,
       photoUrl: photoUrl,
     );
+
+    profile.add(currentUser);
   }
 
   Future<void> updateFirebaseUser({

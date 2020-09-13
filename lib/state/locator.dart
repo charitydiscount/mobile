@@ -5,6 +5,7 @@ import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/navigation.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
+import 'package:charity_discount/state/state_model.dart';
 import 'package:get_it/get_it.dart';
 import 'package:charity_discount/services/auth.dart';
 
@@ -27,6 +28,7 @@ void _registerServices() {
   locator.registerLazySingleton<MetaService>(() => MetaService());
   locator.registerLazySingleton<SearchServiceBase>(() => SearchService());
   locator.registerLazySingleton<ShopsService>(() => FirebaseShopsService());
+  locator.registerLazySingleton<AppModel>(() => AppModel());
 }
 
 Future<void> resetServices() async {
@@ -35,6 +37,7 @@ Future<void> resetServices() async {
   await locator<AuthService>().signOut();
   await locator<CharityService>().closeListeners();
   await locator<MetaService>().closeListeners();
+  locator<AppModel>().closeListeners();
   locator.reset();
   _registerServices();
 }

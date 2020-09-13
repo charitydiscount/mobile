@@ -258,6 +258,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       try {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         _toggleLoadingVisible();
+        AppModel.of(context).createListeners();
         await userController.signUp(
           email.trim(),
           password.trim(),
@@ -265,7 +266,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
           lastName.trim(),
         );
         _toggleLoadingVisible();
-        AppModel.of(context).createListeners();
         WidgetsBinding.instance.addPostFrameCallback(
           (_) => Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false),
         );
