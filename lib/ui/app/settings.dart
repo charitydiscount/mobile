@@ -83,6 +83,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
         ),
+        ListTile(
+          title: Text('Email Newsletter'),
+          trailing: Switch.adaptive(
+            value: _state.settings.notificationsEmail || false,
+            onChanged: (bool newValue) {
+              var newSettings = _state.settings;
+              newSettings.notificationsEmail = newValue;
+              setState(() {
+                _state.setSettings(newSettings, storeLocal: true);
+              });
+              fcm.getToken().then(
+                    (token) => locator<MetaService>().setEmailNotifications(
+                      !newValue,
+                    ),
+                  );
+            },
+          ),
+        ),
       ],
     );
     settingTiles.add(notifications);
@@ -128,39 +146,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
             itemCount: settingTiles.length,
           ),
           FutureBuilder<PackageInfo>(
-              future: PackageInfo.fromPlatform(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Container(width: 0, height: 0);
-                }
+            future: PackageInfo.fromPlatform(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Container(width: 0, height: 0);
+              }
 
-                return Positioned(
-                  child: Align(
-                    alignment: FractionalOffset.bottomCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: Text(
-                        snapshot.data.version,
-                        style: Theme.of(context).textTheme.caption,
-                      ),
+              return Positioned(
+                child: Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: Text(
+                      snapshot.data.version,
+                      style: Theme.of(context).textTheme.caption,
                     ),
                   ),
-                );
-              }),
+                ),
+              );
+            },
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSocialTile({IconData icon, String title, String url}) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      onTap: () {
-        launchURL(url);
-      },
-    );
-  }
+  Widget _buildSocialTile({
+    IconData icon,
+    String title,
+    String url,
+  }) =>
+      ListTile(
+        leading: Icon(icon),
+        title: Text(title),
+        onTap: () {
+          launchURL(url);
+        },
+      );
 
   Widget _buildLanguageTile(SupportedLanguage language) {
     return ListTile(

@@ -1,7 +1,8 @@
+import 'package:charity_discount/services/auth.dart';
+import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/fadeslide.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
@@ -70,7 +71,7 @@ class __GotItButtonState extends State<_GotItButton> {
           setState(() {
             loading = true;
           });
-          await FirebaseAuth.instance.signInAnonymously();
+          await locator<AuthService>().signInAnonymously();
           AppModel.of(context, rebuildOnChange: true).finishIntro();
         },
       ),

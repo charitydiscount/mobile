@@ -276,5 +276,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  String getUserName(User user) => user.name ?? user.email;
+  String getUserName(User user) =>
+      user.name != null && user.name.isNotEmpty ? user.name : user.email;
 }
