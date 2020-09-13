@@ -256,7 +256,7 @@ void main() async {
       path: 'assets/i18n',
       supportedLocales: supportedLanguages.map((l) => l.locale).toList(),
       child: ScopedModel(
-        model: AppModel(),
+        model: locator<AppModel>(),
         child: Main(),
       ),
     ),
