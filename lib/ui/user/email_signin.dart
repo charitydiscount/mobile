@@ -181,7 +181,10 @@ class _SignInScreenState extends State<EmailSignInScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           onPressed: () async => _emailLogin(
-              email: _email.text, password: _password.text, context: context),
+            email: _email.text,
+            password: _password.text,
+            context: context,
+          ),
           padding: EdgeInsets.all(12),
           color: Theme.of(context).primaryColor,
           child: Text(

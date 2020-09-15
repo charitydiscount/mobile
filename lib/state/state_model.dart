@@ -29,6 +29,7 @@ class AppModel extends Model {
     displayMode: DisplayMode.GRID,
     notificationsForCashback: true,
     notificationsForPromotions: true,
+    notificationsEmail: true,
   );
   StreamSubscription _profileListener;
   List<Program> _programs;
@@ -37,7 +38,6 @@ class AppModel extends Model {
   ProgramMeta _programsMeta;
   Wallet wallet;
   double minimumWithdrawalAmount;
-  String _referralCode;
 
   AppModel() {
     initFromLocal().then((_) {
@@ -63,30 +63,11 @@ class AppModel extends Model {
           return;
         }
 
-        if (_referralSent == false &&
-            _isRecentEnough(profile.metadata.creationTime)) {
-          if (referralCode == null) {
-            // Ensure that there is no pending dynamic link
-            FirebaseDynamicLinks.instance
-                .getInitialLink()
-                .then((PendingDynamicLinkData data) {
-              if (data?.link != null) {
-                switch (data.link.pathSegments.first) {
-                  case DeepLinkPath.referral:
-                    _referralSent = true;
-                    locator<CharityService>().createReferralRequest(
-                      data.link.pathSegments.last,
-                    );
-                    break;
-                  default:
-                }
-              }
-            });
-          } else {
+        if (locator<AuthService>().isActualUser()) {
+          if (_referralSent == false &&
+              _isRecentEnough(profile.metadata.creationTime)) {
             _referralSent = true;
-            locator<CharityService>().createReferralRequest(
-              referralCode,
-            );
+            handleReferral();
           }
         }
 
@@ -122,8 +103,10 @@ class AppModel extends Model {
 
   Future<void> closeListeners() async {
     clearFavoriteShops();
-    await _profileListener.cancel();
-    _profileListener = null;
+    if (_profileListener != null) {
+      await _profileListener.cancel();
+      _profileListener = null;
+    }
   }
 
   bool _isRecentEnough(DateTime creationTime) =>
@@ -332,9 +315,21 @@ class AppModel extends Model {
     locator<CharityService>().removeAccount(savedAccount);
   }
 
-  String get referralCode => _referralCode;
-  void setReferralCode(String referralCode) {
-    _referralCode = referralCode;
-    notifyListeners();
+  Future<void> handleReferral() async {
+    String referralCode = await localService.getReferralCode();
+
+    if (referralCode == null) {
+      // Ensure that there is no pending dynamic link
+      var data = await FirebaseDynamicLinks.instance.getInitialLink();
+      if (data?.link != null &&
+          data.link.pathSegments.first == DeepLinkPath.referral) {
+        referralCode = data.link.pathSegments.last;
+      }
+    }
+
+    if (referralCode != null) {
+      locator<CharityService>().createReferralRequest(referralCode);
+      await localService.storeReferralCode(null);
+    }
   }
 }

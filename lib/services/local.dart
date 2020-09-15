@@ -128,6 +128,20 @@ class LocalService {
 
     return TwoPerformantMeta.fromJson(jsonDecode(affiliateMetaPrefs));
   }
+
+  Future<void> storeReferralCode(String referralCode) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (referralCode == null) {
+      await prefs.remove('referralCode');
+    } else {
+      await prefs.setString('referralCode', referralCode);
+    }
+  }
+
+  Future<String> getReferralCode() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('referralCode');
+  }
 }
 
 final LocalService localService = LocalService();

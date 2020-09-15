@@ -24,6 +24,7 @@ import 'package:charity_discount/ui/user/sign_in.dart';
 import 'package:charity_discount/ui/user/sign_up.dart';
 import 'package:charity_discount/ui/user/forgot_password.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/services/local.dart';
 
 class Main extends StatefulWidget {
   @override
@@ -184,7 +185,7 @@ class _MainState extends State<Main> {
 
     switch (deepLink.pathSegments.first) {
       case DeepLinkPath.referral:
-        AppModel.of(context).setReferralCode(deepLink.pathSegments.last);
+        await localService.storeReferralCode(deepLink.pathSegments.last);
         break;
       case DeepLinkPath.shop:
         if (AppModel.of(context).user == null) {

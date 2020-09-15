@@ -6,7 +6,7 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
 import 'package:charity_discount/util/validator.dart';
 import 'package:charity_discount/controllers/user_controller.dart';
-import 'package:charity_discount/util/firebase_errors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:charity_discount/ui/app/loading.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -271,12 +271,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
         );
       } catch (e) {
         _toggleLoadingVisible();
-        String exception = getExceptionText(e);
-        Flushbar(
-          title: 'Sign Up Error',
-          message: exception,
-          duration: Duration(seconds: 5),
-        )..show(context);
+        if (e is FirebaseException) {
+          Flushbar(
+            title: tr('authError'),
+            message: e.message,
+            duration: Duration(seconds: 5),
+          )..show(context);
+        } else {
+          if (e is PlatformException) {
+            Flushbar(
+              title: tr('authError'),
+              message: e.toString(),
+              duration: Duration(seconds: 5),
+            )..show(context);
+          } else {
+            printError(e.toString());
+          }
+        }
       }
     } else {
       setState(() => _autoValidate = true);

@@ -36,10 +36,7 @@ class ProductDetails extends StatelessWidget {
         },
       ),
       body: SingleChildScrollView(
-        child: Container(
-          height: 900,
-          child: _buildProductHeader(context),
-        ),
+        child: _buildProductHeader(context),
       ),
     );
   }
@@ -88,12 +85,10 @@ class ProductDetails extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text(plural('category', 1)),
-              Expanded(
-                child: Text(
-                  product.category ?? '-',
-                  style: textTheme.subtitle2,
-                  textAlign: TextAlign.center,
-                ),
+              Text(
+                product.category ?? '-',
+                style: textTheme.subtitle2,
+                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -135,12 +130,12 @@ class ProductDetails extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 12.0),
           child: _buildShopInfo(context),
         ),
-        Flexible(
-          flex: 1,
-          child: meta,
+        Container(
+          height: 100,
+          child: Center(child: meta),
         ),
-        Flexible(
-          flex: 4,
+        Container(
+          height: 200,
           child: Padding(
             padding: const EdgeInsets.only(left: 8, right: 8, bottom: 60),
             child: Column(
