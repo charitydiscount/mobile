@@ -432,11 +432,11 @@ class _ProductsScreenState extends State<ProductsScreen> {
 List<Product> prepareProducts(Iterable<Product> products, AppModel state) =>
     products
         .map((product) {
-          final program = state.programs.firstWhere(
+          final program = state.programs?.firstWhere(
                 (program) => program.id == product.programId,
                 orElse: () => null,
               ) ??
-              state.programs.firstWhere(
+              state.programs?.firstWhere(
                 (program) =>
                     program.uniqueCode.compareTo(product.programName) == 0,
                 orElse: () => null,

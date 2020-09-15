@@ -94,6 +94,12 @@
 	<array>
 		<string>https://charitydiscount.ro/invite</string>
 		<string>https://charitydiscount-test.web.app/invite</string>
+		<string>https://charitydiscount.ro/shop</string>
+		<string>https://charitydiscount-test.web.app/shop</string>
+		<string>https://charitydiscount.ro/product</string>
+		<string>https://charitydiscount-test.web.app/product</string>
+		<string>https://charitydiscount.ro/case</string>
+		<string>https://charitydiscount-test.web.app/case</string>
 	</array>
 	<key>MinimumOSVersion</key>
   	<string>13.0</string>

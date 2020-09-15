@@ -19,7 +19,7 @@ class AuthService {
     _auth.authStateChanges().listen((u) => profile.add(u));
   }
 
-  Future<User> signInWithEmailAndPass(email, password) async {
+  Future<User> signInWithEmailAndPass(String email, String password) async {
     AuthCredential credential = EmailAuthProvider.credential(
       email: email,
       password: password,
@@ -233,12 +233,23 @@ class AuthService {
     String firstName,
     String lastName,
   ) async {
-    UserCredential authResult = await _auth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    UserCredential authResult;
 
-    await authResult.user.updateProfile(displayName: '$firstName $lastName');
+    if (_auth.currentUser != null) {
+      AuthCredential credential = EmailAuthProvider.credential(
+        email: email,
+        password: password,
+      );
+
+      authResult = await _signInWithCredential(credential);
+    } else {
+      authResult = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    }
+
+    await updateUser(firstName: firstName, lastName: lastName);
 
     return authResult.user;
   }
@@ -246,7 +257,8 @@ class AuthService {
   bool isActualUser() =>
       _auth.currentUser != null && !_auth.currentUser.isAnonymous;
 
-  Future<void> signInAnonymously() async {
-    await _auth.signInAnonymously();
+  Future<User> signInAnonymously() async {
+    var credential = await _auth.signInAnonymously();
+    return credential.user;
   }
 }

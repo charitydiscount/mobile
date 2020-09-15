@@ -24,6 +24,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
             enableInfiniteScroll: false,
             viewportFraction: 1.0,
             aspectRatio: 4 / 3,
+            height: 350,
             onPageChanged: (index, _) {
               setState(() {
                 _currentIndex = index;
