@@ -117,7 +117,7 @@ class _RateScreenState extends State<RateScreen> {
         ),
         labelText: tr('review.opinion'),
       ),
-      autovalidate: true,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       minLines: 1,
       maxLines: 20,
       validator: (text) {

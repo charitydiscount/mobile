@@ -20,7 +20,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
 
-  bool _autoValidate = false;
   bool _loadingVisible = false;
 
   @override
@@ -195,7 +194,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: LoadingScreen(
         child: Form(
           key: _formKey,
-          autovalidate: _autoValidate,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Center(
@@ -289,8 +288,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
           }
         }
       }
-    } else {
-      setState(() => _autoValidate = true);
     }
   }
 }

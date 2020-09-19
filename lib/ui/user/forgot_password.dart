@@ -15,7 +15,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _email = TextEditingController();
 
-  bool _autoValidate = false;
   bool _loadingVisible = false;
 
   @override
@@ -101,7 +100,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       body: LoadingScreen(
         child: Form(
           key: _formKey,
-          autovalidate: _autoValidate,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Center(
@@ -161,8 +160,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           duration: Duration(seconds: 10),
         )..show(context);
       }
-    } else {
-      setState(() => _autoValidate = true);
     }
   }
 }

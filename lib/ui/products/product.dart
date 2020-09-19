@@ -19,9 +19,7 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final logo = CachedNetworkImage(
-      imageUrl: Uri.tryParse(product.images.first) != null
-          ? product.images.first
-          : null,
+      imageUrl: Uri.tryParse(product.images.first)?.toString(),
       height: 80,
       fit: BoxFit.contain,
       errorWidget: (context, url, error) => Container(
