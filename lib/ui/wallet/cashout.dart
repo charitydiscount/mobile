@@ -53,7 +53,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
       children: <Widget>[
         Form(
           key: _formKey,
-          autovalidate: true,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: IbanFormField(
             onSaved: (iban) {
               if (iban != null &&
@@ -178,9 +178,10 @@ class _CashoutScreenState extends State<CashoutScreen> {
         children: <Widget>[
           TextFormField(
             controller: _amountController,
-            autovalidate: true,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             style: TextStyle(
-                fontSize: Theme.of(context).textTheme.headline4.fontSize),
+              fontSize: Theme.of(context).textTheme.headline4.fontSize,
+            ),
             validator: (String value) {
               if (value.isEmpty) {
                 if (_validAmount != false) {
@@ -393,7 +394,7 @@ class _CashoutScreenState extends State<CashoutScreen> {
         child: TextFormField(
           controller: _accountNameController,
           textCapitalization: TextCapitalization.words,
-          autovalidate: true,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           onChanged: (value) {
             setState(() {});
           },

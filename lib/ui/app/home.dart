@@ -108,27 +108,19 @@ class _HomeScreenState extends State<HomeScreen> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.add_shopping_cart),
-            title: Text(
-              tr('shops'),
-            ),
+            label: tr('shops'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.category),
-            title: Text(
-              tr('product.title'),
-            ),
+            label: tr('product.title'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
-            title: Text(
-              tr('charity'),
-            ),
+            label: tr('charity'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_balance_wallet),
-            title: Text(
-              tr('wallet.name'),
-            ),
+            label: tr('wallet.name'),
           ),
         ],
         currentIndex: selectedNavIndex,

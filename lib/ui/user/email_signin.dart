@@ -19,7 +19,6 @@ class _SignInScreenState extends State<EmailSignInScreen> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
 
-  bool _autoValidate = false;
   bool _loadingVisible = false;
 
   @override
@@ -90,7 +89,7 @@ class _SignInScreenState extends State<EmailSignInScreen> {
               ),
               child: Form(
                 key: _formKey,
-                autovalidate: _autoValidate,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -270,8 +269,6 @@ class _SignInScreenState extends State<EmailSignInScreen> {
       } catch (e) {
         _handleAuthError(e);
       }
-    } else {
-      setState(() => _autoValidate = true);
     }
   }
 

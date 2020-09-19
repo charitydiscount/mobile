@@ -102,7 +102,7 @@ class _DonateWidgetState extends State<DonateWidget> {
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Form(
                 key: widget.formKey,
-                autovalidate: true,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 child: TextFormField(
                   autofocus: true,
                   controller: _amountController,
