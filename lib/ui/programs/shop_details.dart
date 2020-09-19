@@ -33,9 +33,9 @@ class ShopDetails extends StatefulWidget {
 }
 
 class _ShopDetailsState extends State<ShopDetails> {
-  AsyncMemoizer _promotionsMemoizer = AsyncMemoizer();
-  AsyncMemoizer<ProductSearchResult> _productsMemoizer = AsyncMemoizer();
-  AsyncMemoizer<List<Review>> _reviewsMemoizer = AsyncMemoizer();
+  final _promotionsMemoizer = AsyncMemoizer<List<Promotion>>();
+  AsyncMemoizer _reviewsMemoizer = AsyncMemoizer<List<Review>>();
+  final _productsMemoizer = AsyncMemoizer<ProductSearchResult>();
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +53,10 @@ class _ShopDetailsState extends State<ShopDetails> {
     double sectionTitleSize =
         Theme.of(context).textTheme.headline5.fontSize * 0.7;
 
+    final reviewsFuture = _reviewsMemoizer.runOnce(() =>
+        locator<ShopsService>().getProgramRating(widget.program.uniqueCode));
     Widget ratingBuilder = FutureBuilder<List<Review>>(
-      future: _reviewsMemoizer.runOnce(
-        () =>
-            locator<ShopsService>().getProgramRating(widget.program.uniqueCode),
-      ),
+      future: reviewsFuture,
       builder: (context, snapshot) {
         final loading = buildConnectionLoading(
           context: context,
@@ -65,8 +64,9 @@ class _ShopDetailsState extends State<ShopDetails> {
           waitingDisplay: Text(tr('review.loading')),
         );
         if (loading != null) {
-          return loading;
+          return SliverToBoxAdapter(child: loading);
         }
+
         final titleColor =
             snapshot.data.isEmpty ? Colors.grey.shade500 : Colors.grey.shade800;
         final reviewsTitle = Text(
@@ -89,44 +89,7 @@ class _ShopDetailsState extends State<ShopDetails> {
         bool alreadyReviewed = thisUserReview != null;
 
         Widget addReview = locator<AuthService>().isActualUser()
-            ? ClipOval(
-                child: Container(
-                  color: Colors.green,
-                  child: IconButton(
-                    color: Colors.white,
-                    icon: alreadyReviewed ? Icon(Icons.edit) : Icon(Icons.add),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          maintainState: true,
-                          builder: (BuildContext context) => RateScreen(
-                            program: widget.program,
-                            existingReview: thisUserReview,
-                          ),
-                          settings: RouteSettings(name: 'ProvideRating'),
-                        ),
-                      ).then((createdReview) {
-                        if (createdReview != null && createdReview) {
-                          Flushbar(
-                            icon: Icon(
-                              Icons.check,
-                              color: Colors.green,
-                            ),
-                            title: tr('review.thankYou'),
-                            message: tr('review.itIsImportant'),
-                            reverseAnimationCurve: Curves.linear,
-                          ).show(context).then((value) {
-                            setState(() {
-                              _reviewsMemoizer = AsyncMemoizer();
-                            });
-                          });
-                        }
-                      });
-                    },
-                  ),
-                ),
-              )
+            ? _buildProvideRating(alreadyReviewed, context, thisUserReview)
             : Container();
 
         snapshot.data.sort((r1, r2) => r2.createdAt.compareTo(r1.createdAt));
@@ -139,7 +102,6 @@ class _ShopDetailsState extends State<ShopDetails> {
         List<Widget> reviewSection = [
           Container(
             width: MediaQuery.of(context).size.width,
-            padding: const EdgeInsets.all(8.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
@@ -174,21 +136,27 @@ class _ShopDetailsState extends State<ShopDetails> {
           );
         }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: reviewSection,
+        return SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              return reviewSection[index];
+            },
+            childCount: reviewSection.length,
+          ),
         );
       },
     );
 
-    Widget promotionsBuilder = FutureBuilder(
-      future: _promotionsMemoizer.runOnce(
-        () => locator<AffiliateService>().getPromotions(
-          affiliateUniqueCode: appState.affiliateMeta.uniqueCode,
-          programId: widget.program.id,
-          programUniqueCode: widget.program.uniqueCode,
-        ),
+    final promotionsFuture = _promotionsMemoizer.runOnce(
+      () => locator<AffiliateService>().getPromotions(
+        affiliateUniqueCode: appState.affiliateMeta.uniqueCode,
+        programId: widget.program.id,
+        programUniqueCode: widget.program.uniqueCode,
       ),
+    );
+
+    Widget promotionsBuilder = FutureBuilder<List<Promotion>>(
+      future: promotionsFuture,
       builder: (context, snapshot) {
         final loading = buildConnectionLoading(
           context: context,
@@ -196,9 +164,10 @@ class _ShopDetailsState extends State<ShopDetails> {
           waitingDisplay: Text(tr('promotion.loading')),
         );
         if (loading != null) {
-          return loading;
+          return SliverToBoxAdapter(child: loading);
         }
-        var promotions = snapshot.data as List<Promotion>;
+
+        var promotions = snapshot.data;
         final titleColor =
             promotions.isEmpty ? Colors.grey.shade500 : Colors.grey.shade800;
         final promotionsTitle = Text(
@@ -209,17 +178,26 @@ class _ShopDetailsState extends State<ShopDetails> {
           ),
           textAlign: TextAlign.left,
         );
-        List<Widget> promotionsWidgets = [promotionsTitle];
-        promotionsWidgets.addAll(
-          promotions.map((p) => PromotionWidget(promotion: p)).toList(),
-        );
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: promotionsWidgets,
+
+        return SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              if (index == 0) {
+                return promotionsTitle;
+              } else {
+                return PromotionWidget(promotion: promotions[index - 1]);
+              }
+            },
+            childCount: (promotions?.length ?? 0) + 1,
+          ),
         );
       },
     );
+
+    final productsFuture = _productsMemoizer.runOnce(() =>
+        Future.delayed(Duration(milliseconds: 500)).then((_) =>
+            locator<SearchServiceBase>()
+                .getProductsForProgram(programId: widget.program.id)));
 
     return Scaffold(
       appBar: AppBar(
@@ -239,33 +217,115 @@ class _ShopDetailsState extends State<ShopDetails> {
           );
         },
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
+      body: CustomScrollView(
+        primary: true,
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+            sliver: SliverToBoxAdapter(
               child: Center(child: logo),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+            sliver: SliverToBoxAdapter(
               child: _buildInfo(context),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: promotionsBuilder,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: ratingBuilder,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+            sliver: promotionsBuilder,
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+            sliver: ratingBuilder,
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+            sliver: SliverToBoxAdapter(
               child: Divider(height: 2.0),
             ),
-            _buildProducts(),
-            SizedBox(height: 50),
-          ],
+          ),
+          FutureBuilder<ProductSearchResult>(
+            future: productsFuture,
+            builder: (context, snapshot) {
+              final loading = buildConnectionLoading(
+                context: context,
+                snapshot: snapshot,
+              );
+              if (loading != null) {
+                return SliverToBoxAdapter(child: loading);
+              }
+
+              List products = prepareProducts(
+                snapshot.data.products,
+                AppModel.of(context),
+              );
+
+              return _ShopProducts(products: products);
+            },
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                bottom: 24.0,
+                top: 24.0,
+                left: 12.0,
+                right: 48.0,
+              ),
+              child: Text(
+                tr('completeOffer'),
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(height: 50),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ClipOval _buildProvideRating(
+      bool alreadyReviewed, BuildContext context, Review thisUserReview) {
+    return ClipOval(
+      child: Container(
+        color: Colors.green,
+        child: IconButton(
+          color: Colors.white,
+          icon: alreadyReviewed ? Icon(Icons.edit) : Icon(Icons.add),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                maintainState: true,
+                builder: (BuildContext context) => RateScreen(
+                  program: widget.program,
+                  existingReview: thisUserReview,
+                ),
+                settings: RouteSettings(name: 'ProvideRating'),
+              ),
+            ).then(
+              (createdReview) {
+                if (createdReview != null && createdReview) {
+                  Flushbar(
+                    icon: Icon(
+                      Icons.check,
+                      color: Colors.green,
+                    ),
+                    title: tr('review.thankYou'),
+                    message: tr('review.itIsImportant'),
+                    reverseAnimationCurve: Curves.linear,
+                  ).show(context).then((value) {
+                    setState(() {
+                      _reviewsMemoizer = AsyncMemoizer<List<Review>>();
+                    });
+                  });
+                }
+              },
+            );
+          },
         ),
       ),
     );
@@ -378,56 +438,27 @@ class _ShopDetailsState extends State<ShopDetails> {
       ),
     );
   }
+}
 
-  Widget _buildProducts() {
-    if (widget.program.productsCount == 0) {
-      return Container();
-    }
+class _ShopProducts extends StatelessWidget {
+  _ShopProducts({
+    Key key,
+    @required this.products,
+  }) : super(key: key);
 
-    return FutureBuilder(
-      future: _productsMemoizer.runOnce(() =>
-          Future.delayed(Duration(milliseconds: 500)).then((_) =>
-              locator<SearchServiceBase>()
-                  .getProductsForProgram(programId: widget.program.id))),
-      builder: (context, snapshot) {
-        final loading = buildConnectionLoading(
-          context: context,
-          snapshot: snapshot,
-        );
-        if (loading != null) {
-          return loading;
-        }
+  final List<Product> products;
 
-        final appState = AppModel.of(context);
-        List products = prepareProducts(snapshot.data.products, appState);
-
-        return Column(
-          children: <Widget>[
-            GridView.builder(
-              shrinkWrap: true,
-              primary: false,
-              gridDelegate: getGridDelegate(context, aspectRatioFactor: 0.95),
-              itemCount: products.length,
-              itemBuilder: (context, index) => ProductCard(
-                product: products[index],
-                showShopLogo: false,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                bottom: 24.0,
-                top: 24.0,
-                left: 12.0,
-                right: 48.0,
-              ),
-              child: Text(
-                tr('completeOffer'),
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
-            ),
-          ],
-        );
-      },
+  @override
+  Widget build(BuildContext context) {
+    return SliverGrid(
+      gridDelegate: getGridDelegate(context, aspectRatioFactor: 0.95),
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) => ProductCard(
+          product: products[index],
+          showShopLogo: false,
+        ),
+        childCount: products?.length ?? 0,
+      ),
     );
   }
 }

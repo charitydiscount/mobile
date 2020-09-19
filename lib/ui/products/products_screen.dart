@@ -26,7 +26,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   final _priceFormKey = GlobalKey<FormState>();
   ScrollController _productsScrollController;
   AppModel _state;
-  AsyncMemoizer<List<Product>> _featuredMemoizer = AsyncMemoizer();
+  AsyncMemoizer _featuredMemoizer = AsyncMemoizer<List<Product>>();
   int _totalProducts = 1;
   int _perPage = 50;
   List<Product> _products = [];
