@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
@@ -11,3 +12,7 @@ String removeAllHtmlTags(String htmlText) {
 
   return htmlText.replaceAll(exp, '');
 }
+
+DateTime jsonToDate(dynamic json) => json != null
+    ? (json is Timestamp ? json.toDate() : DateTime.parse(json))
+    : null;

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:charity_discount/models/promotion.dart';
 import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/state/locator.dart';
@@ -5,6 +6,7 @@ import 'package:charity_discount/util/remote_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get_ip/get_ip.dart';
 
 class AffiliateService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -76,5 +78,19 @@ class AffiliateService {
 
   Future<void> _setBaseUrl() async {
     _baseUrl = await remoteConfig.getAffiliateEndpoint();
+  }
+
+  Future<void> saveClickInfo(String programId) async {
+    String ipAddress = await GetIp.ipAddress;
+    String ipv6Address = await GetIp.ipv6Address;
+
+    await _db.collection('clicks').add({
+      'ipAddress': ipAddress,
+      'ipv6Address': ipv6Address,
+      'userId': _auth.currentUser.uid,
+      'programId': programId,
+      'createdAt': FieldValue.serverTimestamp(),
+      'deviceType': Platform.operatingSystem,
+    });
   }
 }

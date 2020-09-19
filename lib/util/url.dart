@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:charity_discount/services/affiliate.dart';
 import 'package:charity_discount/services/analytics.dart';
 import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/state/locator.dart';
@@ -45,8 +47,8 @@ String interpolateUserCode(
 void openAffiliateLink(
   String url,
   BuildContext context,
-  String eventId,
-  String eventName,
+  String programId,
+  String programName,
   String eventScreen,
 ) async {
   if (!locator<AuthService>().isActualUser()) {
@@ -57,8 +59,8 @@ void openAffiliateLink(
   analytics.logEvent(
     name: 'access_shop',
     parameters: {
-      'id': eventId,
-      'name': eventName,
+      'id': programId,
+      'name': programName,
       'screen': eventScreen,
     },
   );
@@ -66,6 +68,12 @@ void openAffiliateLink(
   bool continueToShop = await showExplanationDialog(context);
   if (continueToShop != true) {
     return;
+  }
+
+  try {
+    await locator<AffiliateService>().saveClickInfo(programId);
+  } catch (e) {
+    stderr.write(e.toString());
   }
 
   launchURL(url);
