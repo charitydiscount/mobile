@@ -58,6 +58,7 @@ class DonateWidget extends StatefulWidget {
 class _DonateWidgetState extends State<DonateWidget> {
   Stream<Wallet> _pointsListener;
   final TextEditingController _amountController = TextEditingController();
+  bool _firstLoad = true;
 
   @override
   void initState() {
@@ -87,6 +88,11 @@ class _DonateWidgetState extends State<DonateWidget> {
         }
 
         double balance = snapshot.data.cashback.acceptedAmount;
+        if (_firstLoad == true) {
+          // Default the donation amount to the available cashback
+          _amountController.text = AmountHelper.amountToString(balance);
+        }
+        _firstLoad = false;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
