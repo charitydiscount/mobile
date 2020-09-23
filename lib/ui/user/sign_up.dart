@@ -1,4 +1,5 @@
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/ui/user/agreement.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -161,13 +162,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        onPressed: () {
-          _emailSignUp(
+        onPressed: () async {
+          bool agreed = await showDialog(
+            context: context,
+            builder: (context) => AgreementDialog(),
+          );
+          if (agreed) {
+            _emailSignUp(
               firstName: _firstName.text,
               lastName: _lastName.text,
               email: _email.text,
               password: _password.text,
-              context: context);
+              context: context,
+            );
+          }
         },
         padding: EdgeInsets.all(12),
         color: Theme.of(context).primaryColor,

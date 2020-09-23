@@ -230,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 tr('terms'),
                 style: titleStyle,
               ),
-              onTap: () => launchURL('https://charitydiscount.ro/tos'),
+              onTap: () => UrlHelper.launchTerms(),
             );
             menuTiles.add(terms);
 
@@ -240,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 tr('privacy'),
                 style: titleStyle,
               ),
-              onTap: () => launchURL('https://charitydiscount.ro/privacy'),
+              onTap: () => UrlHelper.launchPrivacy(),
             );
             menuTiles.add(privacy);
 

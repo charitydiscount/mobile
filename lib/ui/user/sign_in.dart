@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:apple_sign_in/apple_sign_in.dart';
+import 'package:charity_discount/ui/user/agreement.dart';
 import 'package:charity_discount/ui/user/email_signin.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:device_info/device_info.dart';
@@ -126,14 +127,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   void _googleLogin(BuildContext context) async {
     _toggleLoadingVisible();
-    try {
-      AppModel.of(context).createListeners();
-      await userController.signIn(Strategy.Google);
-      _toggleLoadingVisible();
-      Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
-    } catch (e) {
-      _handleAuthError(e);
-    }
+    await _handleSignIn(context, strategy: Strategy.Google);
   }
 
   void _appleSignIn(BuildContext context) async {
@@ -145,17 +139,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
     switch (result.status) {
       case AuthorizationStatus.authorized:
-        try {
-          AppModel.of(context).createListeners();
-          await userController.signIn(
-            Strategy.Apple,
-            appleResult: result,
-          );
-          _toggleLoadingVisible();
-          Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
-        } catch (e) {
-          _handleAuthError(e);
-        }
+        await _handleSignIn(context, strategy: Strategy.Apple, result: result);
         break;
       case AuthorizationStatus.error:
         _toggleLoadingVisible();
@@ -179,17 +163,11 @@ class _SignInScreenState extends State<SignInScreen> {
 
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
-        try {
-          AppModel.of(context).createListeners();
-          await userController.signIn(
-            Strategy.Facebook,
-            facebookResult: result,
-          );
-          _toggleLoadingVisible();
-          Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
-        } catch (e) {
-          _handleAuthError(e);
-        }
+        await _handleSignIn(
+          context,
+          strategy: Strategy.Facebook,
+          result: result,
+        );
         break;
       case FacebookLoginStatus.cancelledByUser:
         _toggleLoadingVisible();
@@ -202,6 +180,37 @@ class _SignInScreenState extends State<SignInScreen> {
           duration: Duration(seconds: 5),
         )..show(context);
         break;
+    }
+  }
+
+  Future _handleSignIn(
+    BuildContext context, {
+    Strategy strategy,
+    dynamic result,
+  }) async {
+    try {
+      AppModel.of(context).createListeners();
+      await userController.signIn(
+        strategy,
+        authResult: result,
+      );
+      _toggleLoadingVisible();
+      bool agreed = false;
+      if (userController.isRecentNewUser()) {
+        agreed = await showDialog(
+          context: context,
+          builder: (context) => AgreementDialog(),
+        );
+      } else {
+        agreed = true;
+      }
+      if (agreed) {
+        Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+      } else {
+        await userController.signOut();
+      }
+    } catch (e) {
+      _handleAuthError(e);
     }
   }
 

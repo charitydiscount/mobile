@@ -57,7 +57,7 @@ class _SignInScreenState extends State<EmailSignInScreen> {
           Icon(Icons.launch)
         ],
       ),
-      onPressed: () => launchURL('https://charitydiscount.ro/tos'),
+      onPressed: () => UrlHelper.launchTerms(),
     );
 
     final privacyButton = FlatButton(
@@ -70,7 +70,7 @@ class _SignInScreenState extends State<EmailSignInScreen> {
           Icon(Icons.launch)
         ],
       ),
-      onPressed: () => launchURL('https://charitydiscount.ro/privacy'),
+      onPressed: () => UrlHelper.launchPrivacy(),
     );
 
     return Scaffold(
