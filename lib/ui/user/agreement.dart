@@ -37,6 +37,7 @@ class _AgreementDialogState extends State<AgreementDialog> {
     );
 
     return AlertDialog(
+      contentPadding: EdgeInsets.symmetric(vertical: 12),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -52,6 +53,7 @@ class _AgreementDialogState extends State<AgreementDialog> {
   }
 
   Widget _buildAgreementEntry(_AgreementEntry _agreementEntry) => Row(
+        mainAxisSize: MainAxisSize.max,
         children: [
           Checkbox(
             value: _agreementEntry == _AgreementEntry.PRIVACY
@@ -68,6 +70,10 @@ class _AgreementDialogState extends State<AgreementDialog> {
             },
           ),
           RichText(
+            softWrap: true,
+            maxLines: 2,
+            overflow: TextOverflow.visible,
+            textAlign: TextAlign.left,
             text: TextSpan(
               children: [
                 TextSpan(
