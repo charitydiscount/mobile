@@ -78,3 +78,14 @@ void openAffiliateLink(
 
   launchURL(url);
 }
+
+class UrlHelper {
+  static Future<bool> launchTerms() => launch(
+        'https://charitydiscount.ro/tos',
+        forceWebView: true,
+      );
+  static Future<bool> launchPrivacy() => launch(
+        'https://charitydiscount.ro/privacy',
+        forceWebView: true,
+      );
+}

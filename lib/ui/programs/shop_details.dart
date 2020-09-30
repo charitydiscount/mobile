@@ -197,7 +197,7 @@ class _ShopDetailsState extends State<ShopDetails> {
     final productsFuture = _productsMemoizer.runOnce(() =>
         Future.delayed(Duration(milliseconds: 500)).then((_) =>
             locator<SearchServiceBase>()
-                .getProductsForProgram(programId: widget.program.id)));
+                .getProductsForProgram(program: widget.program)));
 
     return Scaffold(
       appBar: AppBar(
@@ -450,6 +450,12 @@ class _ShopProducts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (products == null || products.length == 0) {
+      return SliverToBoxAdapter(
+        child: Container(height: 0, width: 0),
+      );
+    }
+
     return SliverGrid(
       gridDelegate: getGridDelegate(context, aspectRatioFactor: 0.95),
       delegate: SliverChildBuilderDelegate(

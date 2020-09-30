@@ -4,6 +4,7 @@ import 'package:charity_discount/models/suggestion.dart';
 import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/util/remote_config.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -25,7 +26,7 @@ abstract class SearchServiceBase {
   Future<List<Product>> getFeaturedProducts({String userId});
 
   Future<ProductSearchResult> getProductsForProgram({
-    String programId,
+    @required Program program,
     int size = 20,
     int from = 0,
   });
@@ -171,11 +172,15 @@ class SearchService implements SearchServiceBase {
 
   @override
   Future<ProductSearchResult> getProductsForProgram({
-    String programId,
+    @required Program program,
     int size = 20,
     int from = 0,
   }) async {
-    final cachedResult = _getCachedResult(programId, size, from);
+    if (program.productsCount == null || program.productsCount == 0) {
+      return ProductSearchResult([], 0);
+    }
+
+    final cachedResult = _getCachedResult(program.id, size, from);
     if (cachedResult != null) return cachedResult;
 
     String elasticUrl = await remoteConfig.getElasticEndpoint();
@@ -184,7 +189,7 @@ class SearchService implements SearchServiceBase {
     final body = {
       'query': {
         'term': {
-          'campaign_id': {'value': programId}
+          'campaign_id': {'value': program.id}
         }
       },
       'size': size,
@@ -213,7 +218,7 @@ class SearchService implements SearchServiceBase {
       productsFromElastic(List.from(data['hits'])),
       data['total']['value'] ?? 0,
     );
-    _cacheResult(programId, result);
+    _cacheResult(program.id, result);
 
     return result;
   }

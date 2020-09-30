@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:charity_discount/controllers/user_controller.dart';
 import 'package:charity_discount/models/favorite_shops.dart';
 import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/models/program.dart';
@@ -64,8 +65,7 @@ class AppModel extends Model {
         }
 
         if (locator<AuthService>().isActualUser()) {
-          if (_referralSent == false &&
-              _isRecentEnough(profile.metadata.creationTime)) {
+          if (_referralSent == false && userController.isRecentNewUser()) {
             _referralSent = true;
             handleReferral();
           }
@@ -108,9 +108,6 @@ class AppModel extends Model {
       _profileListener = null;
     }
   }
-
-  bool _isRecentEnough(DateTime creationTime) =>
-      DateTime.now().toUtc().difference(creationTime.toUtc()).inMinutes < 5;
 
   static AppModel of(BuildContext context, {bool rebuildOnChange = false}) =>
       ScopedModel.of<AppModel>(context, rebuildOnChange: rebuildOnChange);

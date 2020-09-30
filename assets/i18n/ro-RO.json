@@ -251,5 +251,8 @@
   "signInExplanation": {
     "title": "Conectează-te",
     "content": "Pentru a beneficia de întreaga experiență, trebuie să te conectezi cu contul tău. Durează doar câteva secunde, promitem 👇"
-  }
+  },
+  "agreeTo": "Sunt de acord cu",
+  "cancel": "Renunță",
+  "agree": "Accept"
 }

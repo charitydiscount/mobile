@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/notifications.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 enum Strategy { EmailAndPass, Google, Facebook, Apple }
 
@@ -17,8 +15,7 @@ class UserController {
   Future<void> signIn(
     Strategy provider, {
     Map<String, dynamic> credentials,
-    FacebookLoginResult facebookResult,
-    AuthorizationResult appleResult,
+    dynamic authResult,
   }) async {
     switch (provider) {
       case Strategy.EmailAndPass:
@@ -29,10 +26,10 @@ class UserController {
         await locator<AuthService>().signInWithGoogle();
         break;
       case Strategy.Facebook:
-        await locator<AuthService>().signInWithFacebook(facebookResult);
+        await locator<AuthService>().signInWithFacebook(authResult);
         break;
       case Strategy.Apple:
-        await locator<AuthService>().signInWithApple(appleResult);
+        await locator<AuthService>().signInWithApple(authResult);
         break;
       default:
         return;
@@ -73,6 +70,18 @@ class UserController {
     await locator<MetaService>().addFcmToken(token);
     await locator<MetaService>().setNotificationsForPromotions(token, true);
   }
+
+  bool isRecentNewUser() =>
+      locator<AuthService>().currentUser != null &&
+      DateTime.now()
+              .toUtc()
+              .difference(locator<AuthService>()
+                  .currentUser
+                  .metadata
+                  .creationTime
+                  .toUtc())
+              .inMinutes <
+          2;
 }
 
 UserController userController = UserController();
