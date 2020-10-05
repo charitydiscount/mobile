@@ -14,6 +14,7 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
+        height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.symmetric(vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

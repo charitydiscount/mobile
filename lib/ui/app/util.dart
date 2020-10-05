@@ -1,6 +1,11 @@
 import 'dart:math';
 
 import 'package:charity_discount/models/program.dart';
+import 'package:charity_discount/services/analytics.dart';
+import 'package:charity_discount/services/navigation.dart';
+import 'package:charity_discount/state/locator.dart';
+import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/util/constants.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -145,5 +150,34 @@ SliverGridDelegate getGridDelegate(
         ? min(maxPerRow, perRow + rowDisplacement)
         : perRow + rowDisplacement,
     childAspectRatio: aspectRatio * aspectRatioFactor,
+  );
+}
+
+Future<void> navigateToShop(BuildContext context, String shopName) async {
+  if (shopName == null || shopName.isEmpty) {
+    return;
+  }
+  if (AppModel.of(context).user == null) {
+    return;
+  }
+  var programs = await AppModel.of(context).programsFuture;
+  var program = programs.firstWhere(
+    (p) => p.name.toLowerCase() == shopName.toLowerCase(),
+    orElse: () => null,
+  );
+
+  if (program == null) {
+    return;
+  }
+
+  analytics.logViewItem(
+    itemId: program.id,
+    itemName: program.name,
+    itemCategory: 'program',
+  );
+
+  locator<NavigationService>().navigateTo(
+    Routes.shopDetails,
+    arguments: program,
   );
 }

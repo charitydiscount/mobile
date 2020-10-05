@@ -4,6 +4,7 @@ import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/notifications.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/ui/products/products_screen.dart';
 import 'package:charity_discount/ui/app/settings.dart';
 import 'package:charity_discount/ui/referrals/referrals.dart';
@@ -44,9 +45,34 @@ class _HomeScreenState extends State<HomeScreen> {
     fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
         if (mounted) {
+          final type = message['data']['type'];
+          bool needsButton = type == NotificationTypes.commission ||
+              type == NotificationTypes.shop;
           Flushbar(
             title: message['notification']['title'],
             message: message['notification']['body'],
+            mainButton: needsButton
+                ? FlatButton(
+                    child: Text(
+                      tr('open'),
+                      style: TextStyle(color: Theme.of(context).primaryColor),
+                    ),
+                    onPressed: () async {
+                      switch (type) {
+                        case NotificationTypes.commission:
+                          setState(() {
+                            selectedNavIndex = 3;
+                          });
+                          break;
+                        case NotificationTypes.shop:
+                          await navigateToShop(
+                              context, message['data']['shopName']);
+                          break;
+                        default:
+                      }
+                    },
+                  )
+                : null,
           )?.show(context);
         }
       },
@@ -62,11 +88,20 @@ class _HomeScreenState extends State<HomeScreen> {
     return Future.value(true);
   }
 
-  Future<dynamic> _handleBackgroundNotification(Map<String, dynamic> message) {
-    if (message['data']['type'] == 'COMMISSION') {
-      setState(() {
-        selectedNavIndex = 3;
-      });
+  Future<dynamic> _handleBackgroundNotification(
+    Map<String, dynamic> message,
+  ) async {
+    final type = message['data']['type'];
+    switch (type) {
+      case NotificationTypes.commission:
+        setState(() {
+          selectedNavIndex = 3;
+        });
+        break;
+      case NotificationTypes.shop:
+        await navigateToShop(context, message['data']['shopName']);
+        break;
+      default:
     }
 
     return Future.value(true);
