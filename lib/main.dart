@@ -188,30 +188,7 @@ class _MainState extends State<Main> {
         await localService.storeReferralCode(deepLink.pathSegments.last);
         break;
       case DeepLinkPath.shop:
-        if (AppModel.of(context).user == null) {
-          return;
-        }
-        var programs = await AppModel.of(context).programsFuture;
-        var program = programs.firstWhere(
-          (p) =>
-              p.name.toLowerCase() == deepLink.pathSegments.last.toLowerCase(),
-          orElse: () => null,
-        );
-
-        if (program == null) {
-          return;
-        }
-
-        analytics.logViewItem(
-          itemId: program.id,
-          itemName: program.name,
-          itemCategory: 'program',
-        );
-
-        locator<NavigationService>().navigateTo(
-          Routes.shopDetails,
-          arguments: program,
-        );
+        await navigateToShop(context, deepLink.pathSegments.last);
         break;
       default:
     }
