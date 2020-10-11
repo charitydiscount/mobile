@@ -50,7 +50,7 @@ dependencies:
   carousel_slider: ^2.2.1
   json_annotation: ^3.0.1
   double_back_to_close_app: ^1.2.0
-  firebase_crashlytics: ^0.1.4+1
+  firebase_crashlytics: ^0.2.1+1
   substring_highlight: ^0.1.2
   fluttertoast: ^7.0.2
   firebase_dynamic_links: ^0.6.0
