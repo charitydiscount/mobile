@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:charity_discount/controllers/user_controller.dart';
 import 'package:charity_discount/services/auth.dart';
+import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/user/user_avatar.dart';
 import 'package:charity_discount/ui/app/loading.dart';
+import 'package:charity_discount/util/authorize.dart';
 import 'package:charity_discount/util/remote_config.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -129,6 +131,45 @@ class _ProfileState extends State<Profile> {
     final nameLabel = Text('${tr('name')}:');
     final name = appState.user.name ?? '';
 
+    final deleteAccountButton = FlatButton(
+      child: Text(
+        tr('deleteAccount').toUpperCase(),
+        style: Theme.of(context).textTheme.button,
+      ),
+      onPressed: () async {
+        bool agreed = await showDialog(
+          context: context,
+          builder: _deleteConfirmationDialogBuilder,
+        );
+        if (!agreed) {
+          return;
+        }
+
+        bool didAuthenticate = await authorize(
+          context: context,
+          title: tr('deleteAuthorization'),
+          charityService: locator<CharityService>(),
+        );
+
+        if (!didAuthenticate) {
+          return;
+        }
+
+        bool requiresSignIn = await userController.deleteAccount();
+        if (requiresSignIn) {
+          bool accepted = await showDialog(
+            context: context,
+            builder: _reAuthDialogBuilder,
+          );
+          if (accepted) {
+            await _signOut(context);
+          }
+        } else {
+          await _signOut(context);
+        }
+      },
+    );
+
     return LoadingScreen(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 48.0),
@@ -149,12 +190,59 @@ class _ProfileState extends State<Profile> {
                 SizedBox(height: 12.0),
                 SizedBox(height: 12.0),
                 signOutButton,
+                deleteAccountButton,
               ],
             ),
           ),
         ),
       ),
       inAsyncCall: _loadingVisible,
+    );
+  }
+
+  Widget _deleteConfirmationDialogBuilder(context) {
+    Widget cancelButton = FlatButton(
+      child: Text(tr('cancel')),
+      onPressed: () {
+        Navigator.pop(context, false);
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text(tr('agree')),
+      onPressed: () {
+        Navigator.pop(context, true);
+      },
+    );
+
+    return AlertDialog(
+      content: Text(tr('deleteConfirmation')),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+  }
+
+  Widget _reAuthDialogBuilder(context) {
+    Widget cancelButton = FlatButton(
+      child: Text(tr('cancel')),
+      onPressed: () {
+        Navigator.pop(context, false);
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text('OK'),
+      onPressed: () {
+        Navigator.pop(context, true);
+      },
+    );
+
+    return AlertDialog(
+      content: Text(tr('signInAgain')),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
     );
   }
 

@@ -1,7 +1,7 @@
 name: charity_discount
 description: Empowering charity.
 
-version: 1.9.0+700
+version: 1.9.1+700
 
 environment:
   sdk: '>=2.1.0 <3.0.0'
@@ -39,7 +39,7 @@ dependencies:
   flutter_rating_bar: ^3.0.0
   flutter_facebook_login: ^3.0.0
   local_auth: ^0.6.1
-  firebase_messaging: ^7.0.0
+  firebase_messaging: ^7.0.3
   devicelocale: ^0.3.1
   device_info: ^0.4.2+7
   apple_sign_in: ^0.1.0

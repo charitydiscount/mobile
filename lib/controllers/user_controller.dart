@@ -82,6 +82,23 @@ class UserController {
                   .toUtc())
               .inMinutes <
           2;
+
+  Future<bool> deleteAccount() async {
+    try {
+      await locator<AuthService>().deleteAccount();
+    } catch (e) {
+      if (e is FirebaseAuthException) {
+        switch (e.code) {
+          case 'requires-recent-login':
+            return true;
+            break;
+          default:
+        }
+      }
+    }
+
+    return false;
+  }
 }
 
 UserController userController = UserController();

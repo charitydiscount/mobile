@@ -261,4 +261,6 @@ class AuthService {
     var credential = await _auth.signInAnonymously();
     return credential.user;
   }
+
+  Future<void> deleteAccount() => _auth.currentUser.delete();
 }

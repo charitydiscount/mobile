@@ -5,7 +5,6 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:charity_discount/util/validator.dart';
 import 'package:charity_discount/ui/app/loading.dart';
 import 'package:charity_discount/controllers/user_controller.dart';
 import 'package:charity_discount/state/state_model.dart';
@@ -20,10 +19,26 @@ class _SignInScreenState extends State<EmailSignInScreen> {
   final TextEditingController _password = TextEditingController();
 
   bool _loadingVisible = false;
+  bool _emailFilledIn = false;
+  bool _passFilledIn = false;
 
   @override
   void initState() {
     super.initState();
+    _email.addListener(() {
+      if (_emailFilledIn != _email.text.isNotEmpty) {
+        setState(() {
+          _emailFilledIn = _email.text.isNotEmpty;
+        });
+      }
+    });
+    _password.addListener(() {
+      if (_passFilledIn != _password.text.isNotEmpty) {
+        setState(() {
+          _passFilledIn = _password.text.isNotEmpty;
+        });
+      }
+    });
   }
 
   @override
@@ -133,7 +148,6 @@ class _SignInScreenState extends State<EmailSignInScreen> {
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
       controller: _email,
-      validator: Validator.validateEmail,
       decoration: InputDecoration(
         prefixIcon: Padding(
           padding: EdgeInsets.only(left: 5.0),
@@ -154,7 +168,6 @@ class _SignInScreenState extends State<EmailSignInScreen> {
       autofocus: false,
       obscureText: true,
       controller: _password,
-      validator: Validator.validatePassword,
       decoration: InputDecoration(
         prefixIcon: Padding(
           padding: EdgeInsets.only(left: 5.0),
@@ -179,11 +192,15 @@ class _SignInScreenState extends State<EmailSignInScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          onPressed: () async => _emailLogin(
-            email: _email.text,
-            password: _password.text,
-            context: context,
-          ),
+          onPressed: _emailFilledIn && _passFilledIn
+              ? () {
+                  _emailLogin(
+                    email: _email.text,
+                    password: _password.text,
+                    context: context,
+                  );
+                }
+              : null,
           padding: EdgeInsets.all(12),
           color: Theme.of(context).primaryColor,
           child: Text(
