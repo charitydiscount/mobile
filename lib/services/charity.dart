@@ -105,9 +105,7 @@ class FirebaseCharityService implements CharityService {
         .doc(userId)
         .snapshots()
         .map(
-          (pointsSnapshop) => pointsSnapshop.exists
-              ? Wallet.fromJson(pointsSnapshop.data())
-              : null,
+          (pointsSnapshop) => Wallet.fromJson(pointsSnapshop?.data() ?? Map()),
         )
         .listen((wallet) {
       _walletStream.add(wallet);

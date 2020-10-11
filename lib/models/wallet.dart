@@ -12,21 +12,18 @@ class Wallet {
   Wallet({this.charityPoints, this.cashback, this.transactions});
 
   factory Wallet.fromJson(Map<String, dynamic> json) {
-    final cashbackJson = json['cashback'];
-    final pointsJson = json['points'];
+    final cashbackJson = json['cashback'] ?? Map();
+    final pointsJson = json['points'] ?? Map();
     final transactionsJson = json['transactions'] ?? [];
 
     final cashback = {
-      'approved':
-          cashbackJson.containsKey('approved') ? cashbackJson['approved'] : 0,
-      'pending':
-          cashbackJson.containsKey('pending') ? cashbackJson['pending'] : 0,
+      'approved': cashbackJson['approved'] ?? 0,
+      'pending': cashbackJson['pending'] ?? 0,
     };
 
     final points = {
-      'approved':
-          pointsJson.containsKey('approved') ? pointsJson['approved'] : 0,
-      'pending': pointsJson.containsKey('pending') ? pointsJson['pending'] : 0,
+      'approved': pointsJson['approved'] ?? 0,
+      'pending': pointsJson['pending'] ?? 0,
     };
 
     final transactions = List<Transaction>.from(
