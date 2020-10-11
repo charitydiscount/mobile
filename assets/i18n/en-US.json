@@ -255,5 +255,9 @@
   "agreeTo": "I agree to the",
   "cancel": "Cancel",
   "agree": "I Agree",
-  "open": "Open"
+  "open": "Open",
+  "deleteAccount": "Delete account",
+  "signInAgain": "For security reasons, please sign in again",
+  "deleteAuthorization": "Authorize the account deletion",
+  "deleteConfirmation": "Are you sure that you want to delete your account? This cannot be undone."
 }

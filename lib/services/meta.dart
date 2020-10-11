@@ -49,12 +49,14 @@ class MetaService {
         'platform': Platform.operatingSystem,
       });
 
-  Future<void> removeFcmToken(String token) => _db
-      .collection('users')
-      .doc(_auth.currentUser.uid)
-      .collection('tokens')
-      .doc(token)
-      .delete();
+  Future<void> removeFcmToken(String token) => _auth.currentUser != null
+      ? _db
+          .collection('users')
+          .doc(_auth.currentUser.uid)
+          .collection('tokens')
+          .doc(token)
+          .delete()
+      : null;
 
   Future<void> setNotifications(
     String deviceToken,
