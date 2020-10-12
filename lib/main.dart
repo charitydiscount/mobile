@@ -224,8 +224,8 @@ class AppLoading extends StatelessWidget {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = CustomHttpOverrides();
-  FlutterError.onError = Crashlytics.instance.recordFlutterError;
   await Firebase.initializeApp();
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
   setupServices();
 
