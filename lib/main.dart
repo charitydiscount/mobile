@@ -78,7 +78,7 @@ class _MainState extends State<Main> {
     }
   }
 
-  Widget _buildDefaultWidget({int initialScreen = 0}) {
+  Widget _buildDefaultWidget({Screen initialScreen = Screen.PROGRAMS}) {
     return ScopedModelDescendant<AppModel>(
       builder: (context, child, appModel) {
         if (appModel.loading) {
@@ -150,7 +150,7 @@ class _MainState extends State<Main> {
               top: false,
             ),
         '/wallet': (context) => SafeArea(
-              child: _buildDefaultWidget(initialScreen: 3),
+              child: _buildDefaultWidget(initialScreen: Screen.WALLET),
               top: false,
             ),
       },

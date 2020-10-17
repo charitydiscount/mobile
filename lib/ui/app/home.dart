@@ -7,6 +7,7 @@ import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/ui/products/products_screen.dart';
 import 'package:charity_discount/ui/app/settings.dart';
+import 'package:charity_discount/ui/promotions/promotions.dart';
 import 'package:charity_discount/ui/referrals/referrals.dart';
 import 'package:charity_discount/ui/wallet/wallet.dart';
 import 'package:charity_discount/ui/user/profile.dart';
@@ -21,17 +22,18 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:charity_discount/ui/charity/charity.dart';
 
 class HomeScreen extends StatefulWidget {
-  final int initialScreen;
+  final Screen initialScreen;
   _HomeScreenState createState() => _HomeScreenState(
         selectedNavIndex: initialScreen,
       );
-  HomeScreen({this.initialScreen = 0});
+  HomeScreen({this.initialScreen = Screen.PROGRAMS});
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int selectedNavIndex = 0;
-  List<Widget> _widgets = [Container(), Container(), Container(), Container()];
-  List<bool> _loadedWidgets = [false, false, false, false];
+  Screen selectedNavIndex;
+  List<Widget> _widgets =
+      List.generate(Screen.values.length, (_) => Container());
+  List<bool> _loadedWidgets = List.generate(Screen.values.length, (_) => false);
 
   _HomeScreenState({this.selectedNavIndex});
 
@@ -61,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       switch (type) {
                         case NotificationTypes.commission:
                           setState(() {
-                            selectedNavIndex = 3;
+                            selectedNavIndex = Screen.WALLET;
                           });
                           break;
                         case NotificationTypes.shop:
@@ -95,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
     switch (type) {
       case NotificationTypes.commission:
         setState(() {
-          selectedNavIndex = 3;
+          selectedNavIndex = Screen.WALLET;
         });
         break;
       case NotificationTypes.shop:
@@ -110,23 +112,26 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     var appState = AppModel.of(context);
 
-    if (_loadedWidgets[selectedNavIndex] == false) {
+    if (_loadedWidgets[selectedNavIndex.index] == false) {
       switch (selectedNavIndex) {
-        case 0:
-          _widgets[selectedNavIndex] = ProgramsList();
+        case Screen.PROGRAMS:
+          _widgets[selectedNavIndex.index] = ProgramsList();
           break;
-        case 1:
-          _widgets[selectedNavIndex] = ProductsScreen();
+        case Screen.PROMOTIONS:
+          _widgets[selectedNavIndex.index] = PromotionsScreen();
           break;
-        case 2:
-          _widgets[selectedNavIndex] = CharityWidget();
+        case Screen.PRODUCTS:
+          _widgets[selectedNavIndex.index] = ProductsScreen();
           break;
-        case 3:
-          _widgets[selectedNavIndex] = WalletScreen();
+        case Screen.CASES:
+          _widgets[selectedNavIndex.index] = CharityWidget();
+          break;
+        case Screen.WALLET:
+          _widgets[selectedNavIndex.index] = WalletScreen();
           break;
         default:
       }
-      _loadedWidgets[selectedNavIndex] = true;
+      _loadedWidgets[selectedNavIndex.index] = true;
     }
 
     return Scaffold(
@@ -146,6 +151,10 @@ class _HomeScreenState extends State<HomeScreen> {
             label: tr('shops'),
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.access_time),
+            label: tr('promotion.promotions'),
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.category),
             label: tr('product.title'),
           ),
@@ -158,14 +167,14 @@ class _HomeScreenState extends State<HomeScreen> {
             label: tr('wallet.name'),
           ),
         ],
-        currentIndex: selectedNavIndex,
+        currentIndex: selectedNavIndex.index,
         onTap: _onItemTapped,
       ),
       body: DoubleBackToCloseApp(
         snackBar: SnackBar(content: Text(tr('doubleBack'))),
         child: IndexedStack(
           children: _widgets,
-          index: selectedNavIndex,
+          index: selectedNavIndex.index,
         ),
       ),
     );
@@ -173,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onItemTapped(int index) {
     setState(() {
-      selectedNavIndex = index;
+      selectedNavIndex = Screen.values[index];
     });
   }
 
@@ -306,3 +315,5 @@ class _HomeScreenState extends State<HomeScreen> {
   String getUserName(User user) =>
       user.name != null && user.name.isNotEmpty ? user.name : user.email;
 }
+
+enum Screen { PROGRAMS, PROMOTIONS, PRODUCTS, CASES, WALLET }

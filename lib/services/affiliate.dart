@@ -38,30 +38,38 @@ class AffiliateService {
     User user,
   ) =>
       snapData.entries
-          .map((snapEntry) {
-            final promotion =
-                Promotion.fromJson(Map<String, dynamic>.from(snapEntry.value));
-            if (promotion.affiliateUrl != null) {
-              promotion.actualAffiliateUrl = interpolateUserCode(
-                promotion.affiliateUrl,
+          .map((snapEntry) => _promotionFromSnap(
+                snapEntry,
                 programUniqueCode,
-                user.uid,
-              );
-            } else {
-              // Fallback to previous strategy for old promotions
-              promotion.actualAffiliateUrl = convertAffiliateUrl(
-                promotion.landingPageLink,
+                user,
                 affiliateUniqueCode,
-                programUniqueCode,
-                user.uid,
-              );
-            }
-            return promotion;
-          })
+              ))
           .where((promotion) =>
               promotion.promotionStart.isBefore(DateTime.now()) &&
               promotion.promotionEnd.isAfter(DateTime.now()))
           .toList();
+
+  Promotion _promotionFromSnap(MapEntry<String, dynamic> snapEntry,
+      String programUniqueCode, User user, String affiliateUniqueCode) {
+    final promotion =
+        Promotion.fromJson(Map<String, dynamic>.from(snapEntry.value));
+    if (promotion.affiliateUrl != null) {
+      promotion.actualAffiliateUrl = interpolateUserCode(
+        promotion.affiliateUrl,
+        programUniqueCode,
+        user.uid,
+      );
+    } else {
+      // Fallback to previous strategy for old promotions
+      promotion.actualAffiliateUrl = convertAffiliateUrl(
+        promotion.landingPageLink,
+        affiliateUniqueCode,
+        programUniqueCode,
+        user.uid,
+      );
+    }
+    return promotion;
+  }
 
   Future<void> launchWebApp(
       String route, String itemKey, String itemValue) async {
@@ -95,4 +103,21 @@ class AffiliateService {
       stderr.write('Failed to save the IP address: $e');
     }
   }
+
+  Future<List<Promotion>> getAllPromotions() =>
+      _db.collection('promotions').doc('all').get().then((snap) {
+        if (!snap.exists) {
+          return [];
+        }
+
+        List<dynamic> promotionsJson = [];
+        snap.data().entries.forEach((e) => promotionsJson.addAll(e.value));
+
+        return promotionsJson
+            .map((e) => Promotion.fromJson(e))
+            .where((promotion) =>
+                promotion.promotionStart.isBefore(DateTime.now()) &&
+                promotion.promotionEnd.isAfter(DateTime.now()))
+            .toList();
+      });
 }

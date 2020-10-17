@@ -112,10 +112,13 @@ class Product {
       );
 }
 
-List<String> _getImages(dynamic json, String key) =>
-    json[key] != null && json[key].toString().contains(',')
+List<String> _getImages(dynamic json, String key) => (json[key] != null &&
+            json[key].toString().contains(',')
         ? json[key].toString().split(',').map((img) => img.trim()).toList()
-        : [json[key]];
+        : [json[key]])
+    .map((image) =>
+        image.toString().replaceAll('http:', 'https:').replaceAll('////', '//'))
+    .toList();
 
 List<Product> productsFromElastic(List json) => List<Product>.from(
       json

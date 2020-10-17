@@ -3,7 +3,9 @@ import 'package:charity_discount/controllers/user_controller.dart';
 import 'package:charity_discount/models/favorite_shops.dart';
 import 'package:charity_discount/models/meta.dart';
 import 'package:charity_discount/models/program.dart';
+import 'package:charity_discount/models/promotion.dart';
 import 'package:charity_discount/models/wallet.dart';
+import 'package:charity_discount/services/affiliate.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/notifications.dart';
@@ -39,6 +41,8 @@ class AppModel extends Model {
   ProgramMeta _programsMeta;
   Wallet wallet;
   double minimumWithdrawalAmount;
+
+  List<Promotion> _promotions;
 
   AppModel() {
     initFromLocal().then((_) {
@@ -215,6 +219,7 @@ class AppModel extends Model {
     _programs = [];
     _programs.addAll(programs);
     _programs.sort((p1, p2) => p1.getOrder().compareTo(p2.getOrder()));
+    notifyListeners();
     if (storeLocal) {
       _programs.forEach((program) {
         final userPercentage = affiliateMeta?.percentage ?? 0.6;
@@ -249,8 +254,7 @@ class AppModel extends Model {
           );
         }
       });
-    }
-    if (storeLocal) {
+
       localService.setPrograms(_programs);
     }
   }
@@ -328,5 +332,44 @@ class AppModel extends Model {
       locator<CharityService>().createReferralRequest(referralCode);
       await localService.storeReferralCode(null);
     }
+  }
+
+  List<Promotion> get promotions => _promotions;
+  void setPromotions(List<Promotion> promotions) {
+    _promotions = promotions;
+    notifyListeners();
+  }
+
+  Future<List<Promotion>> loadPromotions() async {
+    if (_promotions == null) {
+      final promotions = await locator<AffiliateService>().getAllPromotions();
+
+      // Find the program unique codes required to create the affiliate URL
+      final programIds = promotions.map((e) => e.program.id).toSet();
+      final programs = await programsFuture;
+      Map<int, Program> relevantPrograms = Map.fromIterable(
+        programIds,
+        key: (programId) => programId,
+        value: (programId) => programs.firstWhere(
+          (element) => element.id == programId.toString(),
+          orElse: null,
+        ),
+      );
+
+      // Build the affiliate URL for the promotions
+      promotions.forEach((p) {
+        p.actualAffiliateUrl = interpolateUserCode(
+          p.affiliateUrl,
+          relevantPrograms[p.program.id].uniqueCode,
+          user.userId,
+        );
+      });
+      promotions.sort((p1, p2) => relevantPrograms[p1.program.id]
+          .getOrder()
+          .compareTo(relevantPrograms[p2.program.id].getOrder()));
+      setPromotions(promotions);
+    }
+
+    return promotions;
   }
 }
