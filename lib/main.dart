@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:charity_discount/models/settings.dart';
 import 'package:charity_discount/router.dart' as appRouter;
 import 'package:charity_discount/services/analytics.dart';
+import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/navigation.dart';
 import 'package:charity_discount/state/locator.dart';
+import 'package:charity_discount/ui/app/email_dialog.dart';
 import 'package:charity_discount/ui/app/welcome.dart';
 import 'package:charity_discount/util/constants.dart';
 import 'package:charity_discount/util/locale.dart';
@@ -90,12 +92,19 @@ class _MainState extends State<Main> {
         }
 
         if (appModel.user != null && appModel.user.userId != null) {
+          if (appModel.user.email.isEmpty && locator<AuthService>().isActualUser()) {
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) => showDialog(
+                context: context,
+                builder: (context) => EmailDialog(),
+              ),
+            );
+          }
           return HomeScreen(initialScreen: initialScreen);
         }
 
         WidgetsBinding.instance.addPostFrameCallback(
-          (_) => Navigator.pushNamedAndRemoveUntil(
-              context, Routes.signIn, (r) => false),
+          (_) => Navigator.pushNamedAndRemoveUntil(context, Routes.signIn, (r) => false),
         );
 
         return AppLoading(child: buildLoading(context));
@@ -110,10 +119,8 @@ class _MainState extends State<Main> {
     bool isDark = state.settings.theme == ThemeOption.DARK;
     SystemChrome.setSystemUIOverlayStyle(
       isDark
-          ? SystemUiOverlayStyle.dark
-              .copyWith(statusBarColor: theme.primaryColor)
-          : SystemUiOverlayStyle.light
-              .copyWith(statusBarColor: theme.primaryColor),
+          ? SystemUiOverlayStyle.dark.copyWith(statusBarColor: theme.primaryColor)
+          : SystemUiOverlayStyle.light.copyWith(statusBarColor: theme.primaryColor),
     );
 
     FirebaseAuth.instance.setLanguageCode(locale.languageCode);
@@ -169,8 +176,7 @@ class _MainState extends State<Main> {
       },
     );
 
-    final PendingDynamicLinkData data =
-        await FirebaseDynamicLinks.instance.getInitialLink();
+    final PendingDynamicLinkData data = await FirebaseDynamicLinks.instance.getInitialLink();
     final Uri deepLink = data?.link;
 
     if (deepLink != null) {
@@ -245,7 +251,6 @@ class CustomHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext context) {
     return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
   }
 }

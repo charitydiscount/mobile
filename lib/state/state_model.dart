@@ -32,7 +32,7 @@ class AppModel extends Model {
     displayMode: DisplayMode.GRID,
     notificationsForCashback: true,
     notificationsForPromotions: true,
-    notificationsEmail: true,
+    notificationsEmail: false,
   );
   StreamSubscription _profileListener;
   List<Program> _programs;
@@ -352,7 +352,7 @@ class AppModel extends Model {
         key: (programId) => programId,
         value: (programId) => programs.firstWhere(
           (element) => element.id == programId.toString(),
-          orElse: null,
+          orElse: () => null,
         ),
       );
 

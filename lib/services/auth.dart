@@ -203,6 +203,7 @@ class AuthService {
   }
 
   Future<void> updateUser({
+    String email,
     String firstName,
     String lastName,
     String photoUrl,
@@ -218,14 +219,18 @@ class AuthService {
   }
 
   Future<void> updateFirebaseUser({
+    String email,
     String name,
     String photoUrl,
-  }) async {
+  }) {
     return _auth.currentUser.updateProfile(
       displayName: name,
       photoURL: photoUrl,
     );
   }
+
+  Future<void> updateUserEmail(String email) =>
+      _auth.currentUser.updateEmail(email);
 
   Future<User> createUser(
     String email,

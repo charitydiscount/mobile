@@ -259,5 +259,10 @@
   "deleteAccount": "Delete account",
   "signInAgain": "For security reasons, please sign in again",
   "deleteAuthorization": "Authorize the account deletion",
-  "deleteConfirmation": "Are you sure that you want to delete your account? This cannot be undone."
+  "deleteConfirmation": "Are you sure that you want to delete your account? This cannot be undone.",
+  "emailRequiredExplanation": "It seems that we don't have your email address. We need it in order to confirm your identity. Of course, we value your privacy so we will not share it with anyone.",
+  "emailNewsletterExplanation": "Stay up to date with what we do and live a more meaningful life by subscribing to our newsletter.",
+  "emailNewsletterCheckbox": "Receive email newsletter",
+  "emailAlreadyTaken": "This email is already taken",
+  "emailInvalid": "Invalid email address"
 }
