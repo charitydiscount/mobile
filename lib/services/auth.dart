@@ -138,9 +138,7 @@ class AuthService {
       }
     }
     User user = authResult.user;
-    if (userInfoJson['first_name'] != null ||
-        userInfoJson['last_name'] != null ||
-        userInfoJson['picture'] != null) {
+    if (userInfoJson['first_name'] != null || userInfoJson['last_name'] != null || userInfoJson['picture'] != null) {
       updateUser(
         firstName: userInfoJson['first_name'],
         lastName: userInfoJson['last_name'],
@@ -177,8 +175,7 @@ class AuthService {
     }
     User user = authResult.user;
 
-    if (appleIdCredential.fullName.givenName != null ||
-        appleIdCredential.fullName.familyName != null) {
+    if (appleIdCredential.fullName.givenName != null || appleIdCredential.fullName.familyName != null) {
       await updateUser(
         firstName: appleIdCredential.fullName.givenName,
         lastName: appleIdCredential.fullName.familyName,
@@ -188,29 +185,26 @@ class AuthService {
     return user;
   }
 
-  Future<User> _handleDifferentCredential(
-      {AuthCredential credential, String email}) async {
+  Future<User> _handleDifferentCredential({AuthCredential credential, String email}) async {
     final signInMethods = await _auth.fetchSignInMethodsForEmail(email);
     if (signInMethods.contains(GoogleAuthProvider.PROVIDER_ID)) {
       return signInWithGoogle(previousCredential: credential);
     } else {
       throw PlatformException(
         code: 'ACCOUNT_EXISTS_CASE_NOT_HANDLED',
-        message:
-            'Please try another sign in method until we get this one working :D',
+        message: 'Please try another sign in method until we get this one working :D',
       );
     }
   }
 
   Future<void> updateUser({
+    String email,
     String firstName,
     String lastName,
     String photoUrl,
   }) async {
     await updateFirebaseUser(
-      name: firstName != null || lastName != null
-          ? '$firstName $lastName'.trim()
-          : null,
+      name: firstName != null || lastName != null ? '$firstName $lastName'.trim() : null,
       photoUrl: photoUrl,
     );
 
@@ -218,13 +212,19 @@ class AuthService {
   }
 
   Future<void> updateFirebaseUser({
+    String email,
     String name,
     String photoUrl,
-  }) async {
+  }) {
     return _auth.currentUser.updateProfile(
       displayName: name,
       photoURL: photoUrl,
     );
+  }
+
+  Future<void> updateUserEmail(String email) async {
+    await _auth.currentUser.updateEmail(email);
+    profile.add(currentUser);
   }
 
   Future<User> createUser(
@@ -254,8 +254,7 @@ class AuthService {
     return authResult.user;
   }
 
-  bool isActualUser() =>
-      _auth.currentUser != null && !_auth.currentUser.isAnonymous;
+  bool isActualUser() => _auth.currentUser != null && !_auth.currentUser.isAnonymous;
 
   Future<User> signInAnonymously() async {
     var credential = await _auth.signInAnonymously();

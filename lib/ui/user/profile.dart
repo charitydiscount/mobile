@@ -4,6 +4,7 @@ import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/ui/app/auth_dialog.dart';
 import 'package:charity_discount/ui/user/user_avatar.dart';
 import 'package:charity_discount/ui/app/loading.dart';
 import 'package:charity_discount/util/authorize.dart';
@@ -159,7 +160,7 @@ class _ProfileState extends State<Profile> {
         if (requiresSignIn) {
           bool accepted = await showDialog(
             context: context,
-            builder: _reAuthDialogBuilder,
+            builder: reAuthDialogBuilder,
           );
           if (accepted) {
             await _signOut(context);
@@ -216,29 +217,6 @@ class _ProfileState extends State<Profile> {
 
     return AlertDialog(
       content: Text(tr('deleteConfirmation')),
-      actions: [
-        cancelButton,
-        continueButton,
-      ],
-    );
-  }
-
-  Widget _reAuthDialogBuilder(context) {
-    Widget cancelButton = FlatButton(
-      child: Text(tr('cancel')),
-      onPressed: () {
-        Navigator.pop(context, false);
-      },
-    );
-    Widget continueButton = FlatButton(
-      child: Text('OK'),
-      onPressed: () {
-        Navigator.pop(context, true);
-      },
-    );
-
-    return AlertDialog(
-      content: Text(tr('signInAgain')),
       actions: [
         cancelButton,
         continueButton,

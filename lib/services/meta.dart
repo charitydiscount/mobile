@@ -99,6 +99,13 @@ class MetaService {
         SetOptions(merge: true),
       );
 
+  Stream<bool> get subscribedToNewsletter => _db
+      .collection('users')
+      .doc(_auth.currentUser.uid)
+      .snapshots()
+      .map((event) =>
+          event.data().putIfAbsent('disableMailNotification', () => false));
+
   Future<void> closeListeners() async {
     if (_programsMetaListener != null) {
       await _programsMetaListener.cancel();
