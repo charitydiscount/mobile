@@ -32,7 +32,6 @@ class AppModel extends Model {
     displayMode: DisplayMode.GRID,
     notificationsForCashback: true,
     notificationsForPromotions: true,
-    notificationsEmail: false,
   );
   StreamSubscription _profileListener;
   List<Program> _programs;
@@ -48,9 +47,7 @@ class AppModel extends Model {
     initFromLocal().then((_) {
       createListeners();
     });
-    remoteConfig
-        .getWithdrawalThreshold()
-        .then((threshold) => minimumWithdrawalAmount = threshold);
+    remoteConfig.getWithdrawalThreshold().then((threshold) => minimumWithdrawalAmount = threshold);
   }
 
   void createListeners() {
@@ -223,21 +220,16 @@ class AppModel extends Model {
     if (storeLocal) {
       _programs.forEach((program) {
         final userPercentage = affiliateMeta?.percentage ?? 0.6;
-        program.leadCommissionAmount =
-            program.defaultLeadCommissionAmount != null
-                ? (program.defaultLeadCommissionAmount * userPercentage)
-                    .toStringAsFixed(2)
-                : null;
+        program.leadCommissionAmount = program.defaultLeadCommissionAmount != null
+            ? (program.defaultLeadCommissionAmount * userPercentage).toStringAsFixed(2)
+            : null;
         program.saleCommissionRate = program.defaultSaleCommissionRate != null
-            ? (program.defaultSaleCommissionRate * userPercentage)
-                .toStringAsFixed(2)
+            ? (program.defaultSaleCommissionRate * userPercentage).toStringAsFixed(2)
             : null;
-        program.commissionMinDisplay = program.commissionMin != null
-            ? (program.commissionMin * userPercentage).toStringAsFixed(2)
-            : null;
-        program.commissionMaxDisplay = program.commissionMax != null
-            ? (program.commissionMax * userPercentage).toStringAsFixed(2)
-            : null;
+        program.commissionMinDisplay =
+            program.commissionMin != null ? (program.commissionMin * userPercentage).toStringAsFixed(2) : null;
+        program.commissionMaxDisplay =
+            program.commissionMax != null ? (program.commissionMax * userPercentage).toStringAsFixed(2) : null;
         if (program.affiliateUrl != null && program.affiliateUrl.isNotEmpty) {
           program.actualAffiliateUrl = interpolateUserCode(
             program.affiliateUrl,
@@ -311,8 +303,7 @@ class AppModel extends Model {
   }
 
   void deleteSavedAccount(SavedAccount savedAccount) {
-    user.savedAccounts
-        .removeWhere((account) => account.iban == savedAccount.iban);
+    user.savedAccounts.removeWhere((account) => account.iban == savedAccount.iban);
     locator<CharityService>().removeAccount(savedAccount);
   }
 
@@ -322,8 +313,7 @@ class AppModel extends Model {
     if (referralCode == null) {
       // Ensure that there is no pending dynamic link
       var data = await FirebaseDynamicLinks.instance.getInitialLink();
-      if (data?.link != null &&
-          data.link.pathSegments.first == DeepLinkPath.referral) {
+      if (data?.link != null && data.link.pathSegments.first == DeepLinkPath.referral) {
         referralCode = data.link.pathSegments.last;
       }
     }
@@ -364,9 +354,8 @@ class AppModel extends Model {
           user.userId,
         );
       });
-      promotions.sort((p1, p2) => relevantPrograms[p1.program.id]
-          .getOrder()
-          .compareTo(relevantPrograms[p2.program.id].getOrder()));
+      promotions.sort(
+          (p1, p2) => relevantPrograms[p1.program.id].getOrder().compareTo(relevantPrograms[p2.program.id].getOrder()));
       setPromotions(promotions);
     }
 

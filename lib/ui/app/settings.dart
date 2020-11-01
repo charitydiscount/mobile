@@ -36,8 +36,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Widget language = ExpansionTile(
       leading: Icon(Icons.language),
       title: Text(tr('language', context: context)),
-      children:
-          supportedLanguages.map((lang) => _buildLanguageTile(lang)).toList(),
+      children: supportedLanguages.map((lang) => _buildLanguageTile(lang)).toList(),
     );
     settingTiles.add(language);
     Widget notifications = ExpansionTile(
@@ -74,8 +73,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _state.setSettings(newSettings, storeLocal: true);
               });
               fcm.getToken().then(
-                    (token) =>
-                        locator<MetaService>().setNotificationsForPromotions(
+                    (token) => locator<MetaService>().setNotificationsForPromotions(
                       token,
                       newValue,
                     ),
@@ -83,24 +81,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
         ),
-        ListTile(
-          title: Text('Email Newsletter'),
-          trailing: Switch.adaptive(
-            value: _state.settings.notificationsEmail || false,
-            onChanged: (bool newValue) {
-              var newSettings = _state.settings;
-              newSettings.notificationsEmail = newValue;
-              setState(() {
-                _state.setSettings(newSettings, storeLocal: true);
-              });
-              fcm.getToken().then(
-                    (token) => locator<MetaService>().setEmailNotifications(
-                      !newValue,
-                    ),
-                  );
-            },
-          ),
-        ),
+        StreamBuilder<bool>(
+          stream: locator<MetaService>().subscribedToNewsletter,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container(width: 0, height: 0);
+            }
+            return ListTile(
+              title: Text('Email Newsletter'),
+              trailing: Switch.adaptive(
+                value: !snapshot.data || false,
+                onChanged: (bool newValue) {
+                  locator<MetaService>().setEmailNotifications(!newValue);
+                },
+              ),
+            );
+          },
+        )
       ],
     );
     settingTiles.add(notifications);
@@ -108,9 +105,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Widget theme = ExpansionTile(
       leading: Icon(Icons.color_lens),
       title: Text(tr('theme.name', context: context)),
-      children: ThemeOption.values
-          .map((themeOption) => _buildThemeRadioButton(themeOption))
-          .toList(),
+      children: ThemeOption.values.map((themeOption) => _buildThemeRadioButton(themeOption)).toList(),
     );
     settingTiles.add(theme);
 
@@ -147,8 +142,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           FutureBuilder<PackageInfo>(
             future: PackageInfo.fromPlatform(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
+            builder: (context, infoSnap) {
+              if (infoSnap.connectionState == ConnectionState.waiting) {
                 return Container(width: 0, height: 0);
               }
 
@@ -158,7 +153,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: Text(
-                      snapshot.data.version,
+                      infoSnap.data.version,
                       style: Theme.of(context).textTheme.caption,
                     ),
                   ),
@@ -196,10 +191,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       title: Text(language.name),
-      trailing:
-          EasyLocalization.of(context).locale.languageCode == language.code
-              ? Icon(Icons.check)
-              : null,
+      trailing: EasyLocalization.of(context).locale.languageCode == language.code ? Icon(Icons.check) : null,
       onTap: () {
         EasyLocalization.of(context).locale = language.locale;
         FirebaseAuth.instance.setLanguageCode(language.locale.languageCode);

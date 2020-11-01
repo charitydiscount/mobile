@@ -92,7 +92,7 @@ class _MainState extends State<Main> {
         }
 
         if (appModel.user != null && appModel.user.userId != null) {
-          if (appModel.user.email.isEmpty && locator<AuthService>().isActualUser()) {
+          if (_hasNoEmail(appModel.user.email) && locator<AuthService>().isActualUser()) {
             WidgetsBinding.instance.addPostFrameCallback(
               (_) => showDialog(
                 context: context,
@@ -199,6 +199,8 @@ class _MainState extends State<Main> {
       default:
     }
   }
+
+  bool _hasNoEmail(String email) => email == null || email.isEmpty || email == '-';
 }
 
 class AppLoading extends StatelessWidget {
