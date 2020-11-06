@@ -1,6 +1,5 @@
 import 'package:charity_discount/models/settings.dart';
 import 'package:charity_discount/services/meta.dart';
-import 'package:charity_discount/services/notifications.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/util/locale.dart';
@@ -9,6 +8,7 @@ import 'package:charity_discount/util/tools.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -53,7 +53,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               setState(() {
                 _state.setSettings(newSettings, storeLocal: true);
               });
-              fcm.getToken().then(
+              FirebaseMessaging.instance.getToken().then(
                     (token) => locator<MetaService>().setNotifications(
                       token,
                       newValue,
@@ -72,7 +72,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               setState(() {
                 _state.setSettings(newSettings, storeLocal: true);
               });
-              fcm.getToken().then(
+              FirebaseMessaging.instance.getToken().then(
                     (token) => locator<MetaService>().setNotificationsForPromotions(
                       token,
                       newValue,

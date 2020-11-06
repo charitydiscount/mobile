@@ -8,13 +8,13 @@ import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/services/affiliate.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/meta.dart';
-import 'package:charity_discount/services/notifications.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/util/constants.dart';
 import 'package:charity_discount/util/remote_config.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/user.dart';
@@ -126,7 +126,7 @@ class AppModel extends Model {
     if (settings != null) {
       setSettings(settings);
       if (settings.notificationsForPromotions == null) {
-        final token = await fcm.getToken();
+        final token = await FirebaseMessaging.instance.getToken();
         await locator<MetaService>().setNotificationsForPromotions(
           token,
           true,
@@ -134,7 +134,7 @@ class AppModel extends Model {
       }
     } else {
       await localService.storeSettingsLocal(_settings);
-      final token = await fcm.getToken();
+      final token = await FirebaseMessaging.instance.getToken();
       await locator<MetaService>().setNotificationsForPromotions(
         token,
         true,

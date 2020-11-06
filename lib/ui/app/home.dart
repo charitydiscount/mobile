@@ -1,7 +1,6 @@
 import 'package:charity_discount/models/user.dart';
 import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/charity.dart';
-import 'package:charity_discount/services/notifications.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/util.dart';
@@ -16,6 +15,7 @@ import 'package:charity_discount/ui/user/user_avatar.dart';
 import 'package:charity_discount/util/constants.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -31,8 +31,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Screen selectedNavIndex;
-  List<Widget> _widgets =
-      List.generate(Screen.values.length, (_) => Container());
+  List<Widget> _widgets = List.generate(Screen.values.length, (_) => Container());
   List<bool> _loadedWidgets = List.generate(Screen.values.length, (_) => false);
 
   _HomeScreenState({this.selectedNavIndex});
@@ -44,56 +43,51 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _configureFcm(BuildContext context) {
-    fcm.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        if (mounted) {
-          final type = message['data']['type'];
-          bool needsButton = type == NotificationTypes.commission ||
-              type == NotificationTypes.shop;
-          Flushbar(
-            title: message['notification']['title'],
-            message: message['notification']['body'],
-            mainButton: needsButton
-                ? FlatButton(
-                    child: Text(
-                      tr('open'),
-                      style: TextStyle(color: Theme.of(context).primaryColor),
-                    ),
-                    onPressed: () async {
-                      switch (type) {
-                        case NotificationTypes.commission:
-                          setState(() {
-                            selectedNavIndex = Screen.WALLET;
-                          });
-                          break;
-                        case NotificationTypes.shop:
-                          await navigateToShop(
-                              context, message['data']['shopName']);
-                          break;
-                        default:
-                      }
-                    },
-                  )
-                : null,
-          )?.show(context);
-        }
-      },
-      onLaunch: _handleBackgroundNotification,
-      onResume: _handleBackgroundNotification,
-      onBackgroundMessage: backgroundMessageHandler,
-    );
-  }
+    FirebaseMessaging.onMessage.listen((message) {
+      if (!mounted) {
+        return;
+      }
+      final type = message.data['type'];
+      bool needsButton = type == NotificationTypes.commission || type == NotificationTypes.shop;
 
-  static Future<dynamic> backgroundMessageHandler(
-    Map<String, dynamic> message,
-  ) async {
-    return Future.value(true);
+      Flushbar(
+        title: message.notification.title,
+        message: message.notification.body,
+        mainButton: needsButton
+            ? FlatButton(
+                child: Text(
+                  tr('open'),
+                  style: TextStyle(color: Theme.of(context).primaryColor),
+                ),
+                onPressed: () async {
+                  switch (type) {
+                    case NotificationTypes.commission:
+                      setState(() {
+                        selectedNavIndex = Screen.WALLET;
+                      });
+                      break;
+                    case NotificationTypes.shop:
+                      await navigateToShop(context, message.data['shopName']);
+                      break;
+                    default:
+                  }
+                },
+              )
+            : null,
+      )?.show(context);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleBackgroundNotification);
+    FirebaseMessaging.instance.getInitialMessage().then(_handleBackgroundNotification);
   }
 
   Future<dynamic> _handleBackgroundNotification(
-    Map<String, dynamic> message,
+    RemoteMessage message,
   ) async {
-    final type = message['data']['type'];
+    if (message == null) {
+      return;
+    }
+
+    final type = message.data['type'];
     switch (type) {
       case NotificationTypes.commission:
         setState(() {
@@ -101,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
         break;
       case NotificationTypes.shop:
-        await navigateToShop(context, message['data']['shopName']);
+        await navigateToShop(context, message.data['shopName']);
         break;
       default:
     }
@@ -312,8 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  String getUserName(User user) =>
-      user.name != null && user.name.isNotEmpty ? user.name : user.email;
+  String getUserName(User user) => user.name != null && user.name.isNotEmpty ? user.name : user.email;
 }
 
 enum Screen { PROGRAMS, PROMOTIONS, PRODUCTS, CASES, WALLET }

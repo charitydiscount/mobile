@@ -51,16 +51,14 @@ class _SignInScreenState extends State<EmailSignInScreen> {
   Widget get horizontalLine => Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: Container(
-          width: ScreenUtil.getInstance().setWidth(120),
+          width: ScreenUtil().setWidth(120),
           height: 1.0,
           color: Colors.black26.withOpacity(0.2),
         ),
       );
 
   Widget build(BuildContext context) {
-    ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
-    ScreenUtil.instance =
-        ScreenUtil(width: 750, height: 1334, allowFontScaling: true);
+    ScreenUtil.init(context);
 
     final termsButton = FlatButton(
       child: Row(

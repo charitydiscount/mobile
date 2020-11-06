@@ -21,8 +21,7 @@ String convertAffiliateUrl(
   String uniqueId,
   String userId,
 ) {
-  final baseUrl =
-      'https://event.2performant.com/events/click?ad_type=quicklink';
+  final baseUrl = 'https://event.2performant.com/events/click?ad_type=quicklink';
   final affCode = 'aff_code=$affiliateCode';
   final unique = 'unique=$uniqueId';
   final redirect = 'redirect_to=$url';
@@ -39,9 +38,7 @@ String interpolateUserCode(
   String programUniqueCode,
   String userId,
 ) {
-  return affiliateUrl
-      .replaceAll(PROGRAM_LINK_PLACEHOLDER, programUniqueCode)
-      .replaceAll(USER_LINK_PLACEHOLDER, userId);
+  return affiliateUrl.replaceAll(PROGRAM_LINK_PLACEHOLDER, programUniqueCode).replaceAll(USER_LINK_PLACEHOLDER, userId);
 }
 
 void openAffiliateLink(
@@ -80,12 +77,6 @@ void openAffiliateLink(
 }
 
 class UrlHelper {
-  static Future<bool> launchTerms() => launch(
-        'https://charitydiscount.ro/tos',
-        forceWebView: true,
-      );
-  static Future<bool> launchPrivacy() => launch(
-        'https://charitydiscount.ro/privacy',
-        forceWebView: true,
-      );
+  static Future<bool> launchTerms() => launch('https://charitydiscount.ro/tos');
+  static Future<bool> launchPrivacy() => launch('https://charitydiscount.ro/privacy');
 }
