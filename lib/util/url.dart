@@ -16,6 +16,7 @@ Future<void> launchURL(String url, {Map<String, String> headers}) async {
 }
 
 String convertAffiliateUrl(
+  String source,
   String url,
   String affiliateCode,
   String uniqueId,

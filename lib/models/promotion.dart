@@ -1,3 +1,4 @@
+import 'package:charity_discount/util/constants.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'promotion.g.dart';
@@ -18,6 +19,7 @@ class Promotion {
   final String landingPageLink;
   final String affiliateUrl;
   final PromotionProgram program;
+  final String source;
 
   String actualAffiliateUrl;
 
@@ -31,6 +33,7 @@ class Promotion {
     this.landingPageLink,
     this.affiliateUrl,
     this.program,
+    this.source,
   });
 
   factory Promotion.fromJson(Map<String, dynamic> json) => Promotion(
@@ -43,6 +46,7 @@ class Promotion {
         landingPageLink: json['landingPageLink'],
         affiliateUrl: json['affiliateUrl'],
         program: PromotionProgram.fromJson(json['program']),
+        source: json['source'] ?? Source.twoP,
       );
 }
 
@@ -53,8 +57,7 @@ class PromotionProgram {
 
   PromotionProgram({this.id, this.name});
 
-  factory PromotionProgram.fromJson(dynamic json) =>
-      _$PromotionProgramFromJson(json);
+  factory PromotionProgram.fromJson(dynamic json) => _$PromotionProgramFromJson(json);
 
   Map<String, dynamic> toJson() => _$PromotionProgramToJson(this);
 }

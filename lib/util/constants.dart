@@ -14,3 +14,8 @@ abstract class NotificationTypes {
   static const String commission = 'COMMISSION';
   static const String shop = 'SHOP';
 }
+
+abstract class Source {
+  static const String twoP = '2p';
+  static const String altex = 'altex';
+}

@@ -155,7 +155,7 @@
         "minimumAmount": "The minimum withdrawal amount is {}."
       }
     },
-    "commissions": "Commissions",
+    "commissions": "Cashback History",
     "status": {
       "pending": "Pending",
       "accepted": "Pending",

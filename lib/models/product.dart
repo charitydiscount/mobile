@@ -15,8 +15,7 @@ class ProductPriceHistoryEntry {
 
   ProductPriceHistoryEntry({this.timestamp, this.price, this.oldPrice});
 
-  factory ProductPriceHistoryEntry.fromJson(Map json) =>
-      ProductPriceHistoryEntry(
+  factory ProductPriceHistoryEntry.fromJson(Map json) => ProductPriceHistoryEntry(
         timestamp: DateTime.parse(json['@timestamp']),
         price: double.tryParse(json['price'].toString()),
         oldPrice: double.tryParse(json['old_price'].toString()),
@@ -42,7 +41,9 @@ class Product {
   final List<String> images;
   final String url;
   final DateTime timestamp;
-  String affiliateUrl;
+  final String source;
+  final String affiliateUrl;
+  String actualAffiliateUrl;
   Program program;
 
   Product({
@@ -56,28 +57,27 @@ class Product {
     this.images,
     this.url,
     this.oldPrice,
+    this.timestamp,
+    this.source,
     this.affiliateUrl,
     this.program,
-    this.timestamp,
+    this.actualAffiliateUrl,
   });
 
   factory Product.fromJson(Map json) => Product(
-        id: json['product_id'] != null
-            ? json['aff_code']
-            : json['id'].toString(),
+        id: json['aff_code'],
         title: removeAllHtmlTags(json['title']),
         price: double.tryParse(json['price'].toString()),
-        programId:
-            json['campaign_id'].toString() ?? json['programId'].toString(),
+        oldPrice: double.tryParse(json['old_price'].toString()),
+        programId: json['campaign_id'].toString() ?? json['programId'].toString(),
         programName: json['campaign_name'] ?? json['programName'],
         brand: json['brand'],
         category: json['category'],
-        images: json['image_urls'] != null
-            ? _getImages(json, 'image_urls')
-            : _getImages(json, 'imageUrl'),
+        images: json['image_urls'] != null ? _getImages(json, 'image_urls') : _getImages(json, 'imageUrl'),
         url: json['url'],
-        oldPrice: double.tryParse(json['old_price'].toString()),
         timestamp: DateTime.parse(json['@timestamp']),
+        source: json['source'],
+        affiliateUrl: json['affiliate_url'],
       );
 
   Product copyWith({
@@ -94,6 +94,8 @@ class Product {
     String affiliateUrl,
     Program program,
     DateTime timestamp,
+    String source,
+    String actualAffiliateUrl,
   }) =>
       Product(
         id: id ?? this.id,
@@ -109,29 +111,25 @@ class Product {
         affiliateUrl: affiliateUrl ?? this.affiliateUrl,
         program: program ?? this.program,
         timestamp: timestamp ?? this.timestamp,
+        source: source ?? this.source,
+        actualAffiliateUrl: actualAffiliateUrl ?? this.actualAffiliateUrl,
       );
 }
 
-List<String> _getImages(dynamic json, String key) => (json[key] != null &&
-            json[key].toString().contains(',')
+List<String> _getImages(dynamic json, String key) => (json[key] != null && json[key].toString().contains(',')
         ? json[key].toString().split(',').map((img) => img.trim()).toList()
         : [json[key]])
-    .map((image) =>
-        image.toString().replaceAll('http:', 'https:').replaceAll('////', '//'))
+    .map((image) => image.toString().replaceAll('http:', 'https:').replaceAll('////', '//'))
     .toList();
 
 List<Product> productsFromElastic(List json) => List<Product>.from(
-      json
-          .map((jsonProduct) => Product.fromJson(jsonProduct['_source']))
-          .toList(),
+      json.map((jsonProduct) => Product.fromJson(jsonProduct['_source'])).toList(),
     );
 
-List<ProductPriceHistoryEntry> productHistoryFromElastic(List json) =>
-    List<ProductPriceHistoryEntry>.from(
+List<ProductPriceHistoryEntry> productHistoryFromElastic(List json) => List<ProductPriceHistoryEntry>.from(
       json
           .map(
-            (jsonProduct) =>
-                ProductPriceHistoryEntry.fromJson(jsonProduct['_source']),
+            (jsonProduct) => ProductPriceHistoryEntry.fromJson(jsonProduct['_source']),
           )
           .toList(),
     );

@@ -215,6 +215,7 @@ class AppModel extends Model {
   void setPrograms(List<Program> programs, {bool storeLocal = true}) {
     _programs = [];
     _programs.addAll(programs);
+    _programs.removeWhere((p) => p.affiliateUrl == null);
     _programs.sort((p1, p2) => p1.getOrder().compareTo(p2.getOrder()));
     notifyListeners();
     if (storeLocal) {
@@ -230,21 +231,11 @@ class AppModel extends Model {
             program.commissionMin != null ? (program.commissionMin * userPercentage).toStringAsFixed(2) : null;
         program.commissionMaxDisplay =
             program.commissionMax != null ? (program.commissionMax * userPercentage).toStringAsFixed(2) : null;
-        if (program.affiliateUrl != null && program.affiliateUrl.isNotEmpty) {
-          program.actualAffiliateUrl = interpolateUserCode(
-            program.affiliateUrl,
-            program.uniqueCode,
-            user.userId,
-          );
-        } else {
-          // fallback to the previous strategy (probably old cache)
-          program.actualAffiliateUrl = convertAffiliateUrl(
-            program.mainUrl,
-            affiliateMeta.uniqueCode,
-            program.uniqueCode,
-            user.userId,
-          );
-        }
+        program.actualAffiliateUrl = interpolateUserCode(
+          program.affiliateUrl,
+          program.uniqueCode,
+          user.userId,
+        );
       });
 
       localService.setPrograms(_programs);
@@ -345,6 +336,7 @@ class AppModel extends Model {
           orElse: () => null,
         ),
       );
+      promotions.removeWhere((p) => relevantPrograms[p.program.id] == null);
 
       // Build the affiliate URL for the promotions
       promotions.forEach((p) {
