@@ -42,8 +42,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     _productsScrollController = ScrollController();
     _productsScrollController.addListener(() {
       if (_searchInProgress == false && _products.length < _totalProducts) {
-        if (_productsScrollController.position.pixels >
-            0.9 * _productsScrollController.position.maxScrollExtent) {
+        if (_productsScrollController.position.pixels > 0.9 * _productsScrollController.position.maxScrollExtent) {
           setState(() {
             _searchInProgress = true;
           });
@@ -171,14 +170,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
             color: Theme.of(context).accentColor,
           ),
           onPressed: () {
-            showDialog(context: context, builder: _filterDialogBuilder)
-                .then((priceRange) {
+            showDialog(context: context, builder: _filterDialogBuilder).then((priceRange) {
               if (priceRange == null) {
                 // Dialog was closed
                 return;
               }
-              if (_minPrice != priceRange['minPrice'] ||
-                  _maxPrice != priceRange['maxPrice']) {
+              if (_minPrice != priceRange['minPrice'] || _maxPrice != priceRange['maxPrice']) {
                 setState(() {
                   _minPrice = priceRange['minPrice'];
                   _maxPrice = priceRange['maxPrice'];
@@ -210,19 +207,15 @@ class _ProductsScreenState extends State<ProductsScreen> {
     );
   }
 
-  PopupMenuItem<SortStrategy> _buildMenuItem(SortStrategy value, String text) =>
-      PopupMenuItem<SortStrategy>(
+  PopupMenuItem<SortStrategy> _buildMenuItem(SortStrategy value, String text) => PopupMenuItem<SortStrategy>(
         value: value,
         child: Text(text),
         textStyle: TextStyle(
-          color: _sortStrategy == value
-              ? Theme.of(context).primaryColor
-              : Theme.of(context).textTheme.bodyText2.color,
+          color: _sortStrategy == value ? Theme.of(context).primaryColor : Theme.of(context).textTheme.bodyText2.color,
         ),
       );
 
-  List<Product> _prepareProducts(Iterable<Product> products) =>
-      prepareProducts(products, _state);
+  List<Product> _prepareProducts(Iterable<Product> products) => prepareProducts(products, _state);
 
   Widget get _featuredProducts => FutureBuilder<List<Product>>(
         future: _featuredMemoizer.runOnce(
@@ -281,9 +274,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     );
   }
 
-  Widget _getProductCard(index) => _products.length - 1 >= index
-      ? ProductCard(product: _products[index])
-      : Container();
+  Widget _getProductCard(index) => _products.length - 1 >= index ? ProductCard(product: _products[index]) : Container();
 
   @override
   void dispose() {
@@ -429,30 +420,27 @@ class _ProductsScreenState extends State<ProductsScreen> {
   }
 }
 
-List<Product> prepareProducts(Iterable<Product> products, AppModel state) =>
-    products
-        .map((product) {
-          final program = state.programs?.firstWhere(
-                (program) => program.id == product.programId,
-                orElse: () => null,
-              ) ??
-              state.programs?.firstWhere(
-                (program) =>
-                    program.uniqueCode.compareTo(product.programName) == 0,
-                orElse: () => null,
-              );
-          if (program == null) {
-            return null;
-          }
-          return product.copyWith(
-            program: program,
-            affiliateUrl: convertAffiliateUrl(
-              product.url,
-              state.affiliateMeta.uniqueCode,
-              program.uniqueCode,
-              state.user.userId,
-            ),
+List<Product> prepareProducts(Iterable<Product> products, AppModel state) => products
+    .map((product) {
+      final program = state.programs?.firstWhere(
+            (program) => program.id == product.programId,
+            orElse: () => null,
+          ) ??
+          state.programs?.firstWhere(
+            (program) => program.name.compareTo(product.programName) == 0,
+            orElse: () => null,
           );
-        })
-        .where((product) => product != null)
-        .toList();
+      if (program == null) {
+        return null;
+      }
+      return product.copyWith(
+        program: program,
+        actualAffiliateUrl: interpolateUserCode(
+          product.affiliateUrl,
+          program.uniqueCode,
+          state.user.userId,
+        ),
+      );
+    })
+    .where((product) => product != null)
+    .toList();

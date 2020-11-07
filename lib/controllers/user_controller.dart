@@ -1,16 +1,14 @@
 import 'dart:async';
-import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/meta.dart';
-import 'package:charity_discount/services/notifications.dart';
 import 'package:charity_discount/state/locator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 enum Strategy { EmailAndPass, Google, Facebook, Apple }
 
 class UserController {
   StreamSubscription authListener;
-  StreamSubscription _iosSubscription;
 
   Future<void> signIn(
     Strategy provider, {
@@ -19,8 +17,7 @@ class UserController {
   }) async {
     switch (provider) {
       case Strategy.EmailAndPass:
-        await locator<AuthService>().signInWithEmailAndPass(
-            credentials['email'], credentials['password']);
+        await locator<AuthService>().signInWithEmailAndPass(credentials['email'], credentials['password']);
         break;
       case Strategy.Google:
         await locator<AuthService>().signInWithGoogle();
@@ -35,13 +32,17 @@ class UserController {
         return;
     }
 
-    if (Platform.isIOS) {
-      _iosSubscription = fcm.onIosSettingsRegistered.listen((data) {
-        _registerFcmToken();
-      });
-      fcm.requestNotificationPermissions();
-    } else {
-      _registerFcmToken();
+    final notifcationSettings = await FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+    if (notifcationSettings.authorizationStatus == AuthorizationStatus.authorized) {
+      await _registerFcmToken();
     }
   }
 
@@ -49,10 +50,9 @@ class UserController {
     if (authListener != null) {
       await authListener.cancel();
     }
-    var token = await fcm.getToken();
+    var token = await FirebaseMessaging.instance.getToken();
     await locator<MetaService>().removeFcmToken(token);
     await locator<MetaService>().setNotificationsForPromotions(token, false);
-    _iosSubscription?.cancel();
     await resetServices();
   }
 
@@ -61,27 +61,18 @@ class UserController {
   }
 
   Future<User> signUp(email, password, firstName, lastName) async {
-    return await locator<AuthService>()
-        .createUser(email, password, firstName, lastName);
+    return await locator<AuthService>().createUser(email, password, firstName, lastName);
   }
 
-  void _registerFcmToken() async {
-    final token = await fcm.getToken();
+  Future<void> _registerFcmToken() async {
+    final token = await FirebaseMessaging.instance.getToken();
     await locator<MetaService>().addFcmToken(token);
     await locator<MetaService>().setNotificationsForPromotions(token, true);
   }
 
   bool isRecentNewUser() =>
       locator<AuthService>().currentUser != null &&
-      DateTime.now()
-              .toUtc()
-              .difference(locator<AuthService>()
-                  .currentUser
-                  .metadata
-                  .creationTime
-                  .toUtc())
-              .inMinutes <
-          2;
+      DateTime.now().toUtc().difference(locator<AuthService>().currentUser.metadata.creationTime.toUtc()).inMinutes < 2;
 
   Future<bool> deleteAccount() async {
     try {

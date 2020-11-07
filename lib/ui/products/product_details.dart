@@ -27,7 +27,7 @@ class ProductDetails extends StatelessWidget {
         label: Text(tr('accessShop')),
         onPressed: () {
           openAffiliateLink(
-            product.affiliateUrl,
+            product.actualAffiliateUrl,
             context,
             product.program.id,
             product.program.name,
@@ -54,23 +54,21 @@ class ProductDetails extends StatelessWidget {
       ),
     );
 
-    final oldPrice = this.product.oldPrice != null &&
-            this.product.price != null &&
-            this.product.oldPrice > this.product.price
-        ? Text(
-            '${this.product.oldPrice.toString()} Lei',
-            style: TextStyle(
-              fontSize: 16,
-              decoration: TextDecoration.lineThrough,
-            ),
-          )
-        : Container();
+    final oldPrice =
+        this.product.oldPrice != null && this.product.price != null && this.product.oldPrice > this.product.price
+            ? Text(
+                '${this.product.oldPrice.toString()} Lei',
+                style: TextStyle(
+                  fontSize: 16,
+                  decoration: TextDecoration.lineThrough,
+                ),
+              )
+            : Container();
     final price = product.price != null
         ? Center(
             child: Text(
               '${product.price.toString()} Lei',
-              style: textTheme.headline5
-                  .copyWith(color: Theme.of(context).primaryColor),
+              style: textTheme.headline5.copyWith(color: Theme.of(context).primaryColor),
             ),
           )
         : Container();
@@ -168,9 +166,7 @@ class ProductDetails extends StatelessWidget {
         leading: Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: CachedNetworkImage(
-            imageUrl: Uri.tryParse(product.program.logoPath) != null
-                ? product.program.logoPath
-                : null,
+            imageUrl: Uri.tryParse(product.program.logoPath) != null ? product.program.logoPath : null,
             width: 60,
             fit: BoxFit.contain,
             errorWidget: (context, url, error) => Container(
@@ -225,14 +221,8 @@ class ProductDetails extends StatelessWidget {
             child: Text(
               getProgramCommission(product.program),
               style: _hasCommissionInterval
-                  ? Theme.of(context)
-                      .textTheme
-                      .subtitle2
-                      .copyWith(color: Colors.green)
-                  : Theme.of(context)
-                      .textTheme
-                      .headline5
-                      .copyWith(color: Colors.green),
+                  ? Theme.of(context).textTheme.subtitle2.copyWith(color: Colors.green)
+                  : Theme.of(context).textTheme.headline5.copyWith(color: Colors.green),
             ),
           ),
         ],
@@ -240,15 +230,11 @@ class ProductDetails extends StatelessWidget {
     );
   }
 
-  bool get _hasCommissionInterval =>
-      product.program.commissionMin != null &&
-      product.program.commissionMax != null;
+  bool get _hasCommissionInterval => product.program.commissionMin != null && product.program.commissionMax != null;
 
   Widget _buildSellingCountries(BuildContext context) {
     return Text(
-      product.program.sellingCountries
-          .map((country) => country.name)
-          .join(', '),
+      product.program.sellingCountries.map((country) => country.name).join(', '),
       style: Theme.of(context).textTheme.caption,
     );
   }
@@ -302,8 +288,7 @@ class PriceChart extends StatelessWidget {
     );
   }
 
-  List<charts.Series<ProductPriceHistoryEntry, DateTime>> _toSeries(
-      ProductPriceHistory history) {
+  List<charts.Series<ProductPriceHistoryEntry, DateTime>> _toSeries(ProductPriceHistory history) {
     return [
       charts.Series<ProductPriceHistoryEntry, DateTime>(
         id: 'priceHistory',

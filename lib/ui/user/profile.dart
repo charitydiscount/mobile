@@ -38,7 +38,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   bool _loadingVisible = false;
   FirebaseStorage _storage;
-  StorageUploadTask _uploadTask;
+  UploadTask _uploadTask;
 
   @override
   void initState() {
@@ -63,21 +63,8 @@ class _ProfileState extends State<Profile> {
       )
     ];
 
-    if (_uploadTask != null && !_uploadTask.isComplete) {
-      logoWidgets.add(
-        StreamBuilder<StorageTaskEvent>(
-          stream: _uploadTask.events,
-          builder: (context, snapshot) {
-            if (_uploadTask.isComplete) {
-              return Container(
-                width: 0,
-                height: 0,
-              );
-            }
-            return CircularProgressIndicator();
-          },
-        ),
-      );
+    if (_uploadTask != null && _uploadTask.snapshot.state == TaskState.running) {
+      logoWidgets.add(CircularProgressIndicator());
     }
 
     logoWidgets.add(Positioned(
@@ -254,23 +241,27 @@ class _ProfileState extends State<Profile> {
   void _startUpload(File image) async {
     if (_storage == null) {
       String bucket = await remoteConfig.getPicturesBucket();
-      _storage = FirebaseStorage(storageBucket: 'gs://$bucket');
+      _storage = FirebaseStorage.instanceFor(bucket: 'gs://$bucket');
     }
 
-    String picturePath =
-        'profilePhotos/${AppModel.of(context).user.userId}/profilePicture.png';
+    String picturePath = 'profilePhotos/${AppModel.of(context).user.userId}/profilePicture.png';
 
     setState(() {
       _uploadTask = _storage.ref().child(picturePath).putFile(image);
-      _uploadTask.onComplete.then((snap) async {
-        String imageUrl = await snap.ref.getDownloadURL();
-        var userState = AppModel.of(context).user;
-        userState.photoUrl = imageUrl;
-        await locator<AuthService>().updateUser(photoUrl: imageUrl);
-        setState(() {
-          AppModel.of(context).setUser(userState);
-        });
+    });
+
+    _uploadTask.then((snap) async {
+      String imageUrl = await snap.ref.getDownloadURL();
+      var userState = AppModel.of(context).user;
+      userState.photoUrl = imageUrl;
+      await locator<AuthService>().updateUser(photoUrl: imageUrl);
+      setState(() {
+        AppModel.of(context).setUser(userState);
+        _uploadTask = null;
       });
+    }).catchError((FirebaseException error) {
+      printError(error.message);
+      return null;
     });
   }
 }

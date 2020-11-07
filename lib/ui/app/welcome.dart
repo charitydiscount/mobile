@@ -174,19 +174,19 @@ class _StepIndicator extends StatelessWidget {
         child: TimelineTile(
           isFirst: isFirst,
           isLast: isLast,
-          topLineStyle: LineStyle(
+          beforeLineStyle: LineStyle(
             color: color,
-            width: 5,
+            thickness: 5,
           ),
           indicatorStyle: IndicatorStyle(
             color: color,
             width: 20,
           ),
-          bottomLineStyle: LineStyle(
+          afterLineStyle: LineStyle(
             color: color,
-            width: 5,
+            thickness: 5,
           ),
-          rightChild: Padding(
+          endChild: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10.0),
             child: ListTile(
               title: Text(

@@ -18,18 +18,14 @@ class AffiliateService {
     String programId,
     String programUniqueCode,
   }) =>
-      _db
-          .collection('promotions')
-          .doc(programId)
-          .get()
-          .then((snap) => snap.exists
-              ? _promotionsFromSnapData(
-                  snap.data(),
-                  affiliateUniqueCode,
-                  programUniqueCode,
-                  _auth.currentUser,
-                )
-              : []);
+      _db.collection('promotions').doc(programId).get().then((snap) => snap.exists
+          ? _promotionsFromSnapData(
+              snap.data(),
+              affiliateUniqueCode,
+              programUniqueCode,
+              _auth.currentUser,
+            )
+          : []);
 
   List<Promotion> _promotionsFromSnapData(
     Map<String, dynamic> snapData,
@@ -45,14 +41,12 @@ class AffiliateService {
                 affiliateUniqueCode,
               ))
           .where((promotion) =>
-              promotion.promotionStart.isBefore(DateTime.now()) &&
-              promotion.promotionEnd.isAfter(DateTime.now()))
+              promotion.promotionStart.isBefore(DateTime.now()) && promotion.promotionEnd.isAfter(DateTime.now()))
           .toList();
 
-  Promotion _promotionFromSnap(MapEntry<String, dynamic> snapEntry,
-      String programUniqueCode, User user, String affiliateUniqueCode) {
-    final promotion =
-        Promotion.fromJson(Map<String, dynamic>.from(snapEntry.value));
+  Promotion _promotionFromSnap(
+      MapEntry<String, dynamic> snapEntry, String programUniqueCode, User user, String affiliateUniqueCode) {
+    final promotion = Promotion.fromJson(Map<String, dynamic>.from(snapEntry.value));
     if (promotion.affiliateUrl != null) {
       promotion.actualAffiliateUrl = interpolateUserCode(
         promotion.affiliateUrl,
@@ -62,6 +56,7 @@ class AffiliateService {
     } else {
       // Fallback to previous strategy for old promotions
       promotion.actualAffiliateUrl = convertAffiliateUrl(
+        promotion.source,
         promotion.landingPageLink,
         affiliateUniqueCode,
         programUniqueCode,
@@ -71,8 +66,7 @@ class AffiliateService {
     return promotion;
   }
 
-  Future<void> launchWebApp(
-      String route, String itemKey, String itemValue) async {
+  Future<void> launchWebApp(String route, String itemKey, String itemValue) async {
     if (_baseUrl == null) {
       await _setBaseUrl();
     }
@@ -104,8 +98,7 @@ class AffiliateService {
     }
   }
 
-  Future<List<Promotion>> getAllPromotions() =>
-      _db.collection('promotions').doc('all').get().then((snap) {
+  Future<List<Promotion>> getAllPromotions() => _db.collection('promotions').doc('all').get().then((snap) {
         if (!snap.exists) {
           return [];
         }
@@ -116,8 +109,7 @@ class AffiliateService {
         return promotionsJson
             .map((e) => Promotion.fromJson(e))
             .where((promotion) =>
-                promotion.promotionStart.isBefore(DateTime.now()) &&
-                promotion.promotionEnd.isAfter(DateTime.now()))
+                promotion.promotionStart.isBefore(DateTime.now()) && promotion.promotionEnd.isAfter(DateTime.now()))
             .toList();
       });
 }

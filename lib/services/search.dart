@@ -3,6 +3,7 @@ import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/suggestion.dart';
 import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/state/locator.dart';
+import 'package:charity_discount/util/constants.dart';
 import 'package:charity_discount/util/remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -154,8 +155,7 @@ class SearchService implements SearchServiceBase {
       return ProductSearchResult([], 0);
     }
     List hits = data['hits'];
-    return ProductSearchResult(
-        productsFromElastic(hits), data['total']['value'] ?? 0);
+    return ProductSearchResult(productsFromElastic(hits), data['total']['value'] ?? 0);
   }
 
   @override
@@ -176,7 +176,7 @@ class SearchService implements SearchServiceBase {
     int size = 20,
     int from = 0,
   }) async {
-    if (program.productsCount == null || program.productsCount == 0) {
+    if (program.productsCount == 0 && program.source != Source.altex) {
       return ProductSearchResult([], 0);
     }
 
@@ -189,7 +189,7 @@ class SearchService implements SearchServiceBase {
     final body = {
       'query': {
         'term': {
-          'campaign_id': {'value': program.id}
+          'campaign_name.keyword': {'value': program.name}
         }
       },
       'size': size,
@@ -206,7 +206,8 @@ class SearchService implements SearchServiceBase {
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Products load failed: (${response.statusCode})');
+      print('Products load failed: (${response.statusCode})');
+      return ProductSearchResult([], 0);
     }
 
     final data = jsonDecode(response.body)['hits'];

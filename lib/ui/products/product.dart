@@ -53,8 +53,7 @@ class ProductCard extends StatelessWidget {
               context,
               MaterialPageRoute(
                 maintainState: true,
-                builder: (BuildContext context) =>
-                    ProductDetails(product: product),
+                builder: (BuildContext context) => ProductDetails(product: product),
                 settings: RouteSettings(name: 'ProductDetails'),
               ),
             );
@@ -105,9 +104,7 @@ class ProductCard extends StatelessWidget {
                                       ),
                                     )
                                   : Container(),
-                              product.price != null
-                                  ? Center(child: _buildPriceText())
-                                  : Container(),
+                              product.price != null ? Center(child: _buildPriceText()) : Container(),
                             ],
                           ),
                           Center(
@@ -118,7 +115,7 @@ class ProductCard extends StatelessWidget {
                               ),
                               onPressed: () {
                                 openAffiliateLink(
-                                  product.affiliateUrl,
+                                  product.actualAffiliateUrl,
                                   context,
                                   product.program.id,
                                   product.program.name,
@@ -140,10 +137,7 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  bool get _hasOldPrice =>
-      product.oldPrice != null &&
-      product.price != null &&
-      product.oldPrice > product.price;
+  bool get _hasOldPrice => product.oldPrice != null && product.price != null && product.oldPrice > product.price;
 
   Widget _buildPriceText() => Text(
         '${product.price.toString()} Lei',

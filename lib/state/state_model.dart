@@ -8,13 +8,13 @@ import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/services/affiliate.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/meta.dart';
-import 'package:charity_discount/services/notifications.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/util/constants.dart';
 import 'package:charity_discount/util/remote_config.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/user.dart';
@@ -126,7 +126,7 @@ class AppModel extends Model {
     if (settings != null) {
       setSettings(settings);
       if (settings.notificationsForPromotions == null) {
-        final token = await fcm.getToken();
+        final token = await FirebaseMessaging.instance.getToken();
         await locator<MetaService>().setNotificationsForPromotions(
           token,
           true,
@@ -134,7 +134,7 @@ class AppModel extends Model {
       }
     } else {
       await localService.storeSettingsLocal(_settings);
-      final token = await fcm.getToken();
+      final token = await FirebaseMessaging.instance.getToken();
       await locator<MetaService>().setNotificationsForPromotions(
         token,
         true,
@@ -215,6 +215,7 @@ class AppModel extends Model {
   void setPrograms(List<Program> programs, {bool storeLocal = true}) {
     _programs = [];
     _programs.addAll(programs);
+    _programs.removeWhere((p) => p.affiliateUrl == null);
     _programs.sort((p1, p2) => p1.getOrder().compareTo(p2.getOrder()));
     notifyListeners();
     if (storeLocal) {
@@ -230,21 +231,11 @@ class AppModel extends Model {
             program.commissionMin != null ? (program.commissionMin * userPercentage).toStringAsFixed(2) : null;
         program.commissionMaxDisplay =
             program.commissionMax != null ? (program.commissionMax * userPercentage).toStringAsFixed(2) : null;
-        if (program.affiliateUrl != null && program.affiliateUrl.isNotEmpty) {
-          program.actualAffiliateUrl = interpolateUserCode(
-            program.affiliateUrl,
-            program.uniqueCode,
-            user.userId,
-          );
-        } else {
-          // fallback to the previous strategy (probably old cache)
-          program.actualAffiliateUrl = convertAffiliateUrl(
-            program.mainUrl,
-            affiliateMeta.uniqueCode,
-            program.uniqueCode,
-            user.userId,
-          );
-        }
+        program.actualAffiliateUrl = interpolateUserCode(
+          program.affiliateUrl,
+          program.uniqueCode,
+          user.userId,
+        );
       });
 
       localService.setPrograms(_programs);
@@ -345,6 +336,7 @@ class AppModel extends Model {
           orElse: () => null,
         ),
       );
+      promotions.removeWhere((p) => relevantPrograms[p.program.id] == null);
 
       // Build the affiliate URL for the promotions
       promotions.forEach((p) {
