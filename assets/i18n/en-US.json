@@ -190,7 +190,8 @@
     "soldBy": "Sold by",
     "updatedAt": "Updated at",
     "disclaimer": "Information only for presentation purposes. The most accurate information can be obtained by accessing the shop's website",
-    "history": "Price history"
+    "history": "Price history",
+    "similarProducts": "Similar products"
   },
   "filter": {
     "title": "Filters",

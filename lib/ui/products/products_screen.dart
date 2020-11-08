@@ -1,10 +1,8 @@
 import 'package:charity_discount/models/product.dart';
 import 'package:charity_discount/services/search.dart';
-import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/ui/products/product.dart';
-import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:async/async.dart';
@@ -52,24 +50,20 @@ class _ProductsScreenState extends State<ProductsScreen> {
     });
   }
 
-  void _searchProducts(int from) {
-    locator<SearchServiceBase>()
-        .searchProducts(
-          _query,
-          from: from,
-          sort: _sortStrategy,
-          minPrice: _minPrice,
-          maxPrice: _maxPrice,
-        )
-        .then(
-          (searchResult) => setState(() {
-            if (_products.length <= _perPage) {
-              _totalProducts = searchResult.totalFound;
-            }
-            _products.addAll(_prepareProducts(searchResult.products));
-            _searchInProgress = false;
-          }),
-        );
+  void _searchProducts(int from) async {
+    final searchResult = await _state.searchProducts(
+      _query,
+      from: from,
+      sort: _sortStrategy,
+      minPrice: _minPrice,
+      maxPrice: _maxPrice,
+    );
+
+    if (_products.length <= _perPage) {
+      _totalProducts = searchResult.totalFound;
+    }
+    _products.addAll(searchResult.products);
+    _searchInProgress = false;
   }
 
   void _search() {
@@ -215,13 +209,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
         ),
       );
 
-  List<Product> _prepareProducts(Iterable<Product> products) => prepareProducts(products, _state);
-
   Widget get _featuredProducts => FutureBuilder<List<Product>>(
         future: _featuredMemoizer.runOnce(
-          () => locator<SearchServiceBase>().getFeaturedProducts(
-            userId: _state.user.userId,
-          ),
+          () => _state.getFeaturedProducts(),
         ),
         initialData: [],
         builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
@@ -233,7 +223,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
             return loadingWidget;
           }
 
-          List products = _prepareProducts(snapshot.data);
+          List products = snapshot.data;
           final productsWidget = products.map(
             (product) => ProductCard(product: product),
           );
@@ -419,28 +409,3 @@ class _ProductsScreenState extends State<ProductsScreen> {
     );
   }
 }
-
-List<Product> prepareProducts(Iterable<Product> products, AppModel state) => products
-    .map((product) {
-      final program = state.programs?.firstWhere(
-            (program) => program.id == product.programId,
-            orElse: () => null,
-          ) ??
-          state.programs?.firstWhere(
-            (program) => program.name.compareTo(product.programName) == 0,
-            orElse: () => null,
-          );
-      if (program == null) {
-        return null;
-      }
-      return product.copyWith(
-        program: program,
-        actualAffiliateUrl: interpolateUserCode(
-          product.affiliateUrl,
-          program.uniqueCode,
-          state.user.userId,
-        ),
-      );
-    })
-    .where((product) => product != null)
-    .toList();

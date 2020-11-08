@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/product.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/state/locator.dart';
+import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/util.dart';
+import 'package:charity_discount/ui/products/product.dart';
 import 'package:charity_discount/util/tools.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -148,9 +150,28 @@ class ProductDetails extends StatelessWidget {
                     ),
                   ],
                 ),
-                Expanded(
-                  child: PriceChart(productId: product.id),
+                Expanded(child: PriceChart(productId: product.id)),
+              ],
+            ),
+          ),
+        ),
+        Container(
+          height: 300,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8, right: 8, bottom: 60),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      tr('product.similarProducts'),
+                      textAlign: TextAlign.left,
+                    ),
+                  ],
                 ),
+                Expanded(child: SimilarProducts(product: product)),
               ],
             ),
           ),
@@ -265,7 +286,7 @@ class ProductDetails extends StatelessWidget {
 class PriceChart extends StatelessWidget {
   final String productId;
 
-  PriceChart({this.productId});
+  PriceChart({Key key, this.productId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -298,5 +319,40 @@ class PriceChart extends StatelessWidget {
         data: history.history,
       ),
     ];
+  }
+}
+
+class SimilarProducts extends StatelessWidget {
+  final Product product;
+
+  const SimilarProducts({Key key, @required this.product}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Product>>(
+      future: AppModel.of(context).getSimilarProducts(product),
+      builder: (context, snapshot) {
+        final loadingWidget = buildConnectionLoading(
+          snapshot: snapshot,
+          context: context,
+        );
+        if (loadingWidget != null) return loadingWidget;
+
+        if (snapshot.data.isEmpty) {
+          return Container(
+            height: 0,
+            width: 0,
+          );
+        }
+
+        return ListView.builder(
+          itemCount: snapshot.data.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index) => ProductCard(
+            product: snapshot.data[index],
+          ),
+        );
+      },
+    );
   }
 }

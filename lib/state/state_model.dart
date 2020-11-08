@@ -2,12 +2,14 @@ import 'dart:async';
 import 'package:charity_discount/controllers/user_controller.dart';
 import 'package:charity_discount/models/favorite_shops.dart';
 import 'package:charity_discount/models/meta.dart';
+import 'package:charity_discount/models/product.dart';
 import 'package:charity_discount/models/program.dart';
 import 'package:charity_discount/models/promotion.dart';
 import 'package:charity_discount/models/wallet.dart';
 import 'package:charity_discount/services/affiliate.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/meta.dart';
+import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/util/constants.dart';
@@ -353,4 +355,63 @@ class AppModel extends Model {
 
     return promotions;
   }
+
+  Future<List<Product>> getSimilarProducts(Product product) async {
+    final products = await locator<SearchServiceBase>().getSimilarProducts(product: product);
+    return _prepareProducts(products);
+  }
+
+  Future<ProductSearchResult> searchProducts(
+    String query, {
+    String programId,
+    int from = 0,
+    SortStrategy sort,
+    double minPrice,
+    double maxPrice,
+  }) async {
+    final searchResult = await locator<SearchServiceBase>().searchProducts(
+      query,
+      programId: programId,
+      from: from,
+      maxPrice: maxPrice,
+      minPrice: minPrice,
+      sort: sort,
+    );
+    return ProductSearchResult(_prepareProducts(searchResult.products), searchResult.totalFound);
+  }
+
+  Future<ProductSearchResult> getProductsForProgram({
+    Program program,
+    int size = 20,
+    int from = 0,
+  }) async {
+    final searchResult = await locator<SearchServiceBase>().getProductsForProgram(
+      program: program,
+      size: size,
+      from: from,
+    );
+    return ProductSearchResult(_prepareProducts(searchResult.products), searchResult.totalFound);
+  }
+
+  Future<List<Product>> getFeaturedProducts() async {
+    final products = await locator<SearchServiceBase>().getFeaturedProducts(userId: user.userId);
+    return _prepareProducts(products);
+  }
+
+  List<Product> _prepareProducts(Iterable<Product> products) => products
+      .map((product) {
+        final program = programs?.firstWhere(
+          (program) => program.id == product.programId,
+          orElse: () => null,
+        );
+
+        if (program == null) return null;
+
+        return product.copyWith(
+          program: program,
+          actualAffiliateUrl: interpolateUserCode(product.affiliateUrl, program.uniqueCode, user.userId),
+        );
+      })
+      .where((product) => product != null)
+      .toList();
 }
