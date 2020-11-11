@@ -27,7 +27,7 @@ class RatingWidget extends StatelessWidget {
       formatDate(rating.createdAt),
       style: Theme.of(context).textTheme.caption,
     );
-    Widget stars = RatingBar(
+    Widget stars = RatingBar.builder(
       initialRating: rating.rating.toDouble(),
       direction: Axis.horizontal,
       allowHalfRating: true,

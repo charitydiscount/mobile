@@ -16,7 +16,6 @@ abstract class SearchServiceBase {
 
   Future<ProductSearchResult> searchProducts(
     String query, {
-    String category,
     String programId,
     int from,
     SortStrategy sort,
@@ -33,6 +32,14 @@ abstract class SearchServiceBase {
   });
 
   Future<ProductPriceHistory> getProductPriceHistory(productId);
+
+  Future<List<Product>> getSimilarProducts({
+    @required Product product,
+    int size = 20,
+    int from = 0,
+  });
+
+  Future<List<Program>> getRelevantPrograms(String query);
 }
 
 enum SortStrategy { priceAsc, priceDesc, relevance }
@@ -135,7 +142,6 @@ class SearchService implements SearchServiceBase {
   @override
   Future<ProductSearchResult> searchProducts(
     String query, {
-    String category,
     String programId,
     int from = 0,
     SortStrategy sort,
@@ -279,5 +285,108 @@ class SearchService implements SearchServiceBase {
       productId,
       productHistoryFromElastic(List.from(data['hits'])),
     );
+  }
+
+  @override
+  Future<List<Product>> getSimilarProducts({
+    Product product,
+    int size = 20,
+    int from = 0,
+  }) async {
+    String elasticUrl = await remoteConfig.getElasticEndpoint();
+    String auth = await remoteConfig.getElasticAuth();
+
+    final body = {
+      'query': {
+        'more_like_this': {
+          'fields': ['title', 'category'],
+          'like': [
+            {
+              '_index': 'products',
+              '_id': product.id.trim(),
+            }
+          ],
+          'min_term_freq': 1,
+        }
+      },
+      'size': size,
+      'from': from,
+    };
+
+    final response = await http.post(
+      '$elasticUrl/products/_search',
+      headers: {
+        'Authorization': 'Basic $auth',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      print('Products load failed: (${response.body})');
+      return [];
+    }
+
+    final data = jsonDecode(response.body)['hits'];
+    if (!data.containsKey('hits')) {
+      return [];
+    }
+
+    return productsFromElastic(List.from(data['hits']));
+  }
+
+  @override
+  Future<List<Program>> getRelevantPrograms(String query) async {
+    String elasticUrl = await remoteConfig.getElasticEndpoint();
+    String auth = await remoteConfig.getElasticAuth();
+
+    final body = {
+      'query': {
+        'multi_match': {
+          'fields': [
+            'campaign_name^3',
+            'title',
+          ],
+          'query': query,
+        }
+      },
+      'size': 0,
+      'aggs': {
+        'dedup': {
+          'terms': {
+            'field': 'campaign_id',
+          },
+          'aggs': {
+            'dedup_docs': {
+              'top_hits': {
+                'size': 1,
+              }
+            }
+          }
+        }
+      }
+    };
+
+    final response = await http.post(
+      '$elasticUrl/products/_search',
+      headers: {
+        'Authorization': 'Basic $auth',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      print('Products load failed: (${response.body})');
+      return [];
+    }
+
+    final data = jsonDecode(response.body)['hits'];
+    if (!data.containsKey('hits')) {
+      return [];
+    }
+
+    // TODO
+    return [];
   }
 }

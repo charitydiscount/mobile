@@ -42,7 +42,7 @@ String interpolateUserCode(
   return affiliateUrl.replaceAll(PROGRAM_LINK_PLACEHOLDER, programUniqueCode).replaceAll(USER_LINK_PLACEHOLDER, userId);
 }
 
-void openAffiliateLink(
+Future<void> openAffiliateLink(
   String url,
   BuildContext context,
   String programId,
@@ -74,7 +74,7 @@ void openAffiliateLink(
     stderr.write(e.toString());
   }
 
-  launchURL(url);
+  return await launchURL(url);
 }
 
 class UrlHelper {

@@ -1,8 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/promotion.dart';
+import 'package:charity_discount/ui/app/access_button.dart';
 import 'package:charity_discount/util/tools.dart';
-import 'package:charity_discount/util/url.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class PromotionCard extends StatelessWidget {
@@ -12,16 +11,12 @@ class PromotionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final linkButton = FlatButton(
-      padding: EdgeInsets.zero,
-      child: Text(tr('access')),
-      onPressed: () => openAffiliateLink(
-        promotion.actualAffiliateUrl,
-        context,
-        promotion.program.id.toString(),
-        promotion.program.name,
-        'promotion',
-      ),
+    final linkButton = AccessButton(
+      buttonType: AccessButtonType.FLAT,
+      url: promotion.actualAffiliateUrl,
+      programId: promotion.program.id.toString(),
+      programName: promotion.program.name,
+      eventScreen: 'promotion',
     );
 
     return Container(

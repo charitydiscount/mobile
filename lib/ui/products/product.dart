@@ -1,9 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:charity_discount/models/product.dart';
 import 'package:charity_discount/services/analytics.dart';
+import 'package:charity_discount/ui/app/access_button.dart';
 import 'package:charity_discount/ui/products/product_details.dart';
-import 'package:charity_discount/util/url.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class ProductCard extends StatelessWidget {
@@ -108,20 +107,13 @@ class ProductCard extends StatelessWidget {
                             ],
                           ),
                           Center(
-                            child: FlatButton(
-                              child: Text(
-                                tr('access'),
-                                style: TextStyle(fontSize: 12),
-                              ),
-                              onPressed: () {
-                                openAffiliateLink(
-                                  product.actualAffiliateUrl,
-                                  context,
-                                  product.program.id,
-                                  product.program.name,
-                                  'products',
-                                );
-                              },
+                            child: AccessButton(
+                              buttonType: AccessButtonType.FLAT,
+                              url: product.actualAffiliateUrl,
+                              programId: product.program.id,
+                              programName: product.program.name,
+                              eventScreen: 'products',
+                              textStyle: TextStyle(fontSize: 12),
                             ),
                           ),
                         ],

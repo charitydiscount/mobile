@@ -3,11 +3,10 @@ import 'package:charity_discount/models/product.dart';
 import 'package:charity_discount/models/promotion.dart';
 import 'package:charity_discount/models/rating.dart';
 import 'package:charity_discount/services/auth.dart';
-import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/state/locator.dart';
+import 'package:charity_discount/ui/app/access_button.dart';
 import 'package:charity_discount/ui/products/product.dart';
-import 'package:charity_discount/ui/products/products_screen.dart';
 import 'package:charity_discount/ui/programs/promotion.dart';
 import 'package:charity_discount/ui/programs/rate_shop.dart';
 import 'package:charity_discount/ui/programs/rating.dart';
@@ -19,7 +18,6 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/services/affiliate.dart';
-import 'package:charity_discount/util/url.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:async/async.dart';
 
@@ -50,11 +48,10 @@ class _ShopDetailsState extends State<ShopDetails> {
 
     final appState = AppModel.of(context);
 
-    double sectionTitleSize =
-        Theme.of(context).textTheme.headline5.fontSize * 0.7;
+    double sectionTitleSize = Theme.of(context).textTheme.headline5.fontSize * 0.7;
 
-    final reviewsFuture = _reviewsMemoizer.runOnce(() =>
-        locator<ShopsService>().getProgramRating(widget.program.uniqueCode));
+    final reviewsFuture =
+        _reviewsMemoizer.runOnce(() => locator<ShopsService>().getProgramRating(widget.program.uniqueCode));
     Widget ratingBuilder = FutureBuilder<List<Review>>(
       future: reviewsFuture,
       builder: (context, snapshot) {
@@ -67,8 +64,7 @@ class _ShopDetailsState extends State<ShopDetails> {
           return SliverToBoxAdapter(child: loading);
         }
 
-        final titleColor =
-            snapshot.data.isEmpty ? Colors.grey.shade500 : Colors.grey.shade800;
+        final titleColor = snapshot.data.isEmpty ? Colors.grey.shade500 : Colors.grey.shade800;
         final reviewsTitle = Text(
           tr('review.reviews'),
           textAlign: TextAlign.start,
@@ -94,10 +90,7 @@ class _ShopDetailsState extends State<ShopDetails> {
 
         snapshot.data.sort((r1, r2) => r2.createdAt.compareTo(r1.createdAt));
 
-        List<Widget> reviewsWidgets = snapshot.data
-            .take(3)
-            .map((rating) => RatingWidget(rating: rating))
-            .toList();
+        List<Widget> reviewsWidgets = snapshot.data.take(3).map((rating) => RatingWidget(rating: rating)).toList();
 
         List<Widget> reviewSection = [
           Container(
@@ -168,8 +161,7 @@ class _ShopDetailsState extends State<ShopDetails> {
         }
 
         var promotions = snapshot.data;
-        final titleColor =
-            promotions.isEmpty ? Colors.grey.shade500 : Colors.grey.shade800;
+        final titleColor = promotions.isEmpty ? Colors.grey.shade500 : Colors.grey.shade800;
         final promotionsTitle = Text(
           tr('promotion.promotions'),
           style: TextStyle(
@@ -194,28 +186,20 @@ class _ShopDetailsState extends State<ShopDetails> {
       },
     );
 
-    final productsFuture = _productsMemoizer.runOnce(() =>
-        Future.delayed(Duration(milliseconds: 500)).then((_) =>
-            locator<SearchServiceBase>()
-                .getProductsForProgram(program: widget.program)));
+    final productsFuture = _productsMemoizer.runOnce(() => Future.delayed(Duration(milliseconds: 500))
+        .then((_) => AppModel.of(context).getProductsForProgram(program: widget.program)));
 
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.program.name),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton.extended(
-        icon: const Icon(Icons.open_in_new),
-        label: Text(tr('accessShop')),
-        onPressed: () {
-          openAffiliateLink(
-            widget.program.actualAffiliateUrl,
-            context,
-            widget.program.id,
-            widget.program.name,
-            'program_details',
-          );
-        },
+      floatingActionButton: AccessButton(
+        buttonType: AccessButtonType.FLOATING,
+        url: widget.program.actualAffiliateUrl,
+        programId: widget.program.id,
+        programName: widget.program.name,
+        eventScreen: 'program_details',
       ),
       body: CustomScrollView(
         primary: true,
@@ -257,12 +241,7 @@ class _ShopDetailsState extends State<ShopDetails> {
                 return SliverToBoxAdapter(child: loading);
               }
 
-              List products = prepareProducts(
-                snapshot.data.products,
-                AppModel.of(context),
-              );
-
-              return _ShopProducts(products: products);
+              return _ShopProducts(products: snapshot.data.products);
             },
           ),
           SliverToBoxAdapter(
@@ -287,8 +266,7 @@ class _ShopDetailsState extends State<ShopDetails> {
     );
   }
 
-  ClipOval _buildProvideRating(
-      bool alreadyReviewed, BuildContext context, Review thisUserReview) {
+  ClipOval _buildProvideRating(bool alreadyReviewed, BuildContext context, Review thisUserReview) {
     return ClipOval(
       child: Container(
         color: Colors.green,
@@ -379,10 +357,7 @@ class _ShopDetailsState extends State<ShopDetails> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
               getProgramCommission(widget.program),
-              style: Theme.of(context)
-                  .textTheme
-                  .headline5
-                  .copyWith(color: Colors.green),
+              style: Theme.of(context).textTheme.headline5.copyWith(color: Colors.green),
             ),
           ),
         ],
@@ -416,9 +391,7 @@ class _ShopDetailsState extends State<ShopDetails> {
     return Center(
       child: Tooltip(
         showDuration: Duration(seconds: 5),
-        message: widget.program.sellingCountries
-            .map((country) => country.name)
-            .join(', '),
+        message: widget.program.sellingCountries.map((country) => country.name).join(', '),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -427,9 +400,7 @@ class _ShopDetailsState extends State<ShopDetails> {
               style: Theme.of(context).textTheme.caption,
             ),
             Text(
-              widget.program.sellingCountries
-                  .map((country) => country.name)
-                  .join(', '),
+              widget.program.sellingCountries.map((country) => country.name).join(', '),
               style: Theme.of(context).textTheme.subtitle1,
               overflow: TextOverflow.ellipsis,
             ),
