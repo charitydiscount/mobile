@@ -26,7 +26,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
   AppModel _state;
   AsyncMemoizer _featuredMemoizer = AsyncMemoizer<List<Product>>();
   int _totalProducts = 1;
-  int _perPage = 50;
   List<Product> _products = [];
   bool _searchInProgress = false;
   SortStrategy _sortStrategy = SortStrategy.relevance;
@@ -59,11 +58,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
       maxPrice: _maxPrice,
     );
 
-    if (_products.length <= _perPage) {
-      _totalProducts = searchResult.totalFound;
-    }
-    _products.addAll(searchResult.products);
-    _searchInProgress = false;
+    setState(() {
+      if (from == 0) {
+        _totalProducts = searchResult.totalFound;
+      }
+      _products.addAll(searchResult.products);
+      _searchInProgress = false;
+    });
   }
 
   void _search() {
