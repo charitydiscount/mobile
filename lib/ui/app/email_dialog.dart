@@ -97,9 +97,7 @@ class _EmailDialogState extends State<EmailDialog> {
               ? Container(
                   height: 20,
                   width: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 3.0,
-                  ),
+                  child: CircularProgressIndicator(strokeWidth: 3.0),
                 )
               : Text(tr('send').toUpperCase()),
           onPressed: _loadingVisible

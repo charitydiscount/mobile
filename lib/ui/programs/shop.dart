@@ -3,13 +3,12 @@ import 'package:charity_discount/services/analytics.dart';
 import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/state/locator.dart';
+import 'package:charity_discount/ui/app/access_button.dart';
 import 'package:charity_discount/ui/programs/rating.dart';
 import 'package:charity_discount/ui/programs/shop_details.dart';
 import 'package:charity_discount/ui/app/util.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/program.dart' as models;
-import 'package:charity_discount/util/url.dart';
 
 class ShopHalfTile extends StatelessWidget {
   final models.Program program;
@@ -26,18 +25,12 @@ class ShopHalfTile extends StatelessWidget {
         fit: BoxFit.contain,
       ),
     );
-    final linkButton = FlatButton(
-      padding: EdgeInsets.zero,
-      child: Text(tr('access')),
-      onPressed: () {
-        openAffiliateLink(
-          program.actualAffiliateUrl,
-          context,
-          program.id,
-          program.name,
-          'programs',
-        );
-      },
+    final linkButton = AccessButton(
+      buttonType: AccessButtonType.FLAT,
+      url: program.actualAffiliateUrl,
+      programId: program.id,
+      programName: program.name,
+      eventScreen: 'programs',
     );
 
     Widget cashback = Text(
@@ -79,8 +72,7 @@ class ShopHalfTile extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    ShopDetails(program: program),
+                builder: (BuildContext context) => ShopDetails(program: program),
                 settings: RouteSettings(name: 'ShopDetails'),
               ),
             );

@@ -81,19 +81,17 @@ class _RateScreenState extends State<RateScreen> {
               _ratingHeadline,
               style: Theme.of(context).textTheme.subtitle2,
             ),
-            RatingBar(
+            RatingBar.builder(
               allowHalfRating: false,
               initialRating: _rating.toDouble(),
               itemCount: 5,
               itemSize: 45,
               direction: Axis.horizontal,
               itemPadding: EdgeInsets.all(4),
-              itemBuilder: (context, index) {
-                return Icon(
-                  Icons.star,
-                  color: Colors.green,
-                );
-              },
+              itemBuilder: (context, index) => Icon(
+                Icons.star,
+                color: Colors.green,
+              ),
               unratedColor: Colors.grey.shade300,
               onRatingUpdate: (rating) {
                 setState(() {
@@ -131,8 +129,7 @@ class _RateScreenState extends State<RateScreen> {
       },
     );
 
-    String titleKey =
-        widget.existingReview != null ? 'review.edit' : 'review.add';
+    String titleKey = widget.existingReview != null ? 'review.edit' : 'review.add';
     return Scaffold(
       appBar: AppBar(
         title: Text(tr(titleKey)),
@@ -150,9 +147,7 @@ class _RateScreenState extends State<RateScreen> {
                       rating: _rating,
                       description: _descriptionController.text,
                     );
-                    locator<ShopsService>()
-                        .saveReview(widget.program, review)
-                        .then((_) {
+                    locator<ShopsService>().saveReview(widget.program, review).then((_) {
                       Navigator.of(context).pop(true);
                     });
                   }

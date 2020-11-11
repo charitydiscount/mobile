@@ -5,6 +5,7 @@ import 'package:charity_discount/models/rating.dart';
 import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/shops.dart';
 import 'package:charity_discount/state/locator.dart';
+import 'package:charity_discount/ui/app/access_button.dart';
 import 'package:charity_discount/ui/products/product.dart';
 import 'package:charity_discount/ui/programs/promotion.dart';
 import 'package:charity_discount/ui/programs/rate_shop.dart';
@@ -17,7 +18,6 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/models/program.dart' as models;
 import 'package:charity_discount/services/affiliate.dart';
-import 'package:charity_discount/util/url.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:async/async.dart';
 
@@ -194,18 +194,12 @@ class _ShopDetailsState extends State<ShopDetails> {
         title: Text(widget.program.name),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton.extended(
-        icon: const Icon(Icons.open_in_new),
-        label: Text(tr('accessShop')),
-        onPressed: () {
-          openAffiliateLink(
-            widget.program.actualAffiliateUrl,
-            context,
-            widget.program.id,
-            widget.program.name,
-            'program_details',
-          );
-        },
+      floatingActionButton: AccessButton(
+        buttonType: AccessButtonType.FLOATING,
+        url: widget.program.actualAffiliateUrl,
+        programId: widget.program.id,
+        programName: widget.program.name,
+        eventScreen: 'program_details',
       ),
       body: CustomScrollView(
         primary: true,

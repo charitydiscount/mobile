@@ -3,10 +3,10 @@ import 'package:charity_discount/models/product.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/ui/app/access_button.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/ui/products/product.dart';
 import 'package:charity_discount/util/tools.dart';
-import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_discount/ui/app/image_carousel.dart';
@@ -24,18 +24,12 @@ class ProductDetails extends StatelessWidget {
         title: Text(product.title),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton.extended(
-        icon: const Icon(Icons.open_in_new),
-        label: Text(tr('accessShop')),
-        onPressed: () {
-          openAffiliateLink(
-            product.actualAffiliateUrl,
-            context,
-            product.program.id,
-            product.program.name,
-            'product_details',
-          );
-        },
+      floatingActionButton: AccessButton(
+        buttonType: AccessButtonType.FLOATING,
+        url: product.actualAffiliateUrl,
+        programId: product.program.id,
+        programName: product.program.name,
+        eventScreen: 'product_details',
       ),
       body: SingleChildScrollView(
         child: _buildProductHeader(context),
