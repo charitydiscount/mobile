@@ -1,7 +1,7 @@
 name: charity_discount
 description: Empowering charity.
 
-version: 1.11.0+700
+version: 1.10.1+700
 
 environment:
   sdk: '>=2.1.0 <3.0.0'
