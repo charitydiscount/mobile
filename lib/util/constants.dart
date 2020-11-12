@@ -19,3 +19,7 @@ abstract class Source {
   static const String twoP = '2p';
   static const String altex = 'altex';
 }
+
+abstract class FirestoreCollection {
+  static const String achievements = 'achievements';
+}
