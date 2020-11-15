@@ -265,5 +265,6 @@
   "emailNewsletterExplanation": "Stay up to date with what we do and live a more meaningful life by subscribing to our newsletter.",
   "emailNewsletterCheckbox": "Receive email newsletter",
   "emailAlreadyTaken": "This email is already taken",
-  "emailInvalid": "Invalid email address"
+  "emailInvalid": "Invalid email address",
+  "achievements": "Achievements"
 }

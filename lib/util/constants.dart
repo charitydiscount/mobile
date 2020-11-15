@@ -22,4 +22,5 @@ abstract class Source {
 
 abstract class FirestoreCollection {
   static const String achievements = 'achievements';
+  static const String userAchievements = 'user-achievements';
 }

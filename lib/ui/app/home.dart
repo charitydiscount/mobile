@@ -3,6 +3,7 @@ import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/ui/achievements/achievements.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/ui/products/products_screen.dart';
 import 'package:charity_discount/ui/app/settings.dart';
@@ -31,7 +32,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Screen selectedNavIndex;
-  List<Widget> _widgets = List.generate(Screen.values.length, (_) => Container());
+  List<Widget> _widgets =
+      List.generate(Screen.values.length, (_) => Container());
   List<bool> _loadedWidgets = List.generate(Screen.values.length, (_) => false);
 
   _HomeScreenState({this.selectedNavIndex});
@@ -48,7 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return;
       }
       final type = message.data['type'];
-      bool needsButton = type == NotificationTypes.commission || type == NotificationTypes.shop;
+      bool needsButton = type == NotificationTypes.commission ||
+          type == NotificationTypes.shop;
 
       Flushbar(
         title: message.notification.title,
@@ -77,7 +80,9 @@ class _HomeScreenState extends State<HomeScreen> {
       )?.show(context);
     });
     FirebaseMessaging.onMessageOpenedApp.listen(_handleBackgroundNotification);
-    FirebaseMessaging.instance.getInitialMessage().then(_handleBackgroundNotification);
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then(_handleBackgroundNotification);
   }
 
   Future<dynamic> _handleBackgroundNotification(
@@ -195,110 +200,124 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final logoImage = UserAvatar(photoUrl: user.photoUrl);
     return InkWell(
-      onTap: () {
-        showModalBottomSheet(
-          context: context,
-          builder: (BuildContext context) {
-            TextStyle titleStyle = Theme.of(context).textTheme.headline6;
+      onTap: () => showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          TextStyle titleStyle = Theme.of(context).textTheme.headline6;
 
-            List<ListTile> menuTiles = [];
-            ListTile profileTile = ListTile(
-              leading: CircleAvatar(
-                child: logoImage,
-                radius: 12,
-                backgroundColor: Colors.transparent,
-              ),
-              title: Text(
-                getUserName(user),
-                style: titleStyle,
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => ProfileScreen(),
-                    settings: RouteSettings(name: 'Profile'),
+          List<ListTile> menuTiles = [];
+          ListTile profileTile = ListTile(
+            leading: CircleAvatar(
+              child: logoImage,
+              radius: 12,
+              backgroundColor: Colors.transparent,
+            ),
+            title: Text(
+              getUserName(user),
+              style: titleStyle,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => ProfileScreen(),
+                  settings: RouteSettings(name: 'Profile'),
+                ),
+              );
+            },
+          );
+          menuTiles.add(profileTile);
+
+          ListTile achievements = ListTile(
+            leading: Icon(Icons.double_arrow),
+            title: Text(
+              tr('achievements'),
+              style: titleStyle,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => AchivementsScreen(),
+                  settings: RouteSettings(name: 'Achievements'),
+                ),
+              );
+            },
+          );
+          menuTiles.add(achievements);
+
+          ListTile referrals = ListTile(
+            leading: Icon(Icons.people),
+            title: Text(
+              tr('referralsLabel'),
+              style: titleStyle,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => ReferralsScreen(
+                    charityService: locator<CharityService>(),
                   ),
-                );
-              },
-            );
-            menuTiles.add(profileTile);
+                  settings: RouteSettings(name: 'Referrals'),
+                ),
+              );
+            },
+          );
+          menuTiles.add(referrals);
 
-            ListTile referrals = ListTile(
-              leading: Icon(Icons.people),
-              title: Text(
-                tr('referralsLabel'),
-                style: titleStyle,
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => ReferralsScreen(
-                      charityService: locator<CharityService>(),
-                    ),
-                    settings: RouteSettings(name: 'Referrals'),
-                  ),
-                );
-              },
-            );
-            menuTiles.add(referrals);
+          ListTile settings = ListTile(
+            leading: Icon(Icons.settings),
+            title: Text(
+              tr('settings'),
+              style: titleStyle,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => SettingsScreen(),
+                  settings: RouteSettings(name: 'Settings'),
+                ),
+              );
+            },
+          );
+          menuTiles.add(settings);
 
-            ListTile settings = ListTile(
-              leading: Icon(Icons.settings),
-              title: Text(
-                tr('settings'),
-                style: titleStyle,
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => SettingsScreen(),
-                    settings: RouteSettings(name: 'Settings'),
-                  ),
-                );
-              },
-            );
-            menuTiles.add(settings);
+          ListTile terms = ListTile(
+            leading: Icon(Icons.help_outline),
+            title: Text(
+              tr('terms'),
+              style: titleStyle,
+            ),
+            onTap: () => UrlHelper.launchTerms(),
+          );
+          menuTiles.add(terms);
 
-            ListTile terms = ListTile(
-              leading: Icon(Icons.help_outline),
-              title: Text(
-                tr('terms'),
-                style: titleStyle,
-              ),
-              onTap: () => UrlHelper.launchTerms(),
-            );
-            menuTiles.add(terms);
+          ListTile privacy = ListTile(
+            leading: Icon(Icons.verified_user),
+            title: Text(
+              tr('privacy'),
+              style: titleStyle,
+            ),
+            onTap: () => UrlHelper.launchPrivacy(),
+          );
+          menuTiles.add(privacy);
 
-            ListTile privacy = ListTile(
-              leading: Icon(Icons.verified_user),
-              title: Text(
-                tr('privacy'),
-                style: titleStyle,
-              ),
-              onTap: () => UrlHelper.launchPrivacy(),
-            );
-            menuTiles.add(privacy);
-
-            return Container(
-              alignment: Alignment.center,
-              child: ListView.separated(
-                padding: EdgeInsets.all(12.0),
-                primary: false,
-                separatorBuilder: (context, index) {
-                  return Divider();
-                },
-                itemBuilder: (context, index) {
-                  return menuTiles[index];
-                },
-                itemCount: menuTiles.length,
-              ),
-            );
-          },
-        );
-      },
+          return Container(
+            alignment: Alignment.center,
+            height: MediaQuery.of(context).size.height * 0.75,
+            child: ListView.separated(
+              padding: EdgeInsets.all(12.0),
+              primary: false,
+              separatorBuilder: (context, index) => Divider(),
+              itemBuilder: (context, index) => menuTiles[index],
+              itemCount: menuTiles.length,
+            ),
+          );
+        },
+      ),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: logoImage,
@@ -306,7 +325,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  String getUserName(User user) => user.name != null && user.name.isNotEmpty ? user.name : user.email;
+  String getUserName(User user) =>
+      user.name != null && user.name.isNotEmpty ? user.name : user.email;
 }
 
 enum Screen { PROGRAMS, PROMOTIONS, PRODUCTS, CASES, WALLET }

@@ -59,6 +59,7 @@ dependencies:
   charts_flutter: ^0.9.0
   timeline_tile: ^1.0.0
   get_it: ^5.0.1
+  percent_indicator: ^2.1.8
 
 dev_dependencies:
   flutter_test:

@@ -8,13 +8,15 @@ part of 'achievement.dart';
 
 Achievement _$AchievementFromJson(Map<String, dynamic> json) {
   return Achievement(
-    json['badgeUrl'] as String,
+    json['id'] as String,
+    json['badge'] as String,
     (json['conditions'] as List)
         ?.map((e) => e == null
             ? null
             : AchievementCondition.fromJson(e as Map<String, dynamic>))
         ?.toList(),
     Achievement.dateFromJson(json['createdAt']),
+    Achievement.dateFromJson(json['updatedAt']),
     json['description'] == null
         ? null
         : LocalizedText.fromJson(json['description'] as Map<String, dynamic>),
@@ -25,29 +27,26 @@ Achievement _$AchievementFromJson(Map<String, dynamic> json) {
         ? null
         : AchievementReward.fromJson(json['reward'] as Map<String, dynamic>),
     json['type'] as String,
-    json['weight'] as String,
-  );
+    json['weight'] as int,
+    json['order'] as int,
+  )..badgeUrl = json['badgeUrl'] as String;
 }
 
 Map<String, dynamic> _$AchievementToJson(Achievement instance) =>
     <String, dynamic>{
-      'badgeUrl': instance.badgeUrl,
+      'id': instance.id,
+      'badge': instance.badge,
       'conditions': instance.conditions?.map((e) => e?.toJson())?.toList(),
       'createdAt': instance.createdAt?.toIso8601String(),
+      'updatedAt': instance.updatedAt?.toIso8601String(),
       'description': instance.description?.toJson(),
       'name': instance.name?.toJson(),
       'reward': instance.reward?.toJson(),
+      'order': instance.order,
       'type': instance.type,
       'weight': instance.weight,
+      'badgeUrl': instance.badgeUrl,
     };
-
-AchievementCondition _$AchievementConditionFromJson(Map<String, dynamic> json) {
-  return AchievementCondition(
-    json['target'] as String,
-    json['type'] as String,
-    json['unit'] as String,
-  );
-}
 
 Map<String, dynamic> _$AchievementConditionToJson(
         AchievementCondition instance) =>
@@ -59,7 +58,7 @@ Map<String, dynamic> _$AchievementConditionToJson(
 
 AchievementReward _$AchievementRewardFromJson(Map<String, dynamic> json) {
   return AchievementReward(
-    json['amount'] as String,
+    json['amount'] as int,
     json['unit'] as String,
   );
 }
