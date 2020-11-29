@@ -8,7 +8,7 @@ part 'achievement.g.dart';
 @JsonSerializable(explicitToJson: true)
 class Achievement {
   final String id;
-  final String badge;
+  final String badgeUrl;
   final List<AchievementCondition> conditions;
   @JsonKey(fromJson: dateFromJson)
   final DateTime createdAt;
@@ -23,11 +23,9 @@ class Achievement {
   final String type;
   final int weight;
 
-  String badgeUrl;
-
   Achievement(
     this.id,
-    this.badge,
+    this.badgeUrl,
     this.conditions,
     this.createdAt,
     this.updatedAt,
@@ -41,8 +39,7 @@ class Achievement {
 
   static DateTime dateFromJson(dynamic json) => jsonToDate(json);
 
-  factory Achievement.fromJson(Map<String, dynamic> json) =>
-      _$AchievementFromJson(json);
+  factory Achievement.fromJson(Map<String, dynamic> json) => _$AchievementFromJson(json);
 
   Map<String, dynamic> toJson() => _$AchievementToJson(this);
 }
@@ -97,8 +94,7 @@ class AchievementReward {
 
   AchievementReward(this.amount, this.unit);
 
-  factory AchievementReward.fromJson(Map<String, dynamic> json) =>
-      _$AchievementRewardFromJson(json);
+  factory AchievementReward.fromJson(Map<String, dynamic> json) => _$AchievementRewardFromJson(json);
 
   Map<String, dynamic> toJson() => _$AchievementRewardToJson(this);
 }

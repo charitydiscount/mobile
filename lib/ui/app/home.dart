@@ -15,12 +15,12 @@ import 'package:charity_discount/ui/programs/programs.dart';
 import 'package:charity_discount/ui/user/user_avatar.dart';
 import 'package:charity_discount/util/constants.dart';
 import 'package:charity_discount/util/url.dart';
-import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:charity_discount/ui/charity/charity.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class HomeScreen extends StatefulWidget {
   final Screen initialScreen;
@@ -32,9 +32,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Screen selectedNavIndex;
-  List<Widget> _widgets =
-      List.generate(Screen.values.length, (_) => Container());
+  List<Widget> _widgets = List.generate(Screen.values.length, (_) => Container());
   List<bool> _loadedWidgets = List.generate(Screen.values.length, (_) => false);
+  bool willExitApp = false;
 
   _HomeScreenState({this.selectedNavIndex});
 
@@ -50,8 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return;
       }
       final type = message.data['type'];
-      bool needsButton = type == NotificationTypes.commission ||
-          type == NotificationTypes.shop;
+      bool needsButton = type == NotificationTypes.commission || type == NotificationTypes.shop;
 
       Flushbar(
         title: message.notification.title,
@@ -80,9 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
       )?.show(context);
     });
     FirebaseMessaging.onMessageOpenedApp.listen(_handleBackgroundNotification);
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then(_handleBackgroundNotification);
+    FirebaseMessaging.instance.getInitialMessage().then(_handleBackgroundNotification);
   }
 
   Future<dynamic> _handleBackgroundNotification(
@@ -133,45 +130,45 @@ class _HomeScreenState extends State<HomeScreen> {
       _loadedWidgets[selectedNavIndex.index] = true;
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('CharityDiscount'),
-        primary: true,
-        automaticallyImplyLeading: false,
-        actions: <Widget>[
-          _buildProfileButton(context: context, user: appState.user),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_shopping_cart),
-            label: tr('shops'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.access_time),
-            label: tr('promotion.promotions'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category),
-            label: tr('product.title'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: tr('charity'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance_wallet),
-            label: tr('wallet.name'),
-          ),
-        ],
-        currentIndex: selectedNavIndex.index,
-        onTap: _onItemTapped,
-      ),
-      body: DoubleBackToCloseApp(
-        snackBar: SnackBar(content: Text(tr('doubleBack'))),
-        child: IndexedStack(
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('CharityDiscount'),
+          primary: true,
+          automaticallyImplyLeading: false,
+          actions: <Widget>[
+            _buildProfileButton(context: context, user: appState.user),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add_shopping_cart),
+              label: tr('shops'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.access_time),
+              label: tr('promotion.promotions'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.category),
+              label: tr('product.title'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite),
+              label: tr('charity'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_balance_wallet),
+              label: tr('wallet.name'),
+            ),
+          ],
+          currentIndex: selectedNavIndex.index,
+          onTap: _onItemTapped,
+        ),
+        body: IndexedStack(
           children: _widgets,
           index: selectedNavIndex.index,
         ),
@@ -182,6 +179,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onItemTapped(int index) {
     setState(() {
       selectedNavIndex = Screen.values[index];
+      if (willExitApp) {
+        willExitApp = false;
+      }
     });
   }
 
@@ -325,8 +325,27 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  String getUserName(User user) =>
-      user.name != null && user.name.isNotEmpty ? user.name : user.email;
+  String getUserName(User user) => user.name != null && user.name.isNotEmpty ? user.name : user.email;
+
+  Future<bool> _onBackPressed() async {
+    if (willExitApp) {
+      return true;
+    }
+
+    setState(() {
+      willExitApp = true;
+    });
+
+    Future.delayed(Duration(seconds: 3)).then((_) {
+      setState(() {
+        willExitApp = false;
+      });
+    });
+
+    Fluttertoast.showToast(msg: tr('doubleBack'));
+
+    return false;
+  }
 }
 
 enum Screen { PROGRAMS, PROMOTIONS, PRODUCTS, CASES, WALLET }

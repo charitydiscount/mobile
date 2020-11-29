@@ -9,7 +9,7 @@ part of 'achievement.dart';
 Achievement _$AchievementFromJson(Map<String, dynamic> json) {
   return Achievement(
     json['id'] as String,
-    json['badge'] as String,
+    json['badgeUrl'] as String,
     (json['conditions'] as List)
         ?.map((e) => e == null
             ? null
@@ -29,13 +29,13 @@ Achievement _$AchievementFromJson(Map<String, dynamic> json) {
     json['type'] as String,
     json['weight'] as int,
     json['order'] as int,
-  )..badgeUrl = json['badgeUrl'] as String;
+  );
 }
 
 Map<String, dynamic> _$AchievementToJson(Achievement instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'badge': instance.badge,
+      'badgeUrl': instance.badgeUrl,
       'conditions': instance.conditions?.map((e) => e?.toJson())?.toList(),
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
@@ -45,7 +45,6 @@ Map<String, dynamic> _$AchievementToJson(Achievement instance) =>
       'order': instance.order,
       'type': instance.type,
       'weight': instance.weight,
-      'badgeUrl': instance.badgeUrl,
     };
 
 Map<String, dynamic> _$AchievementConditionToJson(
