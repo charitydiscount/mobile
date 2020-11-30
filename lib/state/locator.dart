@@ -1,3 +1,4 @@
+import 'package:charity_discount/services/achievements.dart';
 import 'package:charity_discount/services/affiliate.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/local.dart';
@@ -29,6 +30,9 @@ void _registerServices() {
   locator.registerLazySingleton<SearchServiceBase>(() => SearchService());
   locator.registerLazySingleton<ShopsService>(() => FirebaseShopsService());
   locator.registerLazySingleton<AppModel>(() => AppModel());
+  locator.registerLazySingleton<AchievementsService>(
+    () => AchievementsService(),
+  );
 }
 
 Future<void> resetServices() async {

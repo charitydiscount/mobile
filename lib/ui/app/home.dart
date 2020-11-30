@@ -3,6 +3,7 @@ import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
+import 'package:charity_discount/ui/achievements/achievements.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/ui/products/products_screen.dart';
 import 'package:charity_discount/ui/app/settings.dart';
@@ -14,12 +15,12 @@ import 'package:charity_discount/ui/programs/programs.dart';
 import 'package:charity_discount/ui/user/user_avatar.dart';
 import 'package:charity_discount/util/constants.dart';
 import 'package:charity_discount/util/url.dart';
-import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:charity_discount/ui/charity/charity.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class HomeScreen extends StatefulWidget {
   final Screen initialScreen;
@@ -33,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Screen selectedNavIndex;
   List<Widget> _widgets = List.generate(Screen.values.length, (_) => Container());
   List<bool> _loadedWidgets = List.generate(Screen.values.length, (_) => false);
+  bool willExitApp = false;
 
   _HomeScreenState({this.selectedNavIndex});
 
@@ -128,45 +130,45 @@ class _HomeScreenState extends State<HomeScreen> {
       _loadedWidgets[selectedNavIndex.index] = true;
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('CharityDiscount'),
-        primary: true,
-        automaticallyImplyLeading: false,
-        actions: <Widget>[
-          _buildProfileButton(context: context, user: appState.user),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_shopping_cart),
-            label: tr('shops'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.access_time),
-            label: tr('promotion.promotions'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category),
-            label: tr('product.title'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: tr('charity'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance_wallet),
-            label: tr('wallet.name'),
-          ),
-        ],
-        currentIndex: selectedNavIndex.index,
-        onTap: _onItemTapped,
-      ),
-      body: DoubleBackToCloseApp(
-        snackBar: SnackBar(content: Text(tr('doubleBack'))),
-        child: IndexedStack(
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('CharityDiscount'),
+          primary: true,
+          automaticallyImplyLeading: false,
+          actions: <Widget>[
+            _buildProfileButton(context: context, user: appState.user),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add_shopping_cart),
+              label: tr('shops'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.access_time),
+              label: tr('promotion.promotions'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.category),
+              label: tr('product.title'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite),
+              label: tr('charity'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_balance_wallet),
+              label: tr('wallet.name'),
+            ),
+          ],
+          currentIndex: selectedNavIndex.index,
+          onTap: _onItemTapped,
+        ),
+        body: IndexedStack(
           children: _widgets,
           index: selectedNavIndex.index,
         ),
@@ -177,6 +179,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onItemTapped(int index) {
     setState(() {
       selectedNavIndex = Screen.values[index];
+      if (willExitApp) {
+        willExitApp = false;
+      }
     });
   }
 
@@ -195,110 +200,124 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final logoImage = UserAvatar(photoUrl: user.photoUrl);
     return InkWell(
-      onTap: () {
-        showModalBottomSheet(
-          context: context,
-          builder: (BuildContext context) {
-            TextStyle titleStyle = Theme.of(context).textTheme.headline6;
+      onTap: () => showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          TextStyle titleStyle = Theme.of(context).textTheme.headline6;
 
-            List<ListTile> menuTiles = [];
-            ListTile profileTile = ListTile(
-              leading: CircleAvatar(
-                child: logoImage,
-                radius: 12,
-                backgroundColor: Colors.transparent,
-              ),
-              title: Text(
-                getUserName(user),
-                style: titleStyle,
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => ProfileScreen(),
-                    settings: RouteSettings(name: 'Profile'),
+          List<ListTile> menuTiles = [];
+          ListTile profileTile = ListTile(
+            leading: CircleAvatar(
+              child: logoImage,
+              radius: 12,
+              backgroundColor: Colors.transparent,
+            ),
+            title: Text(
+              getUserName(user),
+              style: titleStyle,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => ProfileScreen(),
+                  settings: RouteSettings(name: 'Profile'),
+                ),
+              );
+            },
+          );
+          menuTiles.add(profileTile);
+
+          ListTile achievements = ListTile(
+            leading: Icon(Icons.double_arrow),
+            title: Text(
+              tr('achievements'),
+              style: titleStyle,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => AchivementsScreen(),
+                  settings: RouteSettings(name: 'Achievements'),
+                ),
+              );
+            },
+          );
+          menuTiles.add(achievements);
+
+          ListTile referrals = ListTile(
+            leading: Icon(Icons.people),
+            title: Text(
+              tr('referralsLabel'),
+              style: titleStyle,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => ReferralsScreen(
+                    charityService: locator<CharityService>(),
                   ),
-                );
-              },
-            );
-            menuTiles.add(profileTile);
+                  settings: RouteSettings(name: 'Referrals'),
+                ),
+              );
+            },
+          );
+          menuTiles.add(referrals);
 
-            ListTile referrals = ListTile(
-              leading: Icon(Icons.people),
-              title: Text(
-                tr('referralsLabel'),
-                style: titleStyle,
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => ReferralsScreen(
-                      charityService: locator<CharityService>(),
-                    ),
-                    settings: RouteSettings(name: 'Referrals'),
-                  ),
-                );
-              },
-            );
-            menuTiles.add(referrals);
+          ListTile settings = ListTile(
+            leading: Icon(Icons.settings),
+            title: Text(
+              tr('settings'),
+              style: titleStyle,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => SettingsScreen(),
+                  settings: RouteSettings(name: 'Settings'),
+                ),
+              );
+            },
+          );
+          menuTiles.add(settings);
 
-            ListTile settings = ListTile(
-              leading: Icon(Icons.settings),
-              title: Text(
-                tr('settings'),
-                style: titleStyle,
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => SettingsScreen(),
-                    settings: RouteSettings(name: 'Settings'),
-                  ),
-                );
-              },
-            );
-            menuTiles.add(settings);
+          ListTile terms = ListTile(
+            leading: Icon(Icons.help_outline),
+            title: Text(
+              tr('terms'),
+              style: titleStyle,
+            ),
+            onTap: () => UrlHelper.launchTerms(),
+          );
+          menuTiles.add(terms);
 
-            ListTile terms = ListTile(
-              leading: Icon(Icons.help_outline),
-              title: Text(
-                tr('terms'),
-                style: titleStyle,
-              ),
-              onTap: () => UrlHelper.launchTerms(),
-            );
-            menuTiles.add(terms);
+          ListTile privacy = ListTile(
+            leading: Icon(Icons.verified_user),
+            title: Text(
+              tr('privacy'),
+              style: titleStyle,
+            ),
+            onTap: () => UrlHelper.launchPrivacy(),
+          );
+          menuTiles.add(privacy);
 
-            ListTile privacy = ListTile(
-              leading: Icon(Icons.verified_user),
-              title: Text(
-                tr('privacy'),
-                style: titleStyle,
-              ),
-              onTap: () => UrlHelper.launchPrivacy(),
-            );
-            menuTiles.add(privacy);
-
-            return Container(
-              alignment: Alignment.center,
-              child: ListView.separated(
-                padding: EdgeInsets.all(12.0),
-                primary: false,
-                separatorBuilder: (context, index) {
-                  return Divider();
-                },
-                itemBuilder: (context, index) {
-                  return menuTiles[index];
-                },
-                itemCount: menuTiles.length,
-              ),
-            );
-          },
-        );
-      },
+          return Container(
+            alignment: Alignment.center,
+            height: MediaQuery.of(context).size.height * 0.75,
+            child: ListView.separated(
+              padding: EdgeInsets.all(12.0),
+              primary: false,
+              separatorBuilder: (context, index) => Divider(),
+              itemBuilder: (context, index) => menuTiles[index],
+              itemCount: menuTiles.length,
+            ),
+          );
+        },
+      ),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: logoImage,
@@ -307,6 +326,26 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String getUserName(User user) => user.name != null && user.name.isNotEmpty ? user.name : user.email;
+
+  Future<bool> _onBackPressed() async {
+    if (willExitApp) {
+      return true;
+    }
+
+    setState(() {
+      willExitApp = true;
+    });
+
+    Future.delayed(Duration(seconds: 3)).then((_) {
+      setState(() {
+        willExitApp = false;
+      });
+    });
+
+    Fluttertoast.showToast(msg: tr('doubleBack'));
+
+    return false;
+  }
 }
 
 enum Screen { PROGRAMS, PROMOTIONS, PRODUCTS, CASES, WALLET }

@@ -1,3 +1,4 @@
+import 'package:charity_discount/models/localized_text.dart';
 import 'package:devicelocale/devicelocale.dart';
 import 'package:flutter/material.dart';
 
@@ -24,4 +25,15 @@ Future<SupportedLanguage> getDefaultLanguage() async {
     (l) => l.code == localeTokens[0],
     orElse: () => supportedLanguages.first,
   );
+}
+
+String getLocalizedText(Locale locale, LocalizedText localizedText) {
+  switch (locale.languageCode) {
+    case 'en':
+      return localizedText.en;
+    case 'ro':
+      return localizedText.ro;
+    default:
+      return localizedText.ro;
+  }
 }
