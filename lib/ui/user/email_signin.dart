@@ -58,8 +58,6 @@ class _SignInScreenState extends State<EmailSignInScreen> {
       );
 
   Widget build(BuildContext context) {
-    ScreenUtil.init(context);
-
     final termsButton = FlatButton(
       child: Row(
         children: <Widget>[

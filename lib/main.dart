@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:charity_discount/ui/app/theme.dart';
 import 'package:charity_discount/ui/app/home.dart';
@@ -243,7 +244,11 @@ void main() async {
       supportedLocales: supportedLanguages.map((l) => l.locale).toList(),
       child: ScopedModel(
         model: locator<AppModel>(),
-        child: Main(),
+        child: ScreenUtilInit(
+          designSize: Size(750, 1334),
+          allowFontScaling: false,
+          child: Main(),
+        ),
       ),
     ),
   );
