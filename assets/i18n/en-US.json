@@ -266,5 +266,6 @@
   "emailNewsletterCheckbox": "Receive email newsletter",
   "emailAlreadyTaken": "This email is already taken",
   "emailInvalid": "Invalid email address",
-  "achievements": "Achievements"
+  "achievements": "Achievements",
+  "leaderboard": "Leaderboard"
 }

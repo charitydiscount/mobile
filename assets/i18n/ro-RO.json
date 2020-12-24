@@ -266,5 +266,6 @@
   "emailNewsletterCheckbox": "Doresc să primesc newsletter-ul pe email",
   "emailAlreadyTaken": "Aceast email e deja folosit",
   "emailInvalid": "Adresa de email nu e validă",
-  "achievements": "Realizări"
+  "achievements": "Realizări",
+  "leaderboard": "Clasament"
 }

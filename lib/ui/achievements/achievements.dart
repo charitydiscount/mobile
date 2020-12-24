@@ -5,50 +5,58 @@ import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/ui/achievements/achievement.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:async/async.dart';
 
-class AchivementsScreen extends StatelessWidget {
-  const AchivementsScreen({Key key}) : super(key: key);
+class AchievementsList extends StatefulWidget {
+  const AchievementsList({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _AchievementsListState createState() => _AchievementsListState();
+}
+
+class _AchievementsListState extends State<AchievementsList> {
+  AsyncMemoizer _memoizer = AsyncMemoizer<List<model.Achievement>>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          tr('achievements'),
-        ),
+    return FutureBuilder<List<model.Achievement>>(
+      future: _memoizer.runOnce(
+        () => locator<AchievementsService>().getAchievements(),
       ),
-      body: FutureBuilder<List<model.Achievement>>(
-        future: locator<AchievementsService>().getAchievements(),
-        builder: (context, snapshot) {
-          final loading = buildConnectionLoading(
-            context: context,
-            snapshot: snapshot,
-          );
+      builder: (context, snapshot) {
+        final loading = buildConnectionLoading(
+          context: context,
+          snapshot: snapshot,
+        );
 
-          if (loading != null) {
-            return loading;
-          }
+        if (loading != null) {
+          return SliverToBoxAdapter(child: loading);
+        }
 
-          final achievements = snapshot.data;
+        final achievements = snapshot.data;
 
-          return StreamBuilder<Map<String, UserAchievement>>(
-            stream: locator<AchievementsService>().getUserAchievements(),
-            builder: (context, userAchievementsSnap) => ListView.builder(
-              itemCount: achievements.length,
-              itemBuilder: (context, index) {
-                final achievement = achievements[index];
-                return Achievement(
-                  achievement: achievement,
-                  userAchievement: userAchievementsSnap.hasData
-                      ? userAchievementsSnap.data[achievement.id]
-                      : null,
-                );
-              },
-            ),
-          );
-        },
-      ),
+        return StreamBuilder<Map<String, UserAchievement>>(
+          stream: locator<AchievementsService>().getUserAchievements(),
+          builder: (context, userAchievementsSnap) {
+            return SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final achievement = achievements[index];
+                  return Achievement(
+                    achievement: achievement,
+                    userAchievement: userAchievementsSnap.hasData
+                        ? userAchievementsSnap.data[achievement.id]
+                        : null,
+                  );
+                },
+                childCount: achievements.length,
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

@@ -22,14 +22,10 @@ class UserAvatar extends StatelessWidget {
               fit: BoxFit.cover,
               width: width,
               height: height,
-              errorWidget: (context, url, error) => Icon(
-                Icons.account_circle,
-                size: width,
-              ),
+              errorWidget: (context, url, error) => Icon(Icons.account_circle),
             )
-          : Icon(
-              Icons.account_circle,
-              size: width,
+          : Center(
+              child: Icon(Icons.account_circle),
             ),
     );
   }

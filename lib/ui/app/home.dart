@@ -3,7 +3,7 @@ import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
-import 'package:charity_discount/ui/achievements/achievements.dart';
+import 'package:charity_discount/ui/app/challenges.dart';
 import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/ui/products/products_screen.dart';
 import 'package:charity_discount/ui/app/settings.dart';
@@ -20,6 +20,8 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:charity_discount/ui/charity/charity.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,7 +34,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Screen selectedNavIndex;
-  List<Widget> _widgets = List.generate(Screen.values.length, (_) => Container());
+  List<Widget> _widgets =
+      List.generate(Screen.values.length, (_) => Container());
   List<bool> _loadedWidgets = List.generate(Screen.values.length, (_) => false);
   bool willExitApp = false;
 
@@ -50,7 +53,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return;
       }
       final type = message.data['type'];
-      bool needsButton = type == NotificationTypes.commission || type == NotificationTypes.shop;
+      bool needsButton = type == NotificationTypes.commission ||
+          type == NotificationTypes.shop;
 
       Flushbar(
         title: message.notification.title,
@@ -79,7 +83,9 @@ class _HomeScreenState extends State<HomeScreen> {
       )?.show(context);
     });
     FirebaseMessaging.onMessageOpenedApp.listen(_handleBackgroundNotification);
-    FirebaseMessaging.instance.getInitialMessage().then(_handleBackgroundNotification);
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then(_handleBackgroundNotification);
   }
 
   Future<dynamic> _handleBackgroundNotification(
@@ -230,16 +236,21 @@ class _HomeScreenState extends State<HomeScreen> {
           menuTiles.add(profileTile);
 
           ListTile achievements = ListTile(
-            leading: Icon(Icons.double_arrow),
+            leading: SvgPicture.asset(
+              'assets/icons/trophy.svg',
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+              color: Colors.grey,
+            ),
             title: Text(
-              tr('achievements'),
+              '${tr('leaderboard')} & ${tr('achievements')}',
               style: titleStyle,
             ),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => AchivementsScreen(),
+                  builder: (BuildContext context) => ChallengesScreen(),
                   settings: RouteSettings(name: 'Achievements'),
                 ),
               );
@@ -307,7 +318,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           return Container(
             alignment: Alignment.center,
-            height: MediaQuery.of(context).size.height * 0.75,
+            height: ScreenUtil().screenHeight * 0.75,
             child: ListView.separated(
               padding: EdgeInsets.all(12.0),
               primary: false,
@@ -325,7 +336,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  String getUserName(User user) => user.name != null && user.name.isNotEmpty ? user.name : user.email;
+  String getUserName(User user) =>
+      user.name != null && user.name.isNotEmpty ? user.name : user.email;
 
   Future<bool> _onBackPressed() async {
     if (willExitApp) {

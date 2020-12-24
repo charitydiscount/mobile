@@ -1,6 +1,7 @@
 import 'package:charity_discount/services/achievements.dart';
 import 'package:charity_discount/services/affiliate.dart';
 import 'package:charity_discount/services/charity.dart';
+import 'package:charity_discount/services/leadeboard.dart';
 import 'package:charity_discount/services/local.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/navigation.dart';
@@ -32,6 +33,9 @@ void _registerServices() {
   locator.registerLazySingleton<AppModel>(() => AppModel());
   locator.registerLazySingleton<AchievementsService>(
     () => AchievementsService(),
+  );
+  locator.registerLazySingleton<LeaderboardService>(
+    () => LeaderboardService(),
   );
 }
 
