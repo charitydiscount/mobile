@@ -17,7 +17,8 @@ class UserController {
   }) async {
     switch (provider) {
       case Strategy.EmailAndPass:
-        await locator<AuthService>().signInWithEmailAndPass(credentials['email'], credentials['password']);
+        await locator<AuthService>().signInWithEmailAndPass(
+            credentials['email'], credentials['password']);
         break;
       case Strategy.Google:
         await locator<AuthService>().signInWithGoogle();
@@ -32,7 +33,8 @@ class UserController {
         return;
     }
 
-    final notifcationSettings = await FirebaseMessaging.instance.requestPermission(
+    final notifcationSettings =
+        await FirebaseMessaging.instance.requestPermission(
       alert: true,
       announcement: false,
       badge: true,
@@ -41,7 +43,8 @@ class UserController {
       provisional: false,
       sound: true,
     );
-    if (notifcationSettings.authorizationStatus == AuthorizationStatus.authorized) {
+    if (notifcationSettings.authorizationStatus ==
+        AuthorizationStatus.authorized) {
       await _registerFcmToken();
     }
   }
@@ -61,7 +64,8 @@ class UserController {
   }
 
   Future<User> signUp(email, password, firstName, lastName) async {
-    return await locator<AuthService>().createUser(email, password, firstName, lastName);
+    return await locator<AuthService>()
+        .createUser(email, password, firstName, lastName);
   }
 
   Future<void> _registerFcmToken() async {
@@ -72,7 +76,15 @@ class UserController {
 
   bool isRecentNewUser() =>
       locator<AuthService>().currentUser != null &&
-      DateTime.now().toUtc().difference(locator<AuthService>().currentUser.metadata.creationTime.toUtc()).inMinutes < 2;
+      DateTime.now()
+              .toUtc()
+              .difference(locator<AuthService>()
+                  .currentUser
+                  .metadata
+                  .creationTime
+                  .toUtc())
+              .inMinutes <
+          2;
 
   Future<bool> deleteAccount() async {
     try {

@@ -57,7 +57,7 @@ class LeaderboardRow extends StatelessWidget {
                 children: [
                   Text(AmountHelper.amountToString(entry.points)),
                   Text(
-                    ' CP',
+                    ' CharityPoints',
                     style: Theme.of(context).textTheme.caption,
                   )
                 ],

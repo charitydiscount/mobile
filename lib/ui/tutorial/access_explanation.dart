@@ -12,6 +12,7 @@ SimpleDialog explanationDialogBuilder(BuildContext context) {
         width: 160,
         child: CheckboxListTile(
           subtitle: Text(tr('explanation.disableExplanation')),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 0),
           dense: true,
           value: AppModel.of(context).explanationSkipped,
           onChanged: (value) {

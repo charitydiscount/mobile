@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:charity_discount/models/meta.dart';
+import 'package:charity_discount/util/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -38,22 +39,36 @@ class MetaService {
     return _metaStream;
   }
 
-  Future<void> addFcmToken(String token) =>
-      _db.collection('users').doc(_auth.currentUser.uid).collection('tokens').doc(token).set({
+  Future<void> addFcmToken(String token) => _db
+          .collection(FirestoreCollection.users)
+          .doc(_auth.currentUser.uid)
+          .collection('tokens')
+          .doc(token)
+          .set({
         'token': token,
         'createdAt': FieldValue.serverTimestamp(),
         'platform': Platform.operatingSystem,
       });
 
   Future<void> removeFcmToken(String token) => _auth.currentUser != null
-      ? _db.collection('users').doc(_auth.currentUser.uid).collection('tokens').doc(token).delete()
+      ? _db
+          .collection(FirestoreCollection.users)
+          .doc(_auth.currentUser.uid)
+          .collection('tokens')
+          .doc(token)
+          .delete()
       : null;
 
   Future<void> setNotifications(
     String deviceToken,
     bool notificationsEnabled,
   ) =>
-      _db.collection('users').doc(_auth.currentUser.uid).collection('tokens').doc(deviceToken).set(
+      _db
+          .collection(FirestoreCollection.users)
+          .doc(_auth.currentUser.uid)
+          .collection('tokens')
+          .doc(deviceToken)
+          .set(
         {
           'notifications': notificationsEnabled,
         },
@@ -77,7 +92,8 @@ class MetaService {
     // );
   }
 
-  Future<void> setEmailNotifications(bool disabled) => _db.collection('users').doc(_auth.currentUser.uid).set(
+  Future<void> setEmailNotifications(bool disabled) =>
+      _db.collection(FirestoreCollection.users).doc(_auth.currentUser.uid).set(
         {
           'disableMailNotification': disabled,
         },
@@ -85,10 +101,11 @@ class MetaService {
       );
 
   Stream<bool> get subscribedToNewsletter => _db
-      .collection('users')
+      .collection(FirestoreCollection.users)
       .doc(_auth.currentUser.uid)
       .snapshots()
-      .map((event) => event.data().putIfAbsent('disableMailNotification', () => false));
+      .map((event) =>
+          event.data().putIfAbsent('disableMailNotification', () => false));
 
   Future<void> closeListeners() async {
     if (_programsMetaListener != null) {

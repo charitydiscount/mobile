@@ -267,5 +267,10 @@
   "emailAlreadyTaken": "Aceast email e deja folosit",
   "emailInvalid": "Adresa de email nu e validă",
   "achievements": "Realizări",
-  "leaderboard": "Clasament"
+  "leaderboard": "Clasament",
+  "privateName": "Nume privat",
+  "privateNameExplanation": "Numele tău nu va fi afișat în clasament și review-uri",
+  "privatePhoto": "Poză privată",
+  "privatePhotoExplanation": "Poza ta nu va fi afișată în clasament și review-uri",
+  "changeQuota": "Această setare poate fi modificată o data la 5 minute"
 }

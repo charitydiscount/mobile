@@ -133,7 +133,7 @@ class WalletScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: AboutPointsWidget(
                 points: state.wallet.charityPoints,
-                currency: 'Charity Points',
+                currency: 'CharityPoints',
                 headingLeading: Icon(
                   Icons.favorite,
                   color: Colors.red,

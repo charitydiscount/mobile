@@ -90,7 +90,8 @@ class _MainState extends State<Main> {
         }
 
         if (appModel.user != null && appModel.user.userId != null) {
-          if (_hasNoEmail(appModel.user.email) && locator<AuthService>().isActualUser()) {
+          if (_hasNoEmail(appModel.user.email) &&
+              locator<AuthService>().isActualUser()) {
             WidgetsBinding.instance.addPostFrameCallback(
               (_) => showDialog(
                 context: context,
@@ -102,7 +103,8 @@ class _MainState extends State<Main> {
         }
 
         WidgetsBinding.instance.addPostFrameCallback(
-          (_) => Navigator.pushNamedAndRemoveUntil(context, Routes.signIn, (r) => false),
+          (_) => Navigator.pushNamedAndRemoveUntil(
+              context, Routes.signIn, (r) => false),
         );
 
         return AppLoading(child: buildLoading(context));
@@ -117,8 +119,10 @@ class _MainState extends State<Main> {
     bool isDark = state.settings.theme == ThemeOption.DARK;
     SystemChrome.setSystemUIOverlayStyle(
       isDark
-          ? SystemUiOverlayStyle.dark.copyWith(statusBarColor: theme.primaryColor)
-          : SystemUiOverlayStyle.light.copyWith(statusBarColor: theme.primaryColor),
+          ? SystemUiOverlayStyle.dark
+              .copyWith(statusBarColor: theme.primaryColor)
+          : SystemUiOverlayStyle.light
+              .copyWith(statusBarColor: theme.primaryColor),
     );
 
     FirebaseAuth.instance.setLanguageCode(locale.languageCode);
@@ -174,7 +178,8 @@ class _MainState extends State<Main> {
       },
     );
 
-    final PendingDynamicLinkData data = await FirebaseDynamicLinks.instance.getInitialLink();
+    final PendingDynamicLinkData data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
     final Uri deepLink = data?.link;
 
     if (deepLink != null) {
@@ -198,7 +203,8 @@ class _MainState extends State<Main> {
     }
   }
 
-  bool _hasNoEmail(String email) => email == null || email.isEmpty || email == '-';
+  bool _hasNoEmail(String email) =>
+      email == null || email.isEmpty || email == '-';
 }
 
 class AppLoading extends StatelessWidget {

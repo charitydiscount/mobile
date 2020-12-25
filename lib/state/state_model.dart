@@ -11,6 +11,7 @@ import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/services/meta.dart';
 import 'package:charity_discount/services/search.dart';
 import 'package:charity_discount/services/shops.dart';
+import 'package:charity_discount/models/change.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/util/constants.dart';
 import 'package:charity_discount/util/remote_config.dart';
@@ -42,6 +43,7 @@ class AppModel extends Model {
   ProgramMeta _programsMeta;
   Wallet wallet;
   double minimumWithdrawalAmount;
+  ChangeTracking changeTracking = ChangeTracking();
 
   List<Promotion> _promotions;
 
@@ -49,7 +51,9 @@ class AppModel extends Model {
     initFromLocal().then((_) {
       createListeners();
     });
-    remoteConfig.getWithdrawalThreshold().then((threshold) => minimumWithdrawalAmount = threshold);
+    remoteConfig
+        .getWithdrawalThreshold()
+        .then((threshold) => minimumWithdrawalAmount = threshold);
   }
 
   void createListeners() {
@@ -223,16 +227,21 @@ class AppModel extends Model {
     if (storeLocal) {
       _programs.forEach((program) {
         final userPercentage = affiliateMeta?.percentage ?? 0.6;
-        program.leadCommissionAmount = program.defaultLeadCommissionAmount != null
-            ? (program.defaultLeadCommissionAmount * userPercentage).toStringAsFixed(2)
-            : null;
+        program.leadCommissionAmount =
+            program.defaultLeadCommissionAmount != null
+                ? (program.defaultLeadCommissionAmount * userPercentage)
+                    .toStringAsFixed(2)
+                : null;
         program.saleCommissionRate = program.defaultSaleCommissionRate != null
-            ? (program.defaultSaleCommissionRate * userPercentage).toStringAsFixed(2)
+            ? (program.defaultSaleCommissionRate * userPercentage)
+                .toStringAsFixed(2)
             : null;
-        program.commissionMinDisplay =
-            program.commissionMin != null ? (program.commissionMin * userPercentage).toStringAsFixed(2) : null;
-        program.commissionMaxDisplay =
-            program.commissionMax != null ? (program.commissionMax * userPercentage).toStringAsFixed(2) : null;
+        program.commissionMinDisplay = program.commissionMin != null
+            ? (program.commissionMin * userPercentage).toStringAsFixed(2)
+            : null;
+        program.commissionMaxDisplay = program.commissionMax != null
+            ? (program.commissionMax * userPercentage).toStringAsFixed(2)
+            : null;
         program.actualAffiliateUrl = interpolateUserCode(
           program.affiliateUrl,
           program.uniqueCode,
@@ -296,7 +305,8 @@ class AppModel extends Model {
   }
 
   void deleteSavedAccount(SavedAccount savedAccount) {
-    user.savedAccounts.removeWhere((account) => account.iban == savedAccount.iban);
+    user.savedAccounts
+        .removeWhere((account) => account.iban == savedAccount.iban);
     locator<CharityService>().removeAccount(savedAccount);
   }
 
@@ -306,7 +316,8 @@ class AppModel extends Model {
     if (referralCode == null) {
       // Ensure that there is no pending dynamic link
       var data = await FirebaseDynamicLinks.instance.getInitialLink();
-      if (data?.link != null && data.link.pathSegments.first == DeepLinkPath.referral) {
+      if (data?.link != null &&
+          data.link.pathSegments.first == DeepLinkPath.referral) {
         referralCode = data.link.pathSegments.last;
       }
     }
@@ -348,8 +359,9 @@ class AppModel extends Model {
           user.userId,
         );
       });
-      promotions.sort(
-          (p1, p2) => relevantPrograms[p1.program.id].getOrder().compareTo(relevantPrograms[p2.program.id].getOrder()));
+      promotions.sort((p1, p2) => relevantPrograms[p1.program.id]
+          .getOrder()
+          .compareTo(relevantPrograms[p2.program.id].getOrder()));
       setPromotions(promotions);
     }
 
@@ -357,7 +369,8 @@ class AppModel extends Model {
   }
 
   Future<List<Product>> getSimilarProducts(Product product) async {
-    final products = await locator<SearchServiceBase>().getSimilarProducts(product: product);
+    final products =
+        await locator<SearchServiceBase>().getSimilarProducts(product: product);
     return _prepareProducts(products);
   }
 
@@ -377,7 +390,8 @@ class AppModel extends Model {
       minPrice: minPrice,
       sort: sort,
     );
-    return ProductSearchResult(_prepareProducts(searchResult.products), searchResult.totalFound);
+    return ProductSearchResult(
+        _prepareProducts(searchResult.products), searchResult.totalFound);
   }
 
   Future<ProductSearchResult> getProductsForProgram({
@@ -385,16 +399,19 @@ class AppModel extends Model {
     int size = 20,
     int from = 0,
   }) async {
-    final searchResult = await locator<SearchServiceBase>().getProductsForProgram(
+    final searchResult =
+        await locator<SearchServiceBase>().getProductsForProgram(
       program: program,
       size: size,
       from: from,
     );
-    return ProductSearchResult(_prepareProducts(searchResult.products), searchResult.totalFound);
+    return ProductSearchResult(
+        _prepareProducts(searchResult.products), searchResult.totalFound);
   }
 
   Future<List<Product>> getFeaturedProducts() async {
-    final products = await locator<SearchServiceBase>().getFeaturedProducts(userId: user.userId);
+    final products = await locator<SearchServiceBase>()
+        .getFeaturedProducts(userId: user.userId);
     return _prepareProducts(products);
   }
 
@@ -409,9 +426,36 @@ class AppModel extends Model {
 
         return product.copyWith(
           program: program,
-          actualAffiliateUrl: interpolateUserCode(product.affiliateUrl, program.uniqueCode, user.userId),
+          actualAffiliateUrl: interpolateUserCode(
+              product.affiliateUrl, program.uniqueCode, user.userId),
         );
       })
       .where((product) => product != null)
       .toList();
+
+  Future<void> updateUserSettings({
+    bool privateName,
+    bool privatePhoto,
+  }) async {
+    if (privateName != null) {
+      if (wasChangedRecently(changeTracking.privateNameChangedAt)) {
+        throw Error();
+      }
+      changeTracking.privateNameChangedAt = DateTime.now();
+      await locator<AuthService>().updateUser(privateName: privateName);
+    }
+
+    if (privatePhoto != null) {
+      if (wasChangedRecently(changeTracking.privatePhotoChangedAt)) {
+        throw Error();
+      }
+      changeTracking.privatePhotoChangedAt = DateTime.now();
+      await locator<AuthService>().updateUser(privatePhoto: privatePhoto);
+    }
+  }
+
+  bool wasChangedRecently(DateTime changedAt) {
+    return changedAt != null &&
+        changedAt.difference(DateTime.now()).inMinutes < 5;
+  }
 }
