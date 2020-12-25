@@ -23,14 +23,44 @@ void setupTestLocator() {
 
 void _registerServices() {
   locator.registerLazySingleton<NavigationService>(() => NavigationService());
-  locator.registerLazySingleton<AuthService>(() => AuthService());
-  locator.registerLazySingleton<LocalService>(() => LocalService());
+  locator.registerLazySingleton<AuthService>(
+    () => AuthService(),
+    dispose: (service) {
+      service?.signOut();
+    },
+  );
+  locator.registerLazySingleton<LocalService>(
+    () => LocalService(),
+    dispose: (service) {
+      service?.clear();
+    },
+  );
   locator.registerLazySingleton<AffiliateService>(() => AffiliateService());
-  locator.registerLazySingleton<CharityService>(() => FirebaseCharityService());
-  locator.registerLazySingleton<MetaService>(() => MetaService());
+  locator.registerLazySingleton<CharityService>(
+    () => FirebaseCharityService(),
+    dispose: (service) {
+      service?.closeListeners();
+    },
+  );
+  locator.registerLazySingleton<MetaService>(
+    () => MetaService(),
+    dispose: (service) {
+      service?.closeListeners();
+    },
+  );
   locator.registerLazySingleton<SearchServiceBase>(() => SearchService());
-  locator.registerLazySingleton<ShopsService>(() => FirebaseShopsService());
-  locator.registerLazySingleton<AppModel>(() => AppModel());
+  locator.registerLazySingleton<ShopsService>(
+    () => FirebaseShopsService(),
+    dispose: (service) {
+      service?.closeFavoritesSink();
+    },
+  );
+  locator.registerLazySingleton<AppModel>(
+    () => AppModel(),
+    dispose: (service) {
+      service?.closeListeners();
+    },
+  );
   locator.registerLazySingleton<AchievementsService>(
     () => AchievementsService(),
   );
@@ -40,12 +70,6 @@ void _registerServices() {
 }
 
 Future<void> resetServices() async {
-  await locator<ShopsService>().closeFavoritesSink();
-  await locator<LocalService>().clear();
-  await locator<AuthService>().signOut();
-  await locator<CharityService>().closeListeners();
-  await locator<MetaService>().closeListeners();
-  locator<AppModel>().closeListeners();
-  locator.reset();
+  await locator.reset(dispose: true);
   _registerServices();
 }
