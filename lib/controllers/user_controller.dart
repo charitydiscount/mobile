@@ -33,7 +33,11 @@ class UserController {
         return;
     }
 
-    final notifcationSettings =
+    await _setupNotifications();
+  }
+
+  Future _setupNotifications() async {
+    final notificationSettings =
         await FirebaseMessaging.instance.requestPermission(
       alert: true,
       announcement: false,
@@ -43,7 +47,7 @@ class UserController {
       provisional: false,
       sound: true,
     );
-    if (notifcationSettings.authorizationStatus ==
+    if (notificationSettings.authorizationStatus ==
         AuthorizationStatus.authorized) {
       await _registerFcmToken();
     }
@@ -64,8 +68,10 @@ class UserController {
   }
 
   Future<User> signUp(email, password, firstName, lastName) async {
-    return await locator<AuthService>()
+    final user = await locator<AuthService>()
         .createUser(email, password, firstName, lastName);
+    await _setupNotifications();
+    return user;
   }
 
   Future<void> _registerFcmToken() async {

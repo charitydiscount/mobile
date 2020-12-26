@@ -280,10 +280,12 @@ class AuthService {
     }
 
     if (updateMap.isNotEmpty) {
+      updateMap['updatedAt'] = FieldValue.serverTimestamp();
+      updateMap['userId'] = _auth.currentUser.uid;
       await _db
           .collection(FirestoreCollection.users)
           .doc(_auth.currentUser.uid)
-          .update(updateMap);
+          .set(updateMap, SetOptions(merge: true));
     }
   }
 

@@ -31,23 +31,7 @@ class LeaderboardRow extends StatelessWidget {
               radius: 20,
               backgroundColor: Colors.transparent,
             ),
-            title: Row(
-              children: [
-                Text(entry.name ?? '-'),
-                if (entry.isStaff)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                    child: Chip(
-                      padding: const EdgeInsets.all(2.0),
-                      label: Text(
-                        'staff',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      backgroundColor: Colors.grey.shade700,
-                    ),
-                  ),
-              ],
-            ),
+            title: Text(entry.name ?? '-'),
             subtitle: LinearPercentIndicator(
               width: ScreenUtil().setWidth(250),
               percent: entry.points / highestPoints,
@@ -73,6 +57,17 @@ class LeaderboardRow extends StatelessWidget {
               bottom: 8,
               left: 45,
               child: getTrophy(),
+            ),
+          if (entry.isStaff)
+            Positioned(
+              bottom: 8,
+              left: 8,
+              child: Image.asset(
+                'assets/icons/logo.png',
+                fit: BoxFit.cover,
+                width: 20,
+                height: 20,
+              ),
             ),
         ],
       ),
