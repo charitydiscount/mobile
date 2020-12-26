@@ -1,17 +1,19 @@
 import 'dart:io';
 import 'package:charity_discount/controllers/user_controller.dart';
+import 'package:charity_discount/models/user_profile.dart';
 import 'package:charity_discount/services/auth.dart';
 import 'package:charity_discount/services/charity.dart';
 import 'package:charity_discount/state/locator.dart';
 import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/auth_dialog.dart';
+import 'package:charity_discount/ui/app/util.dart';
 import 'package:charity_discount/ui/user/user_avatar.dart';
-import 'package:charity_discount/ui/app/loading.dart';
 import 'package:charity_discount/util/authorize.dart';
 import 'package:charity_discount/util/remote_config.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -26,77 +28,32 @@ class ProfileScreen extends StatelessWidget {
           tr('profile'),
         ),
       ),
-      body: Profile(),
-    );
-  }
-}
+      body: StreamBuilder<UserProfile>(
+        stream: locator<AuthService>().userDoc,
+        builder: (context, snapshot) {
+          final loading = buildConnectionLoading(
+            context: context,
+            snapshot: snapshot,
+          );
 
-class Profile extends StatefulWidget {
-  _ProfileState createState() => _ProfileState();
-}
+          if (loading != null) {
+            return loading;
+          }
 
-class _ProfileState extends State<Profile> {
-  bool _loadingVisible = false;
-  FirebaseStorage _storage;
-  UploadTask _uploadTask;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Widget build(BuildContext context) {
-    var appState = AppModel.of(context);
-    if (appState.user == null) {
-      return Container();
-    }
-
-    List<Widget> logoWidgets = [
-      CircleAvatar(
-        backgroundColor: Colors.transparent,
-        radius: 60.0,
-        child: UserAvatar(
-          photoUrl: appState.user.photoUrl,
-          width: 120.0,
-          height: 120.0,
-        ),
-      )
-    ];
-
-    if (_uploadTask != null && _uploadTask.snapshot.state == TaskState.running) {
-      logoWidgets.add(CircularProgressIndicator());
-    }
-
-    logoWidgets.add(Positioned(
-      left: 100.0,
-      right: 0.0,
-      bottom: 0.0,
-      child: PopupMenuButton<ImageSource>(
-        child: Icon(
-          Icons.edit,
-          color: Theme.of(context).primaryColor,
-        ),
-        itemBuilder: (context) => [
-          PopupMenuItem(
-            value: ImageSource.gallery,
-            child: Text(tr('gallery')),
-          ),
-          PopupMenuItem(
-            value: ImageSource.camera,
-            child: Text(tr('camera')),
-          ),
-        ],
-        onSelected: (source) {
-          _pickImage(source);
+          return Profile(userProfile: snapshot.data);
         },
       ),
-    ));
-
-    Widget logoWithEdit = Stack(
-      alignment: AlignmentDirectional.center,
-      children: logoWidgets,
     );
+  }
+}
 
+class Profile extends StatelessWidget {
+  final UserProfile userProfile;
+
+  const Profile({Key key, @required this.userProfile}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     final signOutButton = Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0),
       child: RaisedButton(
@@ -114,10 +71,10 @@ class _ProfileState extends State<Profile> {
     );
 
     final emailLabel = Text('Email: ');
-    final email = appState?.user?.email ?? '';
+    final email = userProfile.email ?? '';
 
     final nameLabel = Text('${tr('name')}:');
-    final name = appState.user.name ?? '';
+    final name = userProfile.name ?? '';
 
     final deleteAccountButton = FlatButton(
       child: Text(
@@ -158,33 +115,59 @@ class _ProfileState extends State<Profile> {
       },
     );
 
-    return LoadingScreen(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 48.0),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                logoWithEdit,
-                SizedBox(height: 48.0),
-                SizedBox(height: 12.0),
-                emailLabel,
-                Text(email, style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 12.0),
-                nameLabel,
-                Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 12.0),
-                SizedBox(height: 12.0),
-                signOutButton,
-                deleteAccountButton,
-              ],
-            ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 48.0),
+      child: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              ProfilePhoto(photoUrl: userProfile.photoUrl),
+              SizedBox(height: 48.0),
+              SizedBox(height: 12.0),
+              emailLabel,
+              Text(email, style: TextStyle(fontWeight: FontWeight.bold)),
+              SizedBox(height: 12.0),
+              nameLabel,
+              Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
+              SizedBox(height: 12.0),
+              CheckboxListTile(
+                title: Text(tr('privateName')),
+                subtitle: Text(tr('privateNameExplanation')),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+                value: userProfile.privateName,
+                onChanged: (value) async {
+                  try {
+                    await locator<AppModel>()
+                        .updateUserSettings(privateName: value);
+                  } catch (_) {
+                    Fluttertoast.showToast(msg: tr('changeQuota'));
+                  }
+                },
+              ),
+              SizedBox(height: 12.0),
+              CheckboxListTile(
+                title: Text(tr('privatePhoto')),
+                subtitle: Text(tr('privatePhotoExplanation')),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+                value: userProfile.privatePhoto,
+                onChanged: (value) async {
+                  try {
+                    await locator<AppModel>()
+                        .updateUserSettings(privatePhoto: value);
+                  } catch (_) {
+                    Fluttertoast.showToast(msg: tr('changeQuota'));
+                  }
+                },
+              ),
+              SizedBox(height: 24.0),
+              signOutButton,
+              deleteAccountButton,
+            ],
           ),
         ),
       ),
-      inAsyncCall: _loadingVisible,
     );
   }
 
@@ -215,6 +198,70 @@ class _ProfileState extends State<Profile> {
     await userController.signOut();
     await Navigator.pushNamedAndRemoveUntil(context, '/signin', (r) => false);
   }
+}
+
+class ProfilePhoto extends StatefulWidget {
+  final String photoUrl;
+
+  ProfilePhoto({Key key, @required this.photoUrl}) : super(key: key);
+
+  @override
+  _ProfilePhotoState createState() => _ProfilePhotoState();
+}
+
+class _ProfilePhotoState extends State<ProfilePhoto> {
+  FirebaseStorage _storage;
+  UploadTask _uploadTask;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> avatarWidgets = [
+      CircleAvatar(
+        backgroundColor: Colors.transparent,
+        radius: 60.0,
+        child: UserAvatar(
+          photoUrl: this.widget.photoUrl,
+          width: 120.0,
+          height: 120.0,
+        ),
+      )
+    ];
+
+    if (_uploadTask != null &&
+        _uploadTask.snapshot.state == TaskState.running) {
+      avatarWidgets.add(CircularProgressIndicator());
+    }
+
+    avatarWidgets.add(Positioned(
+      left: 100.0,
+      right: 0.0,
+      bottom: 0.0,
+      child: PopupMenuButton<ImageSource>(
+        child: Icon(
+          Icons.edit,
+          color: Theme.of(context).primaryColor,
+        ),
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            value: ImageSource.gallery,
+            child: Text(tr('gallery')),
+          ),
+          PopupMenuItem(
+            value: ImageSource.camera,
+            child: Text(tr('camera')),
+          ),
+        ],
+        onSelected: (source) {
+          _pickImage(source);
+        },
+      ),
+    ));
+
+    return Stack(
+      alignment: AlignmentDirectional.center,
+      children: avatarWidgets,
+    );
+  }
 
   Future _pickImage(ImageSource source) async {
     final selectedImage = await ImagePicker().getImage(
@@ -244,7 +291,8 @@ class _ProfileState extends State<Profile> {
       _storage = FirebaseStorage.instanceFor(bucket: 'gs://$bucket');
     }
 
-    String picturePath = 'profilePhotos/${AppModel.of(context).user.userId}/profilePicture.png';
+    String picturePath =
+        'profilePhotos/${AppModel.of(context).user.userId}/profilePicture.png';
 
     setState(() {
       _uploadTask = _storage.ref().child(picturePath).putFile(image);

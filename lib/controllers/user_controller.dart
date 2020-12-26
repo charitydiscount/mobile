@@ -17,7 +17,8 @@ class UserController {
   }) async {
     switch (provider) {
       case Strategy.EmailAndPass:
-        await locator<AuthService>().signInWithEmailAndPass(credentials['email'], credentials['password']);
+        await locator<AuthService>().signInWithEmailAndPass(
+            credentials['email'], credentials['password']);
         break;
       case Strategy.Google:
         await locator<AuthService>().signInWithGoogle();
@@ -32,7 +33,12 @@ class UserController {
         return;
     }
 
-    final notifcationSettings = await FirebaseMessaging.instance.requestPermission(
+    await _setupNotifications();
+  }
+
+  Future _setupNotifications() async {
+    final notificationSettings =
+        await FirebaseMessaging.instance.requestPermission(
       alert: true,
       announcement: false,
       badge: true,
@@ -41,7 +47,8 @@ class UserController {
       provisional: false,
       sound: true,
     );
-    if (notifcationSettings.authorizationStatus == AuthorizationStatus.authorized) {
+    if (notificationSettings.authorizationStatus ==
+        AuthorizationStatus.authorized) {
       await _registerFcmToken();
     }
   }
@@ -61,7 +68,10 @@ class UserController {
   }
 
   Future<User> signUp(email, password, firstName, lastName) async {
-    return await locator<AuthService>().createUser(email, password, firstName, lastName);
+    final user = await locator<AuthService>()
+        .createUser(email, password, firstName, lastName);
+    await _setupNotifications();
+    return user;
   }
 
   Future<void> _registerFcmToken() async {
@@ -72,7 +82,15 @@ class UserController {
 
   bool isRecentNewUser() =>
       locator<AuthService>().currentUser != null &&
-      DateTime.now().toUtc().difference(locator<AuthService>().currentUser.metadata.creationTime.toUtc()).inMinutes < 2;
+      DateTime.now()
+              .toUtc()
+              .difference(locator<AuthService>()
+                  .currentUser
+                  .metadata
+                  .creationTime
+                  .toUtc())
+              .inMinutes <
+          2;
 
   Future<bool> deleteAccount() async {
     try {

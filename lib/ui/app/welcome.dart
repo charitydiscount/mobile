@@ -4,6 +4,7 @@ import 'package:charity_discount/state/state_model.dart';
 import 'package:charity_discount/ui/app/fadeslide.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -15,7 +16,7 @@ class WelcomeScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       body: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height,
+          height: ScreenUtil().screenHeight,
           padding: EdgeInsets.symmetric(vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,

@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:apple_sign_in/apple_sign_in.dart';
+import 'package:charity_discount/models/user_profile.dart';
+import 'package:charity_discount/util/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -11,6 +14,7 @@ import 'dart:convert';
 class AuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['profile', 'email']);
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   User get currentUser => _auth.currentUser;
   BehaviorSubject<User> profile = BehaviorSubject();
@@ -138,7 +142,9 @@ class AuthService {
       }
     }
     User user = authResult.user;
-    if (userInfoJson['first_name'] != null || userInfoJson['last_name'] != null || userInfoJson['picture'] != null) {
+    if (userInfoJson['first_name'] != null ||
+        userInfoJson['last_name'] != null ||
+        userInfoJson['picture'] != null) {
       updateUser(
         firstName: userInfoJson['first_name'],
         lastName: userInfoJson['last_name'],
@@ -175,7 +181,8 @@ class AuthService {
     }
     User user = authResult.user;
 
-    if (appleIdCredential.fullName.givenName != null || appleIdCredential.fullName.familyName != null) {
+    if (appleIdCredential.fullName.givenName != null ||
+        appleIdCredential.fullName.familyName != null) {
       await updateUser(
         firstName: appleIdCredential.fullName.givenName,
         lastName: appleIdCredential.fullName.familyName,
@@ -185,14 +192,16 @@ class AuthService {
     return user;
   }
 
-  Future<User> _handleDifferentCredential({AuthCredential credential, String email}) async {
+  Future<User> _handleDifferentCredential(
+      {AuthCredential credential, String email}) async {
     final signInMethods = await _auth.fetchSignInMethodsForEmail(email);
     if (signInMethods.contains(GoogleAuthProvider.PROVIDER_ID)) {
       return signInWithGoogle(previousCredential: credential);
     } else {
       throw PlatformException(
         code: 'ACCOUNT_EXISTS_CASE_NOT_HANDLED',
-        message: 'Please try another sign in method until we get this one working :D',
+        message:
+            'Please try another sign in method until we get this one working :D',
       );
     }
   }
@@ -202,24 +211,82 @@ class AuthService {
     String firstName,
     String lastName,
     String photoUrl,
+    bool privateName,
+    bool privatePhoto,
   }) async {
-    await updateFirebaseUser(
-      name: firstName != null || lastName != null ? '$firstName $lastName'.trim() : null,
+    String name = firstName != null || lastName != null
+        ? '$firstName $lastName'.trim()
+        : null;
+    if (name != null || photoUrl != null) {
+      await _updateFirebaseUser(
+        name: name,
+        photoUrl: photoUrl,
+      );
+    }
+
+    await _updateUserDoc(
+      name: name,
       photoUrl: photoUrl,
+      privateName: privateName,
+      privatePhoto: privatePhoto,
     );
 
     profile.add(currentUser);
   }
 
-  Future<void> updateFirebaseUser({
-    String email,
+  Future<void> _updateFirebaseUser({
     String name,
     String photoUrl,
   }) {
-    return _auth.currentUser.updateProfile(
-      displayName: name,
-      photoURL: photoUrl,
-    );
+    if (name != null && photoUrl != null) {
+      return _auth.currentUser.updateProfile(
+        displayName: name,
+        photoURL: photoUrl,
+      );
+    } else if (name != null) {
+      return _auth.currentUser.updateProfile(
+        displayName: name,
+      );
+    } else if (photoUrl != null) {
+      return _auth.currentUser.updateProfile(
+        photoURL: photoUrl,
+      );
+    }
+    return null;
+  }
+
+  Future<void> _updateUserDoc({
+    String name,
+    String photoUrl,
+    bool privateName,
+    bool privatePhoto,
+  }) async {
+    Map<String, dynamic> updateMap = new Map();
+
+    if (name != null) {
+      updateMap['name'] = name;
+    }
+
+    if (photoUrl != null) {
+      updateMap['photoUrl'] = photoUrl;
+    }
+
+    if (privateName != null) {
+      updateMap['privateName'] = privateName;
+    }
+
+    if (privatePhoto != null) {
+      updateMap['privatePhoto'] = privatePhoto;
+    }
+
+    if (updateMap.isNotEmpty) {
+      updateMap['updatedAt'] = FieldValue.serverTimestamp();
+      updateMap['userId'] = _auth.currentUser.uid;
+      await _db
+          .collection(FirestoreCollection.users)
+          .doc(_auth.currentUser.uid)
+          .set(updateMap, SetOptions(merge: true));
+    }
   }
 
   Future<void> updateUserEmail(String email) async {
@@ -254,7 +321,8 @@ class AuthService {
     return authResult.user;
   }
 
-  bool isActualUser() => _auth.currentUser != null && !_auth.currentUser.isAnonymous;
+  bool isActualUser() =>
+      _auth.currentUser != null && !_auth.currentUser.isAnonymous;
 
   Future<User> signInAnonymously() async {
     var credential = await _auth.signInAnonymously();
@@ -262,4 +330,10 @@ class AuthService {
   }
 
   Future<void> deleteAccount() => _auth.currentUser.delete();
+
+  Stream<UserProfile> get userDoc => _db
+      .collection(FirestoreCollection.users)
+      .doc(_auth.currentUser.uid)
+      .snapshots()
+      .map((snap) => UserProfile.fromJson(snap.data()));
 }

@@ -266,5 +266,11 @@
   "emailNewsletterCheckbox": "Receive email newsletter",
   "emailAlreadyTaken": "This email is already taken",
   "emailInvalid": "Invalid email address",
-  "achievements": "Achievements"
+  "achievements": "Achievements",
+  "leaderboard": "Leaderboard",
+  "privateName": "Private name",
+  "privateNameExplanation": "Your name will not be shown in leaderboard and reviews",
+  "privatePhoto": "Private photo",
+  "privatePhotoExplanation": "Your photo will not be shown in leaderboard and reviews",
+  "changeQuota": "This setting can be changed once every 5 minutes"
 }

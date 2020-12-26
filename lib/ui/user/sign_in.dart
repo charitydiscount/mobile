@@ -34,8 +34,6 @@ class _SignInScreenState extends State<SignInScreen> {
       );
 
   Widget build(BuildContext context) {
-    ScreenUtil.init(context);
-
     final logo = Hero(
       tag: 'hero',
       child: Image.asset('assets/icons/logo.png', scale: 5, height: 50),
