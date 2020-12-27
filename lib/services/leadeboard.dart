@@ -17,18 +17,6 @@ class LeaderboardService {
     final entries =
         snap.docs.map((doc) => LeaderboardEntry.fromJson(doc.data())).toList();
 
-    // final snap =
-    //     await _db.collection(FirestoreCollection.leaderboard).doc('top').get();
-
-    // if (!snap.exists) {
-    //   return [];
-    // }
-
-    // List<LeaderboardEntry> entries = snap
-    //     .data()['entries']
-    //     .map((Map entry) => LeaderboardEntry.fromJson(entry))
-    //     .toList();
-
     entries.sort((e1, e2) => e2.points.compareTo(e1.points));
 
     return entries;
