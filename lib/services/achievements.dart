@@ -18,12 +18,16 @@ class AchievementsService {
           ),
         )
         .toList();
+    achievements.sort((a1, a2) => a1.order.compareTo(a2.order));
 
-    return achievements..sort((a1, a2) => a1.order.compareTo(a2.order));
+    return achievements;
   }
 
-  Stream<Map<String, UserAchievement>> getUserAchievements() =>
-      _db.collection(FirestoreCollection.userAchievements).doc(_auth.currentUser.uid).snapshots().map(
+  Stream<Map<String, UserAchievement>> getUserAchievements() => _db
+          .collection(FirestoreCollection.userAchievements)
+          .doc(_auth.currentUser.uid)
+          .snapshots()
+          .map(
         (event) {
           if (!event.exists) {
             return null;
