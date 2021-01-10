@@ -13,16 +13,6 @@ class RemoteConfigWrapper {
     return configValue.asString();
   }
 
-  Future<String> getElasticEndpoint() async {
-    RemoteConfigValue configValue = await _getValue('elastic_endpoint');
-    return configValue.asString();
-  }
-
-  Future<String> getElasticAuth() async {
-    RemoteConfigValue configValue = await _getValue('elastic_auth');
-    return configValue.asString();
-  }
-
   Future<String> getAffiliateEndpoint() async {
     RemoteConfigValue configValue = await _getValue('affiliate_endpoint');
     return configValue.asString();

@@ -101,7 +101,12 @@
 		<string>https://charitydiscount.ro/case</string>
 		<string>https://charitydiscount-test.web.app/case</string>
 	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>MinimumOSVersion</key>
-  	<string>13.0</string>
+	<string>13.0</string>
 </dict>
 </plist>
