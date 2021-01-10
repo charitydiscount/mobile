@@ -51,6 +51,17 @@
 	<string>2421121284842131</string>
 	<key>FacebookDisplayName</key>
 	<string>CharityDiscount</string>
+	<key>FirebaseDynamicLinksCustomDomains</key>
+	<array>
+		<string>https://charitydiscount.ro/invite</string>
+		<string>https://charitydiscount-test.web.app/invite</string>
+		<string>https://charitydiscount.ro/shop</string>
+		<string>https://charitydiscount-test.web.app/shop</string>
+		<string>https://charitydiscount.ro/product</string>
+		<string>https://charitydiscount-test.web.app/product</string>
+		<string>https://charitydiscount.ro/case</string>
+		<string>https://charitydiscount-test.web.app/case</string>
+	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
@@ -60,6 +71,13 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>MinimumOSVersion</key>
+	<string>13.0</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Take new profile picture</string>
 	<key>NSFaceIDUsageDescription</key>
@@ -90,23 +108,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>FirebaseDynamicLinksCustomDomains</key>
-	<array>
-		<string>https://charitydiscount.ro/invite</string>
-		<string>https://charitydiscount-test.web.app/invite</string>
-		<string>https://charitydiscount.ro/shop</string>
-		<string>https://charitydiscount-test.web.app/shop</string>
-		<string>https://charitydiscount.ro/product</string>
-		<string>https://charitydiscount-test.web.app/product</string>
-		<string>https://charitydiscount.ro/case</string>
-		<string>https://charitydiscount-test.web.app/case</string>
-	</array>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsLocalNetworking</key>
-		<true/>
-	</dict>
-	<key>MinimumOSVersion</key>
-	<string>13.0</string>
 </dict>
 </plist>
