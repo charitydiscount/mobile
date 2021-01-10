@@ -10,13 +10,13 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
-		783F471723BB42580250CBC6 /* Pods_ImageNotification.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1CB11269C389E961AD8A61 /* Pods_ImageNotification.framework */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		B9BDACD999E7F1DCB91DB301 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34E5F6CE7246F00C72E73D68 /* Pods_Runner.framework */; };
 		C34551DE25AB08BF00FD7A9E /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34551DD25AB08BF00FD7A9E /* NotificationService.swift */; };
 		C34551E225AB08BF00FD7A9E /* ImageNotification.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = C34551DB25AB08BF00FD7A9E /* ImageNotification.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C369BE6625AB7D3800565F6D /* Pods_ImageNotification.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC1CB11269C389E961AD8A61 /* Pods_ImageNotification.framework */; };
 		C3F8C9FC23AA738100D48206 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C3F8C9FB23AA738100D48206 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -96,7 +96,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				783F471723BB42580250CBC6 /* Pods_ImageNotification.framework in Frameworks */,
+				C369BE6625AB7D3800565F6D /* Pods_ImageNotification.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,7 +252,6 @@
 				TargetAttributes = {
 					97C146ED1CF9000F007C117D = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = Y8H4MQC699;
 						LastSwiftMigration = 1100;
 					};
 					C34551DA25AB08BF00FD7A9E = {
@@ -533,6 +532,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = Y8H4MQC699;
 				ENABLE_BITCODE = NO;
@@ -552,6 +553,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clover.CharityDiscount;
 				PRODUCT_NAME = Runner;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -673,6 +675,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = Y8H4MQC699;
 				ENABLE_BITCODE = NO;
@@ -692,6 +696,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clover.CharityDiscount;
 				PRODUCT_NAME = Runner;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -707,6 +712,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = Y8H4MQC699;
 				ENABLE_BITCODE = NO;
@@ -726,6 +733,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clover.CharityDiscount;
 				PRODUCT_NAME = Runner;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
