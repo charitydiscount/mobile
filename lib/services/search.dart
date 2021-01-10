@@ -31,15 +31,12 @@ abstract class SearchServiceBase {
     int from = 0,
   });
 
-  Future<ProductPriceHistory> getProductPriceHistory(productId);
+  Future<ProductPriceHistory> getProductPriceHistory(String productId);
 
   Future<List<Product>> getSimilarProducts({
     @required Product product,
-    int size = 20,
     int from = 0,
   });
-
-  Future<List<Program>> getRelevantPrograms(String query);
 }
 
 enum SortStrategy { priceAsc, priceDesc, relevance }
@@ -49,9 +46,9 @@ class SearchService implements SearchServiceBase {
   Map<String, ProductSearchResult> _cache = Map();
 
   dynamic _search(
-    String entity,
-    String query,
-    bool exact, {
+    String entity, {
+    String query = '',
+    bool exact = false,
     int from,
     SortStrategy sort,
     double minPrice,
@@ -100,9 +97,40 @@ class SearchService implements SearchServiceBase {
     return json.decode(response.body);
   }
 
+  dynamic _searchPost(String entity, String query, int from) async {
+    if (_baseUrl == null) {
+      await _setBaseUrl();
+    }
+
+    String url = '$_baseUrl/search/$entity?';
+
+    if (from != null) {
+      url = '$url&from=$from';
+    }
+
+    String authToken = await locator<AuthService>().currentUser.getIdToken();
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $authToken',
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: json.encode({
+        'query': query,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Search failed: (${response.statusCode})');
+    }
+
+    return json.decode(response.body);
+  }
+
   @override
   Future<List<Program>> search(String query, {bool exact = false}) async {
-    Map<String, dynamic> data = await _search('programs', query, exact);
+    Map<String, dynamic> data = await _search('programs', query: query, exact: exact);
     if (!data.containsKey('hits')) {
       return [];
     }
@@ -114,7 +142,7 @@ class SearchService implements SearchServiceBase {
 
   @override
   Future<List<Suggestion>> getSuggestions(String query) async {
-    Map<String, dynamic> data = await _search('programs', query, false);
+    Map<String, dynamic> data = await _search('programs', query: query);
     if (!data.containsKey('hits')) {
       return [];
     }
@@ -150,8 +178,7 @@ class SearchService implements SearchServiceBase {
   }) async {
     Map<String, dynamic> data = await _search(
       'products',
-      query,
-      false,
+      query: query,
       from: from,
       sort: sort,
       minPrice: minPrice,
@@ -166,7 +193,7 @@ class SearchService implements SearchServiceBase {
 
   @override
   Future<List<Product>> getFeaturedProducts({String userId}) async {
-    Map<String, dynamic> data = await _search('products/featured', '', false);
+    Map<String, dynamic> data = await _search('products/featured');
     if (!data.containsKey('hits')) {
       return [];
     }
@@ -189,34 +216,12 @@ class SearchService implements SearchServiceBase {
     final cachedResult = _getCachedResult(program.id, size, from);
     if (cachedResult != null) return cachedResult;
 
-    String elasticUrl = await remoteConfig.getElasticEndpoint();
-    String auth = await remoteConfig.getElasticAuth();
+    Map<String, dynamic> data = await _searchPost('programs/${program.name}/similar', '', 0);
 
-    final body = {
-      'query': {
-        'term': {
-          'campaign_name.keyword': {'value': program.name}
-        }
-      },
-      'size': size,
-      'from': from,
-    };
-
-    final response = await http.post(
-      '$elasticUrl/products/_search',
-      headers: {
-        'Authorization': 'Basic $auth',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(body),
-    );
-
-    if (response.statusCode != 200) {
-      print('Products load failed: (${response.statusCode})');
+    if (!data.containsKey('hits')) {
       return ProductSearchResult([], 0);
     }
 
-    final data = jsonDecode(response.body)['hits'];
     if (!data.containsKey('hits')) {
       return ProductSearchResult([], 0);
     }
@@ -250,33 +255,8 @@ class SearchService implements SearchServiceBase {
   }
 
   @override
-  Future<ProductPriceHistory> getProductPriceHistory(productId) async {
-    String elasticUrl = await remoteConfig.getElasticEndpoint();
-    String auth = await remoteConfig.getElasticAuth();
-
-    final body = {
-      'query': {
-        'term': {
-          '_id': {'value': productId}
-        }
-      },
-      'size': 45,
-    };
-
-    final response = await http.post(
-      '$elasticUrl/prices-*/_search',
-      headers: {
-        'Authorization': 'Basic $auth',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(body),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception('Product history load failed: (${response.statusCode})');
-    }
-
-    final data = jsonDecode(response.body)['hits'];
+  Future<ProductPriceHistory> getProductPriceHistory(String productId) async {
+    Map<String, dynamic> data = await _searchPost('products/history', productId, 0);
     if (!data.containsKey('hits')) {
       return ProductPriceHistory(productId, []);
     }
@@ -290,103 +270,15 @@ class SearchService implements SearchServiceBase {
   @override
   Future<List<Product>> getSimilarProducts({
     Product product,
-    int size = 20,
     int from = 0,
   }) async {
-    String elasticUrl = await remoteConfig.getElasticEndpoint();
-    String auth = await remoteConfig.getElasticAuth();
-
-    final body = {
-      'query': {
-        'more_like_this': {
-          'fields': ['title', 'category'],
-          'like': [
-            {
-              '_index': 'products',
-              '_id': product.id.trim(),
-            }
-          ],
-          'min_term_freq': 1,
-        }
-      },
-      'size': size,
-      'from': from,
-    };
-
-    final response = await http.post(
-      '$elasticUrl/products/_search',
-      headers: {
-        'Authorization': 'Basic $auth',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(body),
-    );
-
-    if (response.statusCode != 200) {
-      print('Products load failed: (${response.body})');
-      return [];
-    }
-
-    final data = jsonDecode(response.body)['hits'];
+    Map<String, dynamic> data = await _searchPost('products/similar', product.id, from);
     if (!data.containsKey('hits')) {
       return [];
     }
+    List hits = data['hits'];
+    List<Product> products = productsFromElastic(hits);
 
-    return productsFromElastic(List.from(data['hits']));
-  }
-
-  @override
-  Future<List<Program>> getRelevantPrograms(String query) async {
-    String elasticUrl = await remoteConfig.getElasticEndpoint();
-    String auth = await remoteConfig.getElasticAuth();
-
-    final body = {
-      'query': {
-        'multi_match': {
-          'fields': [
-            'campaign_name^3',
-            'title',
-          ],
-          'query': query,
-        }
-      },
-      'size': 0,
-      'aggs': {
-        'dedup': {
-          'terms': {
-            'field': 'campaign_id',
-          },
-          'aggs': {
-            'dedup_docs': {
-              'top_hits': {
-                'size': 1,
-              }
-            }
-          }
-        }
-      }
-    };
-
-    final response = await http.post(
-      '$elasticUrl/products/_search',
-      headers: {
-        'Authorization': 'Basic $auth',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(body),
-    );
-
-    if (response.statusCode != 200) {
-      print('Products load failed: (${response.body})');
-      return [];
-    }
-
-    final data = jsonDecode(response.body)['hits'];
-    if (!data.containsKey('hits')) {
-      return [];
-    }
-
-    // TODO
-    return [];
+    return products;
   }
 }
