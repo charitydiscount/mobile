@@ -27,12 +27,10 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 
 flutter_ios_podfile_setup
 
-use_frameworks!
 target 'Runner' do
+  use_frameworks!
   use_modular_headers!
-
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-  pod 'Firebase/Messaging'
   pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => '6.33.0'
 end
 
@@ -44,8 +42,4 @@ post_install do |installer|
       config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
     end
   end
-end
-
-target 'ImageNotification' do
-  pod 'Firebase/Messaging'
 end
