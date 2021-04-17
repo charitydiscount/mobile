@@ -138,7 +138,7 @@ class _ProgramsListState extends State<ProgramsList>
 
   Expanded _buildCategoriesButton(BuildContext context) {
     return Expanded(
-      child: FlatButton(
+      child: TextButton(
         child: Text(
           _category == null ? plural('category', 2) : _category,
           style: TextStyle(color: Colors.white),
@@ -203,7 +203,7 @@ class _ProgramsListState extends State<ProgramsList>
   Widget _buildCategoryButton(BuildContext context, String category) {
     return Padding(
       padding: EdgeInsets.all(2),
-      child: FlatButton(
+      child: TextButton(
         child: Text(category),
         onPressed: () {
           Navigator.pop(context, category);

@@ -84,13 +84,15 @@ class FirebaseCharityService implements CharityService {
   @override
   Future<Map<String, Charity>> getCases() async {
     QuerySnapshot qS = await _db.collection('cases').get();
-    Map<String, Charity> cases = Map.fromIterable(qS.docs,
-        key: (snap) => snap.documentID,
-        value: (snap) {
-          Charity charityCase = Charity.fromJson(snap.data());
-          charityCase.id = snap.documentID;
-          return charityCase;
-        });
+    Map<String, Charity> cases = Map.fromIterable(
+      qS.docs,
+      key: (snap) => snap.id,
+      value: (snap) {
+        Charity charityCase = Charity.fromJson(snap.data());
+        charityCase.id = snap.id;
+        return charityCase;
+      },
+    );
     return Future<Map<String, Charity>>.value(cases);
   }
 

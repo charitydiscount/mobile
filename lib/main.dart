@@ -14,6 +14,7 @@ import 'package:charity_discount/state/state_model.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = CustomHttpOverrides();
+  await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp();
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
@@ -27,8 +28,7 @@ void main() async {
         model: locator<AppModel>(),
         child: ScreenUtilInit(
           designSize: Size(750, 1334),
-          allowFontScaling: false,
-          child: Main(),
+          builder: () => Main(),
         ),
       ),
     ),

@@ -86,7 +86,8 @@ class SearchService implements SearchServiceBase {
     }
 
     String authToken = await locator<AuthService>().currentUser.getIdToken();
-    final response = await http.get(url, headers: {
+    final uri = Uri.parse(url);
+    final response = await http.get(uri, headers: {
       'Authorization': 'Bearer $authToken',
     });
 
@@ -109,8 +110,9 @@ class SearchService implements SearchServiceBase {
     }
 
     String authToken = await locator<AuthService>().currentUser.getIdToken();
+    final uri = Uri.parse(url);
     final response = await http.post(
-      url,
+      uri,
       headers: {
         'Authorization': 'Bearer $authToken',
         'Content-type': 'application/json',

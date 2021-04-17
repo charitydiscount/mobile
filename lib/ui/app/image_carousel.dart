@@ -31,7 +31,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
               });
             },
           ),
-          itemBuilder: (context, index) {
+          itemBuilder: (context, index, realIndex) {
             return CachedNetworkImage(
               imageUrl: Uri.tryParse(widget.images[index]) != null
                   ? widget.images[index]

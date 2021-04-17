@@ -1,7 +1,7 @@
 import 'package:charity_discount/util/url.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -58,7 +58,7 @@ class _SignInScreenState extends State<EmailSignInScreen> {
       );
 
   Widget build(BuildContext context) {
-    final termsButton = FlatButton(
+    final termsButton = TextButton(
       child: Row(
         children: <Widget>[
           Text(
@@ -71,7 +71,7 @@ class _SignInScreenState extends State<EmailSignInScreen> {
       onPressed: () => UrlHelper.launchTerms(),
     );
 
-    final privacyButton = FlatButton(
+    final privacyButton = TextButton(
       child: Row(
         children: <Widget>[
           Text(
@@ -117,7 +117,7 @@ class _SignInScreenState extends State<EmailSignInScreen> {
                         privacyButton,
                       ],
                     ),
-                    FlatButton(
+                    TextButton(
                       child: Text(
                         tr('useOtherAuthMethods'),
                         style: TextStyle(
@@ -184,9 +184,13 @@ class _SignInScreenState extends State<EmailSignInScreen> {
       padding: EdgeInsets.symmetric(vertical: 12.0),
       child: Container(
         width: double.infinity,
-        child: RaisedButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: EdgeInsets.all(12),
+            primary: Theme.of(context).primaryColor,
           ),
           onPressed: _emailFilledIn && _passFilledIn
               ? () {
@@ -197,8 +201,6 @@ class _SignInScreenState extends State<EmailSignInScreen> {
                   );
                 }
               : null,
-          padding: EdgeInsets.all(12),
-          color: Theme.of(context).primaryColor,
           child: Text(
             tr('signIn').toUpperCase(),
             style: TextStyle(color: Colors.white),
@@ -207,7 +209,7 @@ class _SignInScreenState extends State<EmailSignInScreen> {
       ),
     );
 
-    final forgotLabel = FlatButton(
+    final forgotLabel = TextButton(
       child: Text(
         tr('forgotPassword'),
         style: TextStyle(color: Theme.of(context).hintColor),
@@ -217,7 +219,7 @@ class _SignInScreenState extends State<EmailSignInScreen> {
       },
     );
 
-    final signUpButton = FlatButton(
+    final signUpButton = TextButton(
       child: Text(
         tr('createAccount'),
         style: TextStyle(

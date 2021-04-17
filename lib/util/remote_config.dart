@@ -46,11 +46,12 @@ class RemoteConfigWrapper {
   }
 
   Future<void> _setInstance() async {
-    _remoteConfig = await RemoteConfig.instance;
+    _remoteConfig = RemoteConfig.instance;
     try {
-      await _remoteConfig.fetch(expiration: const Duration(hours: 0));
-      await _remoteConfig.activateFetched();
-    } catch (e) {}
+      await _remoteConfig.fetchAndActivate();
+    } catch (e) {
+      print('Failed to setup remote config: $e');
+    }
   }
 }
 

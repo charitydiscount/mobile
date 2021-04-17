@@ -3,7 +3,7 @@ import 'package:charity_discount/ui/user/agreement.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
 import 'package:charity_discount/util/validator.dart';
 import 'package:charity_discount/controllers/user_controller.dart';
@@ -130,7 +130,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
 
-    final termsButton = FlatButton(
+    final termsButton = TextButton(
       child: Row(
         children: <Widget>[
           Text(
@@ -143,7 +143,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       onPressed: () => launchURL('https://charitydiscount.ro/tos'),
     );
 
-    final privacyButton = FlatButton(
+    final privacyButton = TextButton(
       child: Row(
         children: <Widget>[
           Text(
@@ -158,9 +158,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     final signUpButton = Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0),
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: EdgeInsets.all(12),
+          primary: Theme.of(context).primaryColor,
         ),
         onPressed: () async {
           bool agreed = await showDialog(
@@ -177,13 +181,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
             );
           }
         },
-        padding: EdgeInsets.all(12),
-        color: Theme.of(context).primaryColor,
         child: Text(tr('createAccount'), style: TextStyle(color: Colors.white)),
       ),
     );
 
-    final signInLabel = FlatButton(
+    final signInLabel = TextButton(
       child: Text(
         tr('alreadyAccount'),
         style: TextStyle(color: Theme.of(context).hintColor),
@@ -292,7 +294,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               duration: Duration(seconds: 5),
             )..show(context);
           } else {
-            printError(e.toString());
+            print(e.toString());
           }
         }
       }

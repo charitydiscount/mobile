@@ -29,7 +29,8 @@ class _EmailDialogState extends State<EmailDialog> {
     super.initState();
     _emailController.addListener(() {
       if (_emailFilledIn != _emailController.text.isNotEmpty) {
-        if (_emailFilledIn == false && Validator.validateEmail(_emailController.text) != null) {
+        if (_emailFilledIn == false &&
+            Validator.validateEmail(_emailController.text) != null) {
           return;
         }
         setState(() {
@@ -88,11 +89,13 @@ class _EmailDialogState extends State<EmailDialog> {
 
     Widget controls = ButtonBar(
       children: [
-        FlatButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+        TextButton(
+          style: TextButton.styleFrom(
+            padding: EdgeInsets.all(12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
-          padding: EdgeInsets.all(12),
           child: _loadingVisible
               ? Container(
                   height: 20,
@@ -108,7 +111,8 @@ class _EmailDialogState extends State<EmailDialog> {
                         _loadingVisible = true;
                       });
                       try {
-                        await locator<AuthService>().updateUserEmail(_emailController.text);
+                        await locator<AuthService>()
+                            .updateUserEmail(_emailController.text);
                       } catch (e) {
                         setState(() {
                           _loadingVisible = false;
@@ -121,7 +125,8 @@ class _EmailDialogState extends State<EmailDialog> {
                                 builder: reAuthDialogBuilder,
                               );
                               await userController.signOut();
-                              Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context, '/', (r) => false);
                               return;
                             case 'invalid-email':
                               setState(() {
@@ -141,7 +146,8 @@ class _EmailDialogState extends State<EmailDialog> {
                           }
                         }
                       }
-                      await locator<MetaService>().setEmailNotifications(!_subscribeToNewsletter);
+                      await locator<MetaService>()
+                          .setEmailNotifications(!_subscribeToNewsletter);
                       Navigator.pop(context, true);
                     }
                   : null,

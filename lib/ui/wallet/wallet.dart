@@ -33,11 +33,13 @@ class WalletScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: RaisedButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  primary: Theme.of(context).primaryColor,
                 ),
-                color: Theme.of(context).primaryColor,
                 child: Text(
                   tr('signIn').toUpperCase(),
                   style: TextStyle(color: Colors.white),
@@ -155,7 +157,7 @@ class WalletScreen extends StatelessWidget {
                 ),
               ),
             ),
-            FlatButton(
+            TextButton(
               child: Text(
                 tr('wallet.commissions'),
                 style: Theme.of(context).textTheme.button,
@@ -170,7 +172,7 @@ class WalletScreen extends StatelessWidget {
                 );
               },
             ),
-            FlatButton(
+            TextButton(
               child: Text(
                 tr('wallet.history'),
                 style: Theme.of(context).textTheme.button,
@@ -230,7 +232,7 @@ class WalletScreen extends StatelessWidget {
         ],
       ),
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           child: Row(
             children: <Widget>[
               Icon(
@@ -247,7 +249,7 @@ class WalletScreen extends StatelessWidget {
             Navigator.of(context).pop(CashbackAction.DONATE);
           },
         ),
-        FlatButton(
+        TextButton(
           child: Row(
             children: <Widget>[
               Icon(
@@ -270,7 +272,13 @@ class WalletScreen extends StatelessWidget {
                   Navigator.of(context).pop(CashbackAction.CASHOUT);
                 }
               : null,
-          disabledTextColor: Colors.black,
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.resolveWith<Color>(
+                (Set<MaterialState> states) {
+              if (states.contains(MaterialState.disabled)) return Colors.black;
+              return null; // Defer to the widget's default.
+            }),
+          ),
         ),
       ],
     );

@@ -35,8 +35,8 @@ class _AccessButtonState extends State<AccessButton> {
   @override
   Widget build(BuildContext context) {
     return widget.buttonType == AccessButtonType.FLAT
-        ? FlatButton(
-            padding: EdgeInsets.zero,
+        ? TextButton(
+            style: TextButton.styleFrom(padding: EdgeInsets.zero),
             child: _buildChild('access'),
             onPressed: _onPressed,
           )
@@ -69,33 +69,34 @@ class _AccessButtonState extends State<AccessButton> {
           });
         };
 
-  Widget _buildChild(String textKey) => widget.buttonType == AccessButtonType.FLAT
-      ? _loading
-          ? Container(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(strokeWidth: 3.0),
-            )
-          : Text(
-              tr(textKey),
-              style: widget.textStyle,
-            )
-      : Container(
-          width: 150,
-          child: Center(
-            child: _loading
-                ? Container(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 3.0,
-                      valueColor: AlwaysStoppedAnimation(Colors.white),
-                    ),
-                  )
-                : Text(
-                    tr(textKey),
-                    style: widget.textStyle,
-                  ),
-          ),
-        );
+  Widget _buildChild(String textKey) =>
+      widget.buttonType == AccessButtonType.FLAT
+          ? _loading
+              ? Container(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(strokeWidth: 3.0),
+                )
+              : Text(
+                  tr(textKey),
+                  style: widget.textStyle,
+                )
+          : Container(
+              width: 150,
+              child: Center(
+                child: _loading
+                    ? Container(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3.0,
+                          valueColor: AlwaysStoppedAnimation(Colors.white),
+                        ),
+                      )
+                    : Text(
+                        tr(textKey),
+                        style: widget.textStyle,
+                      ),
+              ),
+            );
 }

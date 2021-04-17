@@ -41,11 +41,12 @@ class AffiliateService {
                 affiliateUniqueCode,
               ))
           .where((promotion) =>
-              promotion.promotionStart.isBefore(DateTime.now()) && promotion.promotionEnd.isAfter(DateTime.now()))
+              promotion.promotionStart.isBefore(DateTime.now()) &&
+              promotion.promotionEnd.isAfter(DateTime.now()))
           .toList();
 
-  Promotion _promotionFromSnap(
-      MapEntry<String, dynamic> snapEntry, String programUniqueCode, User user, String affiliateUniqueCode) {
+  Promotion _promotionFromSnap(MapEntry<String, dynamic> snapEntry, String programUniqueCode,
+      User user, String affiliateUniqueCode) {
     final promotion = Promotion.fromJson(Map<String, dynamic>.from(snapEntry.value));
     if (promotion.affiliateUrl != null) {
       promotion.actualAffiliateUrl = interpolateUserCode(
@@ -83,8 +84,9 @@ class AffiliateService {
   }
 
   Future<void> saveClickInfo(String programId) async {
+    final ipifyUri = Uri.parse('https://api64.ipify.org');
     try {
-      final ipifyResponse = await http.get('https://api64.ipify.org');
+      final ipifyResponse = await http.get(ipifyUri);
       await _db.collection('clicks').add({
         'ipAddress': ipifyResponse.body,
         'ipv6Address': ipifyResponse.body,
@@ -98,7 +100,8 @@ class AffiliateService {
     }
   }
 
-  Future<List<Promotion>> getAllPromotions() => _db.collection('promotions').doc('all').get().then((snap) {
+  Future<List<Promotion>> getAllPromotions() =>
+      _db.collection('promotions').doc('all').get().then((snap) {
         if (!snap.exists) {
           return [];
         }
@@ -109,7 +112,8 @@ class AffiliateService {
         return promotionsJson
             .map((e) => Promotion.fromJson(e))
             .where((promotion) =>
-                promotion.promotionStart.isBefore(DateTime.now()) && promotion.promotionEnd.isAfter(DateTime.now()))
+                promotion.promotionStart.isBefore(DateTime.now()) &&
+                promotion.promotionEnd.isAfter(DateTime.now()))
             .toList();
       });
 }

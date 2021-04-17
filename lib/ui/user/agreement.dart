@@ -21,13 +21,13 @@ class _AgreementDialogState extends State<AgreementDialog> {
 
   @override
   Widget build(BuildContext context) {
-    Widget cancelButton = FlatButton(
+    Widget cancelButton = TextButton(
       child: Text(tr('cancel')),
       onPressed: () {
         Navigator.pop(context, false);
       },
     );
-    Widget continueButton = FlatButton(
+    Widget continueButton = TextButton(
       child: Text(tr('agree')),
       onPressed: _acceptedTerms && _acceptedPrivacy
           ? () {

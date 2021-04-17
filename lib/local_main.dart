@@ -33,8 +33,7 @@ void main() async {
         model: locator<AppModel>(),
         child: ScreenUtilInit(
           designSize: Size(750, 1334),
-          allowFontScaling: false,
-          child: Main(),
+          builder: () => Main(),
         ),
       ),
     ),

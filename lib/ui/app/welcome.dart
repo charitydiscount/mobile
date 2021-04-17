@@ -13,7 +13,6 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
       body: SingleChildScrollView(
         child: Container(
           height: ScreenUtil().screenHeight,
@@ -49,12 +48,14 @@ class __GotItButtonState extends State<_GotItButton> {
   Widget build(BuildContext context) {
     return FadeSlide(
       delay: Duration(milliseconds: 5500),
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: EdgeInsets.all(12),
+          primary: Theme.of(context).primaryColor,
         ),
-        padding: EdgeInsets.all(12),
-        color: Theme.of(context).primaryColor,
         child: loading
             ? SizedBox(
                 child: CircularProgressIndicator(

@@ -6,7 +6,7 @@ import 'package:charity_discount/util/amounts.dart';
 import 'package:charity_discount/util/animated_pages.dart';
 import 'package:charity_discount/util/authorize.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -317,12 +317,14 @@ class _CashoutScreenState extends State<CashoutScreen> {
             width: double.infinity,
             child: _done
                 ? null
-                : RaisedButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                : ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: EdgeInsets.all(12),
+                      primary: Theme.of(context).primaryColor,
                     ),
-                    padding: EdgeInsets.all(12),
-                    color: Theme.of(context).primaryColor,
                     child: Text(
                       '${tr('authorize')} & ${tr('send')}'.toUpperCase(),
                       style: TextStyle(color: Colors.white),
@@ -451,9 +453,11 @@ class _CashoutScreenState extends State<CashoutScreen> {
     List<Widget> actions = [];
     if (_stackIndex != 2) {
       actions.add(
-        FlatButton(
-          child: Text(tr('next')),
-          textColor: Colors.white,
+        TextButton(
+          child: Text(
+            tr('next'),
+            style: TextStyle(color: Colors.white),
+          ),
           onPressed: _iban == null ||
                   _accountNameController.text.length < 5 ||
                   !_iban.isValid ||

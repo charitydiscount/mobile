@@ -56,13 +56,15 @@ class Profile extends StatelessWidget {
   Widget build(BuildContext context) {
     final signOutButton = Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0),
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: EdgeInsets.all(12),
+          primary: Theme.of(context).primaryColor,
         ),
         onPressed: () => _signOut(context),
-        padding: EdgeInsets.all(12),
-        color: Theme.of(context).primaryColor,
         child: Text(
           'LOG OUT',
           style: TextStyle(color: Colors.white),
@@ -76,7 +78,7 @@ class Profile extends StatelessWidget {
     final nameLabel = Text('${tr('name')}:');
     final name = userProfile.name ?? '';
 
-    final deleteAccountButton = FlatButton(
+    final deleteAccountButton = TextButton(
       child: Text(
         tr('deleteAccount').toUpperCase(),
         style: Theme.of(context).textTheme.button,
@@ -172,13 +174,13 @@ class Profile extends StatelessWidget {
   }
 
   Widget _deleteConfirmationDialogBuilder(context) {
-    Widget cancelButton = FlatButton(
+    Widget cancelButton = TextButton(
       child: Text(tr('cancel')),
       onPressed: () {
         Navigator.pop(context, false);
       },
     );
-    Widget continueButton = FlatButton(
+    Widget continueButton = TextButton(
       child: Text(tr('agree')),
       onPressed: () {
         Navigator.pop(context, true);
@@ -307,9 +309,8 @@ class _ProfilePhotoState extends State<ProfilePhoto> {
         AppModel.of(context).setUser(userState);
         _uploadTask = null;
       });
-    }).catchError((FirebaseException error) {
-      printError(error.message);
-      return null;
+    }).catchError((error) {
+      print(error.message);
     });
   }
 }

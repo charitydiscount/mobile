@@ -6,7 +6,7 @@ import 'package:charity_discount/util/url.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
@@ -39,7 +39,7 @@ class _SignInScreenState extends State<SignInScreen> {
       child: Image.asset('assets/icons/logo.png', scale: 5, height: 50),
     );
 
-    final termsButton = FlatButton(
+    final termsButton = TextButton(
       child: Row(
         children: <Widget>[
           Text(
@@ -52,7 +52,7 @@ class _SignInScreenState extends State<SignInScreen> {
       onPressed: () => launchURL('https://charitydiscount.ro/tos'),
     );
 
-    final privacyButton = FlatButton(
+    final privacyButton = TextButton(
       child: Row(
         children: <Widget>[
           Text(
@@ -221,7 +221,7 @@ class _SignInScreenState extends State<SignInScreen> {
           duration: Duration(seconds: 5),
         )..show(context);
       } else {
-        printError(e.toString());
+        print(e.toString());
       }
     }
   }

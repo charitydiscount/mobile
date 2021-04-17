@@ -129,16 +129,19 @@ class _RateScreenState extends State<RateScreen> {
       },
     );
 
-    String titleKey = widget.existingReview != null ? 'review.edit' : 'review.add';
+    String titleKey =
+        widget.existingReview != null ? 'review.edit' : 'review.add';
     return Scaffold(
       appBar: AppBar(
         title: Text(tr(titleKey)),
         automaticallyImplyLeading: false,
         leading: CloseButton(),
         actions: <Widget>[
-          FlatButton(
-            textColor: Colors.white,
-            child: Text(tr('review.publish').toUpperCase()),
+          TextButton(
+            child: Text(
+              tr('review.publish').toUpperCase(),
+              style: TextStyle(color: Colors.white),
+            ),
             onPressed: _validReview
                 ? () {
                     AppModel state = AppModel.of(context);
@@ -147,7 +150,9 @@ class _RateScreenState extends State<RateScreen> {
                       rating: _rating,
                       description: _descriptionController.text,
                     );
-                    locator<ShopsService>().saveReview(widget.program, review).then((_) {
+                    locator<ShopsService>()
+                        .saveReview(widget.program, review)
+                        .then((_) {
                       Navigator.of(context).pop(true);
                     });
                   }

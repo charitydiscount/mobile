@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
 import 'package:charity_discount/util/validator.dart';
 import 'package:charity_discount/ui/app/loading.dart';
@@ -65,15 +65,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     final forgotPasswordButton = Padding(
       padding: EdgeInsets.symmetric(vertical: 16.0),
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: EdgeInsets.all(12),
+          primary: Theme.of(context).primaryColor,
         ),
         onPressed: () {
           _forgotPassword(email: _email.text, context: context);
         },
-        padding: EdgeInsets.all(12),
-        color: Theme.of(context).primaryColor,
         child: Text(
           tr('recoverPassword'),
           style: TextStyle(color: Colors.white),
@@ -81,7 +83,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       ),
     );
 
-    final signInLabel = FlatButton(
+    final signInLabel = TextButton(
       child: Text(
         'Sign In',
         style: TextStyle(color: Theme.of(context).hintColor),

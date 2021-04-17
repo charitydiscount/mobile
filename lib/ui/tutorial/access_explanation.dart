@@ -20,12 +20,14 @@ SimpleDialog explanationDialogBuilder(BuildContext context) {
           },
         ),
       ),
-      RaisedButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: EdgeInsets.all(12),
+          primary: Theme.of(context).primaryColor,
         ),
-        padding: EdgeInsets.all(12),
-        color: Theme.of(context).primaryColor,
         child: Text(
           tr('gotIt').toUpperCase(),
           style: TextStyle(color: Colors.white),
@@ -92,8 +94,10 @@ SimpleDialog signInDialogBuilder(BuildContext context) {
   Widget content = Text(tr('signInExplanation.content'));
   Widget controls = ButtonBar(
     children: [
-      FlatButton(
-        padding: EdgeInsets.symmetric(horizontal: 12),
+      TextButton(
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+        ),
         child: Text(
           tr('signIn').toUpperCase(),
           style: TextStyle(color: Theme.of(context).primaryColor),

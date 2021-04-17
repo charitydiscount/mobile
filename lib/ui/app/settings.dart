@@ -35,16 +35,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     List<Widget> settingTiles = [];
     Widget language = ExpansionTile(
       leading: Icon(Icons.language),
-      title: Text(tr('language', context: context)),
-      children: supportedLanguages.map((lang) => _buildLanguageTile(lang)).toList(),
+      title: Text(tr('language')),
+      children:
+          supportedLanguages.map((lang) => _buildLanguageTile(lang)).toList(),
     );
     settingTiles.add(language);
     Widget notifications = ExpansionTile(
       leading: Icon(Icons.notifications),
-      title: Text(tr('notifications', context: context)),
+      title: Text(tr('notifications')),
       children: [
         ListTile(
-          title: Text(capitalize(tr('commission', context: context))),
+          title: Text(capitalize(tr('commission'))),
           trailing: Switch.adaptive(
             value: _state.settings.notificationsForCashback || false,
             onChanged: (bool newValue) {
@@ -63,7 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
         ListTile(
-          title: Text(tr('promotion.promotions', context: context)),
+          title: Text(tr('promotion.promotions')),
           trailing: Switch.adaptive(
             value: _state.settings.notificationsForPromotions || false,
             onChanged: (bool newValue) {
@@ -73,7 +74,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _state.setSettings(newSettings, storeLocal: true);
               });
               FirebaseMessaging.instance.getToken().then(
-                    (token) => locator<MetaService>().setNotificationsForPromotions(
+                    (token) =>
+                        locator<MetaService>().setNotificationsForPromotions(
                       token,
                       newValue,
                     ),
@@ -104,8 +106,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     Widget theme = ExpansionTile(
       leading: Icon(Icons.color_lens),
-      title: Text(tr('theme.name', context: context)),
-      children: ThemeOption.values.map((themeOption) => _buildThemeRadioButton(themeOption)).toList(),
+      title: Text(tr('theme.name')),
+      children: ThemeOption.values
+          .map((themeOption) => _buildThemeRadioButton(themeOption))
+          .toList(),
     );
     settingTiles.add(theme);
 
@@ -124,7 +128,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          tr('settings', context: context),
+          tr('settings'),
         ),
       ),
       body: Stack(
@@ -191,9 +195,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       title: Text(language.name),
-      trailing: EasyLocalization.of(context).locale.languageCode == language.code ? Icon(Icons.check) : null,
+      trailing:
+          EasyLocalization.of(context).locale.languageCode == language.code
+              ? Icon(Icons.check)
+              : null,
       onTap: () {
-        EasyLocalization.of(context).locale = language.locale;
+        EasyLocalization.of(context).setLocale(language.locale);
         FirebaseAuth.instance.setLanguageCode(language.locale.languageCode);
         setState(() {});
       },
@@ -202,7 +209,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildThemeRadioButton(ThemeOption value) => ListTile(
         title: Text(
-          tr('theme.${describeEnum(value).toLowerCase()}', context: context),
+          tr('theme.${describeEnum(value).toLowerCase()}'),
         ),
         leading: Radio(
           value: value,

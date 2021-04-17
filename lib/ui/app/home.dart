@@ -16,7 +16,7 @@ import 'package:charity_discount/ui/user/user_avatar.dart';
 import 'package:charity_discount/util/constants.dart';
 import 'package:charity_discount/util/url.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:charity_discount/ui/charity/charity.dart';
@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: message.notification.title,
         message: message.notification.body,
         mainButton: needsButton
-            ? FlatButton(
+            ? TextButton(
                 child: Text(
                   tr('open'),
                   style: TextStyle(color: Theme.of(context).primaryColor),
@@ -149,6 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
+          selectedItemColor: Theme.of(context).primaryColor,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.add_shopping_cart),
@@ -193,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildProfileButton({BuildContext context, User user}) {
     if (!locator<AuthService>().isActualUser()) {
-      return FlatButton(
+      return TextButton(
         child: Text(
           tr('signIn').toUpperCase(),
           style: TextStyle(color: Colors.white),

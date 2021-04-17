@@ -28,7 +28,7 @@ class CaseWidget extends StatelessWidget {
     final websiteButton = charityCase.site != null
         ? Padding(
             padding: EdgeInsets.only(right: 12.0),
-            child: FlatButton(
+            child: TextButton(
               onPressed: () {
                 launchURL(charityCase.site);
               },
@@ -36,9 +36,13 @@ class CaseWidget extends StatelessWidget {
             ),
           )
         : Container();
-    final donateButton = RaisedButton(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+    final donateButton = ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: EdgeInsets.all(12),
+        primary: Theme.of(context).primaryColor,
       ),
       onPressed: () {
         if (!locator<AuthService>().isActualUser()) {
@@ -65,8 +69,6 @@ class CaseWidget extends StatelessWidget {
           });
         }
       },
-      padding: EdgeInsets.all(12),
-      color: Theme.of(context).primaryColor,
       child: Text(
         tr('contribute'),
         style: TextStyle(color: Colors.white),

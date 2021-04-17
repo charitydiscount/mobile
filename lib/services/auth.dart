@@ -60,7 +60,7 @@ class AuthService {
 
     final googleApisUrl =
         'https://www.googleapis.com/oauth2/v3/userinfo?alt=json&access_token=${googleAuth.accessToken}';
-    final response = await http.get(googleApisUrl);
+    final response = await http.get(Uri.parse(googleApisUrl));
 
     if (response.statusCode == 200) {
       Map<String, dynamic> userInfoJson = json.decode(response.body);
@@ -76,7 +76,11 @@ class AuthService {
     }
 
     if (previousCredential != null) {
-      user.linkWithCredential(previousCredential).catchError(() {});
+      try {
+        await user.linkWithCredential(previousCredential);
+      } catch (e) {
+        print('Failed to link with credential: $e');
+      }
     }
 
     return user;
@@ -116,8 +120,9 @@ class AuthService {
     FacebookLoginResult result,
   ) async {
     final token = result.accessToken.token;
-    final graphResponse = await http.get(
+    final fbGraphUri = Uri.parse(
         'https://graph.facebook.com/me?fields=name,first_name,last_name,email,picture.height(200)&access_token=$token');
+    final graphResponse = await http.get(fbGraphUri);
 
     if (graphResponse.statusCode != 200) {
       throw PlatformException(code: 'GRAPH_CALL_FAILED');
@@ -192,16 +197,14 @@ class AuthService {
     return user;
   }
 
-  Future<User> _handleDifferentCredential(
-      {AuthCredential credential, String email}) async {
+  Future<User> _handleDifferentCredential({AuthCredential credential, String email}) async {
     final signInMethods = await _auth.fetchSignInMethodsForEmail(email);
     if (signInMethods.contains(GoogleAuthProvider.PROVIDER_ID)) {
       return signInWithGoogle(previousCredential: credential);
     } else {
       throw PlatformException(
         code: 'ACCOUNT_EXISTS_CASE_NOT_HANDLED',
-        message:
-            'Please try another sign in method until we get this one working :D',
+        message: 'Please try another sign in method until we get this one working :D',
       );
     }
   }
@@ -214,9 +217,7 @@ class AuthService {
     bool privateName,
     bool privatePhoto,
   }) async {
-    String name = firstName != null || lastName != null
-        ? '$firstName $lastName'.trim()
-        : null;
+    String name = firstName != null || lastName != null ? '$firstName $lastName'.trim() : null;
     if (name != null || photoUrl != null) {
       await _updateFirebaseUser(
         name: name,
@@ -321,8 +322,7 @@ class AuthService {
     return authResult.user;
   }
 
-  bool isActualUser() =>
-      _auth.currentUser != null && !_auth.currentUser.isAnonymous;
+  bool isActualUser() => _auth.currentUser != null && !_auth.currentUser.isAnonymous;
 
   Future<User> signInAnonymously() async {
     var credential = await _auth.signInAnonymously();
