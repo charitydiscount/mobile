@@ -216,7 +216,7 @@ class SearchService implements SearchServiceBase {
     final cachedResult = _getCachedResult(program.id, size, from);
     if (cachedResult != null) return cachedResult;
 
-    Map<String, dynamic> data = await _searchPost('programs/${program.name}/similar', '', 0);
+    Map<String, dynamic> data = await _searchPost('programs/${program.name}/products', '', 0);
 
     if (!data.containsKey('hits')) {
       return ProductSearchResult([], 0);
